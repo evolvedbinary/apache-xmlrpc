@@ -63,6 +63,7 @@ import java.util.Properties;
 import java.util.Hashtable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import org.apache.xmlrpc.util.HttpUtil;
 
 /**
  * Default XML-RPC transport factory, produces HTTP, HTTPS with SSL or TLS based on URI protocol.
@@ -158,12 +159,17 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
   
     public DefaultXmlRpcTransportFactory(URL url)
     {
-        this(url, null);
+        this.url = url;
     }
-
+    
+    /**
+     * Contructor taking a Base64 encoded Basic Authentication string.
+     *
+     * @deprecated use setBasicAuthentication method instead
+     */
     public DefaultXmlRpcTransportFactory(URL url, String auth)
     {
-        this.url = url;
+        this(url);
         this.auth = auth;
     }
     
@@ -188,6 +194,17 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
         return new DefaultXmlRpcTransport(url);
     }
     
+    /**
+     * Sets Authentication for this client. This will be sent as Basic
+     * Authentication header to the server as described in
+     * <a href="http://www.ietf.org/rfc/rfc2617.txt">
+     * http://www.ietf.org/rfc/rfc2617.txt</a>.
+     */
+    public void setBasicAuthentication(String user, String password)
+    {
+        auth = HttpUtil.encodeBasicAuthentication(user, password);
+    }
+
     public URL getURL() 
     {
         return url;

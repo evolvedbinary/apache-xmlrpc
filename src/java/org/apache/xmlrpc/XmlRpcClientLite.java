@@ -71,8 +71,6 @@ import java.util.Vector;
  */
 public class XmlRpcClientLite extends XmlRpcClient
 {
-    static String auth;
-
     /**
      * Construct a XML-RPC client with this URL.
      */

@@ -65,6 +65,7 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import org.apache.xmlrpc.util.HttpUtil;
 
 /**
  * Interface from XML-RPC to a 'lite' HTTP implementation.  This class will use
@@ -79,6 +80,7 @@ class LiteXmlRpcTransport implements XmlRpcTransport
 {
     String hostname;
     String host;
+    protected String auth = null;
     int port;
     String uri;
     Socket socket = null;
@@ -220,9 +222,9 @@ class LiteXmlRpcTransport implements XmlRpcTransport
             output.write("Connection: Keep-Alive\r\n".getBytes());
         }
         output.write("Content-Type: text/xml\r\n".getBytes());
-        if (XmlRpcClientLite.auth != null)
+        if (auth != null)
         {
-            output.write(("Authorization: Basic " + XmlRpcClientLite.auth + "\r\n")
+            output.write(("Authorization: Basic " + auth + "\r\n")
                     .getBytes());
         }
         output.write(("Content-Length: " + request.length)
@@ -286,6 +288,17 @@ class LiteXmlRpcTransport implements XmlRpcTransport
         while (line != null && ! line.equals(""))
             ;
         return new ServerInputStream(input, contentLength);
+    }
+
+    /**
+     * Sets Authentication for this client. This will be sent as Basic
+     * Authentication header to the server as described in
+     * <a href="http://www.ietf.org/rfc/rfc2617.txt">
+     * http://www.ietf.org/rfc/rfc2617.txt</a>.
+     */
+    public void setBasicAuthentication(String user, String password)
+    {
+        auth = HttpUtil.encodeBasicAuthentication(user, password);
     }
 
     /**

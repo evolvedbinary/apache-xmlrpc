@@ -1,10 +1,10 @@
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.util;
 
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,83 +54,33 @@ package org.apache.xmlrpc;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import org.apache.xmlrpc.util.HttpUtil;
+
+import org.apache.xmlrpc.Base64;
 
 /**
- * Interface from XML-RPC to the default HTTP transport based on the
- * @see java.net.URLConnection class.
+ * Provides utility functions useful in HTTP communications
  *
- * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
- * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @author <a href="mailto:rhoegg@isisnetworks.net">Ryan Hoegg</a>
- * @version $Id$
- * @since 1.2
  */
-public class DefaultXmlRpcTransport implements XmlRpcTransport
+public class HttpUtil
 {
-    protected URL url;
-    protected String auth;
-
-    /**
-     * Create a new DefaultXmlRpcTransport with the specified URL and basic
-     * authorization string.
-     *
-     * @deprecated Use setBasicAuthentication instead of passing an encoded authentication String.
-     *
-     * @param url the url to POST XML-RPC requests to.
-     * @param auth the Base64 encoded HTTP Basic authentication value.
-     */
-    public DefaultXmlRpcTransport(URL url, String auth)
+    private HttpUtil()
     {
-        this.url = url;
-        this.auth = auth;
+        // private because currently we only offer static methods.
     }
-
-    /**
-     * Create a new DefaultXmlRpcTransport with the specified URL.
-     *
-     * @param url the url to POST XML-RPC requests to.
-     */
-    public DefaultXmlRpcTransport(URL url)
+    
+    public static String encodeBasicAuthentication(String user, String password)
     {
-        this(url, null);
-    }
-
-    public InputStream sendXmlRpc(byte [] request)
-    throws IOException
-    {
-        URLConnection con = url.openConnection();
-        con.setDoInput(true);
-        con.setDoOutput(true);
-        con.setUseCaches(false);
-        con.setAllowUserInteraction(false);
-        con.setRequestProperty("Content-Length",
-        Integer.toString(request.length));
-        con.setRequestProperty("Content-Type", "text/xml");
-        if (auth != null)
+        String auth;
+        if (user == null || password == null)
         {
-            con.setRequestProperty("Authorization", "Basic " + auth);
+            auth = null;
         }
-        OutputStream out = con.getOutputStream();
-        out.write(request);
-        out.flush();
-        out.close();
-        return con.getInputStream();
-    }
-
-    /**
-     * Sets Authentication for this client. This will be sent as Basic
-     * Authentication header to the server as described in
-     * <a href="http://www.ietf.org/rfc/rfc2617.txt">
-     * http://www.ietf.org/rfc/rfc2617.txt</a>.
-     */
-    public void setBasicAuthentication(String user, String password)
-    {
-        auth = HttpUtil.encodeBasicAuthentication(user, password);
+        else
+        {
+            auth = new String(Base64.encode((user + ':' + password)
+                    .getBytes())).trim();
+        }
+        return auth;
     }
 }

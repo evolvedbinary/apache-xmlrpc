@@ -77,12 +77,16 @@ import org.xml.sax.SAXException;
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
+ * @author <a href="mailto:rhoegg@isisnetworks.net">Ryan Hoegg</a>
  * @version $Id$
  */
 public class XmlRpcClient implements XmlRpcHandler
 {
     protected URL url;
-    private String auth;
+    
+    // stored user and password for deprecated setBasicAuthentication method
+    private String storedUser;
+    private String storedPassword;
 
     // pool of worker instances
     protected Stack pool = new Stack();
@@ -144,18 +148,22 @@ public class XmlRpcClient implements XmlRpcHandler
      * Authentication header to the server as described in
      * <a href="http://www.ietf.org/rfc/rfc2617.txt">
      * http://www.ietf.org/rfc/rfc2617.txt</a>.
+     *
+     * @deprecated Authentication is now handled by each XmlRpcTransport
+     * @see DefaultXmlRpcTransport
+     * @see LiteXmlRpcTransport
+     * @see CommonsXmlRpcTransport
      */
     public void setBasicAuthentication(String user, String password)
     {
-        if (user == null || password == null)
-        {
-            auth = null;
-        }
-        else
-        {
-            auth = new String(Base64.encode((user + ':' + password)
-                    .getBytes())).trim();
-        }
+        /*
+         * Store for use in execute(XmlRpcClientRequest, XmlRpcTransport) and
+         * XmlRpcClientWorker.execute(XmlRpcClientRequest, XmlRpcTransport)
+         *
+         * Will be unnecessary once this method is removed.
+         */
+        storedUser = user;
+        storedPassword = password;
     }
 
     /**
@@ -169,7 +177,20 @@ public class XmlRpcClient implements XmlRpcHandler
     public Object execute(String method, Vector params)
             throws XmlRpcException, IOException
     {
-        return execute(new XmlRpcRequest(method, params));
+        /* Setting user and password on transport if setBasicAuthentication was 
+         * used and there is no XmlRpcTransportFactory.  As setBasicAuthentication 
+         * is deprecated, this should be removed in a future version.
+         */
+        if ((storedUser != null) && (storedPassword != null) && (transportFactory == null))
+        {
+            DefaultXmlRpcTransport transport = createDefaultTransport();
+            transport.setBasicAuthentication(storedUser, storedPassword);
+            return execute(new XmlRpcRequest(method, params), transport);
+        }
+        else
+        {
+            return execute(new XmlRpcRequest(method, params));
+        }
     }
 
     public Object execute(XmlRpcClientRequest request)
@@ -201,7 +222,17 @@ public class XmlRpcClient implements XmlRpcHandler
     public void executeAsync(String method, Vector params,
             AsyncCallback callback)
     {
-        executeAsync(new XmlRpcRequest(method, params), callback);
+        XmlRpcRequest request = new XmlRpcRequest(method, params);
+        if ((storedUser != null) && (storedPassword != null) && (transportFactory == null))
+        {
+            DefaultXmlRpcTransport transport = createDefaultTransport();
+            transport.setBasicAuthentication(storedUser, storedPassword);
+            executeAsync(request, callback, transport);
+        }
+        else
+        {
+            executeAsync(request, callback);
+        }
     }
 
     public void executeAsync(XmlRpcClientRequest request,
@@ -419,9 +450,13 @@ public class XmlRpcClient implements XmlRpcHandler
     {
         if (transportFactory == null)
         {
-          return new DefaultXmlRpcTransport(url, auth);
+          return createDefaultTransport();
         }
         return transportFactory.createTransport();
+    }
+    
+    private DefaultXmlRpcTransport createDefaultTransport() {
+        return new DefaultXmlRpcTransport(url);
     }
 
     /**
