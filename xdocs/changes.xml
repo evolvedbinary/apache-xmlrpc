@@ -13,6 +13,18 @@
       <p>
         <ul>
           <li>
+            <strong>07 Mar 2002</strong>
+            <ul>
+
+              <li>
+                SimpleXmlRpcClient.java: Improve XmlWriter efficiency.
+                (Martin Poeschl <mpoeschl@marmot.at>)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
             <strong>03 Mar 2002</strong>
             <ul>
 
