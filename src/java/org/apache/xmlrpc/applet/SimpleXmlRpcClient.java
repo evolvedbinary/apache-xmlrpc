@@ -610,13 +610,11 @@ class XmlRpcSupport extends HandlerBase
             this.type = type;
             if (type == ARRAY)
             {
-                value = new Vector();
-                array = new Vector();
+                value = array = new Vector();
             }
             if (type == STRUCT)
             {
-                value = new Hashtable();
-                struct = new Hashtable();
+                value = struct = new Hashtable();
             }
         }
 
