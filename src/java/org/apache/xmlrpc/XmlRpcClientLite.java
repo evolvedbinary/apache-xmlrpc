@@ -230,7 +230,7 @@ public class XmlRpcClientLite extends XmlRpcClient
 
                 if (debug)
                 {
-                    System.err.println ("result = " + result);
+                    System.out.println ("result = " + result);
                 }
 
                 // check for errors from the XML parser
@@ -285,7 +285,7 @@ public class XmlRpcClientLite extends XmlRpcClient
             }
             if (debug)
             {
-                System.err.println ("Spent " + (System.currentTimeMillis()
+                System.out.println ("Spent " + (System.currentTimeMillis()
                         - now) + " millis in request");
             }
             return result;
@@ -386,7 +386,7 @@ public class XmlRpcClientLite extends XmlRpcClient
             String line = readLine();
             if (XmlRpc.debug)
             {
-                System.err.println(line);
+                System.out.println(line);
             }
             int contentLength = -1;
             try
@@ -419,7 +419,7 @@ public class XmlRpcClientLite extends XmlRpcClient
                 {
                     if (XmlRpc.debug)
                     {
-                        System.err.println(line);
+                        System.out.println(line);
                     }
                     line = line.toLowerCase();
                     if (line.startsWith("content-length:"))
@@ -507,7 +507,7 @@ public class XmlRpcClientLite extends XmlRpcClient
             // XmlRpc.setEncoding ("UTF-8");
             try
             {
-                System.err.println(client.execute(method, v));
+                System.out.println(client.execute(method, v));
             }
             catch (Exception ex)
             {

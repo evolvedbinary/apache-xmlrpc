@@ -171,7 +171,7 @@ public class XmlRpcServer
                 workers += 1;
                 if (workers >= maxThreads * .95)
                 {
-                    System.err.println("95% of XML-RPC server threads in use");
+                    System.out.println("95% of XML-RPC server threads in use");
                 }
                 return new Worker();
             }
@@ -238,8 +238,8 @@ public class XmlRpcServer
                 parse(is);
                 if (XmlRpc.debug)
                 {
-                    System.err.println("method name: " + methodName);
-                    System.err.println("inparams: " + inParams);
+                    System.out.println("method name: " + methodName);
+                    System.out.println("inparams: " + inParams);
                 }
                 // check for errors from the XML parser
                 if (errorLevel > NONE)
@@ -294,7 +294,7 @@ public class XmlRpcServer
                 }
                 if (XmlRpc.debug)
                 {
-                    System.err.println("outparam = " + outParam);
+                    System.out.println("outparam = " + outParam);
                 }
                 writer = new XmlWriter(buffer, encoding);
                 writeResponse(outParam, writer);
@@ -379,7 +379,7 @@ public class XmlRpcServer
             }
             if (XmlRpc.debug)
             {
-                System.err.println("Spent " + (System.currentTimeMillis() - now)
+                System.out.println("Spent " + (System.currentTimeMillis() - now)
                         + " millis in request");
             }
             return result;
@@ -445,7 +445,7 @@ class Invoker implements XmlRpcHandler
                 invokeTarget.getClass();
         if (XmlRpc.debug)
         {
-            System.err.println("Target object is " + targetClass);
+            System.out.println("Target object is " + targetClass);
         }
     }
 
@@ -488,10 +488,10 @@ class Invoker implements XmlRpcHandler
 
         if (XmlRpc.debug)
         {
-            System.err.println("Searching for method: " + methodName);
+            System.out.println("Searching for method: " + methodName);
             for (int i = 0; i < argClasses.length; i++)
             {
-                System.err.println("Parameter " + i + ": " + argClasses[i]
+                System.out.println("Parameter " + i + ": " + argClasses[i]
                         + " = " + argValues[i]);
             }
         }

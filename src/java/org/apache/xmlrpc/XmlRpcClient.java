@@ -388,7 +388,7 @@ public class XmlRpcClient implements XmlRpcHandler
 
             if (XmlRpc.debug)
             {
-                System.err.println("Client calling procedure '" + method
+                System.out.println("Client calling procedure '" + method
                         + "' with parameters " + params);
                 now = System.currentTimeMillis();
             }
@@ -460,7 +460,7 @@ public class XmlRpcClient implements XmlRpcHandler
             }
             if (XmlRpc.debug)
             {
-                System.err.println("Spent " + (System.currentTimeMillis() - now)
+                System.out.println("Spent " + (System.currentTimeMillis() - now)
                         + " in request");
             }
             return result;
@@ -559,7 +559,7 @@ public class XmlRpcClient implements XmlRpcHandler
             XmlRpcClient client = new XmlRpcClientLite(url);
             try
             {
-                System.err.println(client.execute(method, v));
+                System.out.println(client.execute(method, v));
             }
             catch(Exception ex)
             {
