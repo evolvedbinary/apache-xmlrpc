@@ -73,8 +73,8 @@ public class XmlRpcServer
     Hashtable handlers;
 
     /**
-     * Construct a new XML-RPC server. You have to register handlers to make it
-     * do something useful.
+     * Construct a new XML-RPC server. You have to register handlers
+     * to make it do something useful.
      */
     public XmlRpcServer ()
     {
@@ -82,10 +82,15 @@ public class XmlRpcServer
     }
 
     /**
-      * Register a handler object with this name. Methods of this objects will be
-      * callable over XML-RPC as "handlername.methodname". For more information
-      * about XML-RPC handlers see the <a href="../index.html#1a">main documentation page</a>.
-      */
+     * Register a handler object with this name. Methods of this
+     * objects will be callable over XML-RPC as
+     * "handlername.methodname". For more information about XML-RPC
+     * handlers see the <a href="../index.html#1a">main documentation
+     * page</a>.
+     *
+     * @param handlername The name to identify the handler by.
+     * @param handler The handler itself.
+     */
     public void addHandler (String handlername, Object handler)
     {
         if (handler instanceof XmlRpcHandler ||
@@ -96,27 +101,32 @@ public class XmlRpcServer
     }
 
     /**
-      * Remove a handler object that was previously registered with this server.
-      */
+     * Remove a handler object that was previously registered with
+     * this server.
+     *
+     * @param handlername The name identifying the handler to remove.
+     */
     public void removeHandler (String handlername)
     {
         handlers.remove (handlername);
     }
 
     /**
-      * Parse the request and execute the handler method, if one is found. Returns the result as XML.
-      * The calling Java code doesn't need to know whether the call was successful or not since this is all
-      * packed into the response.
-      */
+     * Parse the request and execute the handler method, if one is
+     * found. Returns the result as XML.  The calling Java code
+     * doesn't need to know whether the call was successful or not
+     * since this is all packed into the response.
+     */
     public byte[] execute (InputStream is)
     {
         return execute (is, null, null);
     }
 
     /**
-      * Parse the request and execute the handler method, if one is found. If the invoked handler is
-      * AuthenticatedXmlRpcHandler, use the credentials to authenticate the user.
-      */
+     * Parse the request and execute the handler method, if one is
+     * found. If the invoked handler is AuthenticatedXmlRpcHandler,
+     * use the credentials to authenticate the user.
+     */
     public byte[] execute (InputStream is, String user, String password)
     {
         Worker worker = getWorker ();
