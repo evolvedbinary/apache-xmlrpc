@@ -414,7 +414,20 @@ public abstract class XmlRpc extends HandlerBase
         {
             System.out.println("Beginning parsing XML input stream");
         }
-        parser.parse(new InputSource (is));
+        try
+        {
+            parser.parse(new InputSource (is));
+        }
+        finally
+        {
+            // Clear any huge buffers.
+            if (cdata.length() > 128 * 4)
+            {
+                // Exceeded original capacity by greater than 4x; release
+                // buffer to prevent leakage.
+                cdata = null;
+            }
+        }
         if (debug)
         {
             System.out.println ("Spent " + (System.currentTimeMillis() - now)
