@@ -12,13 +12,26 @@
     <section name="Changes">
       <p>
         <ul>
+
           <li>
             <strong>07 Mar 2002</strong>
             <ul>
 
               <li>
-                SimpleXmlRpcClient.java: Improved XmlWriter efficiency.
-                (Martin Poeschl <mpoeschl@marmot.at>)
+                XmlRpc.java: Improved Base64 efficiency. (JSS)
+                Thanks to idea from (Martin Poeschl mpoeschl NOSPAM marmot.at)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
+            <strong>07 Mar 2002</strong>
+            <ul>
+
+              <li>
+                SimpleXmlRpcClient.java: Improved XmlWriter efficiency. (DLR)
+                (Martin Poeschl mpoeschl NO SPAM marmot.at)
               </li>
 
             </ul>
