@@ -19,7 +19,6 @@
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${servlet.jar}"/>
-    <pathelement location="${junit.jar}"/>
   </path>
 
   <!-- ================================================================== -->
@@ -228,7 +227,6 @@
       <classpath refid="classpath"/>
       <classpath>
         <pathelement path="${build.dest}"/>
-        <pathelement path="${build.test.dest}"/>
       </classpath>
     </javac>
     
@@ -250,12 +248,12 @@
       <classpath refid="classpath"/>
       <classpath>
         <pathelement path="${build.dest}"/>
+        <pathelement location="${junit.jar}"/>
         <pathelement path="${build.test.dest}"/>
       </classpath>
       <batchtest todir="${test.reportsDirectory}">
         <fileset dir="${build.test.dest}">
           <include name="**/*Test.class"/>
-          <!-- <exclude name="**/*ServletTest.class"/> -->
         </fileset>
       </batchtest>
     </junit>
