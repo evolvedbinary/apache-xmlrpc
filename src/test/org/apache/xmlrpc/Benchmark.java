@@ -58,7 +58,7 @@ package org.apache.xmlrpc;
 import java.util.*;
 import java.io.IOException;
 
-public class Benchmark 
+public class Benchmark
     implements Runnable
 {
 
@@ -66,6 +66,8 @@ public class Benchmark
     static String url;
     static int clients = 16;
     static int loops = 100;
+
+    long start;
 
     int gCalls = 0, gErrors = 0;
 
@@ -84,7 +86,10 @@ public class Benchmark
         date = new Date ();
         date = new Date ((date.getTime() / 1000) * 1000);
 
-        for (int i = 0; i < clients; i++)
+        start = System.currentTimeMillis ();
+        int nclients = clients;
+
+        for (int i = 0; i < nclients; i++)
             new Thread (this).start ();
     }
 
@@ -92,7 +97,6 @@ public class Benchmark
     {
         int errors = 0;
         int calls = 0;
-        long start = System.currentTimeMillis ();
         try
         {
             int val = (int)(-100 * Math.random ());
