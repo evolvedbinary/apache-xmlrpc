@@ -243,6 +243,14 @@ public class XmlRpcServer
             {
                 if (debug)
                     x.printStackTrace ();
+
+                // Ensure that if there is anything in the buffer, it
+                // is cleared before continuing with the writing of exceptions.
+                // It is possible that something is in the buffer
+                // if there were an exception during the writeResponse()
+                // call above.
+                strbuf.setLength(0);
+
                 XmlWriter writer = new XmlWriter (strbuf);
                 String message = x.toString ();
                 // check if XmlRpcException was thrown so we can get an error code
