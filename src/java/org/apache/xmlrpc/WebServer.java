@@ -363,11 +363,28 @@ public class WebServer
       */
     public void shutdown()
     {
+        // Stop accepting client connections
         if (listener != null)
         {
             Thread l = listener;
             listener = null;
             l.interrupt ();
+        }
+
+        // Shutdown our Runner threads
+        if (runners != null)
+        {
+            ThreadGroup g = runners;
+            runners = null;
+            try
+            {
+                g.interrupt();
+            }
+            catch (Exception e)
+            {
+                System.err.println(e);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -392,12 +409,20 @@ public class WebServer
         threadpool.push (runner);
     }
 
+    /**
+     * Responsible for handling client connections.
+     */
     class Runner implements Runnable
     {
         Thread thread;
         Connection con;
         int count;
 
+        /**
+         * Handles the client connection on <code>socket</code>.
+         *
+         * @param socket The source to read the client's request from.
+         */
         public synchronized void handle(Socket socket)
             throws IOException
         {
