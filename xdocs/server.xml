@@ -71,7 +71,7 @@ incoming XML-RPC request looks like this:</p>
  ...
  byte[] result = xmlrpc.execute (request.getInputStream ());
  response.setContentType ("text/xml");
- response.setContentLength (result.length);
+ response.setContentLength (result.length());
  OutputStream out = response.getOutputStream();
  out.write (result);
  out.flush ();</pre>
