@@ -20,13 +20,13 @@
   <gumpRepositoryId>jakarta</gumpRepositoryId>
 
   <description>
-    Apache XML-RPC is a Java implementation of <a href="http://www.xmlrpc.com">
-    XML-RPC</a>, a popular protocol that uses XML over HTTP to implement remote
-    procedure calls.
-    <br/>
-    Apache XML-RPC was previously known as Helma XML-RPC. If you have code using
-    the Helma library, all you should have to do is change the import statements
-    in your code from helma.xmlrpc.* to org.apache.xmlrpc.*.
+    Apache XML-RPC is a Java implementation of <a
+    href="http://www.xmlrpc.com/"> XML-RPC</a>, a popular protocol
+    that uses XML over HTTP to implement remote procedure calls.
+    <br/> Apache XML-RPC was previously known as Helma XML-RPC. If you
+    have code using the Helma library, all you should have to do is
+    change the import statements in your code from helma.xmlrpc.* to
+    org.apache.xmlrpc.*.
   </description>
 
   <url>http://ws.apache.org/xmlrpc/</url>
@@ -36,8 +36,9 @@
   <distributionDirectory>/www/www.apache.org/dist/ws/xmlrpc/</distributionDirectory>
 
   <repository>
-    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:xml-rpc</connection>
-    <url>http://cvs.apache.org/viewcvs/xml-rpc/</url>
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:ws-xmlrpc</connection>
+    <developerConnection>scm:cvs:ext:${maven.username}@cvs.apache.org:/home/cvs:ws-xmlrpc</developerConnection>
+    <url>http://cvs.apache.org/viewcvs/ws-xmlrpc/</url>
   </repository>
 
   <versions>
@@ -50,6 +51,11 @@
       <id>1.1</id>
       <name>1.1</name>
       <tag>XMLRPC_1_1</tag>
+    </version>
+    <version>
+      <id>1.2</id>
+      <name>1.2</name>
+      <tag>XMLRPC_1_2_BRANCH</tag>
     </version>
   </versions>
 
@@ -211,4 +217,3 @@
     </jars>
   </build>
 </project>
-
