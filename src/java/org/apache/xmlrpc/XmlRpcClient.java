@@ -70,7 +70,6 @@ import org.xml.sax.*;
 public class XmlRpcClient 
     implements XmlRpcHandler
 {
-
     URL url;
     String auth;
     int maxThreads = 100;
@@ -105,7 +104,7 @@ public class XmlRpcClient
     public XmlRpcClient (String hostname,
             int port) throws MalformedURLException
     {
-        this.url = new URL ("http://"+hostname + ":"+port + "/RPC2");
+        this.url = new URL ("http://" + hostname + ':' + port + "/RPC2");
     }
 
     /**
@@ -149,7 +148,9 @@ public class XmlRpcClient
             Object retval = worker.execute (method, params);
             return retval;
         }
-        finally { releaseWorker (worker, false);
+        finally
+        {
+            releaseWorker (worker, false);
         }
     }
 
@@ -252,7 +253,6 @@ public class XmlRpcClient
 
     class Worker extends XmlRpc implements Runnable
     {
-
         boolean fault;
         Object result = null;
         StringBuffer strbuf;
@@ -263,7 +263,6 @@ public class XmlRpcClient
         {
             super ();
         }
-
 
         public void start (String method, Vector params,
                 AsyncCallback callback)
@@ -315,6 +314,10 @@ public class XmlRpcClient
         Object execute (String method,
                 Vector params) throws XmlRpcException, IOException
         {
+            if (debug)
+                System.err.println("Client calling procedure '" + method +
+                                   "' with parameters " + params);
+
             fault = false;
             long now = System.currentTimeMillis ();
             try
@@ -354,7 +357,8 @@ public class XmlRpcClient
                 throw new IOException (x.getMessage ());
             }
             if (fault)
-            { // generate an XmlRpcException
+            {
+                // generate an XmlRpcException
                 XmlRpcException exception = null;
                 try
                 {
