@@ -12,6 +12,18 @@
     <section name="Changes">
       <p>
         <ul>
+          <li>
+            <strong>03 Mar 2002</strong>
+            <ul>
+
+              <li>
+                SimpleXmlRpcClient.java: Got rid of using Sun's
+                'private' Base64 encode/decode and used the one included
+                in this package. (JSS)
+              </li>
+
+            </ul>
+          </li>
 
           <li>
             <strong>18 Feb 2002</strong>
