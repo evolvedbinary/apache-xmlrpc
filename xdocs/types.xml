@@ -9,15 +9,15 @@
   <body>
     <section name="Type Mapping between XML-RPC and Java">
       <p>
-      The following table explains how data types are converted between their XML-RPC
-representation and Java.
+      The following table explains how data types are converted between their <a href="http://www.xmlrpc.com/spec">XML-RPC
+representation</a> and Java.</p>
 
-Note that the automatic invocation mechanism expects your classes to take the
+<p>Note that the automatic invocation mechanism expects your classes to take the
 primitive data types as input parameters. If your class defines any other types
 as input parameters (including java.lang.Integer, long, float), that
-method won't be usable from XML-RPC unless you write your own handler.
+method won't be usable from XML-RPC unless you write your own handler.</p>
 
-For return values, both the primitive types and their wrapper classes work fine.
+<p>For return values, both the primitive types and their wrapper classes work fine.</p>
 
 <table border="1" cellpadding="5">
 <tr>
@@ -66,7 +66,7 @@ For return values, both the primitive types and their wrapper classes work fine.
 <td>byte[ ]</td>
 </tr>
 </table>
-      </p>
+
     </section>
   </body>
 </document>
