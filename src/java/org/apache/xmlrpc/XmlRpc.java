@@ -76,7 +76,15 @@ import org.xml.sax.*;
 public abstract class XmlRpc 
     extends HandlerBase
 {
+    /**
+     * The version string used in HTTP communication.
+     */
     public static final String version = "Apache XML-RPC 1.0";
+
+    /**
+     * The maximum number of threads which can be used concurrently.
+     */
+    private static int maxThreads = 100;
 
     String methodName;
 
@@ -229,6 +237,22 @@ public abstract class XmlRpc
         return encodings.getProperty (encoding, encoding);
     }
 
+
+    /**
+     * Gets the maximum number of threads used at any given moment.
+     */
+    public int getMaxThreads()
+    {
+        return maxThreads;
+    }
+
+    /**
+     * Sets the maximum number of threads used at any given moment.
+     */
+    public void setMaxThreads(int maxThreads)
+    {
+        this.maxThreads = maxThreads;
+    }
 
     /**
       * Switch debugging output on/off.
