@@ -1,0 +1,273 @@
+<?xml version="1.0"?>
+
+<project name="xmlrpc" default="jar" basedir=".">
+
+  <!-- Allow any user specific values to override the defaults -->
+  <property file="${user.home}/build.properties" />
+
+  <!-- Set default values for the build -->
+  <property file="build.properties" />
+
+  <property name="build.src" value="${build.dir}/src"/>
+  <property name="build.dest" value="${build.dir}/classes"/>
+  <property name="final.name" value="${project}-${version}"/>
+  <property name="final.dir" value="../${final.name}/"/>
+
+  <!-- Construct compile classpath -->
+  <path id="classpath">
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+  </path>
+
+  <!-- ================================================================== -->
+  <!-- E N V I R O N M E N T                                             -->
+  <!-- ================================================================== -->
+  
+  <target name="env">
+    <echo message="java.home = ${java.home}"/>
+    <echo message="user.home = ${user.home}"/>
+    <echo message="jsse.jar = ${jsse.jar}"/>
+    <echo message="jnet.jar = ${jnet.jar}"/>
+    <echo message="jcert.jar = ${jcert.jar}"/>
+    <echo message=""/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- U S A G E                                                          -->
+  <!-- ================================================================== -->
+  
+  <target name="usage">
+    <echo message="use -projecthelp to see the available targets"/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- I N I T                                                            -->
+  <!-- ================================================================== -->
+
+  <target name="init">
+    <available 
+      classname="com.sun.net.ssl.SSLContext"
+      property="jsse.present"
+      classpathref="classpath"
+    />
+    
+    <available 
+      classname="javax.servlet.Servlet"
+      property="servlet.present"
+      classpathref="classpath"
+    />
+    
+    <available 
+      classname="org.apache.xerces.parsers.SAXParser"
+      property="xerces.present"
+      classpathref="classpath"
+    />
+
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- P R O P E R T Y  C H E C K S  A N D  W A R N I N G S               -->
+  <!-- ================================================================== -->
+  
+  <!-- No additional classes are required to compile the
+       core package. If you wish to use the SSL extensions
+       or the XmlRpcProxyServlet than you can make the
+       necessary properties changes. -->
+  
+  <target name="check.jsse" unless="jsse.present">
+    <antcall target="property-warning">
+      <param name="name" value="jsse.jar"/>
+      <param name="value" value="${jsse.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="property-warning">
+    <echo>
+      +----------------------------------------------------------------+
+      + F A I L E D  R E Q U I R E M E N T                             |
+      +----------------------------------------------------------------+
+      | You must define the following property in order                |
+      | to build Torque:                                               |
+      |                                                                |
+      | ${name} 
+      |                                                                |
+      | You can set this property in the provided build.properties     |
+      | file, or you may set this property in your                     |
+      | ${user.home}/build.properties file.                            
+      +----------------------------------------------------------------+
+    </echo>
+    <fail message="Failed Requirement"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- P R E P A R E                                                       -->
+  <!-- =================================================================== -->
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.src}"/>
+    
+    <!-- 
+      We don't care about the javascript interpreter or the
+      the applet code so we'll just exclude it from the
+      build. All we want is the client and server code.
+    -->
+    
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}"> 
+        <include name="**/*.java"/>
+        <exclude name="**/fesi/**"/>
+        <exclude name="**/secure/**" unless="jsse.present"/>
+        <exclude name="**/XmlRpcProxyServlet.java" unless="servlet.present"/>
+      </fileset>
+    </copy>
+    
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- C O M P I L E                                                      -->
+  <!-- ================================================================== -->
+  
+  <target name="compile" depends="prepare">
+    <javac 
+      srcdir="${build.src}"
+      destdir="${build.dest}"
+      debug="${debug}"
+      deprecation="${deprecation}"
+      optimize="${optimize}"
+    >
+    <classpath refid="classpath"/>
+    </javac>
+  </target>
+  
+  <!-- ================================================================== -->
+  <!-- J A R                                                              -->
+  <!-- ================================================================== -->
+  
+  <target name="jar" depends="compile">
+    <jar jarfile="${build.dir}/${project}.jar">
+      <fileset dir="${build.dest}" excludes="**/applet/*"/>
+    </jar>
+    <jar jarfile="${build.dir}/${project}-applet.jar">
+      <fileset dir="${build.dest}"
+      excludes="**/xmlrpc/*,**/fesi/*,**/secure/*"/>
+    </jar>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- J A V A D O C S                                                    -->
+  <!-- ================================================================== -->
+  
+  <target name="javadocs" depends="prepare">
+    <mkdir dir="${javadoc.destdir}"/>
+    <javadoc
+      sourcepath="${build.src}/java"
+      packagenames="org.apache.xmlrpc.*"
+      destdir="${javadoc.destdir}"
+      author="true"
+      private="true"
+      version="true"
+      use="true"
+      windowtitle="${name} ${version} API"
+      doctitle="${name} ${version} API"
+      bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
+    >
+    <classpath refid="classpath"/>
+    </javadoc>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- C L E A N                                                          -->
+  <!-- ================================================================== -->
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- D O C S                                                            -->
+  <!-- ================================================================== -->
+  
+  <target 
+    name="check_for_jdom">
+    
+    <available 
+      property="jdom.present"
+      classname="org.jdom.JDOMException">
+      <classpath>
+        <pathelement location="${jakarta.site2}/lib/${jdom.jar}"/>
+      </classpath>
+    </available>
+  </target>
+    
+  <target 
+    depends="check_for_jdom" 
+    name="docs-prepare-error" 
+    unless="jdom.present">
+    
+    <echo>
+      The Jakarta-Site2 module is not present! Please check
+      to make sure that you have checked it out from CVS.
+
+      &lt;http://jakarta.apache.org/site/jakarta-site2.html&gt;
+    </echo>
+  </target>
+
+  <target 
+    name="docs"
+    depends="docs-prepare-error"
+    description="--> generates the HTML documentation"
+    if="jdom.present">
+
+    <taskdef 
+      name="anakia"
+      classname="org.apache.velocity.anakia.AnakiaTask">
+      <classpath>
+        <fileset dir="${jakarta.site2}/lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </taskdef>
+        
+    <anakia 
+      basedir="${docs.src}" 
+      destdir="${docs.dest}/"
+      extension=".html" 
+      style="./site.vsl"
+      projectFile="stylesheets/project.xml"
+      excludes="**/stylesheets/** empty.xml"
+      includes="**/*.xml"
+      lastModifiedCheck="true"
+      templatePath="${docs.src}/stylesheets">
+    </anakia>
+
+    <copy 
+      todir="${docs.dest}/images" 
+      filtering="no">
+      
+      <fileset dir="${docs.src}/images">
+        <include name="**/*.gif"/>
+        <include name="**/*.jpeg"/>
+        <include name="**/*.jpg"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- I N S T A L L  J A R                                               -->
+  <!-- ================================================================== -->
+
+  <target name="install-jar" depends="jar" 
+          description="==> Installs .jar file in ${lib.repo}">
+    <copy todir="${lib.repo}" filtering="no">
+      <fileset dir="${build.dir}">
+        <include name="${project}.jar"/>
+        <include name="${project}-applet.jar"/>
+      </fileset>
+    </copy>
+  </target>
+
+</project>
