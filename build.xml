@@ -104,7 +104,7 @@
       + F A I L E D  R E Q U I R E M E N T                             |
       +----------------------------------------------------------------+
       | You must define the following property in order                |
-      | to build Torque:                                               |
+      | to build XML-RPC:                                              |
       |                                                                |
       | ${name} 
       |                                                                |
