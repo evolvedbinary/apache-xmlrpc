@@ -667,21 +667,21 @@ public abstract class XmlRpc
 
         public void startElement (String elem)
         {
-            buf.append ("<");
+            buf.append ('<');
             buf.append (elem);
-            buf.append (">");
+            buf.append ('>');
         }
 
         public void endElement (String elem)
         {
             buf.append ("</");
             buf.append (elem);
-            buf.append (">");
+            buf.append ('>');
         }
 
         public void emptyElement (String elem)
         {
-            buf.append ("<");
+            buf.append ('<');
             buf.append (elem);
             buf.append ("/>");
         }
@@ -729,9 +729,7 @@ public abstract class XmlRpc
         {
             return buf.toString ().getBytes (enc);
         }
-
     }
-
 }
 
 
