@@ -19,6 +19,7 @@
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${servlet.jar}"/>
+    <pathelement location="${junit.jar}"/>
   </path>
 
   <!-- ================================================================== -->
@@ -105,7 +106,7 @@
       | You must define the following property in order                |
       | to build XML-RPC:                                              |
       |                                                                |
-      | ${name} 
+      | ${name} = ${value}
       |                                                                |
       | You can set this property in the provided build.properties     |
       | file, or you may set this property in your                     |
