@@ -157,9 +157,22 @@ public class XmlRpcClientLite
                 if (client == null)
                     client = new HttpClient (url);
 
-                client.write (request);
+                InputStream in = null;
 
-                InputStream in = client.getInputStream ();
+               // send request to the server and get an input stream
+               // from which to read the response
+                try {
+                    in = client.sendRequest (request);
+                } catch (IOException iox) {
+                    // if we get an exception while sending the request,
+                    // and the connection is a keepalive connection, it may
+                    // have been timed out by the server. Try again.
+                    if (client.keepalive) {
+                        client.closeConnection ();
+                        client.initConnection ();
+                        in = client.sendRequest (request);
+                    }
+                }
 
                 // parse the response
                 parse (in);
@@ -238,7 +251,6 @@ public class XmlRpcClientLite
         BufferedOutputStream output;
         BufferedInputStream input;
         boolean keepalive;
-        boolean fresh;
 
 
         public HttpClient (URL url) throws IOException
@@ -256,7 +268,6 @@ public class XmlRpcClientLite
 
         protected void initConnection () throws IOException
         {
-            fresh = true;
             socket = new Socket (hostname, port);
             output = new BufferedOutputStream (socket.getOutputStream());
             input = new BufferedInputStream (socket.getInputStream ());
@@ -272,46 +283,25 @@ public class XmlRpcClientLite
                 {}
         }
 
-        public void write (byte[] request) throws IOException
+        public InputStream sendRequest (byte[] request) throws IOException
         {
-            try
-            {
-                output.write (("POST "+uri + " HTTP/1.0\r\n").getBytes());
-                output.write ( ("User-Agent: "+XmlRpc.version +
+            output.write (("POST "+uri + " HTTP/1.0\r\n").getBytes());
+            output.write ( ("User-Agent: "+XmlRpc.version +
                         "\r\n").getBytes());
-                output.write (("Host: "+host + "\r\n").getBytes());
-                if (XmlRpc.getKeepAlive())
-                    output.write ("Connection: Keep-Alive\r\n".getBytes());
-                output.write ("Content-Type: text/xml\r\n".getBytes());
-                if (auth != null)
-                    output.write ( ("Authorization: Basic "+auth +
+            output.write (("Host: "+host + "\r\n").getBytes());
+            if (XmlRpc.getKeepAlive())
+                output.write ("Connection: Keep-Alive\r\n".getBytes());
+            output.write ("Content-Type: text/xml\r\n".getBytes());
+            if (auth != null)
+                output.write ( ("Authorization: Basic "+auth +
                             "\r\n").getBytes());
-                output.write (
+            output.write (
                         ("Content-Length: "+request.length).getBytes());
-                output.write ("\r\n\r\n".getBytes());
-                output.write (request);
-                output.flush ();
-                fresh = false;
-            }
-            catch (IOException iox)
-            {
-                // if the connection is not "fresh" (unused), the exception may have occurred
-                // because the server timed the connection out. Give it another try.
-                if (!fresh)
-                {
-                    initConnection ();
-                    write (request);
-                }
-                else
-                {
-                    throw (iox);
-                }
-            }
-        }
+            output.write ("\r\n\r\n".getBytes());
+            output.write (request);
+            output.flush ();
 
-
-        public InputStream getInputStream () throws IOException
-        {
+            // start reading  server response headers
             String line = readLine ();
             if (XmlRpc.debug)
                 System.err.println (line);
