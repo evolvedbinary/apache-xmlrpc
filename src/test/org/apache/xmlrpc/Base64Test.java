@@ -54,6 +54,7 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
+import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -151,15 +152,46 @@ public class Base64Test
         if (a.length != b.length)
         {
             fail("Byte arrays have different lengths (" + a.length + " != " +
-                 b.length + ")");
+                 b.length + ")", a, b);
         }
         for (int i = 0; i < a.length; i++)
         {
             if (a[i] != b[i])
             {
                 fail("Byte arrays not equal (" + a[i] + " != " + b[i] +
-                     " at position + " + i + ")");
+                     " at position + " + i + ")", a, b);
             }
         }
+    }
+
+    /**
+     * Throws an <code>AssertionFailedError</code> using the two
+     * supplied byte arrays formatted into the error message.
+     */
+    private void fail(String msg, byte[] a, byte[] b)
+        throws AssertionFailedError
+    {
+        StringBuffer buf = new StringBuffer();
+        writeToBuffer(buf, a);
+        buf.append(" not equal to ");
+        writeToBuffer(buf, b);
+        fail(msg + ": " + buf);
+    }
+
+    /**
+     * Writes <code>array</code> to <code>buf</code>.
+     */
+    private void writeToBuffer(StringBuffer buf, byte[] array)
+    {
+        buf.append("{ ");
+        for (int i = 0; i < array.length; i++)
+        {
+            if (i > 0)
+            {
+                buf.append(", ");
+            }
+            buf.append(array[i]);
+        }
+        buf.append(" }");
     }
 }
