@@ -14,6 +14,18 @@
         <ul>
 
           <li>
+            <strong>09 Aug 2002</strong>
+            <ul>
+
+              <li>
+                XmlWriter.java: Corrected encoding of &lt;struct&gt;
+                parameter names.  (Adam Megacz)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
             <strong>08 Aug 2002</strong>
             <ul>
 
