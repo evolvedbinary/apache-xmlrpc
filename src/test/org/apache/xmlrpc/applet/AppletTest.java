@@ -262,12 +262,38 @@ public class AppletTest
             fail (e.getMessage());
         }
     }
+    
+    /**
+     * Tests that the client knows there was a fault
+     */
+    public void testDetectFault()
+    {
+        Vector params = new Vector();
+        try
+        {
+            Object response = client.execute(HANDLER_NAME + ".breakMe", params);
+            fail("Should have thrown an XmlRpcException!");
+        }
+        catch (IOException e)
+        {
+            fail(e.getMessage());
+        }
+        catch (XmlRpcException e)
+        {
+            // all is well.
+        }
+    }
 
     protected class TestHandler
     {
         public String echo(String message)
         {
             return message;
+        }
+        
+        public String breakMe() throws Exception
+        {
+            throw new Exception("Calling breakMe is not allowed!");
         }
     }
 }

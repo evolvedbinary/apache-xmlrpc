@@ -466,7 +466,11 @@ class XmlRpcSupport extends HandlerBase
             System.err.println("startElement: " + name);
         }
 
-        if ("value".equals(name))
+        if( "fault".equals(name)) 
+        { 
+            fault = true; 
+        } 
+        else if ("value".equals(name))
         {
             // System.err.println ("starting value");
             Value v = new Value();
