@@ -439,9 +439,12 @@ public class WebServer
             }
         }
 
+        /**
+         * Delegates to <code>con.run()</code>.
+         */
         public void run()
         {
-            while (Thread.currentThread () == thread)
+            while (con != null && Thread.currentThread() == thread)
             {
                 con.run ();
                 count++;
