@@ -317,7 +317,7 @@ public class XmlRpcServer
                 writer = null;
                 try
                 {
-                    writer = new XmlWriter(buffer);
+                    writer = new XmlWriter(buffer, encoding);
                 }
                 catch(UnsupportedEncodingException encx)
                 {
