@@ -8,7 +8,7 @@
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://ws.apache.org/</url>
-    <logo>/images/group-logo.gif</logo>
+    <logo>/images/project-logo.jpg</logo>
   </organization>
   <inceptionYear>2001</inceptionYear>
   <package>org.apache.xmlrpc</package>
@@ -82,7 +82,7 @@
       <name>Martin Poeschl</name>
       <id>mpoeschl</id>
       <email>mpoeschl@marmot.at</email>
-      <organization>Zenplex</organization>
+      <organization>Tucana.at</organization>
     </developer>
     <developer>
       <name>Daniel Rall</name>
