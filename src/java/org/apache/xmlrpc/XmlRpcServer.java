@@ -191,6 +191,6 @@ public class XmlRpcServer
 
     protected XmlRpcWorker createWorker()
     {
-        return new XmlRpcWorker(handlerMapping);
+        return new XmlRpcWorker(getHandlerMapping());
     }
 }
