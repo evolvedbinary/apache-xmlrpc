@@ -677,13 +677,28 @@ public abstract class XmlRpc
      */
     class XmlWriter
     {
+        protected static final String PROLOG_START =
+            "<?xml version=\"1.0\" encoding=\"";
+        protected static final String PROLOG_END = "\"?>";
+        protected static final String CLOSING_TAG_START = "</";
+        protected static final String SINGLE_TAG_END = "/>";
+        protected static final String LESS_THAN_ENTITY = "&lt;";
+        protected static final String GREATER_THAN_ENTITY = "&gt;";
+        protected static final String AMPERSAND_ENTITY = "&amp;";
 
+        /**
+         * The buffer to write to.
+         */
         StringBuffer buf;
+
+        /**
+         * The encoding to use.
+         */
         String enc;
 
         public XmlWriter (StringBuffer buf)
         {
-            // The default encoding used for XML-RPC is ISO-8859-1 for pragmatical reasons.
+            // The default encoding used for XML-RPC is ISO-8859-1.
             this (buf, encoding);
         }
 
@@ -691,9 +706,11 @@ public abstract class XmlRpc
         {
             this.buf = buf;
             this.enc = enc;
-            // get name of encoding for XML prolog
-            String encName = encodings.getProperty (enc, enc);
-            buf.append ("<?xml version=\"1.0\" encoding=\"" + encName + "\"?>");
+
+            // Add the XML prolog (which includes the encoding)
+            buf.append (PROLOG_START);
+            buf.append (encodings.getProperty (enc, enc));
+            buf.append (PROLOG_END);
         }
 
         public void startElement (String elem)
@@ -705,7 +722,7 @@ public abstract class XmlRpc
 
         public void endElement (String elem)
         {
-            buf.append ("</");
+            buf.append (CLOSING_TAG_START);
             buf.append (elem);
             buf.append ('>');
         }
@@ -714,9 +731,8 @@ public abstract class XmlRpc
         {
             buf.append ('<');
             buf.append (elem);
-            buf.append ("/>");
+            buf.append (SINGLE_TAG_END);
         }
-
 
         public void chardata (String text)
         {
@@ -726,17 +742,17 @@ public abstract class XmlRpc
                 char c = text.charAt (i);
                 switch (c)
                 {
-                    case '<' :
-                        buf.append ("&lt;");
-                        break;
-                    case '>' :
-                        buf.append ("&gt;");
-                        break;
-                    case '&' :
-                        buf.append ("&amp;");
-                        break;
-                    default :
-                        buf.append (c);
+                case '<' :
+                    buf.append (LESS_THAN_ENTITY);
+                    break;
+                case '>' :
+                    buf.append (GREATER_THAN_ENTITY);
+                    break;
+                case '&' :
+                    buf.append (AMPERSAND_ENTITY);
+                    break;
+                default :
+                    buf.append (c);
                 }
             }
         }
@@ -771,6 +787,10 @@ class Formatter
 {
     private DateFormat f;
 
+    /**
+     * Uses the <code>DateFormat</code> string
+     * <code>yyyyMMdd'T'HH:mm:ss</code>.
+     */
     public Formatter ()
     {
         f = new SimpleDateFormat ("yyyyMMdd'T'HH:mm:ss");
