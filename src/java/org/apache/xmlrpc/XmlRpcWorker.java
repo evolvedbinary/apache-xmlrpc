@@ -119,6 +119,17 @@ public class XmlRpcWorker
             }
             else if (handler instanceof AuthenticatedXmlRpcHandler)
             {
+                // If HTTP authentication is in use, XML-RPC must
+                // return a 401 HTTP status code when no user name is
+                // supplied.  This provides authentication meta data
+                // and tells clients to provide authentication on
+                // subsequent requests.
+                String userName = request.getUserName();
+                if (userName == null || userName.length() == 0)
+                {
+                    throw new AuthenticationFailed
+                        ("No user name provided for HTTP authentication");
+                }
                 return ((AuthenticatedXmlRpcHandler) handler)
                     .execute(request.getMethodName(), request.getParameters(),
                              request.getUserName(), request.getPassword());
