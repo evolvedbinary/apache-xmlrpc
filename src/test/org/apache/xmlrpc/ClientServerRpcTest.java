@@ -79,6 +79,15 @@ public class ClientServerRpcTest
     private static final String HANDLER_NAME = "TestHandler";
 
     /**
+     * The identifier or fully qualified class name of the SAX driver
+     * to use.  This is generally <code>uk.co.wilson.xml.MinML</code>,
+     * but could be changed to
+     * <code>org.apache.xerces.parsers.SAXParser</code> for timing
+     * comparisons.
+     */
+    private static final String SAX_DRIVER = "uk.co.wilson.xml.MinML";
+
+    /**
      * The number of RPCs to make for each test.
      */
     private static final int NBR_REQUESTS = 1000;
@@ -133,11 +142,20 @@ public class ClientServerRpcTest
      */
     public void setUp() 
     {
+        XmlRpc.setDebug(true);
+        try
+        {
+            XmlRpc.setDriver(SAX_DRIVER);
+        }
+        catch (ClassNotFoundException e)
+        {
+            fail(e.toString());
+        }
+
         // WebServer
         //webServer = new WebServer();
 
         // Server
-        XmlRpc.setDebug(true);
         server = new XmlRpcServer();
         server.addHandler(HANDLER_NAME, new TestHandler());
         // HELP: What port and url space does this run on?
