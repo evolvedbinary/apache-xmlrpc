@@ -517,7 +517,7 @@ class Invoker implements XmlRpcHandler
         // The last element of the XML-RPC method name is the Java
         // method name.
         int dot = methodName.lastIndexOf('.');
-        if (dot > -1)
+        if (dot > -1 && dot + 1 < methodName.length())
         {
             methodName = methodName.substring(dot + 1);
         }
