@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="xmlrpc" href="http://xml.apache.org/xmlrpc">
+
+  <title>XML-RPC</title>
+  <logo href="/images/logo.gif">XML-RPC</logo>
+
+  <body>
+    <menu name="XML-RPC">
+      <item name="Overview"            href="/index.html"/>
+      <item name="Client Classes"      href="/client.html"/>
+      <item name="XML Parsers"         href="/parser.html"/>
+      <item name="Server Side XML-RPC" href="/server.html"/>
+      <item name="XML-RPC Types"       href="/types.html"/>
+    </menu>
+  </body>
+</project>
