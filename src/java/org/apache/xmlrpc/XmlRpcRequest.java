@@ -67,15 +67,15 @@ public class XmlRpcRequest
 {
     protected final String methodName;
     protected final Vector parameters;
-    protected final String username;
+    protected final String userName;
     protected final String password;
 
     public XmlRpcRequest(String methodName, Vector parameters,
-                         String username, String password)
+                         String userName, String password)
     {
         this.parameters = parameters;
         this.methodName = methodName;
-        this.username = username;
+        this.userName = userName;
         this.password = password;
     }
 
@@ -94,9 +94,9 @@ public class XmlRpcRequest
         return methodName;
     }
 
-    public String getUsername()
+    public String getUserName()
     {
-        return username;
+        return userName;
     }
 
     public String getPassword()
