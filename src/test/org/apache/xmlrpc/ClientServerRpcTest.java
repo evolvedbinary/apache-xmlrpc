@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Vector;
 
 import junit.framework.Test;
@@ -131,6 +132,47 @@ public class ClientServerRpcTest
     public ClientServerRpcTest(String testName) 
     {
         super(testName);
+
+        XmlRpc.setDebug(true);
+        try
+        {
+            XmlRpc.setDriver(SAX_DRIVER);
+        }
+        catch (ClassNotFoundException e)
+        {
+            fail(e.toString());
+        }
+
+        // Server (only)
+        server = new XmlRpcServer();
+        server.addHandler(HANDLER_NAME, new TestHandler());
+
+        InetAddress localhost = null;
+        try
+        {
+            localhost = InetAddress.getLocalHost();
+        }
+        catch (UnknownHostException e)
+        {
+            fail(e.toString());
+        }
+
+        // WebServer (contains its own XmlRpcServer instance)
+        webServer = new WebServer(SERVER_PORT, localhost);
+        webServer.addHandler(HANDLER_NAME, new TestHandler());
+
+        // XML-RPC client(s)
+        try
+        {
+            String hostName = localhost.getHostName();
+            client = new XmlRpcClient(hostName, SERVER_PORT);
+            //liteClient = new XmlRpcClientLite(hostName, SERVER_PORT);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.toString());
+        }
     }
 
     /**
@@ -146,51 +188,14 @@ public class ClientServerRpcTest
      */
     public void setUp() 
     {
-        //XmlRpc.setDebug(true);
         try
         {
-            XmlRpc.setDriver(SAX_DRIVER);
+            webServer.start();
         }
-        catch (ClassNotFoundException e)
-        {
-            throw new Error(e.toString());
-        }
-
-        // Server (only)
-        server = new XmlRpcServer();
-        server.addHandler(HANDLER_NAME, new TestHandler());
-
-        // WebServer (contains its own XmlRpcServer instance)
-        String serverURL = null;
-        String hostName = "localhost";
-        try
-        {
-            InetAddress localhost = InetAddress.getLocalHost();
-            hostName = localhost.getHostName();
-            serverURL = "http://" + hostName + ':' + SERVER_PORT + "/RPC2";
-            System.out.println("Starting WebServer for url space " +
-                               serverURL + " ...");
-            webServer = new WebServer(SERVER_PORT, localhost);
-        }
-        catch (Exception e)
-        {
-            // Probably UnknownHostException or IOException
-            e.printStackTrace();
-            throw new Error(e.toString());
-        }
-
-        // XML-RPC client(s)
-        try
-        {
-            System.out.println("Connecting client to url space " + serverURL +
-                               " ...");
-            client = new XmlRpcClient(hostName, SERVER_PORT);
-            //liteClient = new XmlRpcClientLite(hostName, SERVER_PORT);
-        }
-        catch (Exception e)
+        catch (RuntimeException e)
         {
             e.printStackTrace();
-            throw new Error(e.toString());
+            fail(e.toString());
         }
     }
    
@@ -199,13 +204,15 @@ public class ClientServerRpcTest
      */
     public void tearDown() 
     {
-        liteClient = null;
-        client = null;
-        // TODO: Shut down server
-        server = null;
-        webServer.shutdown();
-        webServer = null;
-        XmlRpc.setDebug(false);
+        try
+        {
+            webServer.shutdown();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.toString());
+        }
     }
 
     /**
@@ -238,19 +245,20 @@ public class ClientServerRpcTest
     }
 
     /**
-     * Tests client/server RPC.
+     * Tests client/server RPC (via {@link WebServer}).
      */
     public void testRpc()
     {
-        int nbrIterations = 300;
         try
         {
             // Test the web server (which also tests the rpc server)
             // by connecting via the clients
             Vector params = new Vector();
             params.add(REQUEST_PARAM_VALUE);
+            System.out.println("FOO");
             Object response = client.execute(HANDLER_NAME + ".echo", params);
-            System.out.println(response);
+            assertEquals(REQUEST_PARAM_VALUE, response);
+            //params.removeAllElements();
         }
         catch (Exception e)
         {

@@ -96,7 +96,7 @@ public class SecureWebServer
      * @param int port number of secure web server.
      * @see #SecureWebServer(int, InetAddress)
      */
-    public SecureWebServer (int port) throws IOException
+    public SecureWebServer (int port)
     {
         this(port, null);
     }
@@ -109,7 +109,7 @@ public class SecureWebServer
      * @param addr The IP address to bind to.
      * @see org.apache.xmlrpc.WebServer#WebServer(int, InetAddress)
      */
-    public SecureWebServer(int port, InetAddress addr) throws IOException
+    public SecureWebServer(int port, InetAddress addr)
     {
         super(port, addr);
     }
@@ -142,46 +142,25 @@ public class SecureWebServer
     /**
      * This <em>can</em> be called from command line, but you'll have to 
      * edit and recompile to change the server port or handler objects. 
-     * By default, it sets up the following responders:
-     * 
-     * <ul><li> A java.lang.String object
-     * <li> The java.lang.Math class (making its static methods callable via XML-RPC)
-     * <li> An Echo handler that returns the argument array
-     * </ul>
+     *
+     * @see org.apache.xmlrpc.WebServer#addDefaultHandlers()
      */
-    public static void main (String args[])
+    public static void main(String[] argv)
     {
-        System.err.println ("Usage: java org.apache.xmlrpc.SecureWebServer [port]");
-        
-        int p = 10000;
-        
-        if (args.length > 0)
-        {
-            try
-            {
-                p = Integer.parseInt (args[0]);
-            }
-            catch (NumberFormatException nfx)
-            {
-                System.err.println ("Error parsing port number: "+args[0]);
-            }
-        }            
-
+        int p = determinePort(argv, 10000);
         XmlRpc.setKeepAlive (true);
+        SecureWebServer webserver = new SecureWebServer (p);
 
         try
         {
-            SecureWebServer webserver = new SecureWebServer (p);
-            webserver.addHandler ("string", "Welcome to XML-RPC!");
-            webserver.addHandler ("math", Math.class);
-            webserver.addHandler ("auth", new AuthDemo());
-            webserver.addHandler ("$default", new Echo());
-
-            System.err.println ("started web server on port "+p);
+            webserver.addDefaultHandlers();
+            webserver.start();
         }
-        catch (IOException x)
+        catch (Exception e)
         {
-            System.err.println ("Error creating web server: "+x);
+            System.err.println("Error running secure web server");
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 }
