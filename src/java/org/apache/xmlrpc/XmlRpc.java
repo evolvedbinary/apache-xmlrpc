@@ -680,6 +680,9 @@ public abstract class XmlRpc
                     case '<' :
                         buf.append ("&lt;");
                         break;
+                    case '>' :
+                        buf.append ("&gt;");
+                        break;
                     case '&' :
                         buf.append ("&amp;");
                         break;
