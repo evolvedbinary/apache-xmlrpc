@@ -145,7 +145,6 @@ public abstract class XmlRpc
         encodings.put ("ISO8859_1", "ISO-8859-1");
     }
 
-
     /**
      * Set the SAX Parser to be used. The argument can either be the
      * full class name or a user friendly shortcut if the parser is
@@ -258,7 +257,38 @@ public abstract class XmlRpc
         Parser parser = null;
         try
         {
-            parser = (Parser) parserClass.newInstance ();
+            Object p = parserClass.newInstance ();
+            if (parserClass.isInstance(p))
+                System.out.println("good");
+            else
+                System.out.println("bad");
+            if (p instanceof Parser)
+            {
+                parser = (Parser) p;
+            }
+            else
+            {
+                System.out.println("___ p class loader: " + p.getClass().
+                                   getClassLoader().getClass().getName());
+                System.out.println("XmlRpc class loader: " +
+                                   getClass().getClassLoader()
+                                   .getClass().getName());
+                System.out.println("Parser interface class loader: " +
+                                   Parser.class
+                                   .getClassLoader().getClass().getName());
+                System.out.println("Class '" + parserClass +
+                                   "' not an instance of org.xml.sax.Parser");
+                Class[] a = parserClass.getInterfaces();
+                for (int i = 0; i < a.length; i++)
+                {
+                    if (a[i].getClass().getName().equals("org.xml.sax.Parser"))
+                    {
+                        System.out.println("parserClass interface class " +
+                                           "loader: " + a[i].getClassLoader()
+                                           .getClass().getName());
+                    }
+                }
+            }
         }
         catch (NoSuchMethodError nsm)
         {
@@ -456,19 +486,16 @@ public abstract class XmlRpc
             cdata.setLength(0);
             readCdata = true;
         }
-
         else if ("methodName".equals (name))
         {
             cdata.setLength(0);
             readCdata = true;
         }
-
         else if ("name".equals (name))
         {
             cdata.setLength(0);
             readCdata = true;
         }
-
         else if ("string".equals (name))
         {
             // currentValue.setType (STRING);
@@ -506,11 +533,14 @@ public abstract class XmlRpc
             readCdata = true;
         }
         else if ("struct".equals (name))
+        {
             currentValue.setType (STRUCT);
+        }
         else if ("array".equals (name))
+        {
             currentValue.setType (ARRAY);
+        }
     }
-
 
     public void error (SAXParseException e) throws SAXException
     {
