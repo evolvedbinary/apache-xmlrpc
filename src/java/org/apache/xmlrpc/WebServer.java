@@ -85,7 +85,7 @@ public class WebServer
     protected static final byte[] conkeep = "Connection: Keep-Alive\r\n".getBytes();
     protected static final byte[] conclose = "Connection: close\r\n".getBytes();
     protected static final byte[] ok = " 200 OK\r\n".getBytes();
-    protected static final byte[] server = "Server: Helma XML-RPC 1.0\r\n".getBytes();
+    protected static final byte[] server = "Server: Apache XML-RPC 1.0\r\n".getBytes();
 
     /**
      * This <em>can</em> be called from command line, but you'll have to edit and recompile
@@ -97,7 +97,8 @@ public class WebServer
      */
     public static void main (String args[])
     {
-        System.err.println ("Usage: java helma.xmlrpc.WebServer [port]");
+        System.err.println ("Usage: java " + WebServer.class.getName() +
+                            " <port>");
         int p = 8080;
         if (args.length > 0)
             try
@@ -526,8 +527,8 @@ public class WebServer
                     {
                         output.write (httpversion.getBytes());
                         output.write (" 400 Bad Request\r\n".getBytes());
-                        output.write (
-                                "Server: helma.XML-RPC\r\n\r\n".getBytes());
+                        output.write (server);
+                        output.write ("\r\n".getBytes());
                         output.write ( ("Method "+method +
                                 " not implemented (try POST)"). getBytes());
                         output.flush ();
