@@ -60,13 +60,13 @@
       <name>XML-RPC User List</name>
       <subscribe>rpc-user-subscribe@xml.apache.org</subscribe>
       <unsubscribe>rpc-user-unsubscribe@xml.apache.org</unsubscribe>
-      <archive></archive>
+      <archive>http://archives.apache.org/eyebrowse/SummarizeList?listName=rpc-user@xml.apache.org</archive>
     </mailingList>
     <mailingList>
       <name>XML-RPC Developer List</name>
       <subscribe>rpc-dev-subscribe@xml.apache.org</subscribe>
       <unsubscribe>rpc-dev-unsubscribe@xml.apache.org</unsubscribe>
-      <archive></archive>
+      <archive>http://archives.apache.org/eyebrowse/SummarizeList?listName=rpc-dev@xml.apache.org</archive>
     </mailingList>
   </mailingLists>
 
