@@ -2,7 +2,7 @@
 <project name="xmlrpc" href="http://xml.apache.org/xmlrpc">
 
   <title>XML-RPC</title>
-  <logo href="/images/logo.gif">XML-RPC</logo>
+  <logo href="/images/xmlrpc-logo.gif">XML-RPC</logo>
 
   <body>
     <menu name="XML-RPC">
