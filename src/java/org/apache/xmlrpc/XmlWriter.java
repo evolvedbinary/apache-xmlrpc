@@ -110,6 +110,12 @@ class XmlWriter extends OutputStreamWriter
     }
 
     /**
+     * Thread-safe wrapper for the <code>DateFormat</code> object used
+     * to parse date/time values.
+     */
+    private static DateTool dateTool = new DateTool();
+
+    /**
      * Creates a new instance.
      *
      * @param out The stream to write output to.
@@ -187,8 +193,7 @@ class XmlWriter extends OutputStreamWriter
         {
             startElement("dateTime.iso8601");
             Date d = (Date) obj;
-            // TODO: Stop using package private variable from XmlRpc
-            write(XmlRpc.dateformat.format(d));
+            write(dateTool.format(d));
             endElement("dateTime.iso8601");
         }
         else if (obj instanceof byte[])

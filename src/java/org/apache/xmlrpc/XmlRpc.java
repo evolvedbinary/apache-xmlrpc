@@ -56,7 +56,6 @@ package org.apache.xmlrpc;
  */
 
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
@@ -82,6 +81,7 @@ import uk.co.wilson.xml.MinML;
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @version $Id$
  */
 public abstract class XmlRpc extends HandlerBase
@@ -128,12 +128,6 @@ public abstract class XmlRpc extends HandlerBase
     // the stack we're parsing our values into.
     Stack values;
     Value currentValue;
-
-    /**
-     * Thread-safe wrapper for the <code>DateFormat</code> object used
-     * to parse date/time values.
-     */
-    static DateTool dateformat = new DateTool();
 
     /**
      * Used to collect character data (<code>CDATA</code>) of
@@ -190,6 +184,76 @@ public abstract class XmlRpc extends HandlerBase
      * <code>ISO8859_1</code>.
      */
     static String encoding = XmlWriter.ISO8859_1;
+
+    private TypeFactory typeFactory;
+
+    /**
+     * Creates a new instance with the {@link
+     * org.apache.xmlrpc.TypeFactory} set to an instance of the class
+     * named by the <code>org.apache.xmlrpc.TypeFactory</code> System
+     * property.  If property not set or class is unavailable, uses
+     * the default.
+     */
+    protected XmlRpc()
+    {
+        this(System.getProperty(TypeFactory.class.getName()));
+    }
+
+    /**
+     * Creates a new instance with the specified {@link
+     * org.apache.xmlrpc.TypeFactory}.
+     *
+     * @param typeFactory The implementation to use.
+     */
+    protected XmlRpc(String typeFactory)
+    {
+        Class c = null;
+        if (typeFactory != null && typeFactory.length() > 0)
+        {
+            try
+            {
+                c = Class.forName(typeFactory);
+            }
+            catch (ClassNotFoundException e)
+            {
+                System.err.println("Error loading TypeFactory specified by " +
+                                   "the " + TypeFactory.class.getName() +
+                                   " property, using default instead: " +
+                                   e.getMessage());
+            }
+        }
+        this.typeFactory = createTypeFactory(c);
+    }
+
+    /**
+     * Creates a new instance of the specified {@link
+     * org.apache.xmlrpc.TypeFactory}.
+     *
+     * @param typeFactory The implementation to use.
+     * @return The new type mapping.
+     */
+    private TypeFactory createTypeFactory(Class typeFactory)
+    {
+        // If we're using the default, serve it up immediately.
+        if (typeFactory == null ||
+            DefaultTypeFactory.class.equals(typeFactory))
+        {
+            return new DefaultTypeFactory();
+        }
+
+        try
+        {
+            return (TypeFactory) typeFactory.newInstance();
+        }
+        catch (Exception e)
+        {
+            System.err.println("Unable to create configured TypeFactory '" +
+                               typeFactory.getName() + "': " + e.getMessage() +
+                               ": Using default");
+            // Call self recursively to acquire default.
+            return createTypeFactory(null);
+        }
+    }
 
     /**
      * Set the SAX Parser to be used. The argument can either be the
@@ -603,30 +667,22 @@ public abstract class XmlRpc extends HandlerBase
             switch (type)
             {
                 case INTEGER:
-                    value = new Integer(cdata.trim ());
+                    value = typeFactory.createInteger(cdata);
                     break;
                 case BOOLEAN:
-                    value = ("1".equals(cdata.trim ())
-                            ? Boolean.TRUE : Boolean.FALSE);
+                    value = typeFactory.createBoolean(cdata);
                     break;
                 case DOUBLE:
-                    value = new Double(cdata.trim ());
+                    value = typeFactory.createDouble(cdata);
                     break;
                 case DATE:
-                    try
-                    {
-                        value = dateformat.parse(cdata.trim());
-                    }
-                    catch (ParseException p)
-                    {
-                        throw new RuntimeException(p.getMessage());
-                    }
+                    value = typeFactory.createDate(cdata);
                     break;
                 case BASE64:
-                    value = Base64.decode(cdata.getBytes());
+                    value = typeFactory.createBase64(cdata);
                     break;
                 case STRING:
-                    value = cdata;
+                    value = typeFactory.createString(cdata);
                     break;
                 case STRUCT:
                     // this is the name to use for the next member of this struct
