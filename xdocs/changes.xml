@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<document>
+
+  <properties>
+    <title>XML-RPC</title>
+    <author email="dlr@finemaltcoding.com">Daniel Rall</author>
+  </properties>
+
+  <body>
+
+    <section name="Changes">
+      <p>
+        <ul>
+
+          <li>
+            <strong>18 Feb 2002</strong>
+            <ul>
+
+              <li>
+                Maximum number of threads made programmatically
+                configurable. (dlr)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
+            <strong>15 Feb 2002</strong>
+            <ul>
+              
+              <li>
+                Optimizations made to memory usage of XmlRpc
+                class. (dlr)
+              </li>
+
+            </ul>
+          </li>
+
+        </ul>
+      </p>
+    </section>
+  </body>
+</document>
