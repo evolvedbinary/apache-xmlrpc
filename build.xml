@@ -3,13 +3,16 @@
 <project name="xmlrpc" default="jar" basedir=".">
 
   <!-- Properties which are not allowed to be overridden -->
-  <property name="version" value="1.2-a3-dev"/>
+  <property name="version" value="1.2-b2"/>
+
+  <!-- Allow any locally-specified values to override the defaults -->
+  <property file="build.properties" />
 
   <!-- Allow any user specific values to override the defaults -->
   <property file="${user.home}/build.properties" />
 
   <!-- Set default values for the build -->
-  <property file="build.properties" />
+  <property file="default.properties" />
 
   <!-- Construct compile classpath -->
   <path id="classpath">

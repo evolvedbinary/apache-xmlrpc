@@ -1,4 +1,4 @@
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.applet;
 
 /* ====================================================================
  * The Apache Software License, Version 1.1
@@ -68,13 +68,17 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.xmlrpc.WebServer;
+import org.apache.xmlrpc.XmlRpc;
+
 /**
- * Tests XmlRpc run-time.
+ * Tests XmlRpc Applet client.  Borrows heavily from ClientServerRpcTest
  *
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author <a href="mailto:rhoegg@isisnetworks.net">Ryan Hoegg</a>
  * @version $Id$
  */
-public class ClientServerRpcTest
+public class AppletTest
     extends TestCase 
 {
     /**
@@ -124,18 +128,16 @@ public class ClientServerRpcTest
         " <params><param>" + REQUEST_PARAM_XML + "</param></params>\n" +
         "</methodCall>\n";
 
+    private InetAddress localhost = null;
+
     private WebServer webServer;
 
-    private XmlRpcServer server;
-
-    private XmlRpcClient client;
-
-    private XmlRpcClientLite liteClient;
+    private SimpleXmlRpcClient client;
 
     /**
      * Constructor
      */
-    public ClientServerRpcTest(String testName) 
+    public AppletTest(String testName) 
     {
         super(testName);
 
@@ -149,11 +151,6 @@ public class ClientServerRpcTest
             fail(e.toString());
         }
 
-        // Server (only)
-        server = new XmlRpcServer();
-        server.addHandler(HANDLER_NAME, new TestHandler());
-
-        InetAddress localhost = null;
         try
         {
             // localhost will be a random network interface on a
@@ -164,28 +161,6 @@ public class ClientServerRpcTest
         {
             fail(e.toString());
         }
-
-        // Setup system handler
-        SystemHandler webServerSysHandler = new SystemHandler();
-        webServerSysHandler.addSystemHandler("multicall", new MultiCall());
-
-        // WebServer (contains its own XmlRpcServer instance)
-        webServer = new WebServer(SERVER_PORT, localhost);
-        webServer.addHandler(HANDLER_NAME, new TestHandler());
-        webServer.addHandler("system", webServerSysHandler);
-
-        // XML-RPC client(s)
-        try
-        {
-            String hostName = localhost.getHostName();
-            client = new XmlRpcClient(hostName, SERVER_PORT);
-            //liteClient = new XmlRpcClientLite(hostName, SERVER_PORT);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            fail(e.toString());
-        }
     }
 
     /**
@@ -193,7 +168,7 @@ public class ClientServerRpcTest
      */
     public static Test suite() 
     {
-        return new TestSuite(ClientServerRpcTest.class);
+        return new TestSuite(AppletTest.class);
     }
 
     /**
@@ -203,7 +178,22 @@ public class ClientServerRpcTest
     {
         try
         {
+            // WebServer (contains its own XmlRpcServer instance)
+            webServer = new WebServer(SERVER_PORT, localhost);
+            webServer.addHandler(HANDLER_NAME, new TestHandler());
             webServer.start();
+            
+            // XML-RPC client(s)
+            try
+            {
+                String hostName = localhost.getHostName();
+                client = new SimpleXmlRpcClient(hostName, SERVER_PORT);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                fail(e.toString());
+            }
         }
         catch (RuntimeException e)
         {
@@ -229,35 +219,6 @@ public class ClientServerRpcTest
     }
 
     /**
-     * Tests server's RPC capabilities directly.
-     */
-    public void testServer()
-    {
-        try
-        {
-            long time = System.currentTimeMillis();
-            for (int i = 0; i < NBR_REQUESTS; i++)
-            {
-                InputStream in =
-                    new ByteArrayInputStream(RPC_REQUEST.getBytes());
-                String response = new String(server.execute(in));
-                assertTrue("Response did not contain " + REQUEST_PARAM_XML,
-                           response.indexOf(REQUEST_PARAM_XML) != -1);
-            }
-            time = System.currentTimeMillis() - time;
-            System.out.println("Total time elapsed for " + NBR_REQUESTS +
-                               " iterations was " + time + " milliseconds, " +
-                               "averaging " + (time / NBR_REQUESTS) +
-                               " milliseconds per request");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-    }
-
-    /**
      * Tests client/server RPC (via {@link WebServer}).
      */
     public void testRpc()
@@ -278,50 +239,61 @@ public class ClientServerRpcTest
             fail(e.getMessage());
         }
     }
-
-    public void testSystemMultiCall()
+    
+    /**
+     * Added as a result of Bug 8397
+     */
+    public void testEntityEncoding()
     {
+        String problemData = "E < mc^2";
+        Vector params = new Vector();
+        params.add(problemData);
         try
         {
-            Vector calls = new Vector();
-
-            for (int i = 0; i < NUM_MULTICALLS; i++)
-            {
-                Hashtable call = new Hashtable();
-                Vector params = new Vector();
-
-                params.add(REQUEST_PARAM_VALUE + i);
-                call.put("methodName", HANDLER_NAME + ".echo");
-                call.put("params", params);
- 
-                calls.addElement(call);
-            }
-
-            Vector paramWrapper = new Vector();
-            paramWrapper.add(calls);
-            
-            Object response = client.execute("system.multicall", paramWrapper);
-
-            for (int i = 0; i < NUM_MULTICALLS; i++)
-            {
-               Vector result = new Vector();
-               result.add(REQUEST_PARAM_VALUE + i);
-
-               assertEquals(result, ((Vector)response).elementAt(i));
-            }
+            Object response = client.execute(HANDLER_NAME + ".echo", params);
+            assertEquals(problemData, response);
         }
-        catch (Exception e)
+        catch (IOException e)
         {
-            e.printStackTrace();
+            fail (e.getMessage());
+        }
+        catch (XmlRpcException e)
+        {
+            fail (e.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that the client knows there was a fault
+     */
+    public void testDetectFault()
+    {
+        Vector params = new Vector();
+        try
+        {
+            Object response = client.execute(HANDLER_NAME + ".breakMe", params);
+            fail("Should have thrown an XmlRpcException!");
+        }
+        catch (IOException e)
+        {
             fail(e.getMessage());
         }
-    }   
- 
+        catch (XmlRpcException e)
+        {
+            // all is well.
+        }
+    }
+
     protected class TestHandler
     {
         public String echo(String message)
         {
             return message;
+        }
+        
+        public String breakMe() throws Exception
+        {
+            throw new Exception("Calling breakMe is not allowed!");
         }
     }
 }

@@ -1,0 +1,44 @@
+<project
+  xmlns:j="jelly:core"
+  xmlns:license="license"
+  xmlns:util="jelly:util">
+
+  <!-- build the applet jar -->
+  <postGoal name="java:jar">
+    <jar
+      jarfile="${maven.build.dir}/${maven.final.name}-applet.jar"
+      basedir="${maven.build.dest}"
+      excludes="**/xmlrpc/*,**/fesi/*,**/secure/*">
+
+      <j:if test="${maven.jar.manifest.available}">
+        <setProperty name="manifest" value="${maven.jar.manifest}" />
+      </j:if>
+
+      <j:set var="licenseFileName"><license:fileName/></j:set>
+      <util:file name="${licenseFileName}" var="licenseFile"/>
+      <metainf dir="${licenseFile.canonicalFile.parent}">
+        <include name="${licenseFile.canonicalFile.name}"/>
+      </metainf>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Created-By" value="Apache Jakarta Maven"/>
+        <attribute name="Package" value="${pom.package}"/>
+        <attribute name="Build-Jdk" value="${java.version}"/>
+        <section name="${pom.package}">
+          <attribute name="Specification-Title" value="${pom.artifactId}"/>
+          <attribute name="Specification-Version" value="${pom.currentVersion}"/>
+          <attribute name="Specification-Vendor" value="${pom.organization.name}"/>
+          <attribute name="Implementation-Title" value="${pom.package}"/>
+          <attribute name="Implementation-Version" value="${pom.currentVersion}"/>
+          <attribute name="Implementation-Vendor" value="${pom.organization.name}"/>
+        </section>
+      </manifest>
+    </jar>
+  </postGoal>
+
+  <preGoal name="dist:build-bin">
+    <!-- applet.jar to bin-dist -->
+    <copy todir="${maven.dist.bin.assembly.dir}"
+      file="${maven.build.dir}/${maven.final.name}-applet.jar"/>
+  </preGoal>
+</project>
