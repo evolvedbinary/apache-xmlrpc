@@ -75,6 +75,29 @@ public class Base64Test
         "foo bar\nbaz"
     };
 
+    private static final String UNENCODED =
+        "This module provides functions to encode and decode\n" +
+        "strings into the Base64 encoding specified in RFC 2045 -\n" +
+        "MIME (Multipurpose Internet Mail Extensions). The Base64\n" +
+        "encoding is designed to represent arbitrary sequences of\n" +
+        "octets in a form that need not be humanly readable. A\n" +
+        "65-character subset ([A-Za-z0-9+/=]) of US-ASCII is used,\n" +
+        "enabling 6 bits to be represented per printable character.";
+
+    /**
+     * The string <code>UNENCODED</code> after being encoded by Perl's
+     * MIME::Base64 module.
+     */
+    private static final String ENCODED =
+        "VGhpcyBtb2R1bGUgcHJvdmlkZXMgZnVuY3Rpb25zIHRvIGVuY29kZSBhbmQgZGVjb2RlCnN0cmlu\n" +
+        "Z3MgaW50byB0aGUgQmFzZTY0IGVuY29kaW5nIHNwZWNpZmllZCBpbiBSRkMgMjA0NSAtCk1JTUUg\n" +
+        "KE11bHRpcHVycG9zZSBJbnRlcm5ldCBNYWlsIEV4dGVuc2lvbnMpLiBUaGUgQmFzZTY0CmVuY29k\n" +
+        "aW5nIGlzIGRlc2lnbmVkIHRvIHJlcHJlc2VudCBhcmJpdHJhcnkgc2VxdWVuY2VzIG9mCm9jdGV0\n" +
+        "cyBpbiBhIGZvcm0gdGhhdCBuZWVkIG5vdCBiZSBodW1hbmx5IHJlYWRhYmxlLiBBCjY1LWNoYXJh\n" +
+        "Y3RlciBzdWJzZXQgKFtBLVphLXowLTkrLz1dKSBvZiBVUy1BU0NJSSBpcyB1c2VkLAplbmFibGlu\n" +
+        "ZyA2IGJpdHMgdG8gYmUgcmVwcmVzZW50ZWQgcGVyIHByaW50YWJsZSBjaGFyYWN0ZXIu";
+
+
     /**
      * Constructor
      */
@@ -91,7 +114,7 @@ public class Base64Test
         return new TestSuite(Base64Test.class);
     }
 
-    public void testWriter()
+    public void testBase64()
         throws Exception
     {
         try
@@ -107,6 +130,12 @@ public class Base64Test
                 assertEquals(raw, decoded);
                 assertEquals(TEST_DATA[i], new String(decoded));
             }
+
+            // FIXME: The Base64.encode() function doesn't wrap at 76 chars.
+            //assertEquals(Base64.encode(UNENCODED.getBytes()),
+            //             ENCODED.getBytes());
+            assertEquals(UNENCODED.getBytes(),
+                         Base64.decode(ENCODED.getBytes()));
         }
         catch (Exception e)
         {

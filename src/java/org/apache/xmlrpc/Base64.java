@@ -63,6 +63,9 @@ package org.apache.xmlrpc;
  *
  */
 
+import java.util.Enumeration;
+import java.util.Vector;
+
 /**
  * This class provides encode/decode for RFC 2045 Base64 as defined by
  * RFC 2045, N. Freed and N. Borenstein.  <a
@@ -71,7 +74,8 @@ package org.apache.xmlrpc;
  * Internet Message Bodies. Reference 1996
  *
  * @author Jeffrey Rodriguez
- * @version $Id$
+ * @author Daniel Rall
+ * @since 1.2
  */
 public final class  Base64
 {
@@ -254,6 +258,10 @@ public final class  Base64
      */
     public static byte[] decode( byte[] base64Data )
     {
+        // RFC 2045 suggests line wrapping at (no more than) 76
+        // characters -- we may have embedded whitespace.
+        base64Data = discardWhitespace(base64Data);
+
         // handle the edge case, so we don't have to worry about it later
         if(base64Data.length == 0) { return new byte[0]; }
 
@@ -316,5 +324,68 @@ public final class  Base64
             encodedIndex += 3;
         }
         return decodedData;
+    }
+
+    /**
+     * Discards any whitespace from a base-64 encoded block.
+     *
+     * @param data The base-64 encoded data to discard the whitespace
+     * from.
+     * @return The data, less whitespace (see RFC 2045).
+     */
+    static byte[] discardWhitespace(byte[] data)
+    {
+        // Locate any regions of whitespace within our data.
+        int nbrToDiscard = 0;
+        Vector discardRegions = new Vector();
+        boolean discarding = false;
+        for (int i = 0; i < data.length; i++)
+        {
+            switch (data[i])
+            {
+            case (byte) ' ':
+            case (byte) '\n':
+            case (byte) '\r':
+            case (byte) '\t':
+                if (!discarding)
+                {
+                    int[] region = { i, data.length };
+                    discardRegions.addElement(region);
+                    discarding = true;
+                }
+                nbrToDiscard++;
+                break;
+
+            default:
+                if (discarding)
+                {
+                    // End region to discard.
+                    ((int []) discardRegions.lastElement())[1] = i;
+                    discarding = false;
+                }
+            }
+        }
+
+        if (nbrToDiscard > 0)
+        {
+            // Groom whitespace from the data.
+            byte[] groomed = new byte[data.length - nbrToDiscard];
+            int srcOffset = 0;
+            int destOffset = 0;
+            int[] region = null;
+            Enumeration enum = discardRegions.elements();
+            while (enum.hasMoreElements())
+            {
+                region = (int []) enum.nextElement();
+                int len = region[0] - srcOffset;
+                System.arraycopy(data, srcOffset, groomed, destOffset, len);
+                destOffset += len;
+                srcOffset = region[1];
+            }
+            System.arraycopy(data, srcOffset, groomed, destOffset,
+                             data.length - region[1]);
+            data = groomed;
+        }
+        return data;
     }
 }
