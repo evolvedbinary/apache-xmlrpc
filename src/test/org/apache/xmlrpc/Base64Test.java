@@ -101,7 +101,7 @@ public class Base64Test
                 byte[] raw = TEST_DATA[i].getBytes();
                 byte[] encoded = Base64.encode(raw);
                 byte[] decoded = Base64.decode(encoded);
-                assertTrue(bytesEqual(raw, decoded));
+                assertEquals(raw, decoded);
                 assertEquals(TEST_DATA[i], String.valueOf(decoded));
             }
         }
@@ -115,15 +115,14 @@ public class Base64Test
     /**
      * Byte by byte test for equality.
      */
-    private boolean bytesEqual(byte[] a, byte[] b)
+    private void assertEquals(byte[] a, byte[] b)
     {
         for (int i = 0; i < a.length; i++)
         {
             if (a[i] != b[i])
             {
-                return false;
+                fail("Byte arrays not equal (" + a[i] + " != " + b[i] + ")");
             }
         }
-        return true;
     }
 }
