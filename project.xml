@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project>
 
-  <version>2</version>
+  <pomVersion>3</pomVersion>
   <name>xmlrpc</name>
   <id>xmlrpc</id>
   <currentVersion>1.2-dev</currentVersion>
@@ -28,24 +28,28 @@
   </description>
 
   <url>http://xml.apache.org/xmlrpc/</url>
-  <cvsWebUrl>http://cvs.apache.org/viewcvs.cgi/xml-rpc/</cvsWebUrl>
   <issueTrackingUrl>http://nagoya.apache.org/bugzilla/query.cgi?product=XML-RPC</issueTrackingUrl>
   <siteAddress>xml.apache.org</siteAddress>
   <siteDirectory>/www/xml.apache.org/xmlrpc/</siteDirectory>
   <distributionDirectory>/www/xml.apache.org/dist/xmlrpc/</distributionDirectory>
 
-  <distributions>
-    <distribution>
+  <repository>
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic/xml-rpc</connection>
+    <url>http://cvs.apache.org/viewcvs/xml-rpc/</url>
+  </repository>
+
+  <versions>
+    <version>
       <id>1.0</id>
-      <version>1.0</version>
+      <name>1.0</name>
       <tag>XMLRPC_1_0</tag>
-    </distribution>
-    <distribution>
+    </version>
+    <version>
       <id>1.1</id>
-      <version>1.1</version>
+      <name>1.1</name>
       <tag>XMLRPC_1_1</tag>
-    </distribution>
-  </distributions>
+    </version>
+  </versions>
 
   <branches>
   </branches>
@@ -100,98 +104,41 @@
 
   <dependencies>
     <dependency>
-      <name>jakarta-servletapi</name>
-      <type>required</type>
+      <id>servletapi</id>
       <version>2.2</version>
-      <jar>servlet-2.2.jar</jar>
       <url></url>
     </dependency>
     <dependency>
-      <name>jsse</name>
-      <type>required</type>
+      <id>jsse</id>
       <version>1.0.2</version>
       <jar>jsse.jar</jar>
       <url>http://java.sun.com/products/jsse/</url>
     </dependency>
     <dependency>
-      <name>jnet</name>
-      <type>required</type>
+      <id>jnet</id>
       <version>1.0.2</version>
       <jar>jnet.jar</jar>
       <url>http://java.sun.com/products/jsse/</url>
     </dependency>
     <dependency>
-      <name>jcert</name>
-      <type>required</type>
+      <id>jcert</id>
       <version>1.0.2</version>
       <jar>jcert.jar</jar>
       <url>http://java.sun.com/products/jsse/</url>
     </dependency>
     <dependency>
-      <name>fesi</name>
-      <type>required</type>
+      <id>fesi</id>
       <version>1.1.5</version>
-      <jar>fesi.jar</jar>
       <url>http://home.worldcom.ch/jmlugrin/fesi/</url>
     </dependency>
-
-    <!-- Documentation dependencies -->
-
-    <dependency>
-      <name>jakarta-velocity-dvsl</name>
-      <type>documentation</type>
-      <version>0.43</version>
-      <jar>velocity-dvsl-0.43.jar</jar>
-      <url>http://jakarta.apache.org/velocity/dvsl/</url>
-    </dependency>
-
-    <dependency>
-      <name>jdepend</name>
-      <type>required</type>
-      <version>2.2</version>
-      <jar>jdepend.jar</jar>
-      <url>http://www.clarkware.com/software/JDepend.html</url>
-    </dependency>
-
-    <!-- the following are all required for checkstyle to work -->
-    <dependency>
-      <name>checkstyle</name>
-      <type>required</type>
-      <version>2.1</version>
-      <jar>checkstyle-2.1.jar</jar>
-      <url>http://checkstyle.sourceforge.net/</url>
-    </dependency>
-
-    <dependency>
-      <name>antlr</name>
-      <type>required</type>
-      <version></version>
-      <jar>antlr.jar</jar>
-      <url>http://www.antlr.org/</url>
-    </dependency>
-
-    <dependency>
-      <name>regexp</name>
-      <type>required</type>
-      <version>1.2</version>
-      <jar>regexp-1.2.jar</jar>
-      <url>http://jakarta.apache.org/regexp/</url>
-    </dependency>
-    <!-- end checkstyle requirements -->
-
   </dependencies>
 
   <build>
 
-    <sourceDirectories>
-      <sourceDirectory>src/java</sourceDirectory>
-    </sourceDirectories>
-
+    <sourceDirectory>src/java</sourceDirectory>
+    <aspectSourceDirectory/>
     <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
     <integrationUnitTestSourceDirectory/>
-
-    <aspectSourceDirectories>
-    </aspectSourceDirectories>
 
     <!-- Unit test classes -->
     <unitTestPatterns>
