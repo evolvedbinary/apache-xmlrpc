@@ -725,8 +725,7 @@ public abstract class XmlRpc
             else if (obj instanceof byte[])
             {
                 startElement("base64");
-                // FIXME: Yucky! Find a better way!
-                write(new String(Base64.encode((byte[]) obj)).toCharArray());
+                this.write(Base64.encode((byte[]) obj));
                 endElement("base64");
             }
             else if (obj instanceof Vector)
@@ -765,6 +764,18 @@ public abstract class XmlRpc
                                             obj.getClass());
             }
             endElement("value");
+        }
+
+        /**
+         * This is used to write out the Base64 output...
+         */
+        protected void write(byte[] byteData)
+            throws IOException
+        {
+            for (int i=0;i<byteData.length;i++)
+            {
+                write(byteData[i]);
+            }
         }
 
         protected void startElement (String elem)
@@ -820,6 +831,7 @@ public abstract class XmlRpc
 
 /**
  * Wraps a <code>DateFormat</code> instance to provide thread safety.
+ * FIXME: this seems like a lot of sync overhead and could be done better...
  */
 class Formatter
 {
@@ -831,6 +843,8 @@ class Formatter
      */
     public Formatter ()
     {
+        // FIXME: this seems like a lot of overhead...shouldn't
+        // the instance also be declared as static?
         f = new SimpleDateFormat ("yyyyMMdd'T'HH:mm:ss");
     }
 
