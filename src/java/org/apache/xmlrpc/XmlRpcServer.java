@@ -70,6 +70,8 @@ import java.lang.reflect.*;
  */
 public class XmlRpcServer
 {
+    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+
     private Hashtable handlers;
     private Stack pool;
     private int workers;
@@ -171,8 +173,6 @@ public class XmlRpcServer
      */
     class Worker extends XmlRpc
     {
-        private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-
         private Vector inParams;
         private ByteArrayOutputStream buffer;
         private XmlWriter writer;
