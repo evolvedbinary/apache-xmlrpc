@@ -66,7 +66,7 @@ import java.util.*;
  * @author <a href="mailto:jvanzyl@apache.org">Jason van Zyl</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  */
-public class WebServer 
+public class WebServer
     implements Runnable
 {
     protected XmlRpcServer xmlrpc;
@@ -136,7 +136,7 @@ public class WebServer
     /**
       * Creates a Web server at the specified port number.
       */
-    public WebServer(int port) 
+    public WebServer(int port)
         throws IOException
     {
         this(port, null);
@@ -145,7 +145,7 @@ public class WebServer
     /**
       * Creates a Web server at the specified port number and IP address.
       */
-    public WebServer(int port, InetAddress add) 
+    public WebServer(int port, InetAddress add)
         throws IOException
     {
         this.port = port;
@@ -219,8 +219,8 @@ public class WebServer
 
     /**
       * Switch client filtering on/off.
-      * @see acceptClient(java.lang.String)
-      * @see denyClient(java.lang.String)
+      * @see #acceptClient(java.lang.String)
+      * @see #denyClient(java.lang.String)
       */
     public void setParanoid(boolean p)
     {
@@ -232,8 +232,8 @@ public class WebServer
       * character, e.g. "192.168.*.*". You must call setParanoid(true) in order for this to have any
       * effect.
       *
-      * @see denyClient(java.lang.String)
-      * @see setParanoid(boolean)
+      * @see #denyClient(java.lang.String)
+      * @see #setParanoid(boolean)
       */
     public void acceptClient(String address)
         throws IllegalArgumentException
@@ -245,8 +245,8 @@ public class WebServer
         }
         catch (Exception x)
         {
-            throw new IllegalArgumentException("\"" + 
-                address + 
+            throw new IllegalArgumentException("\"" +
+                address +
                 "\" does not represent a valid IP address");
         }
     }
@@ -256,8 +256,8 @@ public class WebServer
       * character, e.g. "192.168.*.*". You must call setParanoid(true) in order for this to have any
       * effect.
       *
-      * @see acceptClient(java.lang.String)
-      * @see setParanoid(boolean)
+      * @see #acceptClient(java.lang.String)
+      * @see #setParanoid(boolean)
       */
     public void denyClient(String address) throws IllegalArgumentException
     {
@@ -268,8 +268,8 @@ public class WebServer
         }
         catch (Exception x)
         {
-            throw new IllegalArgumentException("\"" + 
-                address + 
+            throw new IllegalArgumentException("\"" +
+                address +
                 "\" does not represent a valid IP address");
         }
     }
@@ -655,15 +655,15 @@ public class WebServer
     class AddressMatcher
     {
         int pattern[];
-        
+
         public AddressMatcher (String address) throws Exception
         {
             pattern = new int[4];
             StringTokenizer st = new StringTokenizer(address, ".");
             if (st.countTokens() != 4)
             {
-                throw new Exception ("\"" + 
-                    address + 
+                throw new Exception ("\"" +
+                    address +
                     "\" does not represent a valid IP address");
             }
             for (int i = 0; i < 4; i++)
