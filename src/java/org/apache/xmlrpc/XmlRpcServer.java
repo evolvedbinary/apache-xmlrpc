@@ -409,13 +409,26 @@ public class XmlRpcServer
 
 } // XmlRpcServer
 
-// This class uses Java Reflection to call methods matching an XML-RPC call
+/**
+ * Introspects handlers using Java Reflection to call methods matching
+ * a XML-RPC call.
+ */
 class Invoker implements XmlRpcHandler
 {
-
     private Object invokeTarget;
     private Class targetClass;
     private static Class OBJECT_CLASS;
+    static
+    {
+        try
+        {
+            OBJECT_CLASS = Class.forName("java.lang.Object");
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new Error(e.toString());
+        }
+    }
 
     public Invoker(Object target)
     {
@@ -425,16 +438,6 @@ class Invoker implements XmlRpcHandler
         if (XmlRpc.debug)
         {
             System.err.println("Target object is " + targetClass);
-        }
-        try
-        {
-            if (OBJECT_CLASS == null)
-            {
-                OBJECT_CLASS = Class.forName("java.lang.Object");
-            }
-        }
-        catch (ClassNotFoundException cnfe)
-        {
         }
     }
 
