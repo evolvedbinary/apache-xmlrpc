@@ -82,9 +82,13 @@ public abstract class XmlRpc
 
     // class name of SAX parser to use
     private static Class parserClass;
-    private static Hashtable saxDrivers = new Hashtable ();
+    private static Hashtable saxDrivers = new Hashtable (8);
     static
     {
+        // A mapping of short identifiers to the fully qualified class
+        // names of common SAX parsers.  If more mappings are added
+        // here, increase the size of the saxDrivers Map used to store
+        // them.
         saxDrivers.put ("xerces", "org.apache.xerces.parsers.SAXParser");
         saxDrivers.put ("xp", "com.jclark.xml.sax.Driver");
         saxDrivers.put ("ibm1", "com.ibm.xml.parser.SAXDriver");
@@ -99,13 +103,16 @@ public abstract class XmlRpc
     Stack values;
     Value currentValue;
 
-    // formats for parsing and generating dateTime values
-
-    // DateFormat datetime;
-    // now comes wapped into a synchronized class because dateFormat is not threadsafe
+    /**
+     * Thread-safe wrapper for the <code>DateFormat</code> object used
+     * to format and parse date/time values.
+     */
     static Formatter dateformat = new Formatter ();
 
-    // used to collect character data of parameter values
+    /**
+     * Used to collect character data (<code>CDATA</code>) of
+     * parameter values.
+     */
     StringBuffer cdata;
     boolean readCdata;
 
@@ -127,17 +134,40 @@ public abstract class XmlRpc
     static final int RECOVERABLE = 1;
     static final int FATAL = 2;
 
-    // use HTTP keepalive?
+    /**
+     * Wheter to use HTTP Keep-Alive headers.
+     */
     static boolean keepalive = false;
 
-    // for debugging output
+    /**
+     * Whether to log debugging output.
+     */
     public static boolean debug = false;
-    final static String types[] = {"String", "Integer", "Boolean", "Double",
-    "Date", "Base64", "Struct", "Array"};
 
-    // mapping between java encoding names and "real" names used in XML prolog.
+    /**
+     * The list of valid XML elements used for RPC.
+     */
+    final static String types[] =
+    {
+        "String",
+        "Integer",
+        "Boolean",
+        "Double",
+        "Date",
+        "Base64",
+        "Struct",
+        "Array"
+    };
 
+    /**
+     * Java's name for the encoding we're using.
+     */
     static String encoding = "ISO8859_1";
+
+    /**
+     * Mapping between Java encoding names and "real" names used in
+     * XML prolog.
+     */
     static Properties encodings = new Properties ();
     static
     {
@@ -594,7 +624,8 @@ public abstract class XmlRpc
                     value = new Integer (cdata.trim ());
                     break;
                 case BOOLEAN:
-                    value = new Boolean ("1".equals (cdata.trim ()));
+                    value = ("1".equals (cdata.trim ()) ?
+                             Boolean.TRUE : Boolean.FALSE);
                     break;
                 case DOUBLE:
                     value = new Double (cdata.trim ());
