@@ -79,14 +79,15 @@ import uk.co.wilson.xml.MinML;
 
 /**
  * This abstract base class provides basic capabilities for XML-RPC,
- * like parsing of parameters or encoding Java objects into XML-RPC format.
- * Any XML parser with a <a href=http://www.megginson.com/SAX/> SAX</a> interface can
- * be used.<p>
- * XmlRpcServer and XmlRpcClient are the classes that actually implement an
- * XML-RCP server and client.
+ * like parsing of parameters or encoding Java objects into XML-RPC
+ * format.  Any XML parser with a <a
+ * href="http://www.megginson.com/SAX/">SAX</a> interface can be used.
  *
- * @see XmlRpcServer
- * @see XmlRpcClient
+ * <p>XmlRpcServer and XmlRpcClient are the classes that actually
+ * implement an XML-RPC server and client.
+ *
+ * @see org.apache.xmlrpc.XmlRpcServer
+ * @see org.apache.xmlrpc.XmlRpcClient
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
