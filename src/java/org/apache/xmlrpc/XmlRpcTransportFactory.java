@@ -57,6 +57,7 @@ package org.apache.xmlrpc;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Interface from XML-RPC to an underlying transport, most likely base on HTTP.
@@ -64,8 +65,29 @@ import java.io.IOException;
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @version $Id$
  * @since 1.2
+ *
+ * Constructors for SSL implementations of XmlRpcTransportFactory should have a constructor
+ * with a signature defined by CONSTRUCTOR_SIGNATURE:
+ * <code>
+ * ClassName(Properties properties)
+ * </code>
+ *
+ * and use the default properties defined in this interface.
  */
 public interface XmlRpcTransportFactory
 {
-  public XmlRpcTransport createTransport();
+    public static final String TRANSPORT_URL  = "url"; // Name of property containing URL
+    public static final String TRANSPORT_AUTH = "auth"; // Name of property containing Basic Authentication information
+
+    public static final Class [] CONSTRUCTOR_SIGNATURE = new Class [] { Properties.class };
+    public static final String CONSTRUCTOR_SIGNATURE_STRING = "(java.util.Properties properties)";
+
+    /**
+     * Create a new XML-RPC transport.
+     *
+     * @return XmlRpcTransport an instance created according to the rules
+     * specified to the constructor.
+     */
+    public XmlRpcTransport createTransport()
+    throws XmlRpcClientException;
 }

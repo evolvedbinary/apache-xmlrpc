@@ -14,6 +14,20 @@
         <ul>
 
           <li>
+            <strong>28 Jan 2003</strong>
+            <ul>
+
+              <li>
+		Refactor XmlRpcTransportFactory and add DefaultXmlRpcTransportFactory that
+                can load other transport factories via reflection.
+                Merge edited code from Larry Meader and Chris Jackson to use the Sun SSL 
+                provider as a transport.
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
             <strong>25 Jan 2003</strong>
             <ul>
 

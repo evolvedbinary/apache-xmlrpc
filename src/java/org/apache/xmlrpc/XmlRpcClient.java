@@ -415,7 +415,7 @@ public class XmlRpcClient implements XmlRpcHandler
         }
     }
 
-    protected XmlRpcTransport createTransport()
+    protected XmlRpcTransport createTransport() throws XmlRpcClientException
     {
         if (transportFactory == null)
         {
