@@ -58,15 +58,23 @@ package org.apache.xmlrpc;
 import java.util.Vector;
 
 /**
+ * A simple handler which echos its input parameters.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  */
-public class Echo 
+public class Echo
     implements XmlRpcHandler
 {
-    public Object execute (String method, Vector v) 
+    /**
+     * Echos <code>parameters</code>.
+     *
+     * @param method Ignored.
+     * @param parameters Handler input parameters.
+     * @return The input parameters.
+     */
+    public Object execute (String method, Vector parameters)
         throws Exception
     {
-        return (v);
+        return parameters;
     }
 }
