@@ -131,9 +131,8 @@ public class Base64Test
                 assertEquals(TEST_DATA[i], new String(decoded));
             }
 
-            // FIXME: The Base64.encode() function doesn't wrap at 76 chars.
-            //assertEquals(Base64.encode(UNENCODED.getBytes()),
-            //             ENCODED.getBytes());
+            assertEquals(Base64.encode(UNENCODED.getBytes()),
+                         ENCODED.getBytes());
             assertEquals(UNENCODED.getBytes(),
                          Base64.decode(ENCODED.getBytes()));
         }
@@ -149,11 +148,15 @@ public class Base64Test
      */
     private void assertEquals(byte[] a, byte[] b)
     {
+        if (a.length != b.length)
+        {
+            fail("Byte arrays have different lengths (" + a.length + " != " + b.length + ")");
+        }
         for (int i = 0; i < a.length; i++)
         {
             if (a[i] != b[i])
             {
-                fail("Byte arrays not equal (" + a[i] + " != " + b[i] + ")");
+                fail("Byte arrays not equal (" + a[i] + " != " + b[i] + " at position + " + i + ")");
             }
         }
     }
