@@ -101,6 +101,12 @@
       <email>jason@zenplex.com</email>
       <organization>Zenplex</organization>
     </developer>
+    <developer>
+      <name>Leonard Richarson</name>
+      <id>leonardr</id>
+      <email>leonardr@collab.net</email>
+      <organization>CollabNet, Inc.</organization>
+    </developer>
   </developers>
 
   <dependencies>
@@ -148,6 +154,7 @@
     <!-- Unit test classes -->
     <unitTest>
       <includes>
+        <!-- TODO: There are more tests available -->
         <include>**/*Test.java</include>
       </includes>
     </unitTest>
