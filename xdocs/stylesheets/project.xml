@@ -8,9 +8,14 @@
     <menu name="XML-RPC">
       <item name="Overview"            href="/index.html"/>
       <item name="Client Classes"      href="/client.html"/>
-      <item name="XML Parsers"         href="/parser.html"/>
       <item name="Server Side XML-RPC" href="/server.html"/>
       <item name="XML-RPC Types"       href="/types.html"/>
+      <item name="XML Parsers"         href="/parser.html"/>
+    </menu>
+    <menu name="Resources">
+      <item name="Download"            href="/download.html"/>
+      <item name="Mailing Lists"       href="/lists.html"/>
+      <item name="CVS Repository"      href="/cvs.html"/>
     </menu>
   </body>
 </project>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<document>
+  <properties>
+    <title>Mailing Lists</title>
+    <author email="hannes@helma.at">Hannes Wallnofer</author>
+  </properties>
+
+  <body>
+    <section name="The XML-RPC Users List">
+      <p>
+<a href="mailto:rpc-user-subsrcibe@xml.apache.org">Subscribe</a>
+<a href="mailto:rpc-user-unsubsrcibe@xml.apache.org">Unsubscribe</a>
+      </p>
+      <p>
+This is the list where users of XML-RPC can meet and
+discuss questions, raise issues, etc.
+      </p>
+     </section>
+    <section name="The XML-RPC Developers List">
+      <p>
+<a href="mailto:rpc-dev-subsrcibe@xml.apache.org">Subscribe</a>
+<a href="mailto:rpc-dev-unsubsrcibe@xml.apache.org">Unsubscribe</a>
+      </p>
+      <p>
+This is the list where participating developers of the
+XML-RPC project meet and discuss issues, code changes/additions, etc.
+      </p>
+     </section>
+
+  </body>
+</document>
