@@ -59,6 +59,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.util.Vector;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -91,6 +93,8 @@ public class ClientServerRpcTest
      * The number of RPCs to make for each test.
      */
     private static final int NBR_REQUESTS = 1000;
+
+    private static final int SERVER_PORT = 8081;
 
     /**
      * The value to use in our request parameter.
@@ -142,29 +146,52 @@ public class ClientServerRpcTest
      */
     public void setUp() 
     {
-        XmlRpc.setDebug(true);
+        //XmlRpc.setDebug(true);
         try
         {
             XmlRpc.setDriver(SAX_DRIVER);
         }
         catch (ClassNotFoundException e)
         {
-            fail(e.toString());
+            throw new Error(e.toString());
         }
 
-        // WebServer
-        //webServer = new WebServer();
-
-        // Server
+        // Server (only)
         server = new XmlRpcServer();
         server.addHandler(HANDLER_NAME, new TestHandler());
-        // HELP: What port and url space does this run on?
 
-        // Standard Client
-        //client = new XmlRpcClient();
+        // WebServer (contains its own XmlRpcServer instance)
+        String serverURL = null;
+        String hostName = "localhost";
+        try
+        {
+            InetAddress localhost = InetAddress.getLocalHost();
+            hostName = localhost.getHostName();
+            serverURL = "http://" + hostName + ':' + SERVER_PORT + "/RPC2";
+            System.out.println("Starting WebServer for url space " +
+                               serverURL + " ...");
+            webServer = new WebServer(SERVER_PORT, localhost);
+        }
+        catch (Exception e)
+        {
+            // Probably UnknownHostException or IOException
+            e.printStackTrace();
+            throw new Error(e.toString());
+        }
 
-        // Supposedly light-weight client
-        //liteClient = new XmlRpcClientLite();
+        // XML-RPC client(s)
+        try
+        {
+            System.out.println("Connecting client to url space " + serverURL +
+                               " ...");
+            client = new XmlRpcClient(hostName, SERVER_PORT);
+            //liteClient = new XmlRpcClientLite(hostName, SERVER_PORT);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new Error(e.toString());
+        }
     }
    
     /**
@@ -176,7 +203,7 @@ public class ClientServerRpcTest
         client = null;
         // TODO: Shut down server
         server = null;
-        // TODO: Shut down web server
+        webServer.shutdown();
         webServer = null;
         XmlRpc.setDebug(false);
     }
@@ -199,9 +226,9 @@ public class ClientServerRpcTest
             }
             time = System.currentTimeMillis() - time;
             System.out.println("Total time elapsed for " + NBR_REQUESTS +
-                               " iterations: " + time + " milliseconds");
-            System.out.println("Average time: " + (time / NBR_REQUESTS) +
-                               " milliseconds");
+                               " iterations was " + time + " milliseconds, " +
+                               "averaging " + (time / NBR_REQUESTS) +
+                               " milliseconds per request");
         }
         catch (Exception e)
         {
@@ -218,10 +245,12 @@ public class ClientServerRpcTest
         int nbrIterations = 300;
         try
         {
-            throw new Exception("testRpc() not implemented");
-            // TODO: Test the Server
-
-            // TODO: Test the clients
+            // Test the web server (which also tests the rpc server)
+            // by connecting via the clients
+            Vector params = new Vector();
+            params.add(REQUEST_PARAM_VALUE);
+            Object response = client.execute(HANDLER_NAME + ".echo", params);
+            System.out.println(response);
         }
         catch (Exception e)
         {
