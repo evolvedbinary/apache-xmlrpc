@@ -58,7 +58,10 @@ package org.apache.xmlrpc;
 import java.io.*;
 import java.util.*;
 import java.text.*;
+
 import org.xml.sax.*;
+
+import uk.co.wilson.xml.MinML;
 
 /**
  * This abstract base class provides basic capabilities for XML-RPC, 
@@ -85,7 +88,7 @@ public abstract class XmlRpc
     /**
      * The default parser to use (MinML).
      */
-    private static final String DEFAULT_PARSER = "uk.co.wilson.xml.MinML";
+    private static final String DEFAULT_PARSER = MinML.class.getName();
 
     /**
      * The maximum number of threads which can be used concurrently.
@@ -210,7 +213,11 @@ public abstract class XmlRpc
         {
             parserClassName = (String) saxDrivers.get (driver);
             if (parserClassName == null)
+            {
+                // Identifier lookup failed, assuming we were provided
+                // with the fully qualified class name.
                 parserClassName = driver;
+            }
             parserClass = Class.forName (parserClassName);
         }
         catch (ClassNotFoundException x)
