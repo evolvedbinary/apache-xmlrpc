@@ -1,93 +1,446 @@
 <?xml version="1.0"?>
 
-<project name="maven" default="maven:jar" basedir=".">
-
-  <!-- Give user a chance to override without editing this file
-       (and without typing -D each time they invoke a target) -->
+<project name="xmlrpc" default="jar" basedir=".">
 
   <!-- Allow any user specific values to override the defaults -->
   <property file="${user.home}/build.properties" />
-  <!-- Allow user defaults for this project -->
-  <property file="build.properties" />
-  <!-- Set default values for the build -->
-  <property file="project.properties" />
 
-  <!-- maven:start -->
+  <!-- Set default values for the build -->
+  <property file="build.properties" />
+
+  <property name="build.src" value="${build.dir}/src"/>
+  <property name="build.dest" value="${build.dir}/classes"/>
+  <property name="final.name" value="${project}-${version}"/>
+  <property name="final.dir" value="../${final.name}/"/>
+
+  <!-- Construct compile classpath -->
+  <path id="classpath">
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${junit.jar}"/>
+  </path>
+
+  <!-- ================================================================== -->
+  <!-- E N V I R O N M E N T                                             -->
+  <!-- ================================================================== -->
+  
+  <target name="env">
+    <echo message="java.home = ${java.home}"/>
+    <echo message="user.home = ${user.home}"/>
+    <echo message="jsse.jar = ${jsse.jar}"/>
+    <echo message="jnet.jar = ${jnet.jar}"/>
+    <echo message="jcert.jar = ${jcert.jar}"/>
+    <echo message="servlet.jar = ${servlet.jar}"/>
+    <echo message="junit.jar = ${junit.jar}"/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- U S A G E                                                          -->
+  <!-- ================================================================== -->
+  
+  <target name="usage">
+    <echo message="use -projecthelp to see the available targets"/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- I N I T                                                            -->
+  <!-- ================================================================== -->
+
+  <target name="init" depends="env">
+    <available 
+      classname="com.sun.net.ssl.SSLContext"
+      property="jsse.present"
+      classpathref="classpath"
+    />
+    
+    <available 
+      classname="javax.servlet.Servlet"
+      property="servlet.present"
+      classpathref="classpath"
+    />
+    
+    <available 
+      classname="org.apache.xerces.parsers.SAXParser"
+      property="xerces.present"
+      classpathref="classpath"
+    />
+
+    <available
+      classname="junit.framework.TestCase"
+      property="junit.present"
+      classpathref="classpath"
+    />
+
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- P R O P E R T Y  C H E C K S  A N D  W A R N I N G S               -->
+  <!-- ================================================================== -->
+  
+  <!-- No additional classes are required to compile the
+       core package. If you wish to use the SSL extensions
+       or the XmlRpcProxyServlet than you can make the
+       necessary properties changes. -->
+  
+  <target name="check.jsse" unless="jsse.present">
+    <antcall target="property-warning">
+      <param name="name" value="jsse.jar"/>
+      <param name="value" value="${jsse.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="check.junit" unless="junit.present">
+    <antcall target="property-warning">
+      <param name="name" value="junit.jar"/>
+      <param name="value" value="${junit.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="property-warning">
+    <echo>
+      +----------------------------------------------------------------+
+      + F A I L E D  R E Q U I R E M E N T                             |
+      +----------------------------------------------------------------+
+      | You must define the following property in order                |
+      | to build XML-RPC:                                              |
+      |                                                                |
+      | ${name} = ${value}
+      |                                                                |
+      | You can set this property in the provided build.properties     |
+      | file, or you may set this property in your                     |
+      | ${user.home}/build.properties file.                            
+      +----------------------------------------------------------------+
+    </echo>
+    <fail message="Failed Requirement"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- P R E P A R E                                                       -->
+  <!-- =================================================================== -->
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.src}"/>
+    
+    <!-- 
+      We don't care about the javascript interpreter or the
+      the applet code so we'll just exclude it from the
+      build. All we want is the client and server code.
+    -->
+    
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}"> 
+        <include name="**/*.java"/>
+        <exclude name="**/fesi/**"/>
+        <exclude name="**/secure/**" unless="jsse.present"/>
+        <exclude name="**/XmlRpcProxyServlet.java" unless="servlet.present"/>
+        <exclude name="**/test/**"/>
+      </fileset>
+    </copy>
+
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- C O M P I L E                                                      -->
+  <!-- ================================================================== -->
+  
+  <target name="compile" depends="prepare">
+    <javac 
+      srcdir="${build.src}"
+      destdir="${build.dest}"
+      debug="${debug}"
+      deprecation="${deprecation}"
+      optimize="${optimize}"
+    >
+    <classpath refid="classpath"/>
+    </javac>
+  </target>
   
   <!-- ================================================================== -->
-  <!-- D E L E G A T O R S                                                -->
+  <!-- J A R                                                              -->
   <!-- ================================================================== -->
-        
-  <target 
-    name="maven:site">
-    <ant antfile="${maven.home}/build-docs.xml" target="site"/>
+  
+  <target name="jar" depends="compile"
+    description="Builds the two JAR files from source">
+
+    <jar jarfile="${build.dir}/${final.name}.jar">
+      <fileset dir="${build.dest}" excludes="**/applet/*"/>
+    </jar>
+    <jar jarfile="${build.dir}/${final.name}-applet.jar">
+      <fileset dir="${build.dest}"
+      excludes="**/xmlrpc/*,**/fesi/*,**/secure/*"/>
+    </jar>
   </target>
-        
-  <target 
-    name="maven:jar">
-    <ant antfile="${maven.home}/build-maven.xml" target="jar"/>
+
+  <!-- ================================================================== -->
+  <!-- J A V A D O C S                                                    -->
+  <!-- ================================================================== -->
+  
+  <target name="javadocs" depends="prepare">
+    <mkdir dir="${javadoc.destdir}"/>
+    <javadoc
+      sourcepath="${build.src}/java"
+      packagenames="org.apache.xmlrpc.*"
+      destdir="${javadoc.destdir}"
+      author="true"
+      private="true"
+      version="true"
+      use="true"
+      windowtitle="${name} ${version} API"
+      doctitle="${name} ${version} API"
+      bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
+    >
+    <classpath refid="classpath"/>
+    </javadoc>
   </target>
-        
-  <target 
-    name="maven:install-jar">
-    <ant antfile="${maven.home}/build-maven.xml" target="install-jar"/>
+
+  <!-- ================================================================== -->
+  <!-- C L E A N                                                          -->
+  <!-- ================================================================== -->
+
+  <target name="clean">
+    <delete file="${final.name}.tar.gz"/>
+    <delete file="${final.name}.zip"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${test.reportsDirectory}"/>
   </target>
-        
-  <target 
-    name="maven:env">
-    <ant antfile="${maven.home}/build-maven.xml" target="env"/>
+
+  <!-- ================================================================== -->
+  <!-- T E S T                                                            -->
+  <!-- ================================================================== -->
+
+  <target name="compile-tests"
+    depends="init,check.junit,compile"
+    description="Compiles testing source code">
+    
+    <mkdir dir="${build.test.dest}"/>
+
+    <javac srcdir="${src.test.dir}"
+      destdir="${build.test.dest}"
+      includes="**/*Test.java"
+      excludes="**/package.html"
+      debug="${debug}"
+      deprecation="${deprecation}"
+      optimize="${optimize}">
+      <classpath refid="classpath"/>
+      <classpath>
+        <pathelement path="${build.dest}"/>
+      </classpath>
+    </javac>
+    
   </target>
-        
-  <target 
-    name="maven:docs">
-    <ant antfile="${maven.home}/build-docs.xml" target="docs"/>
+
+  <target name="test"
+    depends="compile-tests"
+    description="Runs unit and run-time tests">
+    
+    <echo>
+      Running all JUnit tests
+    </echo>
+    
+    <delete dir="${test.reportsDirectory}"/>
+    <mkdir dir="${test.reportsDirectory}"/>
+    
+    <junit printSummary="yes">
+      <formatter type="plain"/>
+      <classpath refid="classpath"/>
+      <classpath>
+        <!-- <pathelement location="${xerces.jar}"/> -->
+        <pathelement path="${build.dest}"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement path="${build.test.dest}"/>
+      </classpath>
+      <batchtest todir="${test.reportsDirectory}">
+        <fileset dir="${build.test.dest}">
+          <include name="**/*Test.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
   </target>
-        
+
+  <!-- ================================================================== -->
+  <!-- D O C S                                                            -->
+  <!-- ================================================================== -->
+  
   <target 
-    name="maven:test">
-    <ant antfile="${maven.home}/build-test.xml" target="test"/>
+    name="check_for_jdom">
+    
+    <available 
+      property="jdom.present"
+      classname="org.jdom.JDOMException">
+      <classpath>
+        <pathelement location="${jakarta.site2}/lib/${jdom.jar}"/>
+      </classpath>
+    </available>
   </target>
-        
+    
   <target 
-    name="maven:clean">
-    <ant antfile="${maven.home}/build-maven.xml" target="clean"/>
-  </target>
-        
-  <target  
-    name="maven:metrics">
-    <ant antfile="${maven.home}/build-metrics.xml" target="metrics"/>
-  </target>
-        
-  <target 
-    name="maven:dist">
-    <ant antfile="${maven.home}/build-maven.xml" target="dist"/>
-  </target>
-        
-  <target 
-    name="maven:deploy-site">
-    <ant antfile="${maven.home}/build-docs.xml" target="deploy-site"/>
-  </target>
-        
-  <target 
-    name="maven:gump-descriptor">
-    <ant antfile="${maven.home}/build-maven.xml" target="gump-descriptor"/>
-  </target>
-        
-  <target 
-    name="maven:javadocs">
-    <ant antfile="${maven.home}/build-docs.xml" target="javadocs"/>
-  </target>
-        
-  <target 
-    name="maven:compile">
-    <ant antfile="${maven.home}/build-maven.xml" target="compile"/>
+    depends="check_for_jdom" 
+    name="docs-prepare-error" 
+    unless="jdom.present">
+    
+    <echo>
+      The Jakarta-Site2 module is not present! Please check
+      to make sure that you have checked it out from CVS.
+
+      &lt;http://jakarta.apache.org/site/jakarta-site2.html&gt;
+    </echo>
   </target>
 
   <target 
-    name="maven:update-jars">
-    <ant antfile="${maven.home}/build-maven.xml" target="update-jars"/>
+    name="docs"
+    depends="docs-prepare-error,javadocs"
+    description="Generates the HTML documentation (including JavaDoc)"
+    if="jdom.present">
+
+    <taskdef 
+      name="anakia"
+      classname="org.apache.velocity.anakia.AnakiaTask">
+      <classpath>
+        <fileset dir="${jakarta.site2}/lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </taskdef>
+        
+    <anakia 
+      basedir="${docs.src}" 
+      destdir="${docs.dest}/"
+      extension=".html" 
+      style="./site.vsl"
+      projectFile="stylesheets/project.xml"
+      excludes="**/stylesheets/** empty.xml"
+      includes="**/*.xml"
+      lastModifiedCheck="true"
+      templatePath="${docs.src}/stylesheets">
+    </anakia>
+
+    <copy 
+      todir="${docs.dest}/images" 
+      filtering="no">
+      
+      <fileset dir="${docs.src}/images">
+        <include name="**/*.gif"/>
+        <include name="**/*.jpeg"/>
+        <include name="**/*.jpg"/>
+      </fileset>
+    </copy>
   </target>
+
+  <!-- ================================================================== -->
+  <!-- I N S T A L L  J A R                                               -->
+  <!-- ================================================================== -->
+
+  <target name="install-jar" depends="jar" 
+    description="Installs .jar file in ${lib.repo}">
+
+    <copy todir="${lib.repo}" filtering="no">
+      <fileset dir="${build.dir}">
+        <include name="${final.name}.jar"/>
+        <include name="${final.name}-applet.jar"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- D I S T R I B U T I O N S                                          -->
+  <!-- ================================================================== -->
+
+  <target 
+    name="dist"
+    depends="jar,javadocs,docs">
+
+    <property name="distDir" value="${build.dir}/${final.name}"/>
+
+    <!-- B I N A R Y  D I S T R I B U T I O N -->
+
+    <echo>
+      +-------------------------------------------------------+
+      | C R E A T I N G  B I N A R Y  D I S T R I B U T I O N |
+      +-------------------------------------------------------+
+    </echo>
     
-  <!-- maven:end -->
+    <mkdir dir="${distDir}"/>
+
+    <!-- Copy README and LICENSE -->
+    <copy todir="${distDir}" file="README.txt"/>
+    <copy todir="${distDir}" file="LICENSE"/>
+
+    <!-- Copy Jars -->
+    <copy todir="${distDir}">
+      <fileset dir="${build.dir}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- Copy documentation -->
+    <copy todir="${distDir}/docs">
+      <fileset dir="${docs.dest}">
+        <include name="**"/>
+      </fileset>
+    </copy>
+
+    <!-- Create a tar.gz file -->
+    <tar longfile="gnu" tarfile="${final.name}.tar">
+      <tarfileset dir="${build.dir}">
+        <include name="${final.name}/**"/>
+      </tarfileset>
+    </tar>
+    
+    <gzip zipfile="${final.name}.tar.gz" src="${final.name}.tar"/>
+    <delete file="${final.name}.tar"/>
+    
+    <!-- Create a zip file -->
+    <zip zipfile="${final.name}.zip">
+      <zipfileset dir="${build.dir}">
+        <include name="${final.name}/**"/>
+      </zipfileset>
+    </zip>
+
+    <!-- S O U R C E  D I S T R I B U T I O N -->
+
+    <echo>
+      +-------------------------------------------------------+
+      | C R E A T I N G  S O U R C E  D I S T R I B U T I O N |
+      +-------------------------------------------------------+
+    </echo>
+
+    <delete>
+      <fileset dir="${distDir}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </delete>
+    
+    <copy todir="${distDir}" file="build.properties"/>
+    <copy todir="${distDir}" file="build.xml"/>
+
+    <!-- Copy Source -->
+    <copy todir="${distDir}/src">
+      <fileset dir="${src.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+    </copy>
+
+    <!-- Create a tar.gz file -->
+    <tar longfile="gnu" tarfile="${final.name}-src.tar">
+      <tarfileset dir="${build.dir}">
+        <include name="${final.name}/**"/>
+      </tarfileset>
+    </tar>
+    
+    <gzip zipfile="${final.name}-src.tar.gz" src="${final.name}-src.tar"/>
+    <delete file="${final.name}-src.tar"/>
+    
+    <!-- Create a zip file -->
+    <zip zipfile="${final.name}-src.zip">
+      <zipfileset dir="${build.dir}">
+        <include name="${final.name}/**"/>
+      </zipfileset>
+    </zip>
+
+  </target>
 
 </project>
