@@ -105,7 +105,7 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport {
         method.setRequestHeader(userAgentHeader);
         // TODO: authentication not implemented yet
         method.setRequestBody(new ByteArrayInputStream(request));
-        URI hostURI = new URI(url);
+        URI hostURI = new URI(url.toString());
         HostConfiguration hostConfig = new HostConfiguration();
         hostConfig.setHost(hostURI);
         client.executeMethod(hostConfig, method);
