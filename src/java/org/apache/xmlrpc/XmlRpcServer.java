@@ -95,9 +95,13 @@ public class XmlRpcServer
     {
         if (handler instanceof XmlRpcHandler ||
                 handler instanceof AuthenticatedXmlRpcHandler)
+        {
             handlers.put(handlername, handler);
+        }
         else if (handler != null)
+        {
             handlers.put(handlername, new Invoker(handler));
+        }
     }
 
     /**
