@@ -276,14 +276,6 @@
   <!-- D I S T R I B U T I O N S                                          -->
   <!-- ================================================================== -->
 
-  <!-- =================================================================== -->
-  <!-- S E L F  C O N T A I N E D  A P P                                   -->
-  <!-- =================================================================== -->
-  <!-- This is the start of automating the build of a set of novice        -->
-  <!-- apps that will allow people to get up and running quickly with      -->
-  <!-- Turbine and the TDK.                                                -->
-  <!-- =================================================================== -->
-  
   <target 
     name="dist"
     depends="jar">
