@@ -154,8 +154,9 @@ public class XmlRpcServer
     }
 
     /**
+     * Hands out pooled workers.
      *
-     * @return
+     * @return A worker.
      */
     private final Worker getWorker()
     {
@@ -176,6 +177,70 @@ public class XmlRpcServer
                 return new Worker();
             }
             throw new RuntimeException("System overload");
+        }
+    }
+
+    /**
+     * Find the handler for a given method.
+     *
+     * @param methodName The name of the method to find.
+     */
+    protected Object getHandler(String methodName)
+        throws Exception
+    {
+        Object handler = null;
+        String handlerName = null;
+        int dot = methodName.lastIndexOf('.');
+        if (dot > -1)
+        {
+            handlerName = methodName.substring(0, dot);
+            handler = handlers.get(handlerName);
+            if (handler != null)
+            {
+                methodName = methodName.substring(dot + 1);
+            }
+        }
+
+        if (handler == null)
+        {
+            handler = handlers.get("$default");
+        }
+
+        if (handler == null)
+        {
+            if (dot > -1)
+            {
+                throw new Exception("RPC handler object \""
+                                    + handlerName + "\" not found and no default "
+                                    + "handler registered.");
+            }
+            else
+            {
+                throw new Exception("RPC handler object not found for \""
+                                    + methodName
+                                    + "\": no default handler registered.");
+            }
+        }
+
+        return handler;
+    }
+    
+    /**
+     * Invokes the specified method on the provided handler.
+     */
+    protected Object invokeHandler(Object handler, String methodName,
+                                   Vector request, String user,
+                                   String password)
+        throws Exception
+    {
+        if (handler instanceof AuthenticatedXmlRpcHandler)
+        {
+            return ((AuthenticatedXmlRpcHandler) handler)
+                .execute(methodName, request, user, password);
+        }
+        else
+        {
+            return ((XmlRpcHandler) handler).execute(methodName, request);
         }
     }
 
@@ -226,7 +291,7 @@ public class XmlRpcServer
         private byte[] executeInternal(InputStream is, String user,
                 String password)
         {
-            byte[] result;
+            byte[] result = null;
             long now = 0;
 
             if (XmlRpc.debug)
@@ -246,60 +311,14 @@ public class XmlRpcServer
                 {
                     throw new Exception(errorMsg);
                 }
-                Object handler = null;
 
-                String handlerName = null;
-                int dot = methodName.lastIndexOf('.');
-                if (dot > -1)
-                {
-                    handlerName = methodName.substring(0, dot);
-                    handler = handlers.get(handlerName);
-                    if (handler != null)
-                    {
-                        methodName = methodName.substring(dot + 1);
-                    }
-                }
+                Object handler = getHandler(methodName);
+                Object outParam = invokeHandler(handler, methodName, inParams, user, password);
 
-                if (handler == null)
-                {
-                    handler = handlers.get("$default");
-                }
-
-                if (handler == null)
-                {
-                    if (dot > -1)
-                    {
-                        throw new Exception("RPC handler object \""
-                                + handlerName + "\" not found and no default "
-                                + "handler registered.");
-                    }
-                    else
-                    {
-                        throw new Exception("RPC handler object not found for \""
-                                + methodName
-                                + "\": no default handler registered.");
-                    }
-                }
-
-                Object outParam;
-                if (handler instanceof AuthenticatedXmlRpcHandler)
-                {
-                    outParam =((AuthenticatedXmlRpcHandler) handler)
-                            .execute(methodName, inParams, user, password);
-                }
-                else
-                {
-                    outParam =((XmlRpcHandler) handler)
-                            .execute(methodName, inParams);
-                }
                 if (XmlRpc.debug)
                 {
                     System.out.println("outparam = " + outParam);
                 }
-                writer = new XmlWriter(buffer, encoding);
-                writeResponse(outParam, writer);
-                writer.flush();
-                result = buffer.toByteArray();
             }
             catch(Exception x)
             {
