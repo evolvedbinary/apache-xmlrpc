@@ -69,7 +69,7 @@ public class Base64Test
 {
     private static final String[] TEST_DATA =
     {
-        "foobar",
+        "foobar   \t\r",
         "foo bar",
         "foo bar\nbaz"
     };
