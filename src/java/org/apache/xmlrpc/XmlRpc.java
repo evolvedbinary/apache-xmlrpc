@@ -83,13 +83,20 @@ public abstract class XmlRpc
     public static final String version = "Apache XML-RPC 1.0";
 
     /**
+     * The default parser to use (MinML).
+     */
+    private static final String DEFAULT_PARSER = "uk.co.wilson.xml.MinML";
+
+    /**
      * The maximum number of threads which can be used concurrently.
      */
     private static int maxThreads = 100;
 
     String methodName;
 
-    // class name of SAX parser to use
+    /**
+     * The class name of SAX parser to use.
+     */
     private static Class parserClass;
     private static Hashtable saxDrivers = new Hashtable (8);
     static
@@ -292,9 +299,13 @@ public abstract class XmlRpc
         errorMsg = null;
         values = new Stack ();
         if (cdata == null)
+        {
             cdata = new StringBuffer (128);
+        }
         else
+        {
             cdata.setLength (0);
+        }
         readCdata = false;
         currentValue = null;
 
@@ -302,10 +313,17 @@ public abstract class XmlRpc
         if (parserClass == null)
         {
             // try to get the name of the SAX driver from the System properties
-            // setDriver (System.getProperty (
-            //     "sax.driver", "org.apache.xerces.parsers.SAXParser"));
-            setDriver (System.getProperty (
-                "sax.driver", "uk.co.wilson.xml.MinML"));
+            String driver;
+            try
+            {
+                driver = System.getProperty("sax.driver", DEFAULT_PARSER);
+            }
+            catch (SecurityException e)
+            {
+                // An unsigned applet may not access system properties.
+                driver = DEFAULT_PARSER;
+            }
+            setDriver(driver);
         }
 
         Parser parser = null;
