@@ -61,16 +61,16 @@ import java.io.*;
 import java.util.Vector;
 
 /**
- * A  Servlet that acts as a XML-RPC Proxy . <p>
+ * A <code>HttpServlet</code> that acts as a XML-RPC proxy.
  *
- * The URL of the server to connect to is taken from the init parameter <tt>url</tt>.
+ * The URL of the server to connect to is taken from the servlet
+ * initialization parameter <code>url</code>.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  */
 public class XmlRpcProxyServlet 
     extends HttpServlet
 {
-
     private XmlRpcServer xmlrpc;
 
     public void init (ServletConfig config) throws ServletException
@@ -100,5 +100,4 @@ public class XmlRpcProxyServlet
         output.write (result);
         output.flush ();
     }
-
 }
