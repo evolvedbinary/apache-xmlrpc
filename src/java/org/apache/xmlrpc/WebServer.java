@@ -60,6 +60,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -79,13 +80,18 @@ import java.util.Vector;
 public class WebServer implements Runnable
 {
     protected XmlRpcServer xmlrpc;
+
     protected ServerSocket serverSocket;
-    protected int port;
     protected Thread listener;
-    protected boolean paranoid;
     protected Vector accept, deny;
     protected Stack threadpool;
     protected ThreadGroup runners;
+
+    // Inputs to setupServerSocket()
+    private InetAddress address;
+    private int port;
+
+    private boolean paranoid;
 
     protected static final byte[] ctype =
         toHTTPBytes("Content-Type: text/xml\r\n");
@@ -114,50 +120,61 @@ public class WebServer implements Runnable
      *        XML-RPC) </li>
      *   <li> An Echo handler that returns the argument array </li>
      * </ul>
+     *
+     * @see #addDefaultHandlers()
      */
-    public static void main(String args[])
+    public static void main(String[] argv)
     {
-        System.err.println("Usage: java " + WebServer.class.getName()
-                + " <port>");
-        int p = 8080;
-        if (args.length > 0)
+        int p = determinePort(argv, 8080);
+        // XmlRpc.setDebug (true);
+        XmlRpc.setKeepAlive(true);
+        WebServer webserver = new WebServer(p);
+
+        try
+        {
+            webserver.addDefaultHandlers();
+            webserver.start();
+        }
+        catch (Exception e)
+        {
+            System.err.println("Error running web server");
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Examines command line arguments from <code>argv</code>.  If a
+     * port may have been provided, parses that port (exiting with
+     * error status if the port cannot be parsed).  If no port is
+     * specified, defaults to <code>defaultPort</code>.
+     *
+     * @param defaultPort The port to use if none was specified.
+     */
+    protected static int determinePort(String[] argv, int defaultPort)
+    {
+        int port = defaultPort;
+        if (argv.length > 0)
         {
             try
             {
-                p = Integer.parseInt(args[0]);
+                port = Integer.parseInt(argv[0]);
             }
             catch (NumberFormatException nfx)
             {
-                System.err.println("Error parsing port number: " + args[0]);
+                System.err.println("Error parsing port number: " + argv[0]);
+                System.err.println("Usage: java " + WebServer.class.getName()
+                                   + " [port]");
+                System.exit(1);
             }
         }
-        // XmlRpc.setDebug (true);
-        XmlRpc.setKeepAlive(true);
-        try
-        {
-            WebServer webserver = new WebServer(p);
-            // webserver.setParanoid (true);
-            // webserver.acceptClient ("192.168.*.*");
-            webserver.addHandler("string", "Welcome to XML-RPC!");
-            webserver.addHandler("math", Math.class);
-            webserver.addHandler("auth", new AuthDemo());
-            webserver.addHandler("$default", new Echo());
-            // XmlRpcClients can be used as Proxies in XmlRpcServers which is a
-            // cool feature for applets.
-            webserver.addHandler("mttf", new XmlRpcClient(
-                    "http://www.mailtothefuture.com:80/RPC2"));
-            System.err.println("started web server on port " + p);
-        }
-        catch (IOException x)
-        {
-            System.err.println("Error creating web server: " + x);
-        }
+        return port;
     }
 
     /**
      * Creates a Web server at the specified port number.
      */
-    public WebServer(int port) throws IOException
+    public WebServer(int port)
     {
         this(port, null);
     }
@@ -165,24 +182,15 @@ public class WebServer implements Runnable
     /**
      * Creates a Web server at the specified port number and IP address.
      */
-    public WebServer(int port, InetAddress add) throws IOException
+    public WebServer(int port, InetAddress addr)
     {
+        this.address = addr;
         this.port = port;
         xmlrpc = new XmlRpcServer();
         accept = new Vector();
         deny = new Vector();
         threadpool = new Stack();
         runners = new ThreadGroup("XML-RPC Runner");
-
-        try
-        {
-            setupServerSocket(port, 50, add);
-        }
-        catch (Exception e)
-        {
-            throw new IOException(e.getMessage());
-        }
-        start();
     }
 
     /**
@@ -210,33 +218,88 @@ public class WebServer implements Runnable
      * @exception Exception Error creating listener socket.
      */
     protected ServerSocket createServerSocket(int port, int backlog,
-            InetAddress add)
+            InetAddress addr)
             throws Exception
     {
-        return new ServerSocket(port, backlog, add);
+        return new ServerSocket(port, backlog, addr);
     }
 
     /**
      * Initializes this server's listener socket with the specified
-     * attributes.  The <code>createServerSocket()</code> method can
+     * attributes, assuring that a socket timeout has been set.  The
+     * {@link #createServerSocket(int, int, InetAddress)} method can
      * be overridden to change the flavor of socket used.
      *
-     * @see #createServerSocket(int port, int backlog, InetAddress add)
+     * @see #createServerSocket(int, int, InetAddress)
      */
-    public void setupServerSocket(int port, int backlog, InetAddress add)
+    private synchronized void setupServerSocket(int backlog)
             throws Exception
     {
-        serverSocket = createServerSocket(port, backlog, add);
-        serverSocket.setSoTimeout(4096);
+        InetAddress addr = address;
+        if (addr == null)
+        {
+            addr = InetAddress.getLocalHost();
+        }
+
+        // Since we can't reliably set SO_REUSEADDR until JDK 1.4 is
+        // the standard, try to (re-)open the server socket several
+        // times.  Some OSes (Linux and Solaris, for example), hold on
+        // to listener sockets for a brief period of time for security
+        // reasons before relinquishing their hold.
+        int attempt = 1;
+        while (serverSocket == null)
+        {
+            try
+            {
+                serverSocket = createServerSocket(port, backlog, addr);
+            }
+            catch (BindException e)
+            {
+                if (attempt == 10)
+                {
+                    throw e;
+                }
+
+                attempt++;
+                Thread.sleep(1000);
+            }
+        }
+
+
+        if (XmlRpc.debug)
+        {
+            StringBuffer msg = new StringBuffer();
+            msg.append("Opened XML-RPC server socket for ");
+            msg.append(addr.getHostName()).append(':').append(port);
+            if (attempt > 1)
+            {
+                msg.append(" after ").append(attempt).append(" tries");
+            }
+            System.out.println(msg.toString());
+        }
+
+        // A socket timeout must be set.
+        if (serverSocket.getSoTimeout() <= 0)
+        {
+            serverSocket.setSoTimeout(4096);
+        }
     }
 
     /**
+     * Spawns a new thread which binds this server to the port it's
+     * configured to accept connections on.
      *
+     * @see #run()
      */
     public void start()
     {
-        listener = new Thread(this, "XML-RPC Weblistener");
-        listener.start();
+        // The listener reference is released upon shutdown().
+        if (listener == null)
+        {
+            listener = new Thread(this, "XML-RPC Weblistener");
+            // Not marked as daemon thread since run directly via main().
+            listener.start();
+        }
     }
 
     /**
@@ -246,6 +309,25 @@ public class WebServer implements Runnable
     public void addHandler(String name, Object target)
     {
         xmlrpc.addHandler(name, target);
+    }
+
+    /**
+     * Adds the bundled handlers to the server.  Called by {@link
+     * #main(String[])}.
+     */
+    protected void addDefaultHandlers()
+        throws Exception
+    {
+        // webserver.setParanoid (true);
+        // webserver.acceptClient ("192.168.*.*");
+        addHandler("string", "Welcome to XML-RPC!");
+        addHandler("math", Math.class);
+        addHandler("auth", new AuthDemo());
+        addHandler("$default", new Echo());
+        // XmlRpcClients can be used as Proxies in XmlRpcServers which is a
+        // cool feature for applets.
+        String url = "http://www.mailtothefuture.com:80/RPC2";
+        addHandler("mttf", new XmlRpcClient(url));
     }
 
     /**
@@ -311,12 +393,19 @@ public class WebServer implements Runnable
     }
 
     /**
+     * Checks incoming connections to see if they should be allowed.
+     * If not in paranoid mode, always returns true.
      *
-     * @param s
-     * @return
+     * @param s The socket to inspect.
+     * @return Whether the connection should be allowed.
      */
-    protected boolean checkSocket(Socket s)
+    protected boolean allowConnection(Socket s)
     {
+        if (!paranoid)
+        {
+            return true;
+        }
+
         int l = deny.size();
         byte address[] = s.getInetAddress().getAddress();
         for (int i = 0; i < l; i++)
@@ -340,10 +429,42 @@ public class WebServer implements Runnable
     }
 
     /**
-     * Listens for client requests until stopped.
+     * DEPRECATED: Do not use this method, it will be removed soon.
+     * Use {@link #allowConnection(Socket)} instead.
+     *
+     * @deprecated Use allowConnection(Socket) instead.
+     * @see #allowConnection(Socket)
+     */
+    protected boolean checkSocket(Socket s)
+    {
+        return allowConnection(s);
+    }
+
+    /**
+     * Listens for client requests until stopped.  Call {@link
+     * #start()} to invoke this method, and {@link #shutdown()} to
+     * break out of it.
+     *
+     * @throws RuntimeException Generally caused by either an
+     * <code>UnknownHostException</code> or <code>BindException</code>
+     * with the vanilla web server.
+     *
+     * @see #start()
+     * @see #shutdown()
      */
     public void run()
     {
+        try
+        {
+            setupServerSocket(50);
+        }
+        catch (Exception e)
+        {
+            listener = null;
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+
         try
         {
             while (listener != null)
@@ -351,7 +472,7 @@ public class WebServer implements Runnable
                 try
                 {
                     Socket socket = serverSocket.accept();
-                    if (!paranoid || checkSocket(socket))
+                    if (allowConnection(socket))
                     {
                         Runner runner = getRunner();
                         runner.handle(socket);
@@ -370,11 +491,16 @@ public class WebServer implements Runnable
                 {
                     System.err.println("Exception in XML-RPC listener loop ("
                             + ex + ").");
+                    if (XmlRpc.debug)
+                    {
+                        ex.printStackTrace();
+                    }
                 }
                 catch (Error err)
                 {
                     System.err.println("Error in XML-RPC listener loop ("
                             + err + ").");
+                    err.printStackTrace();
                 }
             }
         }
@@ -382,25 +508,56 @@ public class WebServer implements Runnable
         {
             System.err.println("Error accepting XML-RPC connections ("
                     + exception + ").");
+            if (XmlRpc.debug)
+            {
+                exception.printStackTrace();
+            }
         }
         finally
         {
-            System.err.println("Closing XML-RPC server socket.");
-            try
+            if (serverSocket != null)
             {
-                serverSocket.close();
-                serverSocket = null;
+                try
+                {
+                    serverSocket.close();
+                    if (XmlRpc.debug)
+                    {
+                        System.out.print("Closed XML-RPC server socket");
+                    }
+                    serverSocket = null;
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
-            catch (IOException ignore)
+
+            // Shutdown our Runner-based threads
+            if (runners != null)
             {
+                ThreadGroup g = runners;
+                runners = null;
+                try
+                {
+                    g.interrupt();
+                }
+                catch (Exception e)
+                {
+                    System.err.println(e);
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     /**
-     * Stop listening on the server port.
+     * Stop listening on the server port.  Shutting down our {@link
+     * #listener} effectively breaks it out of its {@link #run()}
+     * loop.
+     *
+     * @see #run()
      */
-    public void shutdown()
+    public synchronized void shutdown()
     {
         // Stop accepting client connections
         if (listener != null)
@@ -408,22 +565,6 @@ public class WebServer implements Runnable
             Thread l = listener;
             listener = null;
             l.interrupt();
-        }
-
-        // Shutdown our Runner-based threads
-        if (runners != null)
-        {
-            ThreadGroup g = runners;
-            runners = null;
-            try
-            {
-                g.interrupt();
-            }
-            catch (Exception e)
-            {
-                System.err.println(e);
-                e.printStackTrace();
-            }
         }
     }
 
@@ -564,7 +705,7 @@ public class WebServer implements Runnable
                     }
                     if (XmlRpc.debug)
                     {
-                        System.err.println(line);
+                        System.out.println(line);
                     }
                     int contentLength = -1;
 
@@ -582,7 +723,7 @@ public class WebServer implements Runnable
                         {
                             if (XmlRpc.debug)
                             {
-                                System.err.println(line);
+                                System.out.println(line);
                             }
                             String lineLower = line.toLowerCase();
                             if (lineLower.startsWith("content-length:"))
@@ -607,7 +748,7 @@ public class WebServer implements Runnable
                     {
                         ServerInputStream sin = new ServerInputStream(input,
                                 contentLength);
-                        byte result[] = xmlrpc.execute(sin, user, password);
+                        byte[] result = xmlrpc.execute(sin, user, password);
                         output.write(toHTTPBytes(httpversion));
                         output.write(ok);
                         output.write(server);
