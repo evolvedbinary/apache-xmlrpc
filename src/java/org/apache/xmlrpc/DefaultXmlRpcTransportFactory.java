@@ -88,16 +88,16 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
 
     static
     {
-	// A mapping of short identifiers to the fully qualified class names of
-	// common transport factories. If more mappings are added here,
-	// increase the size of the transports Hashtable used to store them.
+        // A mapping of short identifiers to the fully qualified class names of
+        // common transport factories. If more mappings are added here,
+        // increase the size of the transports Hashtable used to store them.
         transports.put("comnetsun", "org.apache.xmlrpc.secure.sunssl.SunSSLTransportFactory");
     }
 
     public static void setHTTPSTransport(String transport, Properties properties)
         throws XmlRpcClientException
     {
-      httpsTransportFactory = createTransportFactory(transport, properties);    
+        httpsTransportFactory = createTransportFactory(transport, properties);    
     }
 
     public static XmlRpcTransportFactory createTransportFactory(String transport, Properties properties)
@@ -130,8 +130,8 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
             else
             {
                 throw new XmlRpcClientException("Class '" + 
-                   transportFactoryClass.getName() + "' does not implement '" +
-                   XmlRpcTransportFactory.class.getName() + "'", null);
+                    transportFactoryClass.getName() + "' does not implement '" +
+                    XmlRpcTransportFactory.class.getName() + "'", null);
             }
         }
         catch (ClassNotFoundException cnfe)
@@ -158,7 +158,7 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
         catch (InvocationTargetException ite)
         {
             throw new XmlRpcClientException("Error calling Transport Factory constructor: ",
-               ite.getTargetException());
+                ite.getTargetException());
         }
     }
   
@@ -183,19 +183,19 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
     {
         if ("https".equals(url.getProtocol()))
         {
-          if (httpsTransportFactory == null)
-          {
-             Properties properties = new Properties();
-
-             properties.put(XmlRpcTransportFactory.TRANSPORT_URL, url);
-             properties.put(XmlRpcTransportFactory.TRANSPORT_AUTH, auth);
-
-             setHTTPSTransport(DEFAULT_HTTPS_PROVIDER, properties);
-          }
+            if (httpsTransportFactory == null)
+            {
+                Properties properties = new Properties();
+ 
+                properties.put(XmlRpcTransportFactory.TRANSPORT_URL, url);
+                properties.put(XmlRpcTransportFactory.TRANSPORT_AUTH, auth);
+ 
+                setHTTPSTransport(DEFAULT_HTTPS_PROVIDER, properties);
+            }
   
-          return httpsTransportFactory.createTransport();
+            return httpsTransportFactory.createTransport();
         }
-        
+         
         return new DefaultXmlRpcTransport(url);
     }
     
@@ -214,15 +214,15 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
     {
         if (httpsTransportFactory != null)
         {
-           httpsTransportFactory.setProperty(propertyName, value);
+            httpsTransportFactory.setProperty(propertyName, value);
         }
         if (TRANSPORT_AUTH.equals(propertyName))
         {
-          auth = (String) value;
+            auth = (String) value;
         }
         else if (TRANSPORT_URL.equals(propertyName))
         {
-          url = (URL) value;
+            url = (URL) value;
         }
     }
 }
