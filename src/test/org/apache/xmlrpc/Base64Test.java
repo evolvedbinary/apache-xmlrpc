@@ -69,8 +69,9 @@ public class Base64Test
 {
     private static final String[] TEST_DATA =
     {
-        "foobar   \t\r",
+        "foobar",
         "foo bar",
+        "foobar   \t\r",
         "foo bar\nbaz"
     };
 
@@ -97,12 +98,14 @@ public class Base64Test
         {
             for (int i = 0; i < TEST_DATA.length; i++)
             {
-                System.out.println("Test data: " + TEST_DATA[i]);
+                System.out.println("Input data: '" + TEST_DATA[i] + "'");
                 byte[] raw = TEST_DATA[i].getBytes();
                 byte[] encoded = Base64.encode(raw);
                 byte[] decoded = Base64.decode(encoded);
+                System.out.println("Encoded data: '" + new String(encoded) +
+                                   "'");
                 assertEquals(raw, decoded);
-                assertEquals(TEST_DATA[i], String.valueOf(decoded));
+                assertEquals(TEST_DATA[i], new String(decoded));
             }
         }
         catch (Exception e)
