@@ -19,7 +19,7 @@ B U I L D I N G
 --------------------------------------------------------------------------
 
 You can build the core XmlRpc package with the classes provided
-by your JDK. If you wish to use the Servlet and/or SSL extensions
+using JDK 1.2+. If you wish to use the Servlet and/or SSL extensions
 than you must set the following properties in either your
 ${user.home}/build.properties file, or the build.properties
 file provided in the XmlRpc build/ directory:
