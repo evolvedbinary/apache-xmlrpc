@@ -136,9 +136,14 @@ public class XmlRpcServer
         }
         catch (EmptyStackException x)
         {
-            if (workers < XmlRpc.getMaxThreads())
+            int maxThreads = XmlRpc.getMaxThreads();
+            if (workers < maxThreads)
             {
                 workers += 1;
+                if (XmlRpc.debug && maxThreads - workers >= maxThreads * .95)
+                {
+                    System.err.println("95% of XML-RPC server threads in use");
+                }
                 return new Worker ();
             }
             throw new RuntimeException ("System overload");
