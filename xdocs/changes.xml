@@ -14,12 +14,70 @@
         <ul>
 
           <li>
+            <strong>13 Aug 2002</strong>
+            <ul>
+
+              <li>
+                WebServer.java: Renamed the checkSocket() method to
+                allowConnection(), and integrated checking of paranoia
+                state into it. (dlr)
+              </li>
+
+              <li>
+                WebServer.java: Server now shuts down cleanly, with
+                the start() and shutdown() methods mostly just a
+                controls for the listener thread's run() life
+                cycle. (dlr)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
+            <strong>13 Aug 2002</strong>
+            <ul>
+
+              <li>
+                SystemHandler.java: New handler for system.multicall
+                donated by Adam Megacz. (dlr)
+              </li>
+
+              <li>
+                XmlRpcServer.java: Refactored internals to be more
+                modular. (dlr)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
             <strong>09 Aug 2002</strong>
             <ul>
 
               <li>
-                XmlWriter.java: Corrected encoding of &lt;struct&gt;
-                parameter names.  (Adam Megacz)
+                WebServer.java, SecureWebServer.java: Refactored code
+                so that start() is what opens the listener socket.
+                This changes the way the server is started! (dlr)
+              </li>
+
+              <li>
+                XmlRpcServer.java, XmlRpcClient.java,
+                XmlRpcClientLite.java, WebServer.java: Switched
+                general debugging statements from System.err to
+                System.out. (dlr)
+              </li>
+
+              <li>
+                WebServer.java: Reduced scope of setupServerSocket()
+                from public to private, and assured that it only sets
+                the (required) socket timeout when non has been
+                specified.  createServerSocket() can be overridden to
+                produced a different flavor of socket. (dlr)
+              </li>
+
+              <li>
+                SecureWebServer.java: Improved constructor
+                documentation. (dlr)
               </li>
 
             </ul>
@@ -28,6 +86,11 @@
           <li>
             <strong>08 Aug 2002</strong>
             <ul>
+
+              <li>
+                XmlWriter.java: Corrected encoding of &lt;struct&gt;
+                parameter names.  (Adam Megacz)
+              </li>
 
               <li>
                 XmlRpc.java, XmlWriter.java, DateUtil.java:  Extracted
