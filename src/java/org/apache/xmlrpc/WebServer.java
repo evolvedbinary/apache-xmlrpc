@@ -106,6 +106,8 @@ public class WebServer implements Runnable
     protected static final byte[] ok = toHTTPBytes(" 200 OK\r\n");
     protected static final byte[] server =
         toHTTPBytes("Server: Apache XML-RPC 1.0\r\n");
+    protected static final byte[] wwwAuthenticate =
+        toHTTPBytes("WWW-Authenticate: Basic realm=XML-RPC\r\n");
 
     private static final String HTTP_11 = "HTTP/1.1";
     private static final String STAR = "*";
@@ -691,7 +693,7 @@ public class WebServer implements Runnable
         {
             try
             {
-                boolean keepalive = false;
+                boolean keepAlive = false;
 
                 do
                 {
@@ -714,9 +716,9 @@ public class WebServer implements Runnable
                     StringTokenizer tokens = new StringTokenizer(line);
                     String method = tokens.nextToken();
                     String uri = tokens.nextToken();
-                    String httpversion = tokens.nextToken();
-                    keepalive = XmlRpc.getKeepAlive()
-                            && HTTP_11.equals(httpversion);
+                    String httpVersion = tokens.nextToken();
+                    keepAlive = XmlRpc.getKeepAlive()
+                            && HTTP_11.equals(httpVersion);
                     do
                     {
                         line = readLine();
@@ -734,7 +736,7 @@ public class WebServer implements Runnable
                             }
                             if (lineLower.startsWith("connection:"))
                             {
-                                keepalive = XmlRpc.getKeepAlive() &&
+                                keepAlive = XmlRpc.getKeepAlive() &&
                                         lineLower.indexOf("keep-alive") > -1;
                             }
                             if (lineLower.startsWith("authorization: basic "))
@@ -749,47 +751,31 @@ public class WebServer implements Runnable
                     {
                         ServerInputStream sin = new ServerInputStream(input,
                                 contentLength);
-                        byte[] result = xmlrpc.execute(sin, user, password);
-                        output.write(toHTTPBytes(httpversion));
-                        output.write(ok);
-                        output.write(server);
-                        if (keepalive)
+                        try
                         {
-                            output.write(conkeep);
+                            byte[] result = xmlrpc.execute(sin, user, password);
+                            writeResponse(result, httpVersion, keepAlive);
                         }
-                        else
+                        catch (AuthenticationFailed unauthorized)
                         {
-                            output.write (conclose);
+                            keepAlive = false;
+                            writeUnauthorized(httpVersion, method);
                         }
-                        output.write(ctype);
-                        output.write(clength);
-                        output.write(toHTTPBytes(Integer.toString
-                                                 (result.length)));
-                        output.write(doubleNewline);
-                        output.write(result);
-                        output.flush();
                     }
                     else
                     {
-                        output.write(toHTTPBytes(httpversion));
-                        output.write(toHTTPBytes(" 400 Bad Request"));
-                        output.write(newline);
-                        output.write(server);
-                        output.write(newline);
-                        output.write(toHTTPBytes
-                                     ("Method " + method +
-                                      " not implemented (try POST)"));
-                        output.flush();
-                        keepalive = false;
+                        keepAlive = false;
+                        writeBadRequest(httpVersion, method);
                     }
+                    output.flush();
                 }
-                while (keepalive);
+                while (keepAlive);
             }
             catch (Exception exception)
             {
+                System.err.println(exception);
                 if (XmlRpc.debug)
                 {
-                    System.err.println(exception);
                     exception.printStackTrace();
                 }
             }
@@ -857,6 +843,46 @@ public class WebServer implements Runnable
             catch (Throwable ignore)
             {
             }
+        }
+
+        private void writeResponse(byte[] payload, String httpVersion,
+                                   boolean keepAlive)
+            throws IOException
+        {
+            output.write(toHTTPBytes(httpVersion));
+            output.write(ok);
+            output.write(server);
+            output.write(keepAlive ? conkeep : conclose);
+            output.write(ctype);
+            output.write(clength);
+            output.write(toHTTPBytes(Integer.toString(payload.length)));
+            output.write(doubleNewline);
+            output.write(payload);
+        }
+
+        private void writeBadRequest(String httpVersion, String httpMethod)
+            throws IOException
+        {
+            output.write(toHTTPBytes(httpVersion));
+            output.write(toHTTPBytes(" 400 Bad Request"));
+            output.write(newline);
+            output.write(server);
+            output.write(newline);
+            output.write(toHTTPBytes("Method " + httpMethod +
+                                     " not implemented (try POST)"));
+        }
+
+        private void writeUnauthorized(String httpVersion, String httpMethod)
+            throws IOException
+        {
+            output.write(toHTTPBytes(httpVersion));
+            output.write(toHTTPBytes(" 401 Unauthorized"));
+            output.write(newline);
+            output.write(server);
+            output.write(wwwAuthenticate);
+            output.write(newline);
+            output.write(toHTTPBytes("Method " + httpMethod + " requires a " +
+                                     "valid user name and password"));
         }
     }
 
