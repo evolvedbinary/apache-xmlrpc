@@ -371,7 +371,7 @@ public class WebServer
             l.interrupt ();
         }
 
-        // Shutdown our Runner threads
+        // Shutdown our Runner-based threads
         if (runners != null)
         {
             ThreadGroup g = runners;
