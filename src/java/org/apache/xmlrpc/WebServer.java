@@ -59,6 +59,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -86,14 +87,19 @@ public class WebServer implements Runnable
     protected Stack threadpool;
     protected ThreadGroup runners;
 
-    protected static final byte[] ctype = "Content-Type: text/xml\r\n".getBytes();
-    protected static final byte[] clength = "Content-Length: ".getBytes();
-    protected static final byte[] newline = "\r\n".getBytes();
-    protected static final byte[] doubleNewline = "\r\n\r\n".getBytes();
-    protected static final byte[] conkeep = "Connection: Keep-Alive\r\n".getBytes();
-    protected static final byte[] conclose = "Connection: close\r\n".getBytes();
-    protected static final byte[] ok = " 200 OK\r\n".getBytes();
-    protected static final byte[] server = "Server: Apache XML-RPC 1.0\r\n".getBytes();
+    protected static final byte[] ctype =
+        toHTTPBytes("Content-Type: text/xml\r\n");
+    protected static final byte[] clength =
+        toHTTPBytes("Content-Length: ");
+    protected static final byte[] newline = toHTTPBytes("\r\n");
+    protected static final byte[] doubleNewline = toHTTPBytes("\r\n\r\n");
+    protected static final byte[] conkeep =
+        toHTTPBytes("Connection: Keep-Alive\r\n");
+    protected static final byte[] conclose =
+        toHTTPBytes("Connection: close\r\n");
+    protected static final byte[] ok = toHTTPBytes(" 200 OK\r\n");
+    protected static final byte[] server =
+        toHTTPBytes("Server: Apache XML-RPC 1.0\r\n");
 
     private static final String HTTP_11 = "HTTP/1.1";
     private static final String STAR = "*";
@@ -177,6 +183,23 @@ public class WebServer implements Runnable
             throw new IOException(e.getMessage());
         }
         start();
+    }
+
+    /**
+     * Returns the US-ASCII encoded byte representation of text for
+     * HTTP use (as per section 2.2 of RFC 2068).
+     */
+    protected static final byte[] toHTTPBytes(String text)
+    {
+        try
+        {
+            return text.getBytes("US-ASCII");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw new Error(e.getMessage() +
+                            ": HTTP requires US-ASCII encoding");
+        }
     }
 
     /**
@@ -585,7 +608,7 @@ public class WebServer implements Runnable
                         ServerInputStream sin = new ServerInputStream(input,
                                 contentLength);
                         byte result[] = xmlrpc.execute(sin, user, password);
-                        output.write(httpversion.getBytes());
+                        output.write(toHTTPBytes(httpversion));
                         output.write(ok);
                         output.write(server);
                         if (keepalive)
@@ -598,20 +621,22 @@ public class WebServer implements Runnable
                         }
                         output.write(ctype);
                         output.write(clength);
-                        output.write(Integer.toString(result.length)
-                                .getBytes());
+                        output.write(toHTTPBytes(Integer.toString
+                                                 (result.length)));
                         output.write(doubleNewline);
                         output.write(result);
                         output.flush();
                     }
                     else
                     {
-                        output.write(httpversion.getBytes());
-                        output.write(" 400 Bad Request\r\n".getBytes());
+                        output.write(toHTTPBytes(httpversion));
+                        output.write(toHTTPBytes(" 400 Bad Request"));
+                        output.write(newline);
                         output.write(server);
-                        output.write("\r\n".getBytes());
-                        output.write(("Method " + method
-                                + " not implemented (try POST)").getBytes());
+                        output.write(newline);
+                        output.write(toHTTPBytes
+                                     ("Method " + method +
+                                      " not implemented (try POST)"));
                         output.flush();
                         keepalive = false;
                     }
@@ -681,7 +706,7 @@ public class WebServer implements Runnable
         {
             try
             {
-                byte[] c = Base64.decode(line.substring(21).getBytes());
+                byte[] c = Base64.decode(toHTTPBytes(line.substring(21)));
                 String str = new String(c);
                 int col = str.indexOf(':');
                 user = str.substring(0, col);
