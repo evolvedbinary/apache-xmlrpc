@@ -293,8 +293,9 @@ class XmlWriter extends OutputStreamWriter
     }
 
     /**
+     * Writes text as <code>PCDATA</code>.
      *
-     * @param text
+     * @param text The data to write.
      * @throws IOException
      */
     protected void chardata(String text) throws IOException
@@ -305,6 +306,11 @@ class XmlWriter extends OutputStreamWriter
             char c = text.charAt (i);
             switch (c)
             {
+            case '\t':
+            case '\r':
+            case '\n':
+                write(c);
+                break;
             case '<':
                 write(LESS_THAN_ENTITY);
                 break;
@@ -315,7 +321,16 @@ class XmlWriter extends OutputStreamWriter
                 write(AMPERSAND_ENTITY);
                 break;
             default:
-                write(c);
+                if (c < 0x20 || c > 0xff)
+                {
+                    write("&#");
+                    write(String.valueOf((int)c));
+                    write(';');
+                }
+                else
+                {
+                    write(c);
+                }
             }
         }
     }
