@@ -96,6 +96,10 @@ public class XmlRpcClient implements XmlRpcHandler
     public XmlRpcClient(URL url)
     {
         this.url = url;
+        if (XmlRpc.debug)
+        {
+            System.out.println("Created client to url space " + url);
+        }
     }
 
     /**
@@ -103,7 +107,7 @@ public class XmlRpcClient implements XmlRpcHandler
      */
     public XmlRpcClient(String url) throws MalformedURLException
     {
-        this.url = new URL(url);
+        this(new URL(url));
     }
 
     /**
@@ -111,7 +115,7 @@ public class XmlRpcClient implements XmlRpcHandler
      */
     public XmlRpcClient(String hostname, int port) throws MalformedURLException
     {
-        this.url = new URL("http://" + hostname + ':' + port + "/RPC2");
+        this(new URL("http://" + hostname + ':' + port + "/RPC2"));
     }
 
     /**
