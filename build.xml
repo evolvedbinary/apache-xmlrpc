@@ -23,6 +23,7 @@
     <pathelement location="${junit.jar}"/>
     <pathelement location="${commons-httpclient.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
+    <pathelement location="${commons-codec.jar}"/>
   </path>
 
   <!-- ================================================================== -->
@@ -39,6 +40,7 @@
     <echo message="junit.jar = ${junit.jar}"/>
     <echo message="commons-httpclient.jar = ${commons-httpclient.jar}"/>
     <echo message="commons-logging.jar = ${commons-logging.jar}"/>
+    <echo message="commons-codec.jar = ${commons-codec.jar}"/>
   </target>
 
   <!-- ================================================================== -->
