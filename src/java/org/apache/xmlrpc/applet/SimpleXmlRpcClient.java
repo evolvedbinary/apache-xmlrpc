@@ -62,7 +62,7 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 import java.net.*;
-
+import org.apache.xmlrpc.Base64;
 
 /**
  *  A simple XML-RPC client 
@@ -188,8 +188,8 @@ class XmlRpcSupport extends HandlerBase {
 	    writer.endElement ("dateTime.iso8601");
 	} else if (what instanceof byte[]) {
 	    writer.startElement ("base64");
-	    sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder ();
-	    writer.write (encoder.encodeBuffer ((byte[]) what));
+	    // FIXME: Find a better way than creating a new String and converting to a char[]
+	    writer.write (new String(Base64.encode((byte[])what)).toCharArray());
 	    writer.endElement ("base64");
 	} else if (what instanceof Vector) {
 	    writer.startElement ("array");
@@ -543,12 +543,7 @@ class XmlRpcSupport extends HandlerBase {
                     }
                     break;
                 case BASE64:
-                    sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder ();
-                    try {
-                        value = decoder.decodeBuffer (cdata);
-                    } catch (IOException x) {
-                        throw new RuntimeException ("Error decoding base64 tag: "+x.getMessage ());
-                    }
+                    value = Base64.decode(cdata.getBytes());
                     break;
                 case STRING:
                     value = cdata;
