@@ -769,6 +769,18 @@ public abstract class XmlRpc extends HandlerBase
                 this.write(Base64.encode((byte[]) obj));
                 endElement("base64");
             }
+            else if (obj instanceof Object[])
+            {
+                startElement("array");
+                startElement("data");
+                Object[] array = (Object []) obj;
+                for (int i = 0; i < array.length; i++)
+                {
+                    writeObject(array[i]);
+                }
+                endElement("data");
+                endElement("array");
+            }
             else if (obj instanceof Vector)
             {
                 startElement("array");
