@@ -406,7 +406,7 @@ public class XmlRpcClient implements XmlRpcHandler
                     buffer.reset();
                 }
 
-                XmlWriter writer = new XmlWriter(buffer);
+                XmlWriter writer = new XmlWriter(buffer, encoding);
                 writeRequest(writer, method, params);
                 writer.flush();
                 byte[] request = buffer.toByteArray();

@@ -296,7 +296,7 @@ public class XmlRpcServer
                 {
                     System.err.println("outparam = " + outParam);
                 }
-                writer = new XmlWriter(buffer);
+                writer = new XmlWriter(buffer, encoding);
                 writeResponse(outParam, writer);
                 writer.flush();
                 result = buffer.toByteArray();
