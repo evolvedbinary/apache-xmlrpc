@@ -129,18 +129,16 @@
   </developers>
 
   <dependencies>
-    <!-- FIXME: Ryan, would you fill this out?
     <dependency>
       <id>commons-httpclient</id>
-      <version></version>
-      <url></url>
+      <version>2.0</version>
+      <url>http://jakarta.apache.org/commons/httpclient/</url>
     </dependency>
     <dependency>
       <id>commons-logging</id>
-      <version></version>
-      <url></url>
+      <version>1.0</version>
+      <url>http://jakarta.apache.org/commons/logging.html</url>
     </dependency>
-    -->
     <dependency>
       <id>servletapi</id>
       <version>2.2</version>
@@ -172,6 +170,7 @@
     <dependency>
       <id>junit</id>
       <version>3.7</version>
+      <url>http://www.junit.org/</url>
     </dependency>
   </dependencies>
 
