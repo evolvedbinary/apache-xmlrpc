@@ -198,8 +198,9 @@
 #macro (getProjectImage)
 #if ($project.getChild("logo"))
   <td align="left">
-    <a href="http://xml.apache.org">
-    <img src="images/xml-logo.gif" border="0"/></a>
+    <a href="http://xml.apache.org/">
+    <img src="images/feather.gif" border="0"/>
+    </a>
   </td>
   <td align="right">
   #set ( $logoString = $project.getChild("logo").getAttributeValue("href") )
