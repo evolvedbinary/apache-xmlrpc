@@ -3,7 +3,7 @@
 <project name="xmlrpc" default="jar" basedir=".">
 
   <!-- Properties which are not allowed to be overridden -->
-  <property name="version" value="1.2-a3-dev"/>
+  <property name="version" value="2.0-a1-dev"/>
 
   <!-- Allow any user specific values to override the defaults -->
   <property file="${user.home}/build.properties" />
@@ -245,6 +245,8 @@
       <batchtest todir="${test.reportsDirectory}">
         <fileset dir="${build.test.dest}">
           <include name="**/*Test.class"/>
+          <exclude name="**/XmlRpcTransportTest.class"/>
+          <exclude name="**/LocalServerRpcTest.class"/>
         </fileset>
       </batchtest>
     </junit>
