@@ -725,14 +725,18 @@ public abstract class XmlRpc extends HandlerBase
          * Writes the XML representation of a supported Java object type.
          *
          * @param obj The <code>Object</code> to write.
+         * @exception IOException Problem writing data.
+         * @throws IllegalArgumentException If a <code>null</code>
+         * parameter is passed to this method (not supported by the <a
+         * href="http://xml-rpc.com/spec">XML-RPC specification</a>).
          */
         public void writeObject(Object obj) throws IOException
         {
             startElement("value");
             if (obj == null)
             {
-                throw new RuntimeException(
-                        "null value not supported by XML-RPC");
+                throw new IllegalArgumentException
+                    ("null values not supported by XML-RPC");
             }
             else if (obj instanceof String)
             {
