@@ -55,7 +55,6 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import org.apache.xmlrpc.*;
 import java.util.*;
 
 /**
