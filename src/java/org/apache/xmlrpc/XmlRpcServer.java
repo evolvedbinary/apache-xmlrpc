@@ -144,27 +144,46 @@ public class XmlRpcServer
         }
     }
 
-
+    /**
+     * Performs streaming, parsing, and handler execution.
+     * Implementation is not thread-safe.
+     */
     class Worker extends XmlRpc
     {
-
         Vector inParams;
-        Object outParam;
-        byte[] result;
         StringBuffer strbuf;
+        byte[] result;
 
+        /**
+         * Creates a new instance.
+         */
+        protected Worker()
+        {
+            inParams = new Vector();
+            strbuf = new StringBuffer();
+        }
+
+        /**
+         * Given a request for the server, generates a response.
+         */
         public byte[] execute (InputStream is, String user, String password)
         {
-            inParams = new Vector ();
-            if (strbuf == null)
+            try
             {
-                strbuf = new StringBuffer ();
+                // Do the work
+                return executeInternal(is, user, password);
             }
-            else
+            finally
             {
+                // Release most of our resources
                 strbuf.setLength (0);
+                inParams.removeAllElements();
             }
+        }
 
+        private byte[] executeInternal (InputStream is, String user,
+                                        String password)
+        {
             long now = System.currentTimeMillis ();
 
             try
@@ -206,6 +225,7 @@ public class XmlRpcServer
                                 methodName + "\": no default handler registered.");
                 }
 
+                Object outParam;
                 if (handler instanceof AuthenticatedXmlRpcHandler)
                     outParam = ((AuthenticatedXmlRpcHandler) handler).
                             execute (methodName, inParams, user, password);
