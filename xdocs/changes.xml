@@ -14,6 +14,19 @@
         <ul>
 
           <li>
+            <strong>1 Nov 2002</strong>
+            <ul>
+
+              <li>
+                When decoding base-64 data, ignore whitespace
+                occurring in body -- it may have been caused by XML
+                indentation or line wrapping. (Daniel Rall)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
             <strong>21 Oct 2002</strong>
             <ul>
 
