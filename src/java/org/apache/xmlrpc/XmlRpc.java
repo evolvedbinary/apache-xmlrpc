@@ -90,7 +90,7 @@ public abstract class XmlRpc extends HandlerBase
      * The version string used in HTTP communication.
      */
     // FIXME: Use Ant <filter> to preprocess during compilation
-    public static final String version = "Apache XML-RPC 1.2-a2-dev";
+    public static final String version = "Apache XML-RPC 1.2-a2";
 
     /**
      * The default parser to use (MinML).

@@ -4,7 +4,7 @@
   <pomVersion>3</pomVersion>
   <name>xmlrpc</name>
   <id>xmlrpc</id>
-  <currentVersion>1.2-a2-dev</currentVersion>
+  <currentVersion>1.2-a2</currentVersion>
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://xml.apache.org/</url>

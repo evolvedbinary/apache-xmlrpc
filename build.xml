@@ -3,7 +3,7 @@
 <project name="xmlrpc" default="jar" basedir=".">
 
   <!-- Properties which are not allowed to be overridden -->
-  <property name="version" value="1.2-a2-dev"/>
+  <property name="version" value="1.2-a2"/>
 
   <!-- Allow any user specific values to override the defaults -->
   <property file="${user.home}/build.properties" />
