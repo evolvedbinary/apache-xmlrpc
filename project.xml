@@ -9,6 +9,7 @@
     <name>Apache Software Foundation</name>
     <url>http://xml.apache.org/</url>
   </organization>
+  <organizationLogo>xml-logo.gif</organizationLogo>
   <inceptionYear>2001</inceptionYear>
   <package>org.apache.xmlrpc</package>
 
@@ -29,7 +30,7 @@
 
   <url>http://xml.apache.org/xmlrpc/</url>
   <issueTrackingUrl>http://nagoya.apache.org/bugzilla/query.cgi?product=XML-RPC</issueTrackingUrl>
-  <siteAddress>xml.apache.org</siteAddress>
+  <siteAddress>jakarta.apache.org</siteAddress>
   <siteDirectory>/www/xml.apache.org/xmlrpc/</siteDirectory>
   <distributionDirectory>/www/xml.apache.org/dist/xmlrpc/</distributionDirectory>
 
