@@ -230,6 +230,7 @@ public class XmlRpcServer
      *
      * @param methodName The name of the XML-RPC method to invoke
      * (this is <i>not</i> the Java method name).
+     * @throws AuthenticationFailed
      */
     protected Object invokeHandler(Object handler, String methodName,
                                    Vector request, String user,
@@ -268,6 +269,8 @@ public class XmlRpcServer
 
         /**
          * Given a request for the server, generates a response.
+         *
+         * @throws AuthenticationFailed
          */
         public byte[] execute(InputStream is, String user, String password)
         {
@@ -290,6 +293,7 @@ public class XmlRpcServer
          * @param user
          * @param password
          * @return
+         * @throws AuthenticationFailed
          */
         private byte[] executeInternal(InputStream is, String user,
                 String password)
@@ -328,6 +332,10 @@ public class XmlRpcServer
                 writeResponse(outParam, writer);
                 writer.flush();
                 result = buffer.toByteArray();
+            }
+            catch (AuthenticationFailed alertCaller)
+            {
+                throw alertCaller;
             }
             catch(Exception x)
             {
