@@ -257,44 +257,13 @@ public abstract class XmlRpc
         Parser parser = null;
         try
         {
-            Object p = parserClass.newInstance ();
-            if (parserClass.isInstance(p))
-                System.out.println("good");
-            else
-                System.out.println("bad");
-            if (p instanceof Parser)
-            {
-                parser = (Parser) p;
-            }
-            else
-            {
-                System.out.println("___ p class loader: " + p.getClass().
-                                   getClassLoader().getClass().getName());
-                System.out.println("XmlRpc class loader: " +
-                                   getClass().getClassLoader()
-                                   .getClass().getName());
-                System.out.println("Parser interface class loader: " +
-                                   Parser.class
-                                   .getClassLoader().getClass().getName());
-                System.out.println("Class '" + parserClass +
-                                   "' not an instance of org.xml.sax.Parser");
-                Class[] a = parserClass.getInterfaces();
-                for (int i = 0; i < a.length; i++)
-                {
-                    if (a[i].getClass().getName().equals("org.xml.sax.Parser"))
-                    {
-                        System.out.println("parserClass interface class " +
-                                           "loader: " + a[i].getClassLoader()
-                                           .getClass().getName());
-                    }
-                }
-            }
+            parser = (Parser) parserClass.newInstance ();
         }
         catch (NoSuchMethodError nsm)
         {
             // This is thrown if no constructor exists for the parser class
             // and is transformed into a regular exception.
-            throw new Exception ("Can't create Parser: "+parserClass);
+            throw new Exception ("Can't create Parser: " + parserClass);
         }
 
         parser.setDocumentHandler (this);
