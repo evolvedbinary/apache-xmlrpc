@@ -8,10 +8,11 @@
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://xml.apache.org/</url>
+    <logo>/images/xml-logo.gif</logo>
   </organization>
-  <organizationLogo>xml-logo.gif</organizationLogo>
   <inceptionYear>2001</inceptionYear>
   <package>org.apache.xmlrpc</package>
+  <logo>/images/xmlrpc-logo.gif</logo>
 
   <shortDescription>Project Management Tools</shortDescription>
 
@@ -172,7 +173,7 @@
     <!-- Resources that are packaged up inside the JAR file -->
 
     <resources/>
-    
+
     <jars>
     </jars>
   </build>
