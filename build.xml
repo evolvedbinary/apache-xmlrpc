@@ -213,7 +213,7 @@
   <!-- ================================================================== -->
 
   <target name="compile-tests"
-    depends="prepare,check.junit,compile"
+    depends="init,check.junit,compile"
     description="Compiles testing source code">
     
     <mkdir dir="${build.test.dest}"/>
