@@ -72,7 +72,6 @@ public class XmlRpcClient
 {
     URL url;
     String auth;
-    int maxThreads = 100;
 
     // pool of worker instances
     Stack pool = new Stack ();
@@ -198,7 +197,7 @@ public class XmlRpcClient
         }
         catch (EmptyStackException x)
         {
-            if (workers < maxThreads)
+            if (workers < XmlRpc.getMaxThreads())
             {
                 if (async)
                     asyncWorkers += 1;

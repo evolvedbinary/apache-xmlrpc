@@ -135,7 +135,7 @@ public class XmlRpcServer
         }
         catch (EmptyStackException x)
         {
-            if (workers < 100)
+            if (workers < XmlRpc.getMaxThreads())
             {
                 workers += 1;
                 return new Worker ();

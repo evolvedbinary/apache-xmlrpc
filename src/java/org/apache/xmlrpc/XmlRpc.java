@@ -251,7 +251,7 @@ public abstract class XmlRpc
      */
     public static void setMaxThreads(int maxThreads)
     {
-        this.maxThreads = maxThreads;
+        XmlRpc.maxThreads = maxThreads;
     }
 
     /**

@@ -112,7 +112,7 @@ public class XmlRpcClientLite
         }
         catch (EmptyStackException x)
         {
-            if (workers < maxThreads)
+            if (workers < XmlRpc.getMaxThreads())
             {
                 if (async)
                     asyncWorkers += 1;
