@@ -2,16 +2,14 @@
 
 <project name="xmlrpc" default="jar" basedir=".">
 
+  <!-- Properties which are not allowed to be overridden -->
+  <property name="version" value="1.2-dev"/>
+
   <!-- Allow any user specific values to override the defaults -->
   <property file="${user.home}/build.properties" />
 
   <!-- Set default values for the build -->
   <property file="build.properties" />
-
-  <property name="build.src" value="${build.dir}/src"/>
-  <property name="build.dest" value="${build.dir}/classes"/>
-  <property name="final.name" value="${project}-${version}"/>
-  <property name="final.dir" value="../${final.name}/"/>
 
   <!-- Construct compile classpath -->
   <path id="classpath">
@@ -123,24 +121,6 @@
   <target name="prepare" depends="init">
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${build.dest}"/>
-    <mkdir dir="${build.src}"/>
-    
-    <!-- 
-      We don't care about the javascript interpreter or the
-      the applet code so we'll just exclude it from the
-      build. All we want is the client and server code.
-    -->
-    
-    <copy todir="${build.src}">
-      <fileset dir="${src.dir}"> 
-        <include name="**/*.java"/>
-        <exclude name="**/fesi/**"/>
-        <exclude name="**/secure/**" unless="jsse.present"/>
-        <exclude name="**/XmlRpcProxyServlet.java" unless="servlet.present"/>
-        <exclude name="**/test/**"/>
-      </fileset>
-    </copy>
-
   </target>
 
   <!-- ================================================================== -->
@@ -149,13 +129,22 @@
   
   <target name="compile" depends="prepare">
     <javac 
-      srcdir="${build.src}"
+      srcdir="${src.dir}"
       destdir="${build.dest}"
       debug="${debug}"
       deprecation="${deprecation}"
       optimize="${optimize}"
     >
-    <classpath refid="classpath"/>
+      <classpath refid="classpath"/>
+
+      <!-- We don't care about the JavaScript interpreter or the the
+      applet code so we'll just exclude it from the build. For now,
+      all we want is the client and server code.  -->
+      <include name="**/*.java"/>
+      <exclude name="**/fesi/**"/>
+      <exclude name="**/secure/**" unless="jsse.present"/>
+      <exclude name="**/XmlRpcProxyServlet.java" unless="servlet.present"/>
+      <exclude name="**/test/**"/>
     </javac>
   </target>
   
@@ -182,7 +171,7 @@
   <target name="javadocs" depends="prepare">
     <mkdir dir="${javadoc.destdir}"/>
     <javadoc
-      sourcepath="${build.src}/java"
+      sourcepath="${src.dir}/java"
       packagenames="org.apache.xmlrpc.*"
       destdir="${javadoc.destdir}"
       author="true"
@@ -222,8 +211,8 @@
       destdir="${build.test.dest}"
       includes="**/*Test.java"
       excludes="**/package.html"
-      debug="${debug}"
-      deprecation="${deprecation}"
+      debug="on"
+      deprecation="off"
       optimize="${optimize}">
       <classpath refid="classpath"/>
       <classpath>
