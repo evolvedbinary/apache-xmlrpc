@@ -255,7 +255,6 @@ public class ClientServerRpcTest
             // by connecting via the clients
             Vector params = new Vector();
             params.add(REQUEST_PARAM_VALUE);
-            System.out.println("FOO");
             Object response = client.execute(HANDLER_NAME + ".echo", params);
             assertEquals(REQUEST_PARAM_VALUE, response);
             //params.removeAllElements();
