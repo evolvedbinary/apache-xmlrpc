@@ -20,13 +20,13 @@ map incoming requests to actual methods.
           The <a href="/xml-rpc/apidocs/org/apache/xmlrpc/XmlRpcServer.html">
 org.apache.xmlrpc.XmlRpcServer</a> and <a href="/xml-rpc/apidocs/org/apache/xmlrpc/WebServer.html">
 org.apache.xmlrpc.WebServer</a> classes provide methods that let your register and
-unregister Java objects as XML-RPC handlers:
+unregister Java objects as XML-RPC handlers:</p>
 
 <pre> addHandler (String name, Object handler);
  removeHandler (String name);</pre>
 
-Depending on what kind of handler object you give to the server, it will do
-one of the following things:
+<p>Depending on what kind of handler object you give to the server, it will do
+one of the following things:</p>
 
 <ol>
   <li>
@@ -52,7 +52,7 @@ one of the following things:
   </li>
 </ol>
 
-In both cases, incoming requests will be interpreted as
+<p>In both cases, incoming requests will be interpreted as
 <tt>handlerName.methodName</tt> with <tt>handlerName</tt> being the String
 that the handler has been registered with, and <tt>methodName</tt> being the
 name of the method to be invoked. You can work around this scheme by
@@ -95,7 +95,7 @@ simple lines:</p>
 <pre> WebServer webserver = new WebServer (port);
  webserver.addHandler ("examples", someHandler);</pre>
 
-You can also start the web server from the command line by typing:
+<p>You can also start the web server from the command line by typing:</p>
 
 <pre> java org.apache.xmlrpc.WebServer</pre>
 
@@ -114,9 +114,9 @@ deny requests. This is done via the following methods:</p>
 
 <p>If the client filter is activated, entries to the deny list always override those in
 the accept list. Thus, <tt>webserver.denyClient ("*.*.*.*")</tt> would
-completely disable the web server.
+completely disable the web server.</p>
 
-Note that the XML-RPC client in Frontier 5 has its requests hard-coded to URI /RPC2.
+<p>Note that the XML-RPC client in Frontier 5 has its requests hard-coded to URI /RPC2.
 To work with these clients, you have to configure your server environment to respond
 to /RPC2. This should be fixed in a newer version.
       </p>
