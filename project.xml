@@ -4,11 +4,11 @@
   <pomVersion>3</pomVersion>
   <name>xmlrpc</name>
   <id>xmlrpc</id>
-  <currentVersion>1.2-a3-dev</currentVersion>
+  <currentVersion>1.2-b1</currentVersion>
   <organization>
     <name>Apache Software Foundation</name>
-    <url>http://xml.apache.org/</url>
-    <logo>/images/group-logo.gif</logo>
+    <url>http://ws.apache.org/</url>
+    <logo>/images/project-logo.jpg</logo>
   </organization>
   <inceptionYear>2001</inceptionYear>
   <package>org.apache.xmlrpc</package>
@@ -29,11 +29,11 @@
     in your code from helma.xmlrpc.* to org.apache.xmlrpc.*.
   </description>
 
-  <url>http://xml.apache.org/xmlrpc/</url>
+  <url>http://ws.apache.org/xmlrpc/</url>
   <issueTrackingUrl>http://nagoya.apache.org/bugzilla/query.cgi?product=XML-RPC</issueTrackingUrl>
-  <siteAddress>jakarta.apache.org</siteAddress>
-  <siteDirectory>/www/xml.apache.org/xmlrpc/</siteDirectory>
-  <distributionDirectory>/www/xml.apache.org/dist/xmlrpc/</distributionDirectory>
+  <siteAddress>ws.apache.org</siteAddress>
+  <siteDirectory>/www/ws.apache.org/xmlrpc/</siteDirectory>
+  <distributionDirectory>/www/ws.apache.org/dist/xmlrpc/</distributionDirectory>
 
   <repository>
     <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:xml-rpc</connection>
@@ -59,15 +59,15 @@
   <mailingLists>
     <mailingList>
       <name>XML-RPC User List</name>
-      <subscribe>rpc-user-subscribe@xml.apache.org</subscribe>
-      <unsubscribe>rpc-user-unsubscribe@xml.apache.org</unsubscribe>
-      <archive>http://archives.apache.org/eyebrowse/SummarizeList?listName=rpc-user@xml.apache.org</archive>
+      <subscribe>xmlrpc-user-subscribe@ws.apache.org</subscribe>
+      <unsubscribe>xmlrpc-user-unsubscribe@ws.apache.org</unsubscribe>
+      <archive>http://archives.apache.org/eyebrowse/SummarizeList?listName=xmlrpc-user@ws.apache.org</archive>
     </mailingList>
     <mailingList>
       <name>XML-RPC Developer List</name>
-      <subscribe>rpc-dev-subscribe@xml.apache.org</subscribe>
-      <unsubscribe>rpc-dev-unsubscribe@xml.apache.org</unsubscribe>
-      <archive>http://archives.apache.org/eyebrowse/SummarizeList?listName=rpc-dev@xml.apache.org</archive>
+      <subscribe>xmlrpc-dev-subscribe@ws.apache.org</subscribe>
+      <unsubscribe>xmlrpc-dev-unsubscribe@ws.apache.org</unsubscribe>
+      <archive>http://archives.apache.org/eyebrowse/SummarizeList?listName=xmlrpc-dev@ws.apache.org</archive>
     </mailingList>
   </mailingLists>
 
@@ -82,7 +82,7 @@
       <name>Martin Poeschl</name>
       <id>mpoeschl</id>
       <email>mpoeschl@marmot.at</email>
-      <organization>Zenplex</organization>
+      <organization>Tucana.at</organization>
     </developer>
     <developer>
       <name>Daniel Rall</name>

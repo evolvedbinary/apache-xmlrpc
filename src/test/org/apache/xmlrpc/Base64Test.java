@@ -95,7 +95,7 @@ public class Base64Test
         "aW5nIGlzIGRlc2lnbmVkIHRvIHJlcHJlc2VudCBhcmJpdHJhcnkgc2VxdWVuY2VzIG9mCm9jdGV0\n" +
         "cyBpbiBhIGZvcm0gdGhhdCBuZWVkIG5vdCBiZSBodW1hbmx5IHJlYWRhYmxlLiBBCjY1LWNoYXJh\n" +
         "Y3RlciBzdWJzZXQgKFtBLVphLXowLTkrLz1dKSBvZiBVUy1BU0NJSSBpcyB1c2VkLAplbmFibGlu\n" +
-        "ZyA2IGJpdHMgdG8gYmUgcmVwcmVzZW50ZWQgcGVyIHByaW50YWJsZSBjaGFyYWN0ZXIu";
+        "ZyA2IGJpdHMgdG8gYmUgcmVwcmVzZW50ZWQgcGVyIHByaW50YWJsZSBjaGFyYWN0ZXIu\n";
 
 
     /**
@@ -131,9 +131,8 @@ public class Base64Test
                 assertEquals(TEST_DATA[i], new String(decoded));
             }
 
-            // FIXME: The Base64.encode() function doesn't wrap at 76 chars.
-            //assertEquals(Base64.encode(UNENCODED.getBytes()),
-            //             ENCODED.getBytes());
+            assertEquals(Base64.encode(UNENCODED.getBytes()),
+                         ENCODED.getBytes());
             assertEquals(UNENCODED.getBytes(),
                          Base64.decode(ENCODED.getBytes()));
         }
@@ -149,11 +148,15 @@ public class Base64Test
      */
     private void assertEquals(byte[] a, byte[] b)
     {
+        if (a.length != b.length)
+        {
+            fail("Byte arrays have different lengths (" + a.length + " != " + b.length + ")");
+        }
         for (int i = 0; i < a.length; i++)
         {
             if (a[i] != b[i])
             {
-                fail("Byte arrays not equal (" + a[i] + " != " + b[i] + ")");
+                fail("Byte arrays not equal (" + a[i] + " != " + b[i] + " at position + " + i + ")");
             }
         }
     }

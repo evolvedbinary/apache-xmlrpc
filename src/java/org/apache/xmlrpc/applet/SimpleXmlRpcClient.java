@@ -72,6 +72,7 @@ import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 import org.apache.xmlrpc.Base64;
+import org.apache.xmlrpc.XmlRpc;
 import org.xml.sax.AttributeList;
 import org.xml.sax.HandlerBase;
 import org.xml.sax.InputSource;
@@ -465,7 +466,11 @@ class XmlRpcSupport extends HandlerBase
             System.err.println("startElement: " + name);
         }
 
-        if ("value".equals(name))
+        if( "fault".equals(name)) 
+        { 
+            fault = true; 
+        } 
+        else if ("value".equals(name))
         {
             // System.err.println ("starting value");
             Value v = new Value();
@@ -688,7 +693,7 @@ class XmlRpcSupport extends HandlerBase
         public XmlWriter(StringBuffer buf)
         {
             this.buf = buf;
-            buf.append("<?xml version=\"1.0\"?>");
+            buf.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
         }
 
         /**
@@ -766,7 +771,7 @@ class XmlRpcSupport extends HandlerBase
          */
         public void write(char[] text)
         {
-            buf.append(text);
+            chardata(new String(text));
         }
 
         /**
@@ -775,7 +780,7 @@ class XmlRpcSupport extends HandlerBase
          */
         public void write(String text)
         {
-            buf.append(text);
+            chardata(text);
         }
 
         /**
