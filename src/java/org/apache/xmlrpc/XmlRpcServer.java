@@ -70,7 +70,10 @@ import java.lang.reflect.*;
  */
 public class XmlRpcServer
 {
-    Hashtable handlers;
+    private Hashtable handlers;
+    private Stack pool;
+    private int workers;
+    static final byte[] EMPTY_BYTE_ARRAY = new byte[]{};
 
     /**
      * Construct a new XML-RPC server. You have to register handlers
@@ -79,6 +82,8 @@ public class XmlRpcServer
     public XmlRpcServer()
     {
         handlers = new Hashtable();
+        pool = new Stack();
+        workers = 0;
     }
 
     /**
@@ -138,9 +143,6 @@ public class XmlRpcServer
         pool.push(worker);
         return retval;
     }
-
-    Stack pool = new Stack();
-    int workers = 0;
 
     private final Worker getWorker()
     {
@@ -205,15 +207,19 @@ public class XmlRpcServer
                                         String password)
         {
             byte[] result;
-            long now = System.currentTimeMillis();
-
+            long now = 0;
+    
+            if (XmlRpc.debug)
+            {
+                now = System.currentTimeMillis();
+            }
             try
             {
                 parse(is);
                 if (XmlRpc.debug)
                 {
-                    System.err.println("method name: "+methodName);
-                    System.err.println("inparams: "+inParams);
+                    System.err.println("method name: " + methodName);
+                    System.err.println("inparams: " + inParams);
                 }
                 // check for errors from the XML parser
                 if (errorLevel > NONE)
@@ -329,7 +335,7 @@ public class XmlRpcServer
                 }
                 else
                 {
-                    result = "".getBytes();
+                    result = EMPTY_BYTE_ARRAY;
                 }
             }
             finally
@@ -520,7 +526,7 @@ class Invoker implements XmlRpcHandler
             Throwable t = it_e.getTargetException();
             if (t instanceof XmlRpcException)
             {
-                throw(XmlRpcException) t;
+                throw (XmlRpcException) t;
             }
             // It is some other exception
             throw new Exception(t.toString());
