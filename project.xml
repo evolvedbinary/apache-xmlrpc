@@ -8,7 +8,7 @@
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://ws.apache.org/</url>
-    <logo>/images/group-logo.gif</logo>
+    <logo>/images/project-logo.jpg</logo>
   </organization>
   <inceptionYear>2001</inceptionYear>
   <package>org.apache.xmlrpc</package>
@@ -69,7 +69,7 @@
       <unsubscribe>xmlrpc-dev-unsubscribe@ws.apache.org</unsubscribe>
       <archive>http://archives.apache.org/eyebrowse/SummarizeList?listName=xmlrpc-dev@ws.apache.org</archive>
     </mailingList>
-  </mailingLists>  
+  </mailingLists>
 
   <developers>
     <developer>
