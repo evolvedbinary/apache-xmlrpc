@@ -14,6 +14,18 @@
         <ul>
 
           <li>
+            <strong>19 Aug 2002</strong>
+            <ul>
+
+              <li>
+                XmlWriter.java: Added XML entity encoding of
+                characters below 0x20 and above 0xff. (Adam Megacz)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
             <strong>15 Aug 2002</strong>
             <ul>
 
