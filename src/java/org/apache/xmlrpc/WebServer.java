@@ -328,6 +328,7 @@ public class WebServer implements Runnable
         // cool feature for applets.
         String url = "http://www.mailtothefuture.com:80/RPC2";
         addHandler("mttf", new XmlRpcClient(url));
+        addHandler("system", new SystemHandler(xmlrpc));
     }
 
     /**
