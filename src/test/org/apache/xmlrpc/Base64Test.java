@@ -131,9 +131,8 @@ public class Base64Test
                 assertEquals(TEST_DATA[i], new String(decoded));
             }
 
-            // FIXME: The Base64.encode() function doesn't wrap at 76 chars.
-            //assertEquals(Base64.encode(UNENCODED.getBytes()),
-            //             ENCODED.getBytes());
+            assertEquals(Base64.encode(UNENCODED.getBytes()),
+                         ENCODED.getBytes());
             assertEquals(UNENCODED.getBytes(),
                          Base64.decode(ENCODED.getBytes()));
         }

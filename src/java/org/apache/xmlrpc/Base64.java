@@ -79,6 +79,9 @@ import java.util.Vector;
  */
 public final class  Base64
 {
+    static final int CHUNK_SIZE = 76;
+    static final byte[] CHUNK_SEPARATOR = "\n".getBytes();
+
     static private final int  BASELENGTH         = 255;
     static private final int  LOOKUPLENGTH       = 64;
     static private final int  TWENTYFOURBITGROUP = 24;
@@ -167,24 +170,34 @@ public final class  Base64
         int      fewerThan24bits   = lengthDataBits%TWENTYFOURBITGROUP;
         int      numberTriplets    = lengthDataBits/TWENTYFOURBITGROUP;
         byte     encodedData[]     = null;
-
+	int      encodedDataLength = 0;
 
         if (fewerThan24bits != 0)
         {
             //data not divisible by 24 bit
-            encodedData = new byte[ (numberTriplets + 1 ) * 4 ];
+            encodedDataLength = (numberTriplets + 1 ) * 4;
         }
         else
         {
             // 16 or 8 bit
-            encodedData = new byte[ numberTriplets * 4 ];
+            encodedDataLength = numberTriplets * 4;
         }
+
+	// allow extra length for the separator
+        int nbrChunks = (CHUNK_SEPARATOR.length == 0 ? 0 :
+                         (int) Math.ceil((float) encodedDataLength / CHUNK_SIZE));
+
+	encodedDataLength += (nbrChunks - 1) * CHUNK_SEPARATOR.length;
+	encodedData = new byte[encodedDataLength];
 
         byte k = 0, l = 0, b1 = 0, b2 = 0, b3 = 0;
 
         int encodedIndex = 0;
         int dataIndex   = 0;
         int i           = 0;
+	int nextSeparatorIndex = CHUNK_SIZE;
+	int chunksSoFar = 0;
+
         //log.debug("number of triplets = " + numberTriplets);
         for ( i = 0; i<numberTriplets; i++ )
         {
@@ -198,7 +211,6 @@ public final class  Base64
             l  = (byte)(b2 & 0x0f);
             k  = (byte)(b1 & 0x03);
 
-            encodedIndex = i * 4;
             byte val1 = ((b1 & SIGN)==0)?(byte)(b1>>2):(byte)((b1)>>2^0xc0);
             byte val2 = ((b2 & SIGN)==0)?(byte)(b2>>4):(byte)((b2)>>4^0xf0);
             byte val3 = ((b3 & SIGN)==0)?(byte)(b3>>6):(byte)((b3)>>6^0xfc);
@@ -212,11 +224,23 @@ public final class  Base64
             encodedData[encodedIndex+2] =
                 lookUpBase64Alphabet[ (l <<2 ) | val3 ];
             encodedData[encodedIndex+3] = lookUpBase64Alphabet[ b3 & 0x3f ];
+
+	    encodedIndex += 4;
+
+	    // this assumes that CHUNK_SIZE % 4 == 0
+	    if(encodedIndex == nextSeparatorIndex){
+		System.arraycopy(CHUNK_SEPARATOR, 0, encodedData,
+                                 encodedIndex, CHUNK_SEPARATOR.length);
+		chunksSoFar++;
+		nextSeparatorIndex = (CHUNK_SIZE * (chunksSoFar + 1)) + 
+                                     (chunksSoFar * CHUNK_SEPARATOR.length);
+		encodedIndex += CHUNK_SEPARATOR.length;
+	    }
         }
 
         // form integral number of 6-bit groups
         dataIndex    = i*3;
-        encodedIndex = i*4;
+
         if (fewerThan24bits == EIGHTBIT )
         {
             b1 = binaryData[dataIndex];
