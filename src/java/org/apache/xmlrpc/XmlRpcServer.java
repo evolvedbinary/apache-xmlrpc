@@ -73,7 +73,6 @@ public class XmlRpcServer
     private Hashtable handlers;
     private Stack pool;
     private int workers;
-    static final byte[] EMPTY_BYTE_ARRAY = new byte[]{};
 
     /**
      * Construct a new XML-RPC server. You have to register handlers
@@ -172,6 +171,8 @@ public class XmlRpcServer
      */
     class Worker extends XmlRpc
     {
+        private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+
         private Vector inParams;
         private ByteArrayOutputStream buffer;
         private XmlWriter writer;
