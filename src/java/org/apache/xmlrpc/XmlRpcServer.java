@@ -409,15 +409,26 @@ class Invoker implements XmlRpcHandler
 
     private Object invokeTarget;
     private Class targetClass;
+    private static Class OBJECT_CLASS;
 
     public Invoker(Object target)
     {
         invokeTarget = target;
-        targetClass = invokeTarget instanceof Class ?(Class) invokeTarget :
+        targetClass = (invokeTarget instanceof Class) ? (Class) invokeTarget :
                 invokeTarget.getClass();
         if (XmlRpc.debug)
         {
             System.err.println("Target object is " + targetClass);
+        }
+        try
+        {
+            if (OBJECT_CLASS == null)
+            {
+                OBJECT_CLASS = Class.forName("java.lang.Object");
+            }
+        }
+        catch (ClassNotFoundException cnfe)
+        {
         }
     }
 
@@ -480,7 +491,7 @@ class Invoker implements XmlRpcHandler
         }
 
         // our policy is to make all public methods callable except the ones defined in java.lang.Object
-        if (method.getDeclaringClass() == Class.forName("java.lang.Object"))
+        if (method.getDeclaringClass() == OBJECT_CLASS)
         {
             throw new XmlRpcException(0, "Invoker can't call methods defined in java.lang.Object");
         }
