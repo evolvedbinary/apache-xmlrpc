@@ -131,13 +131,18 @@
   <dependencies>
     <dependency>
       <id>commons-httpclient</id>
-      <version>2.0</version>
+      <version>2.0-alpha3</version>
       <url>http://jakarta.apache.org/commons/httpclient/</url>
     </dependency>
     <dependency>
       <id>commons-logging</id>
       <version>1.0.2</version>
       <url>http://jakarta.apache.org/commons/logging.html</url>
+    </dependency>
+    <dependency>
+      <id>commons-codec</id>
+      <version>1.1</version>
+      <url>http://jakarta.apache.org/commons/codec/index.html</url>
     </dependency>
     <dependency>
       <id>servletapi</id>
@@ -187,6 +192,11 @@
         <!-- TODO: There are more tests available -->
         <include>**/*Test.java</include>
       </includes>
+      <excludes>
+        <!-- Exclude abstract tests -->
+        <exclude>**/LocalServerRpcTest.java</exclude>
+        <exclude>**/XmlRpcTransportTest.java</exclude>
+      </excludes>
     </unitTest>
 
     <!-- Integration unit test classes -->

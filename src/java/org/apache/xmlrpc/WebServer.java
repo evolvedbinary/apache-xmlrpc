@@ -69,6 +69,7 @@ import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * A minimal web server that exclusively handles XML-RPC requests.
@@ -686,6 +687,7 @@ public class WebServer implements Runnable
         private BufferedInputStream input;
         private BufferedOutputStream output;
         private String user, password;
+        private Base64 base64Codec;
         byte[] buffer;
 
         /**
@@ -851,7 +853,7 @@ public class WebServer implements Runnable
         {
             try
             {
-                byte[] c = Base64.decode(toHTTPBytes(line.substring(21)));
+                byte[] c = base64Codec.decode(toHTTPBytes(line.substring(21)));
                 String str = new String(c);
                 int col = str.indexOf(':');
                 user = str.substring(0, col);

@@ -60,11 +60,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
+
 import org.apache.xmlrpc.util.HttpUtil;
 
 /**
@@ -183,7 +185,30 @@ class LiteXmlRpcTransport implements XmlRpcTransport
      */
     protected void initConnection() throws IOException
     {
-        socket = new Socket(hostname, port);
+        final int retries = 3;
+        final int delayMillis = 100;
+        
+        int tries = 0;
+        
+        socket = null;
+        while (socket == null) {
+            try {
+                socket = new Socket(hostname, port);
+            }
+            catch (ConnectException e) {
+                if (tries >= retries) {
+                    throw e;
+                } else {
+                    // log.debug("ConnectException: " + e.getMessage() + ", waiting " + new Integer(delayMillis).toString() + " milliseconds and retrying");
+                    try {
+                        Thread.sleep(delayMillis);
+                    }
+                    catch (InterruptedException ignore) {
+                    }
+                }
+            }
+        }
+        
         output = new BufferedOutputStream(socket.getOutputStream());
         input = new BufferedInputStream(socket.getInputStream());
     }

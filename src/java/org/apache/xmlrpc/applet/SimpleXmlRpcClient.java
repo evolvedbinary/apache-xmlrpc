@@ -71,7 +71,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
-import org.apache.xmlrpc.Base64;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
 import org.xml.sax.AttributeList;
 import org.xml.sax.HandlerBase;
 import org.xml.sax.InputSource;
@@ -114,7 +116,7 @@ public class SimpleXmlRpcClient
     {
         this.url = new URL("http://" + hostname + ":" + port + "/RPC2");
     }
-
+    
     /**
      *
      * @param method
@@ -140,6 +142,8 @@ class XmlRpcSupport extends HandlerBase
     String methodName;
     boolean fault = false;
     Object result = null;
+    
+    Base64 base64 = new Base64();
 
     // the stack we're parsing our values into.
     Stack values;
@@ -245,7 +249,12 @@ class XmlRpcSupport extends HandlerBase
         else if (what instanceof byte[])
         {
             writer.startElement("base64");
-            writer.write(Base64.encode((byte[]) what));
+            try {
+                writer.write(base64.encode((byte[]) what));
+            }
+            catch (EncoderException e) {
+                throw new RuntimeException("Incompatible version of org.apache.commons.codec.binary.Base64 used, and an error occurred.");
+            }
             writer.endElement("base64");
         }
         else if (what instanceof Vector)
@@ -640,7 +649,16 @@ class XmlRpcSupport extends HandlerBase
                     }
                     break;
                 case BASE64:
-                    value = Base64.decode(cdata.getBytes());
+                    try {
+                        value = base64.decode(cdata.getBytes());
+                    }
+                    catch (DecoderException e) {
+                        /* FIXME: what should we do here?  Probably an Exception?
+                         * tabling because this class is slated for complete overhaul
+                         * using the core library.
+                         */ 
+                        value = cdata;
+                    }
                     break;
                 case STRING:
                     value = cdata;

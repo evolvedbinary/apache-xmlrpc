@@ -55,7 +55,8 @@ package org.apache.xmlrpc.util;
  * <http://www.apache.org/>.
  */
 
-import org.apache.xmlrpc.Base64;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.EncoderException;
 
 /**
  * Provides utility functions useful in HTTP communications
@@ -64,6 +65,12 @@ import org.apache.xmlrpc.Base64;
  */
 public class HttpUtil
 {
+    private static final Base64 base64;
+    
+    static {
+        base64 = new Base64();
+    }
+    
     private HttpUtil()
     {
         // private because currently we only offer static methods.
@@ -78,8 +85,15 @@ public class HttpUtil
         }
         else
         {
-            auth = new String(Base64.encode((user + ':' + password)
-                    .getBytes())).trim();
+            try {
+                auth = new String(base64.encode((user + ':' + password)
+                        .getBytes())).trim();
+            }
+            catch (EncoderException e) {
+                // EncoderException is never thrown in the body of Base64.encode(byte[]) in version 1.1
+                // TODO: possibly throw an exception from this method or refactor this class
+                throw new RuntimeException("Incompatible version of org.apache.commons.codec.binary.Base64 used, and an error condition was encountered.");
+            }
         }
         return auth;
     }

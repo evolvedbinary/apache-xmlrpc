@@ -66,6 +66,8 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.xmlrpc.util.DateTool;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.EncoderException;
 
 /**
  * A quick and dirty XML writer.  If you feed it a
@@ -98,6 +100,8 @@ class XmlWriter extends OutputStreamWriter
      * Java's name for the the UTF8 encoding.
      */
     protected static final String UTF8 = "UTF8";
+    
+    protected static final Base64 base64Codec = new Base64();
 
     /**
      * Mapping between Java encoding names and "real" names used in
@@ -201,7 +205,12 @@ class XmlWriter extends OutputStreamWriter
         else if (obj instanceof byte[])
         {
             startElement("base64");
-            this.write(Base64.encode((byte[]) obj));
+            try {
+                this.write(base64Codec.encode((byte[]) obj));
+            }
+            catch (EncoderException e) {
+                throw new XmlRpcClientException("Unable to Base 64 encode byte array", e);
+            }
             endElement("base64");
         }
         else if (obj instanceof Object[])

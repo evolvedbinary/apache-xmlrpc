@@ -86,21 +86,6 @@ abstract public class XmlRpcTransportTest
     abstract protected XmlRpcTransport getTransport(URL url);
     
     /**
-     * Sets up the WebServer and starts it.
-     */
-    public void setUp() {
-        setUpWebServer();
-        startWebServer();
-    }
-    
-    /**
-     * Shuts down the WebServer
-     */
-    public void tearDown() {
-        stopWebServer();
-    }
-    
-    /**
      * This test is to enforce that every alternate implementation of 
      * XmlRpcTransport provides a minimum of the same functionality as
      * @link DefaultXmlRpcTransport.  We trust DefaultXmlRpcTransport
@@ -110,6 +95,8 @@ abstract public class XmlRpcTransportTest
     public void testSendXmlRpc() {
         
         try {
+            setUpWebServer();
+            startWebServer();
             URL testUrl = buildURL("localhost", SERVER_PORT);
             XmlRpcTransport controlTransport = new DefaultXmlRpcTransport(testUrl);
             XmlRpcTransport testTransport = getTransport(testUrl);
@@ -118,6 +105,7 @@ abstract public class XmlRpcTransportTest
             assertTrue(
                 "Response from XmlRpcTransport does not match that of DefaultXmlRpcTransport.",
                 equalsInputStream(controlResponse, testResponse));
+            stopWebServer();
         }
         catch (MalformedURLException e) {
             e.printStackTrace();

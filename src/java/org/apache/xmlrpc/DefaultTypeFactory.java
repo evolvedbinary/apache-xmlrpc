@@ -57,6 +57,8 @@ package org.apache.xmlrpc;
 
 import java.text.ParseException;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.DecoderException;
 import org.apache.xmlrpc.util.DateTool;
 
 /**
@@ -85,6 +87,7 @@ public class DefaultTypeFactory
      * to parse date/time values.
      */
     private static DateTool dateTool = new DateTool();
+    private static final Base64 base64Codec = new Base64();
 
     /**
      * Creates a new instance.
@@ -124,7 +127,13 @@ public class DefaultTypeFactory
 
     public Object createBase64(String cdata)
     {
-        return Base64.decode(cdata.getBytes());
+        try {
+            return base64Codec.decode(cdata.getBytes());
+        }
+        catch (DecoderException e) {
+            //TODO: consider throwing an exception here?
+            return new byte[0];
+        }
     }
 
     public Object createString(String cdata)
