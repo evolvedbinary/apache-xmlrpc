@@ -94,7 +94,7 @@ public class SystemHandler
      * The <code>system.multicall</code> handler performs several RPC
      * calls at a time.
      *
-     * @param request The request containing multiple RPC calls.
+     * @param requests The request containing multiple RPC calls.
      * @return The RPC response.
      */
     public Vector multicall(Vector requests)
