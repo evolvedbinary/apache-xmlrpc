@@ -157,8 +157,7 @@ public class XmlRpcClient implements XmlRpcHandler
     public void setBasicAuthentication(String user, String password)
     {
         /*
-         * Store for use in execute(XmlRpcClientRequest, XmlRpcTransport) and
-         * XmlRpcClientWorker.execute(XmlRpcClientRequest, XmlRpcTransport)
+         * Store for use in execute and executeAsync
          *
          * Will be unnecessary once this method is removed.
          */
