@@ -126,7 +126,6 @@ public class XmlRpcClientLite
 
     class LiteWorker extends Worker implements Runnable
     {
-
         HttpClient client = null;
 
         public LiteWorker ()
@@ -134,21 +133,25 @@ public class XmlRpcClientLite
             super ();
         }
 
-
-        Object execute (String method,
-                Vector params) throws XmlRpcException, IOException
+        Object execute (String method, Vector params)
+            throws XmlRpcException, IOException
         {
             long now = System.currentTimeMillis ();
             fault = false;
             try
             {
-                if (strbuf == null)
-                    strbuf = new StringBuffer ();
+                if (buffer == null)
+                {
+                    buffer = new ByteArrayOutputStream();
+                }
                 else
-                    strbuf.setLength (0);
-                XmlWriter writer = new XmlWriter (strbuf);
+                {
+                    buffer.reset();
+                }
+                XmlWriter writer = new XmlWriter (buffer);
                 writeRequest (writer, method, params);
-                byte[] request = writer.getBytes();
+                writer.flush();
+                byte[] request = buffer.toByteArray();
 
                 // and send it to the server
                 if (client == null)

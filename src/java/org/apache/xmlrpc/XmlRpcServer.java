@@ -66,6 +66,7 @@ import java.lang.reflect.*;
  * HTTP listener, use the WebServer class instead.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  */
 public class XmlRpcServer
 {
@@ -150,8 +151,9 @@ public class XmlRpcServer
      */
     class Worker extends XmlRpc
     {
-        Vector inParams;
-        StringBuffer strbuf;
+        private Vector inParams;
+        private ByteArrayOutputStream buffer;
+        private XmlWriter writer;
 
         /**
          * Creates a new instance.
@@ -159,7 +161,7 @@ public class XmlRpcServer
         protected Worker()
         {
             inParams = new Vector();
-            strbuf = new StringBuffer();
+            buffer = new ByteArrayOutputStream();
         }
 
         /**
@@ -175,7 +177,7 @@ public class XmlRpcServer
             finally
             {
                 // Release most of our resources
-                strbuf.setLength (0);
+                buffer.reset();
                 inParams.removeAllElements();
             }
         }
@@ -227,17 +229,22 @@ public class XmlRpcServer
 
                 Object outParam;
                 if (handler instanceof AuthenticatedXmlRpcHandler)
+                {
                     outParam = ((AuthenticatedXmlRpcHandler) handler).
                             execute (methodName, inParams, user, password);
+                }
                 else
+                {
                     outParam = ((XmlRpcHandler) handler).execute (
                             methodName, inParams);
+                }
                 if (debug)
                     System.err.println ("outparam = "+outParam);
 
-                XmlWriter writer = new XmlWriter (strbuf);
+                writer = new XmlWriter(buffer);
                 writeResponse (outParam, writer);
-                result = writer.getBytes ();
+                writer.flush();
+                result = buffer.toByteArray();
             }
             catch (Exception x)
             {
@@ -249,32 +256,69 @@ public class XmlRpcServer
                 // It is possible that something is in the buffer
                 // if there were an exception during the writeResponse()
                 // call above.
-                strbuf.setLength(0);
+                buffer.reset();
 
-                XmlWriter writer = new XmlWriter (strbuf);
+                writer = null;
+                try
+                {
+                    writer = new XmlWriter(buffer);
+                }
+                catch (UnsupportedEncodingException encx)
+                {
+                    System.err.println("XmlRpcServer attempted to use " +
+                                       "unsupported encoding: " + encx);
+                    // NOTE: If we weren't already using the default
+                    // encoding, we could try it here.
+                }
+                catch (IOException iox)
+                {
+                    System.err.println("XmlRpcServer experienced I/O error " +
+                                       "writing error response: " + iox);
+                }
+
                 String message = x.toString ();
-                // check if XmlRpcException was thrown so we can get an error code
+                // Retrieve XmlRpcException error code (if possible).
                 int code = x instanceof XmlRpcException ?
                         ((XmlRpcException) x).code : 0;
                 try
                 {
                     writeError (code, message, writer);
+                    writer.flush();
                 }
-                catch (XmlRpcException e)
+                catch (Exception e)
                 {
                     // Unlikely to occur, as we just sent a struct
                     // with an int and a string.
                     System.err.println("Unable to send error response to " +
                                        "client: " + e);
                 }
-                try
+
+                // If we were able to create a XmlWriter, we should
+                // have a response.
+                if (writer != null)
                 {
-                    result = writer.getBytes ();
+                    result = buffer.toByteArray();
                 }
-                catch (UnsupportedEncodingException encx)
+                else
                 {
-                    System.err.println ("XmlRpcServer.execute: "+encx);
-                    result = writer.toString().getBytes();
+                    result = "".getBytes();
+                }
+            }
+            finally
+            {
+                if (writer != null)
+                {
+                    try
+                    {
+                        writer.close();
+                    }
+                    catch (IOException iox)
+                    {
+                        // This is non-fatal, but worth logging a
+                        // warning for.
+                        System.err.println("Exception closing output stream: " +
+                                           iox);
+                    }
                 }
             }
             if (debug)
@@ -284,8 +328,9 @@ public class XmlRpcServer
         }
 
         /**
-          * Called when an object to be added to the argument list has been parsed.
-          */
+         * Called when an object to be added to the argument list has
+         * been parsed.
+         */
         void objectParsed (Object what)
         {
             inParams.addElement (what);
@@ -294,14 +339,14 @@ public class XmlRpcServer
         /**
           * Writes an XML-RPC response to the XML writer.
           */
-        void writeResponse (Object param,
-                XmlWriter writer) throws XmlRpcException
+        void writeResponse (Object param, XmlWriter writer)
+            throws XmlRpcException, IOException
         {
             writer.startElement ("methodResponse");
             // if (param == null) param = ""; // workaround for Frontier bug
             writer.startElement ("params");
             writer.startElement ("param");
-            writeObject (param, writer);
+            writer.writeObject (param);
             writer.endElement ("param");
             writer.endElement ("params");
             writer.endElement ("methodResponse");
@@ -310,8 +355,8 @@ public class XmlRpcServer
         /**
          * Writes an XML-RPC error response to the XML writer.
          */
-        void writeError (int code, String message,
-                XmlWriter writer) throws XmlRpcException
+        void writeError (int code, String message, XmlWriter writer)
+            throws XmlRpcException, IOException
         {
             // System.err.println ("error: "+message);
             Hashtable h = new Hashtable ();
@@ -319,7 +364,7 @@ public class XmlRpcServer
             h.put ("faultString", message);
             writer.startElement ("methodResponse");
             writer.startElement ("fault");
-            writeObject (h, writer);
+            writer.writeObject (h);
             writer.endElement ("fault");
             writer.endElement ("methodResponse");
         }

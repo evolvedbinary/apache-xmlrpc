@@ -72,6 +72,7 @@ import org.xml.sax.*;
  * @see XmlRpcClient
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  */
 public abstract class XmlRpc 
     extends HandlerBase
@@ -329,89 +330,6 @@ public abstract class XmlRpc
             System.err.println ("Spent "+
                     (System.currentTimeMillis () - now) + " millis parsing");
     }
-
-    /**
-      * Writes the XML representation of a supported Java object to
-      * the XML writer.
-      */
-    void writeObject (Object what, XmlWriter writer)
-    {
-        writer.startElement ("value");
-        if (what == null)
-        {
-            throw new RuntimeException ("null value not supported by XML-RPC");
-        }
-        else if (what instanceof String)
-        {
-            writer.chardata (what.toString ());
-        }
-        else if (what instanceof Integer)
-        {
-            writer.startElement ("int");
-            writer.write (what.toString ());
-            writer.endElement ("int");
-        }
-        else if (what instanceof Boolean)
-        {
-            writer.startElement ("boolean");
-            writer.write (((Boolean) what).booleanValue () ? "1" : "0");
-            writer.endElement ("boolean");
-        }
-        else if (what instanceof Double || what instanceof Float)
-        {
-            writer.startElement ("double");
-            writer.write (what.toString ());
-            writer.endElement ("double");
-        }
-        else if (what instanceof Date)
-        {
-            writer.startElement ("dateTime.iso8601");
-            Date d = (Date) what;
-            writer.write (dateformat.format (d));
-            writer.endElement ("dateTime.iso8601");
-        }
-        else if (what instanceof byte[])
-        {
-            writer.startElement ("base64");
-            writer.write (Base64.encode ((byte[]) what));
-            writer.endElement ("base64");
-        }
-        else if (what instanceof Vector)
-        {
-            writer.startElement ("array");
-            writer.startElement ("data");
-            Vector v = (Vector) what;
-            int l2 = v.size ();
-            for (int i2 = 0; i2 < l2; i2++)
-                writeObject (v.elementAt (i2), writer);
-            writer.endElement ("data");
-            writer.endElement ("array");
-        }
-        else if (what instanceof Hashtable)
-        {
-            writer.startElement ("struct");
-            Hashtable h = (Hashtable) what;
-            for (Enumeration e = h.keys (); e.hasMoreElements ();)
-            {
-                String nextkey = (String) e.nextElement ();
-                Object nextval = h.get (nextkey);
-                writer.startElement ("member");
-                writer.startElement ("name");
-                writer.write (nextkey);
-                writer.endElement ("name");
-                writeObject (nextval, writer);
-                writer.endElement ("member");
-            }
-            writer.endElement ("struct");
-        }
-        else
-        {
-            throw new RuntimeException ("unsupported Java type: " +
-                    what.getClass ());
-        }
-        writer.endElement ("value");
-    }
-
 
     /**
       *  This method is called when a root level object has been parsed.
@@ -700,9 +618,14 @@ public abstract class XmlRpc
 
 
     /**
-     * A quick and dirty XML writer.
+     * A quick and dirty XML writer.  If you feed it a
+     * <code>ByteArrayInputStream</code>, it may be necessary to call
+     * <code>writer.flush()</code> before calling
+     * <code>buffer.toByteArray()</code> to get the data written to
+     * your byte buffer.
      */
     class XmlWriter
+        extends OutputStreamWriter
     {
         protected static final String PROLOG_START =
             "<?xml version=\"1.0\" encoding=\"";
@@ -713,55 +636,137 @@ public abstract class XmlRpc
         protected static final String GREATER_THAN_ENTITY = "&gt;";
         protected static final String AMPERSAND_ENTITY = "&amp;";
 
-        /**
-         * The buffer to write to.
-         */
-        StringBuffer buf;
-
-        /**
-         * The encoding to use.
-         */
-        String enc;
-
-        public XmlWriter (StringBuffer buf)
+        public XmlWriter (OutputStream out)
+            throws UnsupportedEncodingException, IOException
         {
             // The default encoding used for XML-RPC is ISO-8859-1.
-            this (buf, encoding);
+            this (out, encoding);
         }
 
-        public XmlWriter (StringBuffer buf, String enc)
+        public XmlWriter (OutputStream out, String enc)
+            throws UnsupportedEncodingException, IOException
         {
-            this.buf = buf;
-            this.enc = enc;
+            super(out, enc);
 
             // Add the XML prolog (which includes the encoding)
-            buf.append (PROLOG_START);
-            buf.append (encodings.getProperty (enc, enc));
-            buf.append (PROLOG_END);
+            write(PROLOG_START);
+            write(encodings.getProperty(enc, enc));
+            write(PROLOG_END);
         }
 
-        public void startElement (String elem)
+        /**
+         * Writes the XML representation of a supported Java object
+         * type.
+         *
+         * @param obj The <code>Object</code> to write.
+         */
+        public void writeObject (Object obj)
+            throws IOException
         {
-            buf.append ('<');
-            buf.append (elem);
-            buf.append ('>');
+            startElement ("value");
+            if (obj == null)
+            {
+                throw new RuntimeException("null value not supported by XML-RPC");
+            }
+            else if (obj instanceof String)
+            {
+                chardata(obj.toString());
+            }
+            else if (obj instanceof Integer)
+            {
+                startElement("int");
+                write(obj.toString());
+                endElement("int");
+            }
+            else if (obj instanceof Boolean)
+            {
+                startElement("boolean");
+                write(((Boolean) obj).booleanValue() ? "1" : "0");
+                endElement("boolean");
+            }
+            else if (obj instanceof Double || obj instanceof Float)
+            {
+                startElement("double");
+                write(obj.toString());
+                endElement("double");
+            }
+            else if (obj instanceof Date)
+            {
+                startElement("dateTime.iso8601");
+                Date d = (Date) obj;
+                write(dateformat.format(d));
+                endElement("dateTime.iso8601");
+            }
+            else if (obj instanceof byte[])
+            {
+                startElement("base64");
+                write(Base64.encode((byte[]) obj));
+                endElement("base64");
+            }
+            else if (obj instanceof Vector)
+            {
+                startElement("array");
+                startElement("data");
+                Vector array = (Vector) obj;
+                int size = array.size();
+                for (int i = 0; i < size; i++)
+                {
+                    writeObject(array.elementAt(i));
+                }
+                endElement("data");
+                endElement("array");
+            }
+            else if (obj instanceof Hashtable)
+            {
+                startElement("struct");
+                Hashtable struct = (Hashtable) obj;
+                for (Enumeration e = struct.keys(); e.hasMoreElements(); )
+                {
+                    String nextkey = (String) e.nextElement();
+                    Object nextval = struct.get(nextkey);
+                    startElement("member");
+                    startElement("name");
+                    write(nextkey);
+                    endElement("name");
+                    writeObject(nextval);
+                    endElement("member");
+                }
+                endElement("struct");
+            }
+            else
+            {
+                throw new RuntimeException("unsupported Java type: " +
+                                            obj.getClass());
+            }
+            endElement("value");
         }
 
-        public void endElement (String elem)
+        protected void startElement (String elem)
+            throws IOException
         {
-            buf.append (CLOSING_TAG_START);
-            buf.append (elem);
-            buf.append ('>');
+            write('<');
+            write(elem);
+            write('>');
         }
 
-        public void emptyElement (String elem)
+        protected void endElement (String elem)
+            throws IOException
         {
-            buf.append ('<');
-            buf.append (elem);
-            buf.append (SINGLE_TAG_END);
+            write(CLOSING_TAG_START);
+            write(elem);
+            write('>');
         }
 
-        public void chardata (String text)
+        protected void emptyElement (String elem)
+            throws IOException
+        {
+            write('<');
+            write(elem);
+            write(SINGLE_TAG_END);
+        }
+
+        protected void chardata (String text)
+            throws IOException
         {
             int l = text.length ();
             for (int i = 0; i < l; i++)
@@ -769,39 +774,19 @@ public abstract class XmlRpc
                 char c = text.charAt (i);
                 switch (c)
                 {
-                case '<' :
-                    buf.append (LESS_THAN_ENTITY);
+                case '<':
+                    write(LESS_THAN_ENTITY);
                     break;
-                case '>' :
-                    buf.append (GREATER_THAN_ENTITY);
+                case '>':
+                    write(GREATER_THAN_ENTITY);
                     break;
-                case '&' :
-                    buf.append (AMPERSAND_ENTITY);
+                case '&':
+                    write(AMPERSAND_ENTITY);
                     break;
-                default :
-                    buf.append (c);
+                default:
+                    write(c);
                 }
             }
-        }
-
-        public void write (char[] text)
-        {
-            buf.append (text);
-        }
-
-        public void write (String text)
-        {
-            buf.append (text);
-        }
-
-        public String toString ()
-        {
-            return buf.toString ();
-        }
-
-        public byte[] getBytes () throws UnsupportedEncodingException
-        {
-            return buf.toString ().getBytes (enc);
         }
     }
 }

@@ -254,7 +254,11 @@ public class XmlRpcClient
     {
         boolean fault;
         Object result = null;
-        StringBuffer strbuf;
+
+        /**
+         * The output buffer used in creating a request.
+         */
+        ByteArrayOutputStream buffer;
 
         CallData call;
 
@@ -298,12 +302,15 @@ public class XmlRpcClient
             catch (Exception x)
             {
                 if (callback != null)
+                {
                     try
                     {
                         callback.handleError (x, url, method);
                     }
                     catch (Exception ignore)
-                    {}
+                    {
+                    }
+                }
             }
         }
 
@@ -323,14 +330,19 @@ public class XmlRpcClient
             {
                 ByteArrayOutputStream bout = new ByteArrayOutputStream ();
 
-                if (strbuf == null)
-                    strbuf = new StringBuffer ();
+                if (buffer == null)
+                {
+                    buffer = new ByteArrayOutputStream();
+                }
                 else
-                    strbuf.setLength (0);
+                {
+                    buffer.reset();
+                }
 
-                XmlWriter writer = new XmlWriter (strbuf);
+                XmlWriter writer = new XmlWriter (buffer);
                 writeRequest (writer, method, params);
-                byte[] request = writer.getBytes();
+                writer.flush();
+                byte[] request = buffer.toByteArray();
 
                 URLConnection con = url.openConnection ();
                 con.setDoInput (true);
@@ -407,7 +419,7 @@ public class XmlRpcClient
             for (int i = 0; i < l; i++)
             {
                 writer.startElement ("param");
-                writeObject (params.elementAt (i), writer);
+                writer.writeObject (params.elementAt (i));
                 writer.endElement ("param");
             }
             writer.endElement ("params");
