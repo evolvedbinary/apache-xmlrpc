@@ -1,4 +1,4 @@
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.util;
 
 /*
  * The Apache Software License, Version 1.1
@@ -55,9 +55,51 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
- * @deprecated Use org.apache.xmlrpc.util.DateTool instead.
+ * Wraps a <code>DateFormat</code> instance to provide thread safety.
+ *
+ * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  */
-class DateTool extends org.apache.xmlrpc.util.DateTool
+public class DateTool
 {
+    protected static final String FORMAT = "yyyyMMdd'T'HH:mm:ss";
+
+    private DateFormat df;
+
+    /**
+     * Uses the <code>DateFormat</code> string
+     * <code>yyyyMMdd'T'HH:mm:ss</code>.
+     *
+     * @see #FORMAT
+     */
+    public DateTool()
+    {
+        df = new SimpleDateFormat(FORMAT);
+    }
+
+    /**
+     * @param d The date to format.
+     * @return The formatted date.
+     */
+    public synchronized String format(Date d)
+    {
+        return df.format(d);
+    }
+
+    /**
+     * @param s The text to parse a date from.
+     * @return The parsed date.
+     * @exception ParseException If the date could not be parsed.
+     */
+    public synchronized Date parse(String s)
+        throws ParseException
+    {
+        return df.parse(s);
+    }
 }
