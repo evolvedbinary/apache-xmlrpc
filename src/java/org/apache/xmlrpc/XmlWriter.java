@@ -65,6 +65,8 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.xmlrpc.util.DateTool;
+
 /**
  * A quick and dirty XML writer.  If you feed it a
  * <code>ByteArrayInputStream</code>, it may be necessary to call

@@ -57,6 +57,8 @@ package org.apache.xmlrpc;
 
 import java.text.ParseException;
 
+import org.apache.xmlrpc.util.DateTool;
+
 /**
  * The default implementation of the <code>TypeFactory</code>
  * interface.  Provides the following mappings:
