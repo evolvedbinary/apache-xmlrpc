@@ -74,7 +74,7 @@ public class XmlWriterTest
     /**
      * Constructor
      */
-    public XmlRpcTest(String testName) 
+    public XmlWriterTest(String testName) 
     {
         super(testName);
     }
