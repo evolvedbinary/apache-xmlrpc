@@ -354,7 +354,7 @@ public class XmlRpcClient
 
                 now = System.currentTimeMillis();
             }
-            
+
             try
             {
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -388,6 +388,7 @@ public class XmlRpcClient
                 OutputStream out = con.getOutputStream();
                 out.write(request);
                 out.flush();
+                out.close();
                 InputStream in = con.getInputStream();
                 parse(in);
             }
@@ -399,6 +400,7 @@ public class XmlRpcClient
                 }
                 throw new IOException(x.getMessage());
             }
+
             if (fault)
             {
                 // generate an XmlRpcException
