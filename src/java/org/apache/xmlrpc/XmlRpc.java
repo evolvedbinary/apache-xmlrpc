@@ -717,12 +717,11 @@ public abstract class XmlRpc
 }
 
 
-
-
-// wraps a DateFormat because it's not threadsafe
+/**
+ * Wraps a <code>DateFormat</code> instance to provide thread safety.
+ */
 class Formatter
 {
-
     private DateFormat f;
 
     public Formatter ()
