@@ -155,7 +155,7 @@ public class XmlRpcServer
             if (workers < maxThreads)
             {
                 workers += 1;
-                if (XmlRpc.debug && maxThreads - workers >= maxThreads * .95)
+                if (maxThreads - workers >= maxThreads * .95)
                 {
                     System.err.println("95% of XML-RPC server threads in use");
                 }
