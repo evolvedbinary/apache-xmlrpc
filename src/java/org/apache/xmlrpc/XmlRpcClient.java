@@ -70,9 +70,10 @@ import org.xml.sax.AttributeList;
 import org.xml.sax.SAXException;
 
 /**
- * A multithreaded, reusable XML-RPC client object. Use this if you need a
- * full-grown HTTP client(e.g. for Proxy and Cookies support). If you don't need
- * that, <code>XmlRpcClientLite</code> may work better for you.
+ * A multithreaded, reusable XML-RPC client object. Use this if you
+ * need a full-grown HTTP client (e.g. for Proxy and Basic Auth
+ * support). If you don't need that, <code>XmlRpcClientLite</code> may
+ * work better for you.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @version $Id$
