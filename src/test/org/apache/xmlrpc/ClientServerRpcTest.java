@@ -167,7 +167,7 @@ public class ClientServerRpcTest
         {
             InputStream in = new ByteArrayInputStream(RPC_REQUEST.getBytes());
             byte[] response = server.execute(in);
-            assertTrue("Response did not contain " + REQUEST_PARAM_VALUE,
+            assertTrue("Response did not contain " + REQUEST_PARAM_XML,
                        new String(response).indexOf(REQUEST_PARAM_XML) != -1);
         }
         catch (Exception e)
