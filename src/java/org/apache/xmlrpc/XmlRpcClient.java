@@ -149,7 +149,12 @@ public class XmlRpcClient implements XmlRpcHandler
      * <a href="http://www.ietf.org/rfc/rfc2617.txt">
      * http://www.ietf.org/rfc/rfc2617.txt</a>.
      *
+     * This method has been deprecated.  Furthermore, it has no
+     * effect on the overloads for execute and executeAsync that
+     * use an XmlRpcClientRequest or an XmlRpcTransport.
+     *
      * @deprecated Authentication is now handled by each XmlRpcTransport
+     *
      * @see DefaultXmlRpcTransport
      * @see LiteXmlRpcTransport
      * @see CommonsXmlRpcTransport
