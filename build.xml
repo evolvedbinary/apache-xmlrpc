@@ -247,6 +247,7 @@
       <formatter type="plain"/>
       <classpath refid="classpath"/>
       <classpath>
+        <!-- <pathelement location="${xerces.jar}"/> -->
         <pathelement path="${build.dest}"/>
         <pathelement location="${junit.jar}"/>
         <pathelement path="${build.test.dest}"/>
