@@ -601,19 +601,23 @@ public class WebServer implements Runnable
         }
         catch (EmptyStackException empty)
         {
-            if (runners.activeCount () > 255)
+            int maxRequests = XmlRpc.getMaxThreads();
+            if (runners.activeCount() > XmlRpc.getMaxThreads())
             {
-                throw new RuntimeException("System overload");
+                throw new RuntimeException("System overload: Maximum number " +
+                                           "of concurrent requests (" +
+                                           maxRequests + ") exceeded");
             }
             return new Runner();
         }
     }
 
     /**
+     * Put <code>runner</code> back into {@link #threadpool}.
      *
-     * @param runner
+     * @param runner The instance to reclaim.
      */
-    void releaseRunner(Runner runner)
+    void repoolRunner(Runner runner)
     {
         threadpool.push(runner);
     }
@@ -643,6 +647,7 @@ public class WebServer implements Runnable
             }
             else
             {
+                // Wake the thread waiting in our run() method.
                 this.notify();
             }
         }
@@ -660,11 +665,13 @@ public class WebServer implements Runnable
 
                 if (count > 200 || threadpool.size() > 20)
                 {
+                    // We're old, or the number of threads in the pool
+                    // is large.
                     return;
                 }
                 synchronized(this)
                 {
-                    releaseRunner(this);
+                    repoolRunner(this);
                     try
                     {
                         this.wait();
@@ -792,10 +799,13 @@ public class WebServer implements Runnable
             }
             catch (Exception exception)
             {
-                System.err.println(exception);
                 if (XmlRpc.debug)
                 {
                     exception.printStackTrace();
+                }
+                else
+                {
+                    System.err.println(exception);
                 }
             }
             finally

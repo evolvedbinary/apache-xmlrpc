@@ -148,15 +148,22 @@ public class XmlRpcServer
     public byte[] execute(InputStream is, XmlRpcContext context)
     {
         XmlRpcWorker worker = getWorker();
-        byte[] retval = worker.execute(is, context);
-        pool.push(worker);
-        return retval;
+        try
+        {
+            return worker.execute(is, context);
+        }
+        finally
+        {
+            pool.push(worker);
+        }
     }
 
     /**
      * Hands out pooled workers.
      *
-     * @return A worker.
+     * @return A worker (never <code>null</code>).
+     * @throws RuntimeException If the server exceeds its maximum
+     * number of allowed requests.
      */
     protected XmlRpcWorker getWorker()
     {
@@ -176,7 +183,9 @@ public class XmlRpcServer
                 }
                 return createWorker();
             }
-            throw new RuntimeException("System overload");
+            throw new RuntimeException("System overload: Maximum number of " +
+                                       "concurrent requests (" + maxThreads +
+                                       ") exceeded");
         }
     }
 
