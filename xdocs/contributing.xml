@@ -17,7 +17,7 @@
 
     <section name="Submitting Patches">
       <p>The preferred patch format is unidiff.  Emails containing
-      patches should be sent to the rpc-dev@xml.apache.org list, and
+      patches should be sent to the xmlrpc-dev@ws.apache.org list, and
       prefix their subject lines with <strong>[PATCH]</strong>.
       Patches are also accepted via the <a
       href="http://issues.apache.org/bugzilla/">issue tracker</a>.

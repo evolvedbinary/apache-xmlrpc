@@ -18,10 +18,22 @@
             <ul>
 
               <li>
+                Move HTTP Basic Authentication functionality to the XmlRpcTransport
+                classes.  Deprecate XmlRpcClient.setBasicAuthentication. (Ryan Hoegg)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
+            <strong>28 Jan 2003</strong>
+            <ul>
+
+              <li>
 		Refactor XmlRpcTransportFactory and add DefaultXmlRpcTransportFactory that
                 can load other transport factories via reflection.
                 Merge edited code from Larry Meader and Chris Jackson to use the Sun SSL 
-                provider as a transport.
+                provider as a transport. (Andrew Evers)
               </li>
 
             </ul>
@@ -36,6 +48,7 @@
                 Future implementations of XmlRpcTransport should inherit
                 their test classes from XmlRpcTransportTest as it guarantees
                 that they behave identically to DefaultXmlRpcTransport.
+                (Ryan Hoegg)
               </li>
 
             </ul>

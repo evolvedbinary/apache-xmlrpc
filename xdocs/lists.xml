@@ -9,8 +9,8 @@
   <body>
     <section name="The XML-RPC Users List">
       <p>
-<a href="mailto:rpc-user-subscribe@xml.apache.org">Subscribe</a>
-<a href="mailto:rpc-user-unsubscribe@xml.apache.org">Unsubscribe</a>
+<a href="mailto:xmlrpc-user-subscribe@ws.apache.org">Subscribe</a>
+<a href="mailto:xmlrpc-user-unsubscribe@ws.apache.org">Unsubscribe</a>
       </p>
       <p>
 This is the list where users of XML-RPC can meet and
@@ -19,8 +19,8 @@ discuss questions, raise issues, etc.
      </section>
     <section name="The XML-RPC Developers List">
       <p>
-<a href="mailto:rpc-dev-subscribe@xml.apache.org">Subscribe</a>
-<a href="mailto:rpc-dev-unsubscribe@xml.apache.org">Unsubscribe</a>
+<a href="mailto:xmlrpc-dev-subscribe@ws.apache.org">Subscribe</a>
+<a href="mailto:xmlrpc-dev-unsubscribe@ws.apache.org">Unsubscribe</a>
       </p>
       <p>
 This is the list where participating developers of the
