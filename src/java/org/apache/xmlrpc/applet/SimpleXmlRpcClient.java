@@ -80,13 +80,14 @@ import org.xml.sax.SAXParseException;
 import uk.co.wilson.xml.MinML;
 
 /**
- * A simple XML-RPC client
+ * A simple XML-RPC client.
+ *
+ * FIXME: This code is VERY out of date with the rest of the package.
  *
  * @version $Id$
  */
 public class SimpleXmlRpcClient
 {
-
     URL url;
 
     /**
@@ -130,7 +131,7 @@ public class SimpleXmlRpcClient
 }
 
 /**
- *
+ * FIXME: Leverage the XmlRpc class.
  */
 class XmlRpcSupport extends HandlerBase
 {
