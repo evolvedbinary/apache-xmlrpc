@@ -170,7 +170,7 @@ public final class  Base64
         int      fewerThan24bits   = lengthDataBits%TWENTYFOURBITGROUP;
         int      numberTriplets    = lengthDataBits/TWENTYFOURBITGROUP;
         byte     encodedData[]     = null;
-	int      encodedDataLength = 0;
+        int      encodedDataLength = 0;
 
         if (fewerThan24bits != 0)
         {
@@ -183,20 +183,20 @@ public final class  Base64
             encodedDataLength = numberTriplets * 4;
         }
 
-	// allow extra length for the separator
+        // allow extra length for the separator
         int nbrChunks = (CHUNK_SEPARATOR.length == 0 ? 0 :
                          (int) Math.ceil((float) encodedDataLength / CHUNK_SIZE));
 
-	encodedDataLength += (nbrChunks - 1) * CHUNK_SEPARATOR.length;
-	encodedData = new byte[encodedDataLength];
+        encodedDataLength += (nbrChunks - 1) * CHUNK_SEPARATOR.length;
+        encodedData = new byte[encodedDataLength];
 
         byte k = 0, l = 0, b1 = 0, b2 = 0, b3 = 0;
 
         int encodedIndex = 0;
         int dataIndex   = 0;
         int i           = 0;
-	int nextSeparatorIndex = CHUNK_SIZE;
-	int chunksSoFar = 0;
+        int nextSeparatorIndex = CHUNK_SIZE;
+        int chunksSoFar = 0;
 
         //log.debug("number of triplets = " + numberTriplets);
         for ( i = 0; i<numberTriplets; i++ )
@@ -225,17 +225,17 @@ public final class  Base64
                 lookUpBase64Alphabet[ (l <<2 ) | val3 ];
             encodedData[encodedIndex+3] = lookUpBase64Alphabet[ b3 & 0x3f ];
 
-	    encodedIndex += 4;
+            encodedIndex += 4;
 
-	    // this assumes that CHUNK_SIZE % 4 == 0
-	    if(encodedIndex == nextSeparatorIndex){
-		System.arraycopy(CHUNK_SEPARATOR, 0, encodedData,
+            // this assumes that CHUNK_SIZE % 4 == 0
+            if(encodedIndex == nextSeparatorIndex){
+                System.arraycopy(CHUNK_SEPARATOR, 0, encodedData,
                                  encodedIndex, CHUNK_SEPARATOR.length);
-		chunksSoFar++;
-		nextSeparatorIndex = (CHUNK_SIZE * (chunksSoFar + 1)) + 
+                chunksSoFar++;
+                nextSeparatorIndex = (CHUNK_SIZE * (chunksSoFar + 1)) + 
                                      (chunksSoFar * CHUNK_SEPARATOR.length);
-		encodedIndex += CHUNK_SEPARATOR.length;
-	    }
+                encodedIndex += CHUNK_SEPARATOR.length;
+            }
         }
 
         // form integral number of 6-bit groups
