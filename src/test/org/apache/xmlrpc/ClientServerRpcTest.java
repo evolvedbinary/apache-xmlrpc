@@ -77,6 +77,22 @@ public class ClientServerRpcTest
      */
     private static final String HANDLER_NAME = "TestHandler";
 
+    /**
+     * The value to use in our request parameter.
+     */
+    private static final String REQUEST_PARAM_VALUE = "foobar";
+
+    /**
+     * A RPC request of our echo server in XML.
+     */
+    private static final String RPC_REQUEST =
+        "<?xml version=\"1.0\"?>\n" +
+        "<methodCall>\n" +
+        " <methodName>" + HANDLER_NAME + ".echo</methodName>\n" +
+        " <params><param><value>" + REQUEST_PARAM_VALUE +
+        "</value></param></params>\n" +
+        "</methodCall>\n";
+
     private WebServer webServer;
 
     private XmlRpcServer server;
