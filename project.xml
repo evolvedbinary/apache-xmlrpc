@@ -35,7 +35,7 @@
   <distributionDirectory>/www/xml.apache.org/dist/xmlrpc/</distributionDirectory>
 
   <repository>
-    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic/xml-rpc</connection>
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:xml-rpc</connection>
     <url>http://cvs.apache.org/viewcvs/xml-rpc/</url>
   </repository>
 
@@ -116,13 +116,13 @@
       <url>http://java.sun.com/products/jsse/</url>
     </dependency>
     <dependency>
-      <id>jnet</id>
+      <id>jsse:jnet</id>
       <version>1.0.2</version>
       <jar>jnet.jar</jar>
       <url>http://java.sun.com/products/jsse/</url>
     </dependency>
     <dependency>
-      <id>jcert</id>
+      <id>jsse:jcert</id>
       <version>1.0.2</version>
       <jar>jcert.jar</jar>
       <url>http://java.sun.com/products/jsse/</url>
@@ -131,6 +131,10 @@
       <id>fesi</id>
       <version>1.1.5</version>
       <url>http://home.worldcom.ch/jmlugrin/fesi/</url>
+    </dependency>
+    <dependency>
+      <id>junit</id>
+      <version>3.7</version>
     </dependency>
   </dependencies>
 
@@ -142,20 +146,20 @@
     <integrationUnitTestSourceDirectory/>
 
     <!-- Unit test classes -->
-    <unitTestPatterns>
-      <unitTestPattern>include = **/*Test.java</unitTestPattern>
-    </unitTestPatterns>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+      </includes>
+    </unitTest>
 
     <!-- Integration unit test classes -->
-    <integrationUnitTestPatterns>
-    </integrationUnitTestPatterns>
+    <integrationUnitTest/>
 
     <!-- J A R  R E S O U R C E S -->
     <!-- Resources that are packaged up inside the JAR file -->
 
-    <jarResources>
-    </jarResources>
-
+    <resources/>
+    
     <jars>
     </jars>
   </build>
