@@ -152,7 +152,6 @@ public class XmlRpcServer
     {
         Vector inParams;
         StringBuffer strbuf;
-        byte[] result;
 
         /**
          * Creates a new instance.
@@ -184,6 +183,7 @@ public class XmlRpcServer
         private byte[] executeInternal (InputStream is, String user,
                                         String password)
         {
+            byte[] result;
             long now = System.currentTimeMillis ();
 
             try
