@@ -33,7 +33,7 @@
   <issueTrackingUrl>http://nagoya.apache.org/bugzilla/query.cgi?product=XML-RPC</issueTrackingUrl>
   <siteAddress>ws.apache.org</siteAddress>
   <siteDirectory>/www/ws.apache.org/xmlrpc/</siteDirectory>
-  <distributionDirectory>/www/ws.apache.org/dist/xmlrpc/</distributionDirectory>
+  <distributionDirectory>/www/www.apache.org/dist/ws/xmlrpc/</distributionDirectory>
 
   <repository>
     <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:xml-rpc</connection>
