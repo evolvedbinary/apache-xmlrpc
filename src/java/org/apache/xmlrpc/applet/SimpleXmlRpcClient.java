@@ -678,6 +678,10 @@ class XmlRpcSupport extends HandlerBase
     /**
      * A quick and dirty XML writer.
      * TODO: Replace with core package's XmlWriter class.
+     *
+     * @see <a
+     * href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=28982">Bugzilla
+     * bug 28982</a>
      */
     class XmlWriter
     {
@@ -760,7 +764,13 @@ class XmlRpcSupport extends HandlerBase
          */
         public void write(byte[] text)
         {
-            buf.append(text);
+            // ### This may cause encoding complications for
+            // ### multi-byte characters.  This should be properly
+            // ### fixed by implementing Bugzilla issue 28982.
+            for (int i = 0; i < text.length; i++)
+            {
+                buf.append((char) text[i]);
+            }
         }
 
         /**
