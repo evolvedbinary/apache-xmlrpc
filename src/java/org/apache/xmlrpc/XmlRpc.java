@@ -55,18 +55,9 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Stack;
 import java.util.Vector;
 import org.xml.sax.AttributeList;
@@ -140,9 +131,9 @@ public abstract class XmlRpc extends HandlerBase
 
     /**
      * Thread-safe wrapper for the <code>DateFormat</code> object used
-     * to format and parse date/time values.
+     * to parse date/time values.
      */
-    static Formatter dateformat = new Formatter ();
+    static DateTool dateformat = new DateTool();
 
     /**
      * Used to collect character data (<code>CDATA</code>) of
@@ -195,21 +186,10 @@ public abstract class XmlRpc extends HandlerBase
     };
 
     /**
-     * Java's name for the encoding we're using.
+     * Java's name for the encoding we're using.  Defaults to
+     * <code>ISO8859_1</code>.
      */
-    static String encoding = "ISO8859_1";
-
-    /**
-     * Mapping between Java encoding names and "real" names used in
-     * XML prolog.
-     */
-    static Properties encodings = new Properties ();
-
-    static
-    {
-        encodings.put ("UTF8", "UTF-8");
-        encodings.put ("ISO8859_1", "ISO-8859-1");
-    }
+    static String encoding = XmlWriter.ISO8859_1;
 
     /**
      * Set the SAX Parser to be used. The argument can either be the
@@ -252,8 +232,9 @@ public abstract class XmlRpc extends HandlerBase
     }
 
     /**
-     * Set the encoding of the XML. This should be the name of a Java encoding
-     * contained in the encodings Hashtable.
+     * Set the encoding of the XML.
+     *
+     * @param enc The Java name of the encoding.
      */
     public static void setEncoding(String enc)
     {
@@ -261,11 +242,14 @@ public abstract class XmlRpc extends HandlerBase
     }
 
     /**
-     * Return the encoding, transforming to the canonical name if possible.
+     * Return the encoding, transforming to the canonical name if
+     * possible.
+     *
+     * @see org.apache.xmlrpc.XmlWriter#canonicalizeEncoding(String)
      */
     public String getEncoding ()
     {
-        return encodings.getProperty(encoding, encoding);
+        return XmlWriter.canonicalizeEncoding(encoding);
     }
 
     /**
@@ -671,268 +655,5 @@ public abstract class XmlRpc extends HandlerBase
         {
             return (types[type] + " element " + value);
         }
-    }
-
-    /**
-     * A quick and dirty XML writer.  If you feed it a
-     * <code>ByteArrayInputStream</code>, it may be necessary to call
-     * <code>writer.flush()</code> before calling
-     * <code>buffer.toByteArray()</code> to get the data written to
-     * your byte buffer.
-     */
-    class XmlWriter extends OutputStreamWriter
-    {
-        protected static final String PROLOG_START
-                = "<?xml version=\"1.0\" encoding=\"";
-        protected static final String PROLOG_END = "\"?>";
-        protected static final String CLOSING_TAG_START = "</";
-        protected static final String SINGLE_TAG_END = "/>";
-        protected static final String LESS_THAN_ENTITY = "&lt;";
-        protected static final String GREATER_THAN_ENTITY = "&gt;";
-        protected static final String AMPERSAND_ENTITY = "&amp;";
-
-        /**
-         *
-         * @param out
-         * @throws UnsupportedEncodingException
-         * @throws IOException
-         */
-        public XmlWriter(OutputStream out)
-                throws UnsupportedEncodingException, IOException
-        {
-            // The default encoding used for XML-RPC is ISO-8859-1.
-            this(out, encoding);
-        }
-
-        /**
-         *
-         * @param out
-         * @param enc
-         * @throws UnsupportedEncodingException
-         * @throws IOException
-         */
-        public XmlWriter(OutputStream out, String enc)
-                throws UnsupportedEncodingException, IOException
-        {
-            super(out, enc);
-
-            // Add the XML prolog (which includes the encoding)
-            write(PROLOG_START);
-            write(encodings.getProperty(enc, enc));
-            write(PROLOG_END);
-        }
-
-        /**
-         * Writes the XML representation of a supported Java object type.
-         *
-         * @param obj The <code>Object</code> to write.
-         * @exception IOException Problem writing data.
-         * @throws IllegalArgumentException If a <code>null</code>
-         * parameter is passed to this method (not supported by the <a
-         * href="http://xml-rpc.com/spec">XML-RPC specification</a>).
-         */
-        public void writeObject(Object obj) throws IOException
-        {
-            startElement("value");
-            if (obj == null)
-            {
-                throw new IllegalArgumentException
-                    ("null values not supported by XML-RPC");
-            }
-            else if (obj instanceof String)
-            {
-                chardata(obj.toString());
-            }
-            else if (obj instanceof Integer)
-            {
-                startElement("int");
-                write(obj.toString());
-                endElement("int");
-            }
-            else if (obj instanceof Boolean)
-            {
-                startElement("boolean");
-                write(((Boolean) obj).booleanValue() ? "1" : "0");
-                endElement("boolean");
-            }
-            else if (obj instanceof Double || obj instanceof Float)
-            {
-                startElement("double");
-                write(obj.toString());
-                endElement("double");
-            }
-            else if (obj instanceof Date)
-            {
-                startElement("dateTime.iso8601");
-                Date d = (Date) obj;
-                write(dateformat.format(d));
-                endElement("dateTime.iso8601");
-            }
-            else if (obj instanceof byte[])
-            {
-                startElement("base64");
-                this.write(Base64.encode((byte[]) obj));
-                endElement("base64");
-            }
-            else if (obj instanceof Object[])
-            {
-                startElement("array");
-                startElement("data");
-                Object[] array = (Object []) obj;
-                for (int i = 0; i < array.length; i++)
-                {
-                    writeObject(array[i]);
-                }
-                endElement("data");
-                endElement("array");
-            }
-            else if (obj instanceof Vector)
-            {
-                startElement("array");
-                startElement("data");
-                Vector array = (Vector) obj;
-                int size = array.size();
-                for (int i = 0; i < size; i++)
-                {
-                    writeObject(array.elementAt(i));
-                }
-                endElement("data");
-                endElement("array");
-            }
-            else if (obj instanceof Hashtable)
-            {
-                startElement("struct");
-                Hashtable struct = (Hashtable) obj;
-                for (Enumeration e = struct.keys(); e.hasMoreElements(); )
-                {
-                    String nextkey = (String) e.nextElement();
-                    Object nextval = struct.get(nextkey);
-                    startElement("member");
-                    startElement("name");
-                    write(nextkey);
-                    endElement("name");
-                    writeObject(nextval);
-                    endElement("member");
-                }
-                endElement("struct");
-            }
-            else
-            {
-                throw new RuntimeException("unsupported Java type: "
-                        + obj.getClass());
-            }
-            endElement("value");
-        }
-
-        /**
-         * This is used to write out the Base64 output...
-         */
-        protected void write(byte[] byteData) throws IOException
-        {
-            for (int i = 0; i < byteData.length; i++)
-            {
-                write(byteData[i]);
-            }
-        }
-
-        /**
-         *
-         * @param elem
-         * @throws IOException
-         */
-        protected void startElement(String elem) throws IOException
-        {
-            write('<');
-            write(elem);
-            write('>');
-        }
-
-        /**
-         *
-         * @param elem
-         * @throws IOException
-         */
-        protected void endElement(String elem) throws IOException
-        {
-            write(CLOSING_TAG_START);
-            write(elem);
-            write('>');
-        }
-
-        /**
-         *
-         * @param elem
-         * @throws IOException
-         */
-        protected void emptyElement(String elem) throws IOException
-        {
-            write('<');
-            write(elem);
-            write(SINGLE_TAG_END);
-        }
-
-        /**
-         *
-         * @param text
-         * @throws IOException
-         */
-        protected void chardata(String text) throws IOException
-        {
-            int l = text.length ();
-            for (int i = 0; i < l; i++)
-            {
-                char c = text.charAt (i);
-                switch (c)
-                {
-                case '<':
-                    write(LESS_THAN_ENTITY);
-                    break;
-                case '>':
-                    write(GREATER_THAN_ENTITY);
-                    break;
-                case '&':
-                    write(AMPERSAND_ENTITY);
-                    break;
-                default:
-                    write(c);
-                }
-            }
-        }
-    }
-}
-
-/**
- * Wraps a <code>DateFormat</code> instance to provide thread safety.
- */
-class Formatter
-{
-    private DateFormat f;
-
-    /**
-     * Uses the <code>DateFormat</code> string
-     * <code>yyyyMMdd'T'HH:mm:ss</code>.
-     */
-    public Formatter()
-    {
-        f = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
-    }
-
-    /**
-     * @param d The date to format.
-     * @return the formatted date.
-     */
-    public synchronized String format(Date d)
-    {
-        return f.format(d);
-    }
-
-    /**
-     * @param s The text to parse a date from.
-     * @return The parsed date.
-     * @throws ParseException If the date could not be parsed.
-     */
-    public synchronized Date parse(String s) throws ParseException
-    {
-        return f.parse(s);
     }
 }
