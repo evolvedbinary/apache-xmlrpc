@@ -55,87 +55,60 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * Process an InputStream and produce and XmlRpcRequest.  This class
- * is NOT thread safe.
+ * The <code>system.multicall</code> handler performs several RPC
+ * calls at a time.
  *
+ * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @version $Id$
  * @since 1.2
  */
-public class XmlRpcRequestProcessor extends XmlRpc
+public class MultiCall
+implements ContextXmlRpcHandler
 {
-    private Vector requestParams;
-
-    /**
-     * Creates a new instance.
-     */
-    protected XmlRpcRequestProcessor()
+    public Object execute(String method, Vector params, XmlRpcContext context)
+            throws Exception
     {
-        requestParams = new Vector();
+        if ("multicall".equals(method))
+        {
+            return multicall(params, context);
+        }
+
+        throw new NoSuchMethodException("No method '" + method + "' in " + this.getClass().getName());
     }
 
-    /**
-     * Process a request.
-     *
-     * @param is the stream to read the request from.
-     * @returns XMLRpcRequest the request.
-     * @throws ParseFailed if unable to parse the request.
-     */
-    public XmlRpcRequest processRequest(InputStream is)
+    public Vector multicall(Vector requests, XmlRpcContext context)
     {
-        long now = 0;
-
-        if (XmlRpc.debug)
-        {
-            now = System.currentTimeMillis();
-        }
-        try
+        Vector response = new Vector();
+        XmlRpcRequest request;
+        for (int i = 0; i < requests.size(); i++)
         {
             try
             {
-                parse(is);
+                Hashtable call = (Hashtable) requests.elementAt(i);
+                request = new XmlRpcRequest((String) call.get("methodName"),
+                                            (Vector) call.get("params"));
+                Object handler = context.getHandlerMapping().getHandler(request.getMethodName());
+                Vector v = new Vector();
+                v.addElement(XmlRpcWorker.invokeHandler(handler, request, context));
+                response.addElement(v);
             }
-            catch (Exception e)
+            catch (Exception x)
             {
-                throw new ParseFailed(e);
-            }
-            if (XmlRpc.debug)
-            {
-                System.out.println("XML-RPC method name: " + methodName);
-                System.out.println("Request parameters: " + requestParams);
-            }
-            // check for errors from the XML parser
-            if (errorLevel > NONE)
-            {
-                throw new ParseFailed(errorMsg);
-            }
-
-            return new XmlRpcRequest(methodName, (Vector) requestParams.clone());
-        }
-        finally
-        {
-            requestParams.removeAllElements();
-            if (XmlRpc.debug)
-            {
-                System.out.println("Spent " + (System.currentTimeMillis() - now)
-                        + " millis decoding request");
+                String message = x.toString();
+                int code = (x instanceof XmlRpcException ?
+                            ((XmlRpcException) x).code : 0);
+                Hashtable h = new Hashtable();
+                h.put("faultString", message);
+                h.put("faultCode", new Integer(code));
+                response.addElement(h);
             }
         }
-    }
-
-    /**
-     * Called when an object to be added to the argument list has been
-     * parsed.
-     *
-     * @param what The parameter parsed from the request.
-     */
-    void objectParsed(Object what)
-    {
-        requestParams.addElement(what);
+        return response;
     }
 }

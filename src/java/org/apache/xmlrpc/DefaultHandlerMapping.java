@@ -94,7 +94,8 @@ public class DefaultHandlerMapping
     public void addHandler(String handlerName, Object handler)
     {
         if (handler instanceof XmlRpcHandler ||
-                handler instanceof AuthenticatedXmlRpcHandler)
+                handler instanceof AuthenticatedXmlRpcHandler ||
+                handler instanceof ContextXmlRpcHandler)
         {
             handlers.put(handlerName, handler);
         }

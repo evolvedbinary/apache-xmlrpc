@@ -91,12 +91,13 @@ public class XmlRpcWorker
      *
      * @param handler the handler to call.
      * @param request the request information to use.
+     * @param context the context information to use.
      * @return Object the result of calling the handler.
      * @throws ClassCastException if the handler is not of an appropriate type.
      * @throws NullPointerException if the handler is null.
      * @throws Exception if the handler throws an exception.
      */
-    protected static Object invokeHandler(Object handler, XmlRpcRequest request)
+    protected static Object invokeHandler(Object handler, XmlRpcRequest request, XmlRpcContext context)
         throws Exception
     {
         long now = 0;
@@ -112,6 +113,11 @@ public class XmlRpcWorker
               throw new NullPointerException
                   ("Null handler passed to XmlRpcWorker.invokeHandler");
             }
+            else if (handler instanceof ContextXmlRpcHandler)
+            {
+                return ((ContextXmlRpcHandler) handler).execute
+                    (request.getMethodName(), request.getParameters(), context);
+            }
             else if (handler instanceof XmlRpcHandler)
             {
                 return ((XmlRpcHandler) handler).execute
@@ -119,20 +125,9 @@ public class XmlRpcWorker
             }
             else if (handler instanceof AuthenticatedXmlRpcHandler)
             {
-                // If HTTP authentication is in use, XML-RPC must
-                // return a 401 HTTP status code when no user name is
-                // supplied.  This provides authentication meta data
-                // and tells clients to provide authentication on
-                // subsequent requests.
-                String userName = request.getUserName();
-                if (userName == null || userName.length() == 0)
-                {
-                    throw new AuthenticationFailed
-                        ("No user name provided for HTTP authentication");
-                }
                 return ((AuthenticatedXmlRpcHandler) handler)
                     .execute(request.getMethodName(), request.getParameters(),
-                             request.getUserName(), request.getPassword());
+                             context.getUserName(), context.getPassword());
             }
             else
             {
@@ -153,18 +148,27 @@ public class XmlRpcWorker
 
     /**
      * Decode, process and encode the response or exception for an XML-RPC
-     * request.
+     * request. This method executes the handler method with the default context.
+     */
+    public byte[] execute(InputStream is, String user, String password)
+    {
+        return execute(is, defaultContext(user, password));
+    }
+
+    /**
+     * Decode, process and encode the response or exception for an XML-RPC
+     * request. This method executes will pass the specified context to the
+     * handler if the handler supports context.
      *
      * @param is the InputStream to read the request from.
-     * @param user the user name (may be null).
-     * @param password the password (may be null).
+     * @param context the context for the request (may be null).
      * @return byte[] the response.
      * @throws org.apache.xmlrpc.ParseFailed if the request could not be parsed.
      * @throws org.apache.xmlrpc.AuthenticationFailed if the handler for the
      * specific method required authentication and insufficient credentials were
      * supplied.
      */
-    public byte[] execute(InputStream is, String user, String password)
+    public byte[] execute(InputStream is, XmlRpcContext context)
     {
         long now = 0;
 
@@ -175,11 +179,10 @@ public class XmlRpcWorker
 
         try
         {
-            XmlRpcRequest request =
-                requestProcessor.processRequest(is, user, password);
+            XmlRpcRequest request = requestProcessor.processRequest(is);
             Object handler = handlerMapping.getHandler(request.
                                                        getMethodName());
-            Object response = invokeHandler(handler, request);
+            Object response = invokeHandler(handler, request, context);
             return responseProcessor.processResponse
                 (response, requestProcessor.getEncoding());
         }
@@ -208,5 +211,18 @@ public class XmlRpcWorker
                                    + " millis in request/process/response");
             }
         }
+    }
+
+    /**
+     * Factory method to return a default context object for the execute() method.
+     * This method can be overridden to return a custom sub-class of XmlRpcContext.
+     *
+     * @param user the username of the user making the request.
+     * @param password the password of the user making the request.
+     * @return XmlRpcContext the context for the reqeust.
+     */
+    protected XmlRpcContext defaultContext(String user, String password)
+    {
+        return new DefaultXmlRpcContext(user, password, handlerMapping);
     }
 }

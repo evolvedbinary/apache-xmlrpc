@@ -61,22 +61,18 @@ import java.util.Vector;
  * Encapsulates an XML-RPC request.
  *
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
+ * @version $Id$
  * @since 1.2
  */
 public class XmlRpcRequest
 {
     protected final String methodName;
     protected final Vector parameters;
-    protected final String userName;
-    protected final String password;
 
-    public XmlRpcRequest(String methodName, Vector parameters,
-                         String userName, String password)
+    public XmlRpcRequest(String methodName, Vector parameters)
     {
         this.parameters = parameters;
         this.methodName = methodName;
-        this.userName = userName;
-        this.password = password;
     }
 
     public Vector getParameters()
@@ -92,15 +88,5 @@ public class XmlRpcRequest
     public String getMethodName()
     {
         return methodName;
-    }
-
-    public String getUserName()
-    {
-        return userName;
-    }
-
-    public String getPassword()
-    {
-        return password;
     }
 }

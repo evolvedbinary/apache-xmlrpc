@@ -62,6 +62,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
+import java.util.Hashtable;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -101,6 +102,11 @@ public class ClientServerRpcTest
      * The value to use in our request parameter.
      */
     private static final String REQUEST_PARAM_VALUE = "foobar";
+
+    /**
+     * The number of calls to batch in the multicall.
+     */
+    private static final int NUM_MULTICALLS = 10;
 
     /**
      * The value to use in our request parameter.
@@ -159,10 +165,14 @@ public class ClientServerRpcTest
             fail(e.toString());
         }
 
-        // WebServer (contains its own XmlRpcServer instance, binds to
-        // INADDR_ANY)
-        webServer = new WebServer(SERVER_PORT);
+        // Setup system handler
+        SystemHandler webServerSysHandler = new SystemHandler();
+        webServerSysHandler.addSystemHandler("multicall", new MultiCall());
+
+        // WebServer (contains its own XmlRpcServer instance)
+        webServer = new WebServer(SERVER_PORT, localhost);
         webServer.addHandler(HANDLER_NAME, new TestHandler());
+        webServer.addHandler("system", webServerSysHandler);
 
         // XML-RPC client(s)
         try
@@ -269,6 +279,41 @@ public class ClientServerRpcTest
         }
     }
 
+    public void testSystemMultiCall()
+    {
+        try
+        {
+            Vector calls = new Vector();
+
+            for (int i = 0; i < NUM_MULTICALLS; i++)
+            {
+                Hashtable call = new Hashtable();
+                Vector params = new Vector();
+
+                params.add(REQUEST_PARAM_VALUE + i);
+                call.put("methodName", HANDLER_NAME + ".echo");
+                call.put("params", params);
+ 
+                calls.addElement(call);
+            }
+
+            Object response = client.execute("system.multicall", calls);
+
+            for (int i = 0; i < NUM_MULTICALLS; i++)
+            {
+               Vector result = new Vector();
+               result.add(REQUEST_PARAM_VALUE + i);
+
+               assertEquals(result, ((Vector)response).elementAt(i));
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }   
+ 
     protected class TestHandler
     {
         public String echo(String message)

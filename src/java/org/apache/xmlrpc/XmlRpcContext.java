@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright(c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,7 +22,7 @@ package org.apache.xmlrpc;
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *        Apache Software Foundation(http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -40,11 +40,11 @@ package org.apache.xmlrpc;
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
  * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
  * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  * ====================================================================
@@ -55,87 +55,33 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.InputStream;
-import java.util.Vector;
-
 /**
- * Process an InputStream and produce and XmlRpcRequest.  This class
- * is NOT thread safe.
+ * The minimal context that an XML-RPC request will occur in.
  *
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @version $Id$
  * @since 1.2
  */
-public class XmlRpcRequestProcessor extends XmlRpc
+public interface XmlRpcContext
 {
-    private Vector requestParams;
-
     /**
-     * Creates a new instance.
-     */
-    protected XmlRpcRequestProcessor()
-    {
-        requestParams = new Vector();
-    }
-
-    /**
-     * Process a request.
+     * Get the username specified in the outer request.
      *
-     * @param is the stream to read the request from.
-     * @returns XMLRpcRequest the request.
-     * @throws ParseFailed if unable to parse the request.
+     * @returns the username (may be null).
      */
-    public XmlRpcRequest processRequest(InputStream is)
-    {
-        long now = 0;
-
-        if (XmlRpc.debug)
-        {
-            now = System.currentTimeMillis();
-        }
-        try
-        {
-            try
-            {
-                parse(is);
-            }
-            catch (Exception e)
-            {
-                throw new ParseFailed(e);
-            }
-            if (XmlRpc.debug)
-            {
-                System.out.println("XML-RPC method name: " + methodName);
-                System.out.println("Request parameters: " + requestParams);
-            }
-            // check for errors from the XML parser
-            if (errorLevel > NONE)
-            {
-                throw new ParseFailed(errorMsg);
-            }
-
-            return new XmlRpcRequest(methodName, (Vector) requestParams.clone());
-        }
-        finally
-        {
-            requestParams.removeAllElements();
-            if (XmlRpc.debug)
-            {
-                System.out.println("Spent " + (System.currentTimeMillis() - now)
-                        + " millis decoding request");
-            }
-        }
-    }
+    public String getUserName();
 
     /**
-     * Called when an object to be added to the argument list has been
-     * parsed.
+     * Get the password specified in the outer request.
      *
-     * @param what The parameter parsed from the request.
+     * @returns the password (may be null).
      */
-    void objectParsed(Object what)
-    {
-        requestParams.addElement(what);
-    }
+    public String getPassword();
+
+    /**
+     * Get the XML-RPC handler mapping for the server handling the request.
+     *
+     * @returns the handler mapping (may be null).
+     */
+    public XmlRpcHandlerMapping getHandlerMapping();
 }

@@ -120,22 +120,35 @@ public class XmlRpcServer
      * Parse the request and execute the handler method, if one is
      * found. Returns the result as XML.  The calling Java code
      * doesn't need to know whether the call was successful or not
-     * since this is all packed into the response.
+     * since this is all packed into the response. No context information
+     * is passed.
      */
     public byte[] execute(InputStream is)
     {
-        return execute(is, null, null);
+        return execute(is, new DefaultXmlRpcContext(null, null, getHandlerMapping()));
     }
 
     /**
      * Parse the request and execute the handler method, if one is
      * found. If the invoked handler is AuthenticatedXmlRpcHandler,
-     * use the credentials to authenticate the user.
+     * use the credentials to authenticate the user. No context information
+     * is passed.
      */
     public byte[] execute(InputStream is, String user, String password)
     {
+        return execute(is, new DefaultXmlRpcContext(user, password, getHandlerMapping()));
+    }
+    
+    /**
+     * Parse the request and execute the handler method, if one is
+     * found. If the invoked handler is AuthenticatedXmlRpcHandler,
+     * use the credentials to authenticate the user. Context information
+     * is passed to the worker, and may be passed to the request handler.
+     */
+    public byte[] execute(InputStream is, XmlRpcContext context)
+    {
         XmlRpcWorker worker = getWorker();
-        byte[] retval = worker.execute(is, user, password);
+        byte[] retval = worker.execute(is, context);
         pool.push(worker);
         return retval;
     }
@@ -161,9 +174,14 @@ public class XmlRpcServer
                 {
                     System.out.println("95% of XML-RPC server threads in use");
                 }
-                return new XmlRpcWorker(handlerMapping);
+                return createWorker();
             }
             throw new RuntimeException("System overload");
         }
+    }
+
+    protected XmlRpcWorker createWorker()
+    {
+        return new XmlRpcWorker(handlerMapping);
     }
 }
