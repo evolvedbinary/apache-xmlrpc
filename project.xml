@@ -129,6 +129,18 @@
   </developers>
 
   <dependencies>
+    <!-- FIXME: Ryan, would you fill this out?
+    <dependency>
+      <id>commons-httpclient</id>
+      <version></version>
+      <url></url>
+    </dependency>
+    <dependency>
+      <id>commons-logging</id>
+      <version></version>
+      <url></url>
+    </dependency>
+    -->
     <dependency>
       <id>servletapi</id>
       <version>2.2</version>
