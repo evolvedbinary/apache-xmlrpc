@@ -84,6 +84,8 @@ implements ContextXmlRpcHandler
 
     public Vector multicall(Vector requests, XmlRpcContext context)
     {
+        // The array of calls is passed as a single parameter of type array.
+        requests=(Vector)requests.elementAt(0);
         Vector response = new Vector();
         XmlRpcServerRequest request;
         for (int i = 0; i < requests.size(); i++)

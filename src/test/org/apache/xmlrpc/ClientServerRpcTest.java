@@ -265,8 +265,11 @@ public class ClientServerRpcTest
  
                 calls.addElement(call);
             }
-
-            Object response = client.execute("system.multicall", calls);
+ 
+            Vector paramWrapper = new Vector();
+            paramWrapper.add(calls);
+            
+            Object response = client.execute("system.multicall", paramWrapper);
 
             for (int i = 0; i < NUM_MULTICALLS; i++)
             {
