@@ -171,6 +171,8 @@ public class XmlRpcClientLite
                         client.closeConnection ();
                         client.initConnection ();
                         in = client.sendRequest (request);
+                    } else {
+                        throw iox;
                     }
                 }
 
@@ -178,8 +180,10 @@ public class XmlRpcClientLite
                 parse (in);
 
                 // client keepalive is always false if XmlRpc.keepalive is false
-                if (!client.keepalive)
+                if (!client.keepalive) {
                     client.closeConnection ();
+                    client = null;
+                }
 
                 if (debug)
                     System.err.println ("result = "+result);
