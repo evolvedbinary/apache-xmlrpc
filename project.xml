@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<project>
+
+  <version>2</version>
+  <name>xmlrpc</name>
+  <id>xmlrpc</id>
+  <currentVersion>1.2-dev</currentVersion>
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://xml.apache.org/</url>
+  </organization>
+  <inceptionYear>2001</inceptionYear>
+  <package>org.apache.xmlrpc</package>
+
+  <shortDescription>Project Management Tools</shortDescription>
+
+  <!-- Gump integration -->
+  <gumpRepositoryId>jakarta</gumpRepositoryId>
+
+  <description>
+    Apache XML-RPC is a Java implementation of <a href="http://www.xmlrpc.com">
+    XML-RPC</a>, a popular protocol that uses XML over HTTP to implement remote
+    procedure calls.
+    <br/>
+    Apache XML-RPC was previously known as Helma XML-RPC. If you have code using
+    the Helma library, all you should have to do is change the import statements
+    in your code from helma.xmlrpc.* to org.apache.xmlrpc.*.
+  </description>
+
+  <url>http://xml.apache.org/xmlrpc/</url>
+  <cvsWebUrl>http://cvs.apache.org/viewcvs.cgi/xml-rpc/</cvsWebUrl>
+  <issueTrackingUrl>http://nagoya.apache.org/bugzilla/query.cgi?product=XML-RPC</issueTrackingUrl>
+  <siteAddress>xml.apache.org</siteAddress>
+  <siteDirectory>/www/xml.apache.org/xmlrpc/</siteDirectory>
+  <distributionDirectory>/www/xml.apache.org/dist/xmlrpc/</distributionDirectory>
+
+  <distributions>
+    <distribution>
+      <id>1.0</id>
+      <version>1.0</version>
+      <tag>XMLRPC_1_0</tag>
+    </distribution>
+    <distribution>
+      <id>1.1</id>
+      <version>1.1</version>
+      <tag>XMLRPC_1_1</tag>
+    </distribution>
+  </distributions>
+
+  <branches>
+  </branches>
+
+  <mailingLists>
+    <mailingList>
+      <name>XML-RPC User List</name>
+      <subscribe>rpc-user-subscribe@xml.apache.org</subscribe>
+      <unsubscribe>rpc-user-unsubscribe@xml.apache.org</unsubscribe>
+      <archive></archive>
+    </mailingList>
+    <mailingList>
+      <name>XML-RPC Developer List</name>
+      <subscribe>rpc-dev-subscribe@xml.apache.org</subscribe>
+      <unsubscribe>rpc-dev-unsubscribe@xml.apache.org</unsubscribe>
+      <archive></archive>
+    </mailingList>
+  </mailingLists>
+
+  <developers>
+    <developer>
+      <name>Hannes Wallnoefer</name>
+      <id>hannes</id>
+      <email>hannes@apache.org</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Martin Poeschl</name>
+      <id>mpoeschl</id>
+      <email>mpoeschl@marmot.at</email>
+      <organization>Zenplex</organization>
+    </developer>
+    <developer>
+      <name>Daniel Rall</name>
+      <id>dlr</id>
+      <email>dlr@finemaltcoding.com</email>
+      <organization>CollabNet, Inc.</organization>
+    </developer>
+    <developer>
+      <name>Jason van Zyl</name>
+      <id>jvanzyl</id>
+      <email>jason@zenplex.com</email>
+      <organization>Zenplex</organization>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <name>jakarta-servletapi</name>
+      <type>required</type>
+      <version>2.2</version>
+      <jar>servlet-2.2.jar</jar>
+      <url></url>
+    </dependency>
+    <dependency>
+      <name>jsse</name>
+      <type>required</type>
+      <version>1.0.2</version>
+      <jar>jsse.jar</jar>
+      <url>http://java.sun.com/products/jsse/</url>
+    </dependency>
+    <dependency>
+      <name>jnet</name>
+      <type>required</type>
+      <version>1.0.2</version>
+      <jar>jnet.jar</jar>
+      <url>http://java.sun.com/products/jsse/</url>
+    </dependency>
+    <dependency>
+      <name>jcert</name>
+      <type>required</type>
+      <version>1.0.2</version>
+      <jar>jcert.jar</jar>
+      <url>http://java.sun.com/products/jsse/</url>
+    </dependency>
+    <dependency>
+      <name>fesi</name>
+      <type>required</type>
+      <version>1.1.5</version>
+      <jar>fesi.jar</jar>
+      <url>http://home.worldcom.ch/jmlugrin/fesi/</url>
+    </dependency>
+
+    <!-- Documentation dependencies -->
+
+    <dependency>
+      <name>jakarta-velocity-dvsl</name>
+      <type>documentation</type>
+      <version>0.43</version>
+      <jar>velocity-dvsl-0.43.jar</jar>
+      <url>http://jakarta.apache.org/velocity/dvsl/</url>
+    </dependency>
+
+    <dependency>
+      <name>jdepend</name>
+      <type>required</type>
+      <version>2.2</version>
+      <jar>jdepend.jar</jar>
+      <url>http://www.clarkware.com/software/JDepend.html</url>
+    </dependency>
+
+    <!-- the following are all required for checkstyle to work -->
+    <dependency>
+      <name>checkstyle</name>
+      <type>required</type>
+      <version>2.1</version>
+      <jar>checkstyle-2.1.jar</jar>
+      <url>http://checkstyle.sourceforge.net/</url>
+    </dependency>
+
+    <dependency>
+      <name>antlr</name>
+      <type>required</type>
+      <version></version>
+      <jar>antlr.jar</jar>
+      <url>http://www.antlr.org/</url>
+    </dependency>
+
+    <dependency>
+      <name>regexp</name>
+      <type>required</type>
+      <version>1.2</version>
+      <jar>regexp-1.2.jar</jar>
+      <url>http://jakarta.apache.org/regexp/</url>
+    </dependency>
+    <!-- end checkstyle requirements -->
+
+  </dependencies>
+
+  <build>
+
+    <sourceDirectories>
+      <sourceDirectory>src/java</sourceDirectory>
+    </sourceDirectories>
+
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <integrationUnitTestSourceDirectory/>
+
+    <aspectSourceDirectories>
+    </aspectSourceDirectories>
+
+    <!-- Unit test classes -->
+    <unitTestPatterns>
+      <unitTestPattern>include = **/*Test.java</unitTestPattern>
+    </unitTestPatterns>
+
+    <!-- Integration unit test classes -->
+    <integrationUnitTestPatterns>
+    </integrationUnitTestPatterns>
+
+    <!-- J A R  R E S O U R C E S -->
+    <!-- Resources that are packaged up inside the JAR file -->
+
+    <jarResources>
+    </jarResources>
+
+    <jars>
+    </jars>
+  </build>
+</project>
+
