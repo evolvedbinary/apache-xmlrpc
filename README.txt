@@ -6,13 +6,21 @@ The Apache XmlRpc package is an implementation of the XML-RPC
 specification (http://www.xml-rpc.com) with optional Servlet
 and SSL extensions.
 
+.           Location of Ant build.xml and build.properties files.
 bin/        Temporary directory for building the project.
 lib/        Final location of the jar files
-build/      Location of Ant build.xml and build.properties files.
 examples/   Some examples and instructions on how to run them.
 src/        Location of Java sources.
 xdocs/      XmlRpc documention in DocBook format.
 docs/       The rendered documentation in HTML format.
+
+--------------------------------------------------------------------------
+R E Q U I R E M E N T S
+--------------------------------------------------------------------------
+
+To build the XmlRpc package, you need to have Ant (and JDK 1.2+) installed
+(http://jakarta.apache.org/ant/).  Execute "ant -help" from this directory
+to get basic help or just "ant" to build the jars.
 
 --------------------------------------------------------------------------
 B U I L D I N G
