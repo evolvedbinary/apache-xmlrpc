@@ -72,6 +72,7 @@ import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 import org.apache.xmlrpc.Base64;
+import org.apache.xmlrpc.XmlRpc;
 import org.xml.sax.AttributeList;
 import org.xml.sax.HandlerBase;
 import org.xml.sax.InputSource;
@@ -688,7 +689,7 @@ class XmlRpcSupport extends HandlerBase
         public XmlWriter(StringBuffer buf)
         {
             this.buf = buf;
-            buf.append("<?xml version=\"1.0\"?>");
+            buf.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
         }
 
         /**
