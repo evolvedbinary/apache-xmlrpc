@@ -248,7 +248,18 @@ public class WebServer implements Runnable
         InetAddress addr = address;
         if (addr == null)
         {
-            addr = InetAddress.getLocalHost();
+            InetAddress[] addrs = InetAddress.getAllByName("127.0.0.1");
+            if (addrs.length > 0 &&
+                "127.0.0.1".equals(addrs[0].getHostAddress()))
+            {
+                addr = addrs[0];
+            }
+            else
+            {
+                // This is not necessarilly the loopback interface -- it
+                // could be one of your external network interfaces.
+                addr = InetAddress.getLocalHost();
+            }
         }
 
         // Since we can't reliably set SO_REUSEADDR until JDK 1.4 is
