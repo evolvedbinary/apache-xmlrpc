@@ -147,7 +147,9 @@
   <!-- J A R                                                              -->
   <!-- ================================================================== -->
   
-  <target name="jar" depends="compile">
+  <target name="jar" depends="compile"
+    description="Builds the two JAR files from source">
+
     <jar jarfile="${build.dir}/${project}.jar">
       <fileset dir="${build.dest}" excludes="**/applet/*"/>
     </jar>
@@ -190,6 +192,20 @@
   </target>
 
   <!-- ================================================================== -->
+  <!-- T E S T                                                            -->
+  <!-- ================================================================== -->
+
+  <!--
+  <target name="test"
+    description="Runs unit tests">
+  </target>
+
+  <target name="rttest"
+    description="Runs run-time tests">
+  </target>
+  -->
+
+  <!-- ================================================================== -->
   <!-- D O C S                                                            -->
   <!-- ================================================================== -->
   
@@ -220,8 +236,8 @@
 
   <target 
     name="docs"
-    depends="docs-prepare-error"
-    description="--> generates the HTML documentation"
+    depends="docs-prepare-error,javadocs"
+    description="Generates the HTML documentation (including JavaDoc)"
     if="jdom.present">
 
     <taskdef 
@@ -263,7 +279,8 @@
   <!-- ================================================================== -->
 
   <target name="install-jar" depends="jar" 
-          description="==> Installs .jar file in ${lib.repo}">
+    description="Installs .jar file in ${lib.repo}">
+
     <copy todir="${lib.repo}" filtering="no">
       <fileset dir="${build.dir}">
         <include name="${project}.jar"/>
