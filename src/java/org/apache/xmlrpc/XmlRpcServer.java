@@ -181,9 +181,11 @@ public class XmlRpcServer
     }
 
     /**
-     * Find the handler for a given method.
+     * Find the handler and its method name for a given method.
      *
-     * @param methodName The name of the method to find.
+     * @param methodName The name of the XML-RPC method to find a
+     * handler for (this is <i>not</i> the Java method name).
+     * @return A handler object and method name.
      */
     protected Object getHandler(String methodName)
         throws Exception
@@ -193,32 +195,30 @@ public class XmlRpcServer
         int dot = methodName.lastIndexOf('.');
         if (dot > -1)
         {
+            // The last portion of the XML-RPC method name is the Java
+            // method name.
             handlerName = methodName.substring(0, dot);
             handler = handlers.get(handlerName);
-            if (handler != null)
-            {
-                methodName = methodName.substring(dot + 1);
-            }
         }
 
         if (handler == null)
         {
             handler = handlers.get("$default");
-        }
 
-        if (handler == null)
-        {
-            if (dot > -1)
+            if (handler == null)
             {
-                throw new Exception("RPC handler object \""
-                                    + handlerName + "\" not found and no default "
-                                    + "handler registered.");
-            }
-            else
-            {
-                throw new Exception("RPC handler object not found for \""
-                                    + methodName
-                                    + "\": no default handler registered.");
+                if (dot > -1)
+                {
+                    throw new Exception("RPC handler object \""
+                                        + handlerName + "\" not found and no "
+                                        + "default handler registered");
+                }
+                else
+                {
+                    throw new Exception("RPC handler object not found for \""
+                                        + methodName
+                                        + "\": No default handler registered");
+                }
             }
         }
 
@@ -227,6 +227,9 @@ public class XmlRpcServer
     
     /**
      * Invokes the specified method on the provided handler.
+     *
+     * @param methodName The name of the XML-RPC method to invoke
+     * (this is <i>not</i> the Java method name).
      */
     protected Object invokeHandler(Object handler, String methodName,
                                    Vector request, String user,
@@ -303,7 +306,7 @@ public class XmlRpcServer
                 parse(is);
                 if (XmlRpc.debug)
                 {
-                    System.out.println("method name: " + methodName);
+                    System.out.println("XML-RPC method name: " + methodName);
                     System.out.println("inparams: " + inParams);
                 }
                 // check for errors from the XML parser
@@ -313,12 +316,18 @@ public class XmlRpcServer
                 }
 
                 Object handler = getHandler(methodName);
-                Object outParam = invokeHandler(handler, methodName, inParams, user, password);
+                Object outParam = invokeHandler(handler, methodName, inParams,
+                                                user, password);
 
                 if (XmlRpc.debug)
                 {
                     System.out.println("outparam = " + outParam);
                 }
+
+                writer = new XmlWriter(buffer, encoding);
+                writeResponse(outParam, writer);
+                writer.flush();
+                result = buffer.toByteArray();
             }
             catch(Exception x)
             {
@@ -505,13 +514,22 @@ class Invoker implements XmlRpcHandler
         // Methode da ?
         Method method = null;
 
+        // The last element of the XML-RPC method name is the Java
+        // method name.
+        int dot = methodName.lastIndexOf('.');
+        if (dot > -1)
+        {
+            methodName = methodName.substring(dot + 1);
+        }
+
         if (XmlRpc.debug)
         {
-            System.out.println("Searching for method: " + methodName);
+            System.out.println("Searching for method: " + methodName +
+                               " in class " + targetClass.getName());
             for (int i = 0; i < argClasses.length; i++)
             {
-                System.out.println("Parameter " + i + ": " + argClasses[i]
-                        + " = " + argValues[i]);
+                System.out.println("Parameter " + i + ": " + argValues[i]
+                        + " (" + argClasses[i] + ')');
             }
         }
 
