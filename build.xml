@@ -278,15 +278,24 @@
 
   <target 
     name="dist"
-    depends="jar">
+    depends="jar,javadocs,docs">
 
     <property name="distDir" value="${build.dir}/${final.name}"/>
 
+    <!-- B I N A R Y  D I S T R I B U T I O N -->
+
+    <echo>
+      +-------------------------------------------------------+
+      | C R E A T I N G  B I N A R Y  D I S T R I B U T I O N |
+      +-------------------------------------------------------+
+    </echo>
+    
     <mkdir dir="${distDir}"/>
 
-    <copy todir="${distDir}" file="build.properties"/>
-    <copy todir="${distDir}" file="build.xml"/>
-    
+    <!-- Copy README and LICENSE -->
+    <copy todir="${distDir}" file="README.txt"/>
+    <copy todir="${distDir}" file="LICENSE"/>
+
     <!-- Copy Jars -->
     <copy todir="${distDir}">
       <fileset dir="${build.dir}">
@@ -294,13 +303,14 @@
       </fileset>
     </copy>
 
-    <!-- Copy Source -->
-    <copy todir="${distDir}/src">
-      <fileset dir="${src.dir}">
-        <include name="**/*.java"/>
+    <!-- Copy documentation -->
+    <copy todir="${distDir}/docs">
+      <fileset dir="${docs.dest}">
+        <include name="**"/>
       </fileset>
     </copy>
 
+    <!-- Create a tar.gz file -->
     <tar longfile="gnu" tarfile="${final.name}.tar">
       <tarfileset dir="${build.dir}">
         <include name="${final.name}/**"/>
@@ -310,12 +320,54 @@
     <gzip zipfile="${final.name}.tar.gz" src="${final.name}.tar"/>
     <delete file="${final.name}.tar"/>
     
+    <!-- Create a zip file -->
     <zip zipfile="${final.name}.zip">
       <zipfileset dir="${build.dir}">
         <include name="${final.name}/**"/>
       </zipfileset>
     </zip>
+
+    <!-- S O U R C E  D I S T R I B U T I O N -->
+
+    <echo>
+      +-------------------------------------------------------+
+      | C R E A T I N G  S O U R C E  D I S T R I B U T I O N |
+      +-------------------------------------------------------+
+    </echo>
+
+    <delete>
+      <fileset dir="${distDir}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </delete>
     
+    <copy todir="${distDir}" file="build.properties"/>
+    <copy todir="${distDir}" file="build.xml"/>
+
+    <!-- Copy Source -->
+    <copy todir="${distDir}/src">
+      <fileset dir="${src.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+    </copy>
+
+    <!-- Create a tar.gz file -->
+    <tar longfile="gnu" tarfile="${final.name}-src.tar">
+      <tarfileset dir="${build.dir}">
+        <include name="${final.name}/**"/>
+      </tarfileset>
+    </tar>
+    
+    <gzip zipfile="${final.name}-src.tar.gz" src="${final.name}-src.tar"/>
+    <delete file="${final.name}-src.tar"/>
+    
+    <!-- Create a zip file -->
+    <zip zipfile="${final.name}-src.zip">
+      <zipfileset dir="${build.dir}">
+        <include name="${final.name}/**"/>
+      </zipfileset>
+    </zip>
+
   </target>
 
 </project>
