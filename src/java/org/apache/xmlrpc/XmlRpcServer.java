@@ -547,6 +547,12 @@ class Invoker implements XmlRpcHandler
             // It is some other exception
             throw new Exception(t.toString());
         }
+        if (returnValue == null && method.getReturnType() == Void.TYPE)
+        {
+            // Not supported by the spec.
+            throw new IllegalArgumentException
+                ("void return types for handler methods not supported");
+        }
         return returnValue;
     }
 }
