@@ -56,22 +56,20 @@ package org.apache.xmlrpc;
  */
 
 /**
- * An interface used to mark authentication failures.  For instance, a
- * class might implement this interface and sub-class
- * <code>java.security.acl.AclNotFoundException</code> to indicate
- * that a user does not exist, providing an appropriate message via
- * the {@link #getMessage()} API.
+ * Thrown as the result of an authentication failure.
  *
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @see org.apache.xmlrpc.AuthenticatedXmlRpcHandler
  * @since 1.2
  */
-public interface AuthenticationFailed
+public class AuthenticationFailed extends RuntimeException
 {
-    /**
-     * Describes why authentication failed.
-     *
-     * @return A text description of how the failure occurred.
-     */
-    public String getMessage();
+    public AuthenticationFailed()
+    {
+    }
+
+    public AuthenticationFailed(String msg)
+    {
+        super(msg);
+    }
 }
