@@ -234,7 +234,10 @@ public class XmlRpcServer
                 }
                 catch (XmlRpcException xrx)
                 {
-                    // won't happen, we just sent a struct with an int and a string
+                    // Unlikely to occur, as we just sent a struct
+                    // with an int and a string.
+                    System.err.println("Unable to send error response to " +
+                                       "client: " + e);
                 }
                 try
                 {
