@@ -557,11 +557,10 @@ public abstract class XmlRpc
     }
 
     /**
-      * This represents an XML-RPC Value while the request is being parsed.
-      */
+     * This represents a XML-RPC value parsed from the request.
+     */
     class Value
     {
-
         int type;
         Object value;
         // the name to use for the next member of struct values
@@ -583,29 +582,39 @@ public abstract class XmlRpc
           */
         public void endElement (Value child)
         {
-            if (type == ARRAY)
+            switch (type)
+            {
+            case ARRAY:
                 array.addElement (child.value);
-            else if (type == STRUCT)
+                break;
+            case STRUCT:
                 struct.put (nextMemberName, child.value);
+            }
         }
 
         /**
-          * Set the type of this value. If it's a container, create the corresponding java container.
-          */
+         * Set the type of this value. If it's a container, create the
+         * corresponding java container.
+         */
         public void setType (int type)
         {
             // System.err.println ("setting type to "+types[type]);
             this.type = type;
-            if (type == ARRAY)
+            switch (type)
+            {
+            case ARRAY:
                 value = array = new Vector ();
-            if (type == STRUCT)
+                break;
+            case STRUCT:
                 value = struct = new Hashtable ();
+                break;
+            }
         }
 
         /**
-          * Set the character data for the element and interpret it according to the
-          * element type
-          */
+         * Set the character data for the element and interpret it
+         * according to the element type.
+         */
         public void characterData (String cdata)
         {
             switch (type)
@@ -643,9 +652,12 @@ public abstract class XmlRpc
             }
         }
 
-        // This is a performance hack to get the type of a value without casting the Object.
-        // It breaks the contract of method hashCode, but it doesn't matter since
-        // Value objects are never used as keys in Hashtables.
+        /**
+         * This is a performance hack to get the type of a value
+         * without casting the Object.  It breaks the contract of
+         * method hashCode, but it doesn't matter since Value objects
+         * are never used as keys in Hashtables.
+         */
         public int hashCode ()
         {
             return type;
@@ -653,12 +665,14 @@ public abstract class XmlRpc
 
         public String toString ()
         {
-            return (types[type] + " element "+value);
+            return (types[type] + " element " + value);
         }
     }
 
 
-    // A quick and dirty XML writer.
+    /**
+     * A quick and dirty XML writer.
+     */
     class XmlWriter
     {
 
