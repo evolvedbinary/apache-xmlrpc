@@ -71,6 +71,8 @@ import junit.framework.TestSuite;
 public class XmlRpcTest
     extends TestCase 
 {
+    private XmlRpcExtension xmlRpc;
+
     /**
      * Constructor
      */
@@ -92,7 +94,8 @@ public class XmlRpcTest
      */
     public void setUp() 
     {
-        // Nothing done here yet.
+        XmlRpc.setDebug(true);
+        xmlRpc = new XmlRpcExtension();
     }
    
     /**
@@ -100,7 +103,8 @@ public class XmlRpcTest
      */
     public void tearDown() 
     {
-        // Nothing to do here yet.
+        xmlRpc = null;
+        XmlRpc.setDebug(false);
     }
 
     /**
@@ -110,9 +114,6 @@ public class XmlRpcTest
     {
         try
         {
-            XmlRpc.setDebug(true);
-
-            XmlRpcExtension xmlRpc = new XmlRpcExtension();
             // Test the XmlWriter
             xmlRpc.testWriter();
 
@@ -125,7 +126,7 @@ public class XmlRpcTest
         }
     }
 
-    class XmlRpcExtension
+    private class XmlRpcExtension
         extends XmlRpc
     {
         /**
@@ -143,11 +144,15 @@ public class XmlRpcTest
             assertEquals(XmlRpc.encoding, writer.getEncoding());
             String foobar = "foobar";
             writer.writeObject(foobar);
-            assertEquals(foobar, buffer.toString());
+            writer.flush();
+            //System.err.println("buffer=" + new String(buffer.toByteArray()));
+            String postProlog = "<value>" + foobar + "</value>";
+            assertTrue(buffer.toString().endsWith(postProlog));
             int thirtySeven = 37;
             writer.writeObject(new Integer(37));
-            assertEquals(foobar + "<int>" + thirtySeven + "</int>",
-                         buffer.toString());
+            writer.flush();
+            postProlog += "<value><int>" + thirtySeven + "</int></value>";
+            assertTrue(buffer.toString().endsWith(postProlog));
         }
     }
 }
