@@ -89,8 +89,10 @@ public abstract class XmlRpc extends HandlerBase
     /**
      * The version string used in HTTP communication.
      */
-    // FIXME: Use Ant <filter> to preprocess during compilation
-    public static final String version = "Apache XML-RPC 1.2-a3-dev";
+    // FIXME: Use Ant <filter> to pre-process version number into a
+    // class-loaded .properties file at build time.  Use here when
+    // available, and otherwise provide no version string.
+    public static final String version = "Apache XML-RPC 2.0";
 
     /**
      * The default parser to use (MinML).
@@ -193,66 +195,88 @@ public abstract class XmlRpc extends HandlerBase
      * org.apache.xmlrpc.TypeFactory} set to an instance of the class
      * named by the <code>org.apache.xmlrpc.TypeFactory</code> System
      * property.  If property not set or class is unavailable, uses
-     * the default.
+     * the default of {@link org.apache.xmlrpc.TypeFactory}.
      */
     protected XmlRpc()
     {
-        this(System.getProperty(TypeFactory.class.getName()));
+        String typeFactoryName = null;
+        try
+        {
+            typeFactoryName = System.getProperty(TypeFactory.class.getName());
+        }
+        catch (SecurityException e)
+        {
+            // An unsigned applet may not access system properties.
+            // No-op means we use the default TypeFactory instead.
+            if (debug)
+            {
+                System.out.println("Unable to determine the value of the " +
+                                   "system property '" +
+                                   TypeFactory.class.getName() + "': " +
+                                   e.getMessage());
+            }
+        }
+        this.typeFactory = createTypeFactory(typeFactoryName);
     }
 
     /**
      * Creates a new instance with the specified {@link
      * org.apache.xmlrpc.TypeFactory}.
      *
-     * @param typeFactory The implementation to use.
+     * @param typeFactoryName The fully qualified class name of the
+     * {@link org.apache.xmlrpc.TypeFactory} implementation to use.
      */
-    protected XmlRpc(String typeFactory)
+    protected XmlRpc(String typeFactoryName)
     {
-        Class c = null;
-        if (typeFactory != null && typeFactory.length() > 0)
-        {
-            try
-            {
-                c = Class.forName(typeFactory);
-            }
-            catch (ClassNotFoundException e)
-            {
-                System.err.println("Error loading TypeFactory specified by " +
-                                   "the " + TypeFactory.class.getName() +
-                                   " property, using default instead: " +
-                                   e.getMessage());
-            }
-        }
-        this.typeFactory = createTypeFactory(c);
+        this.typeFactory = createTypeFactory(typeFactoryName);
     }
 
     /**
      * Creates a new instance of the specified {@link
      * org.apache.xmlrpc.TypeFactory}.
      *
-     * @param typeFactory The implementation to use.
+     * @param className The fully qualified class name of the
+     * implementation to use.
      * @return The new type mapping.
      */
-    private TypeFactory createTypeFactory(Class typeFactory)
+    private TypeFactory createTypeFactory(String className)
     {
-        // If we're using the default, serve it up immediately.
-        if (typeFactory == null ||
-            DefaultTypeFactory.class.equals(typeFactory))
+        Class c = null;
+        if (className != null && className.length() > 0)
+        {
+            try
+            {
+                c = Class.forName(className);
+            }
+            catch (ClassNotFoundException e)
+            {
+                System.err.println("Error loading TypeFactory '" +
+                                   "' " + c.getName() +
+                                   "': Using the default instead: " +
+                                   e.getMessage());
+            }
+        }
+
+        // If we're using the default, provide it immediately.
+        if (c == null || DefaultTypeFactory.class.equals(c))
         {
             return new DefaultTypeFactory();
         }
 
         try
         {
-            return (TypeFactory) typeFactory.newInstance();
+            return (TypeFactory) c.newInstance();
         }
         catch (Exception e)
         {
             System.err.println("Unable to create configured TypeFactory '" +
-                               typeFactory.getName() + "': " + e.getMessage() +
-                               ": Using default");
-            // Call self recursively to acquire default.
-            return createTypeFactory(null);
+                               c.getName() + "': " + e.getMessage() +
+                               ": Falling back to default");
+            if (debug)
+            {
+                e.printStackTrace();
+            }
+            return new DefaultTypeFactory();
         }
     }
 
