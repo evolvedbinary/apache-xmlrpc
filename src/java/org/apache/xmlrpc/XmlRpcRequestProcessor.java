@@ -134,7 +134,7 @@ public class XmlRpcRequestProcessor extends XmlRpc
      *
      * @param what The parameter parsed from the request.
      */
-    void objectParsed(Object what)
+    protected void objectParsed(Object what)
     {
         requestParams.addElement(what);
     }

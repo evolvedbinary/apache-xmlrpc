@@ -474,7 +474,7 @@ public class XmlRpcClient implements XmlRpcHandler
         /**
          * Called when the return value has been parsed.
          */
-        void objectParsed(Object what)
+        protected void objectParsed(Object what)
         {
             result = what;
         }

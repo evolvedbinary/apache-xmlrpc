@@ -436,9 +436,12 @@ public abstract class XmlRpc extends HandlerBase
     }
 
     /**
-     *  This method is called when a root level object has been parsed.
+     * This method is called when a root level object has been parsed.
+     * Sub-classes implement this callback to receive the fully parsed
+     * object.
      */
-    abstract void objectParsed(Object what);
+    protected abstract void objectParsed(Object what);
+
 
     ////////////////////////////////////////////////////////////////
     // methods called by XML parser
