@@ -148,11 +148,15 @@ public class Base64Test
      */
     private void assertEquals(byte[] a, byte[] b)
     {
+        if (a.length != b.length)
+        {
+            fail("Byte arrays have different lengths (" + a.length + " != " + b.length + ")");
+        }
         for (int i = 0; i < a.length; i++)
         {
             if (a[i] != b[i])
             {
-                fail("Byte arrays not equal (" + a[i] + " != " + b[i] + ")");
+                fail("Byte arrays not equal (" + a[i] + " != " + b[i] + " at position + " + i + ")");
             }
         }
     }
