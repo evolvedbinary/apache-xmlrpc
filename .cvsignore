@@ -1,4 +1,5 @@
 bin
+target
 *~
 docs
 maven.log
