@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright(c) 2001,2002 The Apache Software Foundation.  All rights
+ * Copyright(c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,76 +55,21 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.util.*;
-
 /**
- * Implements the XML-RPC standard system.* methods (such as
- * <code>system.multicall</code>.
+ * Maps from a handler name to a handler object.
  *
- * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @since 1.2
  */
-public class SystemHandler
+public interface XmlRpcHandlerMapping
 {
-    private XmlRpcHandlerMapping handlerMapping = null;
-
-    /**
-     * Creates a new instance that delegates calls via the
-     * specified {@link org.apache.xmlrpc.XmlRpcHandlerMapping}
-     */
-    public SystemHandler(XmlRpcHandlerMapping handlerMapping)
-    {
-        this.handlerMapping = handlerMapping;
-    }
-
-    /**
-     * Creates a new instance that delegates its multicalls via
-     * the mapping used by the specified {@link org.apache.xmlrpc.XmlRpcServer}.
-     *
-     * @param server The server to retrieve the XmlRpcHandlerMapping from.
-     */
-    protected SystemHandler(XmlRpcServer server)
-    {
-        this(server.getHandlerMapping());
-    }
-
-    /**
-     * The <code>system.multicall</code> handler performs several RPC
-     * calls at a time.
-     *
-     * @param request The request containing multiple RPC calls.
-     * @return The RPC response.
-     */
-    public Vector multicall(Vector requests)
-    {
-        Vector response = new Vector();
-        XmlRpcRequest request;
-        for (int i = 0; i < requests.size(); i++)
-        {
-            try
-            {
-                Hashtable call = (Hashtable) requests.elementAt(i);
-                request = new XmlRpcRequest((String) call.get("methodName"),
-                                            (Vector) call.get("params"),
-                                            null, null);
-                Object handler = handlerMapping.getHandler(request.getMethodName());
-                Vector v = new Vector();
-                v.addElement(XmlRpcWorker.invokeHandler(handler, request));
-                response.addElement(v);
-            }
-            catch (Exception x)
-            {
-                String message = x.toString();
-                int code = (x instanceof XmlRpcException ?
-                            ((XmlRpcException) x).code : 0);
-                Hashtable h = new Hashtable();
-                h.put("faultString", message);
-                h.put("faultCode", new Integer(code));
-                response.addElement(h);
-            }
-        }
-        return response;
-    }
+  /**
+   * Return the handler for the specified handler name.
+   *
+   * @param handlerName The name of the handler to retrieve.
+   * @return Object The desired handler.
+   * @throws Exception If a handler can not be found.
+   */
+  public Object getHandler(String handlerName)
+      throws Exception;
 }

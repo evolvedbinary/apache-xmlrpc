@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright(c) 2001,2002 The Apache Software Foundation.  All rights
+ * Copyright(c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,110 +55,110 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.Hashtable;
 
 /**
- * A multithreaded, reusable XML-RPC server object. The name may be misleading
- * because this does not open any server sockets. Instead it is fed by passing
- * an XML-RPC input stream to the execute method. If you want to open a
- * HTTP listener, use the WebServer class instead.
+ * Provide a default handler mapping, used by the XmlRpcServer. This
+ * mapping supports the special handler name "$default" that will
+ * handle otherwise unhandled requests.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
+ * @see org.apache.xmlrpc.XmlRpcServer
+ * @since 1.2
  */
-public class XmlRpcServer
+public class DefaultHandlerMapping
+    implements XmlRpcHandlerMapping
 {
-    private Stack pool;
-    private int nbrWorkers;
-    private DefaultHandlerMapping handlerMapping;
+    private Hashtable handlers;
 
     /**
-     * Construct a new XML-RPC server. You have to register handlers
-     * to make it do something useful.
+     * Create a new mapping.
      */
-    public XmlRpcServer()
+    public DefaultHandlerMapping()
     {
-        pool = new Stack();
-        nbrWorkers = 0;
-        handlerMapping = new DefaultHandlerMapping();
+        handlers = new Hashtable();
     }
 
     /**
-     * @see org.apache.xmlrpc.DefaultHandlerMapping#addHandler(String, Object)
+     * Register a handler object with this name. Methods of this
+     * objects will be callable over XML-RPC as
+     * "handlername.methodname". For more information about XML-RPC
+     * handlers see the <a href="../index.html#1a">main documentation
+     * page</a>.
+     *
+     * @param handlername The name to identify the handler by.
+     * @param handler The handler itself.
      */
     public void addHandler(String handlerName, Object handler)
     {
-        handlerMapping.addHandler(handlerName, handler);
+        if (handler instanceof XmlRpcHandler ||
+                handler instanceof AuthenticatedXmlRpcHandler)
+        {
+            handlers.put(handlerName, handler);
+        }
+        else if (handler != null)
+        {
+            handlers.put(handlerName, new Invoker(handler));
+        }
     }
 
     /**
-     * @see org.apache.xmlrpc.DefaultHandlerMapping#removeHandler(String)
+     * Remove a handler object that was previously registered with
+     * this server.
+     *
+     * @param handlerName The name identifying the handler to remove.
      */
     public void removeHandler(String handlerName)
     {
-        handlerMapping.removeHandler(handlerName);
+        handlers.remove(handlerName);
     }
 
     /**
-     * Return the current XmlRpcHandlerMapping.
-     */
-    public XmlRpcHandlerMapping getHandlerMapping()
-    {
-        return handlerMapping;
-    }
-
-    /**
-     * Parse the request and execute the handler method, if one is
-     * found. Returns the result as XML.  The calling Java code
-     * doesn't need to know whether the call was successful or not
-     * since this is all packed into the response.
-     */
-    public byte[] execute(InputStream is)
-    {
-        return execute(is, null, null);
-    }
-
-    /**
-     * Parse the request and execute the handler method, if one is
-     * found. If the invoked handler is AuthenticatedXmlRpcHandler,
-     * use the credentials to authenticate the user.
-     */
-    public byte[] execute(InputStream is, String user, String password)
-    {
-        XmlRpcWorker worker = getWorker();
-        byte[] retval = worker.execute(is, user, password);
-        pool.push(worker);
-        return retval;
-    }
-
-    /**
-     * Hands out pooled workers.
+     * Find the handler and its method name for a given method.
+     * Implements the <code>XmlRpcHandlerMapping</code> interface.
      *
-     * @return A worker.
+     * @param methodName The name of the XML-RPC method to find a
+     * handler for (this is <i>not</i> the Java method name).
+     * @return A handler object and method name.
+     * @see org.apache.xmlrpc.XmlRpcHandlerMapping#getHandler(String)
      */
-    protected XmlRpcWorker getWorker()
+    public Object getHandler(String methodName)
+        throws Exception
     {
-        try
+        Object handler = null;
+        String handlerName = null;
+        int dot = methodName.lastIndexOf('.');
+        if (dot > -1)
         {
-            return (XmlRpcWorker) pool.pop();
+            // The last portion of the XML-RPC method name is the Java
+            // method name.
+            handlerName = methodName.substring(0, dot);
+            handler = handlers.get(handlerName);
         }
-        catch(EmptyStackException x)
+
+        if (handler == null)
         {
-            int maxThreads = XmlRpc.getMaxThreads();
-            if (nbrWorkers < maxThreads)
+            handler = handlers.get("$default");
+
+            if (handler == null)
             {
-                nbrWorkers += 1;
-                if (nbrWorkers >= maxThreads * .95)
+                if (dot > -1)
                 {
-                    System.out.println("95% of XML-RPC server threads in use");
+                    throw new Exception("RPC handler object \""
+                                        + handlerName + "\" not found and no "
+                                        + "default handler registered");
                 }
-                return new XmlRpcWorker(handlerMapping);
+                else
+                {
+                    throw new Exception("RPC handler object not found for \""
+                                        + methodName
+                                        + "\": No default handler registered");
+                }
             }
-            throw new RuntimeException("System overload");
         }
+
+        return handler;
     }
 }

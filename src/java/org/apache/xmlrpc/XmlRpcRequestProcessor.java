@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright(c) 2001,2002 The Apache Software Foundation.  All rights
+ * Copyright(c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,76 +55,103 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.util.*;
+import java.io.InputStream;
+import java.util.Vector;
 
 /**
- * Implements the XML-RPC standard system.* methods (such as
- * <code>system.multicall</code>.
+ * Process an InputStream and produce and XmlRpcRequest.  This is
+ * class NOT thread safe.
  *
- * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
+ * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @since 1.2
  */
-public class SystemHandler
+public class XmlRpcRequestProcessor extends XmlRpc
 {
-    private XmlRpcHandlerMapping handlerMapping = null;
+    private Vector requestParams;
 
     /**
-     * Creates a new instance that delegates calls via the
-     * specified {@link org.apache.xmlrpc.XmlRpcHandlerMapping}
+     * Creates a new instance.
      */
-    public SystemHandler(XmlRpcHandlerMapping handlerMapping)
+    protected XmlRpcRequestProcessor()
     {
-        this.handlerMapping = handlerMapping;
+        requestParams = new Vector();
     }
 
     /**
-     * Creates a new instance that delegates its multicalls via
-     * the mapping used by the specified {@link org.apache.xmlrpc.XmlRpcServer}.
+     * Process an unauthenticated request.
      *
-     * @param server The server to retrieve the XmlRpcHandlerMapping from.
+     * @param is the stream to read the request from.
+     * @returns XMLRpcRequest the request.
+     * @throws ParseFailed if unable to parse the request.
      */
-    protected SystemHandler(XmlRpcServer server)
+    public XmlRpcRequest processRequest(InputStream is)
     {
-        this(server.getHandlerMapping());
+        return processRequest(is, null, null);
     }
 
     /**
-     * The <code>system.multicall</code> handler performs several RPC
-     * calls at a time.
+     * Process an possibly authenticated request.
      *
-     * @param request The request containing multiple RPC calls.
-     * @return The RPC response.
+     * @param is the stream to read the request from.
+     * @param user the username (may be null).
+     * @param password the password (may be null).
+     * @returns XMLRpcRequest the request.
+     * @throws ParseFailed if unable to parse the request.
      */
-    public Vector multicall(Vector requests)
+    public XmlRpcRequest processRequest(InputStream is, String user,
+                                        String password)
     {
-        Vector response = new Vector();
-        XmlRpcRequest request;
-        for (int i = 0; i < requests.size(); i++)
+        long now = 0;
+
+        if (XmlRpc.debug)
+        {
+            now = System.currentTimeMillis();
+        }
+        try
         {
             try
             {
-                Hashtable call = (Hashtable) requests.elementAt(i);
-                request = new XmlRpcRequest((String) call.get("methodName"),
-                                            (Vector) call.get("params"),
-                                            null, null);
-                Object handler = handlerMapping.getHandler(request.getMethodName());
-                Vector v = new Vector();
-                v.addElement(XmlRpcWorker.invokeHandler(handler, request));
-                response.addElement(v);
+                parse(is);
             }
-            catch (Exception x)
+            catch (Exception e)
             {
-                String message = x.toString();
-                int code = (x instanceof XmlRpcException ?
-                            ((XmlRpcException) x).code : 0);
-                Hashtable h = new Hashtable();
-                h.put("faultString", message);
-                h.put("faultCode", new Integer(code));
-                response.addElement(h);
+                throw new ParseFailed(e);
+            }
+            if (XmlRpc.debug)
+            {
+                System.out.println("XML-RPC method name: " + methodName);
+                System.out.println("Request parameters: " + requestParams);
+            }
+            // check for errors from the XML parser
+            if (errorLevel > NONE)
+            {
+                throw new ParseFailed(errorMsg);
+            }
+
+            return new XmlRpcRequest(methodName, (Vector) requestParams.clone(),
+                                     user, password);
+        }
+        finally
+        {
+            requestParams.removeAllElements();
+            if (XmlRpc.debug)
+            {
+                System.out.println("Spent " + (System.currentTimeMillis() - now)
+                        + " millis decoding request");
             }
         }
-        return response;
+    }
+
+    /**
+     * Called when an object to be added to the argument list has been
+     * parsed.
+     *
+     * @param what The parameter parsed from the request.
+     */
+    void objectParsed(Object what)
+    {
+        requestParams.addElement(what);
     }
 }

@@ -109,7 +109,7 @@ public class XmlWriterTest
         try
         {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            XmlWriter writer = new XmlWriter(buffer);
+            XmlWriter writer = new XmlWriter(buffer, XmlWriter.ISO8859_1);
             assertEquals(XmlRpc.encoding, writer.getEncoding());
             String foobar = "foobar";
             writer.writeObject(foobar);

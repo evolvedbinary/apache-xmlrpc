@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright(c) 2001,2002 The Apache Software Foundation.  All rights
+ * Copyright(c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,76 +55,31 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.util.*;
-
 /**
- * Implements the XML-RPC standard system.* methods (such as
- * <code>system.multicall</code>.
+ * Thrown as the result of an parse failure.
  *
- * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @see org.apache.xmlrpc.XmlRpcRequestProcessor
  * @since 1.2
  */
-public class SystemHandler
+public class ParseFailed extends RuntimeException
 {
-    private XmlRpcHandlerMapping handlerMapping = null;
+    protected Exception cause;
 
-    /**
-     * Creates a new instance that delegates calls via the
-     * specified {@link org.apache.xmlrpc.XmlRpcHandlerMapping}
-     */
-    public SystemHandler(XmlRpcHandlerMapping handlerMapping)
+    public ParseFailed(String message)
     {
-        this.handlerMapping = handlerMapping;
+        super(message);
+        this.cause = null;
     }
 
-    /**
-     * Creates a new instance that delegates its multicalls via
-     * the mapping used by the specified {@link org.apache.xmlrpc.XmlRpcServer}.
-     *
-     * @param server The server to retrieve the XmlRpcHandlerMapping from.
-     */
-    protected SystemHandler(XmlRpcServer server)
+    public ParseFailed(Exception cause)
     {
-        this(server.getHandlerMapping());
+        super(cause.getMessage());
+        this.cause = cause;
     }
 
-    /**
-     * The <code>system.multicall</code> handler performs several RPC
-     * calls at a time.
-     *
-     * @param request The request containing multiple RPC calls.
-     * @return The RPC response.
-     */
-    public Vector multicall(Vector requests)
+    public Exception getCause()
     {
-        Vector response = new Vector();
-        XmlRpcRequest request;
-        for (int i = 0; i < requests.size(); i++)
-        {
-            try
-            {
-                Hashtable call = (Hashtable) requests.elementAt(i);
-                request = new XmlRpcRequest((String) call.get("methodName"),
-                                            (Vector) call.get("params"),
-                                            null, null);
-                Object handler = handlerMapping.getHandler(request.getMethodName());
-                Vector v = new Vector();
-                v.addElement(XmlRpcWorker.invokeHandler(handler, request));
-                response.addElement(v);
-            }
-            catch (Exception x)
-            {
-                String message = x.toString();
-                int code = (x instanceof XmlRpcException ?
-                            ((XmlRpcException) x).code : 0);
-                Hashtable h = new Hashtable();
-                h.put("faultString", message);
-                h.put("faultCode", new Integer(code));
-                response.addElement(h);
-            }
-        }
-        return response;
+        return cause;
     }
 }

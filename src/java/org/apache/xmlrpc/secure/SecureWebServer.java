@@ -68,10 +68,12 @@ import java.security.Security;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+
 import org.apache.xmlrpc.AuthDemo;
 import org.apache.xmlrpc.Echo;
 import org.apache.xmlrpc.WebServer;
 import org.apache.xmlrpc.XmlRpc;
+import org.apache.xmlrpc.XmlRpcServer;
 
 /**
  * A minimal web server that exclusively handles XML-RPC requests
@@ -96,7 +98,7 @@ public class SecureWebServer
      * @param int port number of secure web server.
      * @see #SecureWebServer(int, InetAddress)
      */
-    public SecureWebServer (int port)
+    public SecureWebServer(int port)
     {
         this(port, null);
     }
@@ -112,6 +114,16 @@ public class SecureWebServer
     public SecureWebServer(int port, InetAddress addr)
     {
         super(port, addr);
+    }
+
+
+    /**
+     * Creates a secure web server at the specified port number and IP
+     * address.
+     */
+    public SecureWebServer(int port, InetAddress addr, XmlRpcServer xmlrpc)
+    {
+        super(port, addr, xmlrpc);
     }
 
     /**

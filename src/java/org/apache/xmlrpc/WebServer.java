@@ -75,7 +75,6 @@ import java.util.Vector;
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:jvanzyl@apache.org">Jason van Zyl</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
- * @version $Id$
  */
 public class WebServer implements Runnable
 {
@@ -174,7 +173,7 @@ public class WebServer implements Runnable
     }
 
     /**
-     * Creates a Web server at the specified port number.
+     * Creates a web server at the specified port number.
      */
     public WebServer(int port)
     {
@@ -182,13 +181,22 @@ public class WebServer implements Runnable
     }
 
     /**
-     * Creates a Web server at the specified port number and IP address.
+     * Creates a web server at the specified port number and IP address.
      */
     public WebServer(int port, InetAddress addr)
     {
+        this(port, addr, new XmlRpcServer());
+    }
+
+    /**
+     * Creates a web server at the specified port number and IP
+     * address.
+     */
+    public WebServer(int port, InetAddress addr, XmlRpcServer xmlrpc)
+    {
         this.address = addr;
         this.port = port;
-        xmlrpc = new XmlRpcServer();
+        this.xmlrpc = xmlrpc;
         accept = new Vector();
         deny = new Vector();
         threadpool = new Stack();
