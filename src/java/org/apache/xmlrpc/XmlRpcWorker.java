@@ -97,7 +97,7 @@ public class XmlRpcWorker
      * @throws NullPointerException if the handler is null.
      * @throws Exception if the handler throws an exception.
      */
-    protected static Object invokeHandler(Object handler, XmlRpcRequest request, XmlRpcContext context)
+    protected static Object invokeHandler(Object handler, XmlRpcServerRequest request, XmlRpcContext context)
         throws Exception
     {
         long now = 0;
@@ -179,11 +179,11 @@ public class XmlRpcWorker
 
         try
         {
-            XmlRpcRequest request = requestProcessor.processRequest(is);
+            XmlRpcServerRequest request = requestProcessor.decodeRequest(is);
             Object handler = handlerMapping.getHandler(request.
                                                        getMethodName());
             Object response = invokeHandler(handler, request, context);
-            return responseProcessor.processResponse
+            return responseProcessor.encodeResponse
                 (response, requestProcessor.getEncoding());
         }
         catch (AuthenticationFailed alertCallerAuth)
@@ -200,7 +200,7 @@ public class XmlRpcWorker
             {
                 x.printStackTrace();
             }
-            return responseProcessor.processException
+            return responseProcessor.encodeException
                 (x, requestProcessor.getEncoding());
         }
         finally

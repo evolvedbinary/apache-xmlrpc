@@ -81,7 +81,7 @@ public class XmlRpcResponseProcessor
      * @param encoding The output encoding.
      * @return byte[] The XML-RPC response.
      */
-    public byte[] processResponse(Object responseParam, String encoding)
+    public byte[] encodeResponse(Object responseParam, String encoding)
         throws IOException, UnsupportedEncodingException, XmlRpcException
     {
         long now = 0;
@@ -116,7 +116,7 @@ public class XmlRpcResponseProcessor
      * @param encoding The output encoding.
      * @return byte[] The XML-RPC response.
      */
-    public byte[] processException(Exception x, String encoding)
+    public byte[] encodeException(Exception x, String encoding)
     {
         if (XmlRpc.debug)
         {

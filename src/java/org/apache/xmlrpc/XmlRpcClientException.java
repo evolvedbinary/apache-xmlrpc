@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright(c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,7 +22,7 @@ package org.apache.xmlrpc;
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *        Apache Software Foundation(http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -40,11 +40,11 @@ package org.apache.xmlrpc;
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
  * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
  * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  * ====================================================================
@@ -55,60 +55,50 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 /**
- * The <code>system.multicall</code> handler performs several RPC
- * calls at a time.
+ * This is thrown by many of the client classes if an error occured processing
+ * and XML-RPC request or response due to client side processing. This exception
+ * will wrap a cause exception in the JDK 1.4 style.
  *
- * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @version $Id$
  * @since 1.2
  */
-public class MultiCall
-implements ContextXmlRpcHandler
+public class XmlRpcClientException extends XmlRpcException
 {
-    public Object execute(String method, Vector params, XmlRpcContext context)
-            throws Exception
-    {
-        if ("multicall".equals(method))
-        {
-            return multicall(params, context);
-        }
+    /**
+     * The underlying cause of this exception.
+     */
+    public Throwable cause;
 
-        throw new NoSuchMethodException("No method '" + method + "' in " + this.getClass().getName());
+    /**
+     * Create an XmlRpcClientException with the given message and
+     * underlying cause exception.
+     *
+     * @param message the message for this exception.
+     * @param cause the cause of the exception.
+     */
+    public XmlRpcClientException(String message, Throwable cause)
+    {
+        super(0, message);
+        this.cause = cause;
     }
 
-    public Vector multicall(Vector requests, XmlRpcContext context)
+    /**
+     * Returns the cause of this throwable or null if the cause is nonexistent
+     * or unknown. (The cause is the throwable that caused this throwable to
+     * get thrown.)
+     * 
+     * This implementation returns the cause that was supplied via the constructor,
+     * according to the rules specified for a "legacy chained throwable" that
+     * predates the addition of chained exceptions to Throwable.
+     *
+     * See the <a
+     * href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/Throwable.html">JDK
+     * 1.4 Throwable documentation</a> for more information.
+     */
+    public Throwable getCause()
     {
-        Vector response = new Vector();
-        XmlRpcServerRequest request;
-        for (int i = 0; i < requests.size(); i++)
-        {
-            try
-            {
-                Hashtable call = (Hashtable) requests.elementAt(i);
-                request = new XmlRpcRequest((String) call.get("methodName"),
-                                            (Vector) call.get("params"));
-                Object handler = context.getHandlerMapping().getHandler(request.getMethodName());
-                Vector v = new Vector();
-                v.addElement(XmlRpcWorker.invokeHandler(handler, request, context));
-                response.addElement(v);
-            }
-            catch (Exception x)
-            {
-                String message = x.toString();
-                int code = (x instanceof XmlRpcException ?
-                            ((XmlRpcException) x).code : 0);
-                Hashtable h = new Hashtable();
-                h.put("faultString", message);
-                h.put("faultCode", new Integer(code));
-                response.addElement(h);
-            }
-        }
-        return response;
+        return cause;
     }
 }

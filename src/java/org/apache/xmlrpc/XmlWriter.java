@@ -161,13 +161,13 @@ class XmlWriter extends OutputStreamWriter
      * href="http://xml-rpc.com/spec">XML-RPC specification</a>).
      */
     public void writeObject(Object obj)
-        throws XmlRpcException, IOException
+        throws XmlRpcClientException, IOException
     {
         startElement("value");
         if (obj == null)
         {
-            throw new IllegalArgumentException
-                ("null values not supported by XML-RPC");
+            throw new XmlRpcClientException
+                ("null values not supported by XML-RPC", null);
         }
         else if (obj instanceof String)
         {
@@ -248,8 +248,8 @@ class XmlWriter extends OutputStreamWriter
         }
         else
         {
-            throw new RuntimeException("unsupported Java type: "
-                                       + obj.getClass());
+            throw new XmlRpcClientException("unsupported Java type: "
+                                       + obj.getClass(), null);
         }
         endElement("value");
     }
@@ -305,11 +305,11 @@ class XmlWriter extends OutputStreamWriter
      * Writes text as <code>PCDATA</code>.
      *
      * @param text The data to write.
-     * @exception XmlRpcException Unsupported character data found.
+     * @exception XmlRpcClientException Unsupported character data found.
      * @exception IOException Problem writing data.
      */
     protected void chardata(String text)
-        throws XmlRpcException, IOException
+        throws XmlRpcClientException, IOException
     {
         int l = text.length ();
         for (int i = 0; i < l; i++)
@@ -339,9 +339,9 @@ class XmlWriter extends OutputStreamWriter
                     // does not allow this range of characters,
                     // resulting in a parse error from most XML
                     // parsers.
-                    throw new XmlRpcException(0, "Invalid character data " +
+                    throw new XmlRpcClientException("Invalid character data " +
                                               "corresponding to XML entity &#" +
-                                              String.valueOf((int) c) + ';');
+                                              String.valueOf((int) c) + ';', null);
                 }
                 else
                 {

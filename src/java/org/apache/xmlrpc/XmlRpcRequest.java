@@ -58,13 +58,14 @@ package org.apache.xmlrpc;
 import java.util.Vector;
 
 /**
- * Encapsulates an XML-RPC request.
+ * Default implementation of an XML-RPC request for both client and server.
  *
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @version $Id$
  * @since 1.2
  */
 public class XmlRpcRequest
+implements XmlRpcServerRequest, XmlRpcClientRequest
 {
     protected final String methodName;
     protected final Vector parameters;
@@ -75,6 +76,11 @@ public class XmlRpcRequest
         this.methodName = methodName;
     }
 
+    public int getParameterCount()
+    {
+        return parameters.size();
+    }
+    
     public Vector getParameters()
     {
         return parameters;

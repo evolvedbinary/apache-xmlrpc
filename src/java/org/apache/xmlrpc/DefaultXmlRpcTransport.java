@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright(c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,7 +22,7 @@ package org.apache.xmlrpc;
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *        Apache Software Foundation(http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -40,11 +40,11 @@ package org.apache.xmlrpc;
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
  * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
  * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  * ====================================================================
@@ -54,61 +54,68 @@ package org.apache.xmlrpc;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
-import java.util.Hashtable;
-import java.util.Vector;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
- * The <code>system.multicall</code> handler performs several RPC
- * calls at a time.
+ * Interface from XML-RPC to the default HTTP transport based on the
+ * @see java.net.URLConnection class.
  *
- * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
+ * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @version $Id$
  * @since 1.2
  */
-public class MultiCall
-implements ContextXmlRpcHandler
+public class DefaultXmlRpcTransport implements XmlRpcTransport
 {
-    public Object execute(String method, Vector params, XmlRpcContext context)
-            throws Exception
-    {
-        if ("multicall".equals(method))
-        {
-            return multicall(params, context);
-        }
+    protected URL url;
+    protected String auth;
 
-        throw new NoSuchMethodException("No method '" + method + "' in " + this.getClass().getName());
+    /**
+     * Create a new DefaultXmlRpcTransport with the specified URL and basic
+     * authorization string.
+     *
+     * @param url the url to POST XML-RPC requests to.
+     * @param auth the Base64 encoded HTTP Basic authentication value.
+     */
+    public DefaultXmlRpcTransport(URL url, String auth)
+    {
+        this.url = url;
+        this.auth = auth;
     }
 
-    public Vector multicall(Vector requests, XmlRpcContext context)
+    /**
+     * Create a new DefaultXmlRpcTransport with the specified URL.
+     *
+     * @param url the url to POST XML-RPC requests to.
+     */
+    public DefaultXmlRpcTransport(URL url)
     {
-        Vector response = new Vector();
-        XmlRpcServerRequest request;
-        for (int i = 0; i < requests.size(); i++)
+        this(url, null);
+    }
+
+    public InputStream sendXmlRpc(byte [] request)
+    throws IOException
+    {
+        URLConnection con = url.openConnection();
+        con.setDoInput(true);
+        con.setDoOutput(true);
+        con.setUseCaches(false);
+        con.setAllowUserInteraction(false);
+        con.setRequestProperty("Content-Length",
+        Integer.toString(request.length));
+        con.setRequestProperty("Content-Type", "text/xml");
+        if (auth != null)
         {
-            try
-            {
-                Hashtable call = (Hashtable) requests.elementAt(i);
-                request = new XmlRpcRequest((String) call.get("methodName"),
-                                            (Vector) call.get("params"));
-                Object handler = context.getHandlerMapping().getHandler(request.getMethodName());
-                Vector v = new Vector();
-                v.addElement(XmlRpcWorker.invokeHandler(handler, request, context));
-                response.addElement(v);
-            }
-            catch (Exception x)
-            {
-                String message = x.toString();
-                int code = (x instanceof XmlRpcException ?
-                            ((XmlRpcException) x).code : 0);
-                Hashtable h = new Hashtable();
-                h.put("faultString", message);
-                h.put("faultCode", new Integer(code));
-                response.addElement(h);
-            }
+            con.setRequestProperty("Authorization", "Basic " + auth);
         }
-        return response;
+        OutputStream out = con.getOutputStream();
+        out.write(request);
+        out.flush();
+        out.close();
+        return con.getInputStream();
     }
 }

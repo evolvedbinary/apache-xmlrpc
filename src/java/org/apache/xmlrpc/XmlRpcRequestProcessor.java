@@ -59,7 +59,7 @@ import java.io.InputStream;
 import java.util.Vector;
 
 /**
- * Process an InputStream and produce and XmlRpcRequest.  This class
+ * Process an InputStream and produce an XmlRpcServerRequest.  This class
  * is NOT thread safe.
  *
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
@@ -80,13 +80,15 @@ public class XmlRpcRequestProcessor extends XmlRpc
     }
 
     /**
-     * Process a request.
+     * Decode a request from an InputStream to the internal XmlRpcRequest
+     * implementation. This method must read data from the specified stream and
+     * return an XmlRpcRequest object, or throw an exception.
      *
      * @param is the stream to read the request from.
      * @returns XMLRpcRequest the request.
      * @throws ParseFailed if unable to parse the request.
      */
-    public XmlRpcRequest processRequest(InputStream is)
+    public XmlRpcServerRequest decodeRequest(InputStream is)
     {
         long now = 0;
 

@@ -55,60 +55,90 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.util.Hashtable;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Vector;
 
 /**
- * The <code>system.multicall</code> handler performs several RPC
- * calls at a time.
+ * Process an XML-RPC client request into a byte array or directly onto
+ * an OutputStream.
  *
- * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
+ * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @version $Id$
  * @since 1.2
  */
-public class MultiCall
-implements ContextXmlRpcHandler
+public class XmlRpcClientRequestProcessor
 {
-    public Object execute(String method, Vector params, XmlRpcContext context)
-            throws Exception
+    /**
+     * Encode a request from the XmlClientRpcRequest implementation to an
+     * output stream in the specified character encoding.
+     *
+     * @param request the request to encode.
+     * @param encoding the Java name for the encoding to use.
+     * @return byte [] the encoded request.
+     */
+    public void encodeRequest(XmlRpcClientRequest request, String encoding, OutputStream out)
+    throws XmlRpcClientException, IOException
     {
-        if ("multicall".equals(method))
-        {
-            return multicall(params, context);
-        }
+        XmlWriter writer;
 
-        throw new NoSuchMethodException("No method '" + method + "' in " + this.getClass().getName());
+        writer = new XmlWriter(out, encoding);
+       
+        writer.startElement("methodCall");
+        writer.startElement("methodName");
+        writer.write(request.getMethodName());
+        writer.endElement("methodName");
+        writer.startElement("params");
+
+        int l = request.getParameterCount();
+        for (int i = 0; i < l; i++)
+        {
+            writer.startElement("param");
+            writer.writeObject(request.getParameter(i));
+            writer.endElement("param");
+        }
+        writer.endElement("params");
+        writer.endElement("methodCall");
+        writer.flush();
     }
 
-    public Vector multicall(Vector requests, XmlRpcContext context)
+    /**
+     * Encode a request from the XmlRpcClientRequest implementation to a
+     * byte array representing the XML-RPC call, in the specified character
+     * encoding.
+     *
+     * @param request the request to encode.
+     * @param encoding the Java name for the encoding to use.
+     * @return byte [] the encoded request.
+     */
+    public byte [] encodeRequestBytes(XmlRpcClientRequest request, String encoding)
+    throws XmlRpcClientException
     {
-        Vector response = new Vector();
-        XmlRpcServerRequest request;
-        for (int i = 0; i < requests.size(); i++)
+        ByteArrayOutputStream buffer;
+
+        try
         {
-            try
-            {
-                Hashtable call = (Hashtable) requests.elementAt(i);
-                request = new XmlRpcRequest((String) call.get("methodName"),
-                                            (Vector) call.get("params"));
-                Object handler = context.getHandlerMapping().getHandler(request.getMethodName());
-                Vector v = new Vector();
-                v.addElement(XmlRpcWorker.invokeHandler(handler, request, context));
-                response.addElement(v);
-            }
-            catch (Exception x)
-            {
-                String message = x.toString();
-                int code = (x instanceof XmlRpcException ?
-                            ((XmlRpcException) x).code : 0);
-                Hashtable h = new Hashtable();
-                h.put("faultString", message);
-                h.put("faultCode", new Integer(code));
-                response.addElement(h);
-            }
+            buffer = new ByteArrayOutputStream();
+            encodeRequest(request, encoding, buffer);
+            return buffer.toByteArray();
         }
-        return response;
+        catch (IOException ioe)
+        {
+            throw new XmlRpcClientException("Error occured encoding XML-RPC request", ioe);
+        }
+    }
+
+    /**
+     * Called by the worker management framework to see if this object can be
+     * re-used. Must attempt to clean up any state, and return true if it can
+     * be re-used.
+     *
+     * @return boolean true if this objcet has been cleaned up and may be re-used.
+     */
+    protected boolean canReUse()
+    {
+        return true;
     }
 }
