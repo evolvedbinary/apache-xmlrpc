@@ -17,8 +17,8 @@ map incoming requests to actual methods.
     </section>
     <section name="XML-RPC Handler Objects">
     <p>
-          The <a href="/xml-rpc/apidocs/org/apache/xmlrpc/XmlRpcServer.html">
-org.apache.xmlrpc.XmlRpcServer</a> and <a href="/xml-rpc/apidocs/org/apache/xmlrpc/WebServer.html">
+          The <a href="/xmlrpc/apidocs/org/apache/xmlrpc/XmlRpcServer.html">
+org.apache.xmlrpc.XmlRpcServer</a> and <a href="/xmlrpc/apidocs/org/apache/xmlrpc/WebServer.html">
 org.apache.xmlrpc.WebServer</a> classes provide methods that let your register and
 unregister Java objects as XML-RPC handlers:</p>
 
@@ -42,9 +42,9 @@ one of the following things:</p>
 
   <li>
     If you pass the XmlRpcServer an object that implements interface
-    <a href="/xml-rpc/apidocs/org/apache/xmlrpc/XmlRpcHandler.html">
+    <a href="/xmlrpc/apidocs/org/apache/xmlrpc/XmlRpcHandler.html">
     org.apache.xmlrpc.XmlRpcHandler</a> or
-    <a href="/xml-rpc/apidocs/org/apache/xmlrpc/AuthenticatedXmlRpcHandler.html">
+    <a href="/xmlrpc/apidocs/org/apache/xmlrpc/AuthenticatedXmlRpcHandler.html">
     org.apache.xmlrpc.AuthenticatedXmlRpcHandler</a> the execute() method
     will be called for every incoming request. You are then in full control
     of how to process the XML-RPC request, enabling you to perform input and output

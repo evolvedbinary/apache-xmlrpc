@@ -12,10 +12,10 @@
       Apache XML-RPC provides two client classes.
       </p>
       <ul>
-      <li><a href="/xml-rpc/apidocs/org/apache/xmlrpc/XmlRpcClient.html">org.apache.xmlrpc.XmlRpcClient
+      <li><a href="/xmlrpc/apidocs/org/apache/xmlrpc/XmlRpcClient.html">org.apache.xmlrpc.XmlRpcClient
       </a> uses java.net.URLConnection, the HTTP client that comes with
       the standard Java API</li>
-      <li><a href="/xml-rpc/apidocs/org/apache//xmlrpc/XmlRpcClientLite.html">org.apache.xmlrpc.XmlRpcClientLite</a> provides its own lightweight
+      <li><a href="/xmlrpc/apidocs/org/apache//xmlrpc/XmlRpcClientLite.html">org.apache.xmlrpc.XmlRpcClientLite</a> provides its own lightweight
       HTTP client implementation.</li></ul>
       <p>XmlRpcClientLite is usually faster, but if you need full HTTP support
       (e.g. Proxies, Redirect etc), you should use XmlRpcClient.Both client
@@ -59,7 +59,7 @@ handler of the XML-RPC server.</p>
         <p>If the caller
         is interested in the result of the remote call, or wants to be
         notified of exceptions, it can pass an object implementing the
-        <a href="/xml-rpc/apidocs/org/apache/xmlrpc/AsyncCallback.html">org.apache.xmlrpc.AsyncCallback</a>
+        <a href="/xmlrpc/apidocs/org/apache/xmlrpc/AsyncCallback.html">org.apache.xmlrpc.AsyncCallback</a>
         interface to the XML-RPC client class. This interface defines two
         methods:</p>
 
