@@ -19,6 +19,7 @@
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${servlet.jar}"/>
+    <pathelement location="${junit.jar}"/>
   </path>
 
   <!-- ================================================================== -->
@@ -31,7 +32,8 @@
     <echo message="jsse.jar = ${jsse.jar}"/>
     <echo message="jnet.jar = ${jnet.jar}"/>
     <echo message="jcert.jar = ${jcert.jar}"/>
-    <echo message=""/>
+    <echo message="servlet.jar = ${servlet.jar}"/>
+    <echo message="junit.jar = ${junit.jar}"/>
   </target>
 
   <!-- ================================================================== -->
@@ -46,7 +48,7 @@
   <!-- I N I T                                                            -->
   <!-- ================================================================== -->
 
-  <target name="init">
+  <target name="init" depends="env">
     <available 
       classname="com.sun.net.ssl.SSLContext"
       property="jsse.present"
@@ -65,6 +67,12 @@
       classpathref="classpath"
     />
 
+    <available
+      classname="junit.framework.TestCase"
+      property="junit.present"
+      classpathref="classpath"
+    />
+
   </target>
 
   <!-- ================================================================== -->
@@ -80,6 +88,13 @@
     <antcall target="property-warning">
       <param name="name" value="jsse.jar"/>
       <param name="value" value="${jsse.jar}"/>
+    </antcall>
+  </target>
+
+  <target name="check.junit" unless="junit.present">
+    <antcall target="property-warning">
+      <param name="name" value="junit.jar"/>
+      <param name="value" value="${junit.jar}"/>
     </antcall>
   </target>
 
@@ -122,9 +137,10 @@
         <exclude name="**/fesi/**"/>
         <exclude name="**/secure/**" unless="jsse.present"/>
         <exclude name="**/XmlRpcProxyServlet.java" unless="servlet.present"/>
+        <exclude name="**/test/**"/>
       </fileset>
     </copy>
-    
+
   </target>
 
   <!-- ================================================================== -->
@@ -150,10 +166,10 @@
   <target name="jar" depends="compile"
     description="Builds the two JAR files from source">
 
-    <jar jarfile="${build.dir}/${project}.jar">
+    <jar jarfile="${build.dir}/${final.name}.jar">
       <fileset dir="${build.dest}" excludes="**/applet/*"/>
     </jar>
-    <jar jarfile="${build.dir}/${project}-applet.jar">
+    <jar jarfile="${build.dir}/${final.name}-applet.jar">
       <fileset dir="${build.dest}"
       excludes="**/xmlrpc/*,**/fesi/*,**/secure/*"/>
     </jar>
@@ -197,7 +213,7 @@
   <!-- ================================================================== -->
 
   <target name="compile-tests"
-    depends="compile"
+    depends="check.junit,compile"
     description="Compiles testing source code">
     
     <mkdir dir="${build.test.dest}"/>
@@ -329,8 +345,8 @@
 
     <copy todir="${lib.repo}" filtering="no">
       <fileset dir="${build.dir}">
-        <include name="${project}.jar"/>
-        <include name="${project}-applet.jar"/>
+        <include name="${final.name}.jar"/>
+        <include name="${final.name}-applet.jar"/>
       </fileset>
     </copy>
   </target>
