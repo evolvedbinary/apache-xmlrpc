@@ -213,6 +213,7 @@ public class WebServer implements Runnable
     public void start()
     {
         listener = new Thread(this, "XML-RPC Weblistener");
+        listener.setDaemon(true);
         listener.start();
     }
 
