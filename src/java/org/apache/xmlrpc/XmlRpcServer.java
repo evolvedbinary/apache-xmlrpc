@@ -182,7 +182,7 @@ public class XmlRpcServer
                 Object handler = null;
 
                 String handlerName = null;
-                int dot = methodName.lastIndexOf (".");
+                int dot = methodName.lastIndexOf ('.');
                 if (dot > -1)
                 {
                     handlerName = methodName.substring (0, dot);
