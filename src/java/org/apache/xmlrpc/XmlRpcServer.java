@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright(c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,7 +22,7 @@ package org.apache.xmlrpc;
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
+ *        Apache Software Foundation(http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -40,11 +40,11 @@ package org.apache.xmlrpc;
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
  * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
  * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  * ====================================================================
@@ -76,9 +76,9 @@ public class XmlRpcServer
      * Construct a new XML-RPC server. You have to register handlers
      * to make it do something useful.
      */
-    public XmlRpcServer ()
+    public XmlRpcServer()
     {
-        handlers = new Hashtable ();
+        handlers = new Hashtable();
     }
 
     /**
@@ -91,13 +91,13 @@ public class XmlRpcServer
      * @param handlername The name to identify the handler by.
      * @param handler The handler itself.
      */
-    public void addHandler (String handlername, Object handler)
+    public void addHandler(String handlername, Object handler)
     {
         if (handler instanceof XmlRpcHandler ||
                 handler instanceof AuthenticatedXmlRpcHandler)
-            handlers.put (handlername, handler);
+            handlers.put(handlername, handler);
         else if (handler != null)
-            handlers.put (handlername, new Invoker (handler));
+            handlers.put(handlername, new Invoker(handler));
     }
 
     /**
@@ -106,9 +106,9 @@ public class XmlRpcServer
      *
      * @param handlername The name identifying the handler to remove.
      */
-    public void removeHandler (String handlername)
+    public void removeHandler(String handlername)
     {
-        handlers.remove (handlername);
+        handlers.remove(handlername);
     }
 
     /**
@@ -117,9 +117,9 @@ public class XmlRpcServer
      * doesn't need to know whether the call was successful or not
      * since this is all packed into the response.
      */
-    public byte[] execute (InputStream is)
+    public byte[] execute(InputStream is)
     {
-        return execute (is, null, null);
+        return execute(is, null, null);
     }
 
     /**
@@ -127,24 +127,24 @@ public class XmlRpcServer
      * found. If the invoked handler is AuthenticatedXmlRpcHandler,
      * use the credentials to authenticate the user.
      */
-    public byte[] execute (InputStream is, String user, String password)
+    public byte[] execute(InputStream is, String user, String password)
     {
-        Worker worker = getWorker ();
-        byte[] retval = worker.execute (is, user, password);
-        pool.push (worker);
+        Worker worker = getWorker();
+        byte[] retval = worker.execute(is, user, password);
+        pool.push(worker);
         return retval;
     }
 
-    Stack pool = new Stack ();
+    Stack pool = new Stack();
     int workers = 0;
 
-    private final Worker getWorker ()
+    private final Worker getWorker()
     {
         try
         {
-            return (Worker) pool.pop ();
+            return(Worker) pool.pop();
         }
-        catch (EmptyStackException x)
+        catch(EmptyStackException x)
         {
             int maxThreads = XmlRpc.getMaxThreads();
             if (workers < maxThreads)
@@ -154,9 +154,9 @@ public class XmlRpcServer
                 {
                     System.err.println("95% of XML-RPC server threads in use");
                 }
-                return new Worker ();
+                return new Worker();
             }
-            throw new RuntimeException ("System overload");
+            throw new RuntimeException("System overload");
         }
     }
 
@@ -182,7 +182,7 @@ public class XmlRpcServer
         /**
          * Given a request for the server, generates a response.
          */
-        public byte[] execute (InputStream is, String user, String password)
+        public byte[] execute(InputStream is, String user, String password)
         {
             try
             {
@@ -197,75 +197,84 @@ public class XmlRpcServer
             }
         }
 
-        private byte[] executeInternal (InputStream is, String user,
+        private byte[] executeInternal(InputStream is, String user,
                                         String password)
         {
             byte[] result;
-            long now = System.currentTimeMillis ();
+            long now = System.currentTimeMillis();
 
             try
             {
-                parse (is);
-                if (debug)
+                parse(is);
+                if (XmlRpc.debug)
                 {
-                    System.err.println ("method name: "+methodName);
-                    System.err.println ("inparams: "+inParams);
+                    System.err.println("method name: "+methodName);
+                    System.err.println("inparams: "+inParams);
                 }
                 // check for errors from the XML parser
                 if (errorLevel > NONE)
-                    throw new Exception (errorMsg);
-
+                {
+                    throw new Exception(errorMsg);
+                }
                 Object handler = null;
 
                 String handlerName = null;
-                int dot = methodName.lastIndexOf ('.');
+                int dot = methodName.lastIndexOf('.');
                 if (dot > -1)
                 {
-                    handlerName = methodName.substring (0, dot);
-                    handler = handlers.get (handlerName);
+                    handlerName = methodName.substring(0, dot);
+                    handler = handlers.get(handlerName);
                     if (handler != null)
-                        methodName = methodName.substring (dot + 1);
+                    {
+                        methodName = methodName.substring(dot + 1);
+                    }
                 }
 
                 if (handler == null)
                 {
-                    handler = handlers.get ("$default");
+                    handler = handlers.get("$default");
                 }
 
                 if (handler == null)
                 {
                     if (dot > -1)
-                        throw new Exception ("RPC handler object \""+
+                    {
+                        throw new Exception("RPC handler object \""+
                                 handlerName + "\" not found and no default handler registered.");
+                    }
                     else
-                        throw new Exception ("RPC handler object not found for \""+
+                    {
+                        throw new Exception("RPC handler object not found for \""+
                                 methodName + "\": no default handler registered.");
+                    }
                 }
 
                 Object outParam;
                 if (handler instanceof AuthenticatedXmlRpcHandler)
                 {
-                    outParam = ((AuthenticatedXmlRpcHandler) handler).
-                            execute (methodName, inParams, user, password);
+                    outParam =((AuthenticatedXmlRpcHandler) handler).
+                            execute(methodName, inParams, user, password);
                 }
                 else
                 {
-                    outParam = ((XmlRpcHandler) handler).execute (
+                    outParam =((XmlRpcHandler) handler).execute(
                             methodName, inParams);
                 }
-                if (debug)
-                    System.err.println ("outparam = "+outParam);
-
+                if (XmlRpc.debug)
+                {
+                    System.err.println("outparam = "+outParam);
+                }
                 writer = new XmlWriter(buffer);
-                writeResponse (outParam, writer);
+                writeResponse(outParam, writer);
                 writer.flush();
                 result = buffer.toByteArray();
             }
-            catch (Exception x)
+            catch(Exception x)
             {
-                if (debug)
-                    x.printStackTrace ();
-
+                if (XmlRpc.debug)
+                {
+                    x.printStackTrace();
+                }
                 // Ensure that if there is anything in the buffer, it
                 // is cleared before continuing with the writing of exceptions.
                 // It is possible that something is in the buffer
@@ -278,29 +287,29 @@ public class XmlRpcServer
                 {
                     writer = new XmlWriter(buffer);
                 }
-                catch (UnsupportedEncodingException encx)
+                catch(UnsupportedEncodingException encx)
                 {
                     System.err.println("XmlRpcServer attempted to use " +
                                        "unsupported encoding: " + encx);
                     // NOTE: If we weren't already using the default
                     // encoding, we could try it here.
                 }
-                catch (IOException iox)
+                catch(IOException iox)
                 {
                     System.err.println("XmlRpcServer experienced I/O error " +
                                        "writing error response: " + iox);
                 }
 
-                String message = x.toString ();
-                // Retrieve XmlRpcException error code (if possible).
+                String message = x.toString();
+                // Retrieve XmlRpcException error code(if possible).
                 int code = x instanceof XmlRpcException ?
-                        ((XmlRpcException) x).code : 0;
+                       ((XmlRpcException) x).code : 0;
                 try
                 {
-                    writeError (code, message, writer);
+                    writeError(code, message, writer);
                     writer.flush();
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     // Unlikely to occur, as we just sent a struct
                     // with an int and a string.
@@ -327,7 +336,7 @@ public class XmlRpcServer
                     {
                         writer.close();
                     }
-                    catch (IOException iox)
+                    catch(IOException iox)
                     {
                         // This is non-fatal, but worth logging a
                         // warning for.
@@ -336,9 +345,11 @@ public class XmlRpcServer
                     }
                 }
             }
-            if (debug)
-                System.err.println ("Spent "+
-                        (System.currentTimeMillis () - now) + " millis in request");
+            if (XmlRpc.debug)
+            {
+                System.err.println("Spent "+
+                       (System.currentTimeMillis() - now) + " millis in request");
+            }
             return result;
         }
 
@@ -346,42 +357,42 @@ public class XmlRpcServer
          * Called when an object to be added to the argument list has
          * been parsed.
          */
-        void objectParsed (Object what)
+        void objectParsed(Object what)
         {
-            inParams.addElement (what);
+            inParams.addElement(what);
         }
 
         /**
           * Writes an XML-RPC response to the XML writer.
           */
-        void writeResponse (Object param, XmlWriter writer)
+        void writeResponse(Object param, XmlWriter writer)
             throws XmlRpcException, IOException
         {
-            writer.startElement ("methodResponse");
+            writer.startElement("methodResponse");
             // if (param == null) param = ""; // workaround for Frontier bug
-            writer.startElement ("params");
-            writer.startElement ("param");
-            writer.writeObject (param);
-            writer.endElement ("param");
-            writer.endElement ("params");
-            writer.endElement ("methodResponse");
+            writer.startElement("params");
+            writer.startElement("param");
+            writer.writeObject(param);
+            writer.endElement("param");
+            writer.endElement("params");
+            writer.endElement("methodResponse");
         }
 
         /**
          * Writes an XML-RPC error response to the XML writer.
          */
-        void writeError (int code, String message, XmlWriter writer)
+        void writeError(int code, String message, XmlWriter writer)
             throws XmlRpcException, IOException
         {
-            // System.err.println ("error: "+message);
-            Hashtable h = new Hashtable ();
-            h.put ("faultCode", new Integer (code));
-            h.put ("faultString", message);
-            writer.startElement ("methodResponse");
-            writer.startElement ("fault");
-            writer.writeObject (h);
-            writer.endElement ("fault");
-            writer.endElement ("methodResponse");
+            // System.err.println("error: "+message);
+            Hashtable h = new Hashtable();
+            h.put("faultCode", new Integer(code));
+            h.put("faultString", message);
+            writer.startElement("methodResponse");
+            writer.startElement("fault");
+            writer.writeObject(h);
+            writer.endElement("fault");
+            writer.endElement("methodResponse");
         }
 
     } // end of inner class Worker
@@ -398,19 +409,18 @@ class Invoker implements XmlRpcHandler
     public Invoker(Object target)
     {
         invokeTarget = target;
-        targetClass = invokeTarget instanceof Class ? (Class) invokeTarget :
+        targetClass = invokeTarget instanceof Class ?(Class) invokeTarget :
                 invokeTarget.getClass();
         if (XmlRpc.debug)
+        {
             System.err.println("Target object is " + targetClass);
+        }
     }
 
-
     // main method, sucht methode in object, wenn gefunden dann aufrufen.
-    public Object execute (String methodName,
+    public Object execute(String methodName,
             Vector params) throws Exception
     {
-
-
         // Array mit Classtype bilden, ObjectAry mit Values bilden
         Class[] argClasses = null;
         Object[] argValues = null;
@@ -422,13 +432,21 @@ class Invoker implements XmlRpcHandler
             {
                 argValues[i] = params.elementAt(i);
                 if (argValues[i] instanceof Integer)
+                {
                     argClasses[i] = Integer.TYPE;
+                }
                 else if (argValues[i] instanceof Double)
+                {
                     argClasses[i] = Double.TYPE;
+                }
                 else if (argValues[i] instanceof Boolean)
+                {
                     argClasses[i] = Boolean.TYPE;
+                }
                 else
+                {
                     argClasses[i] = argValues[i].getClass();
+                }
             }
         }
 
@@ -448,46 +466,50 @@ class Invoker implements XmlRpcHandler
             method = targetClass.getMethod(methodName, argClasses);
         }
         // Wenn nicht da dann entsprechende Exception returnen
-        catch (NoSuchMethodException nsm_e)
+        catch(NoSuchMethodException nsm_e)
         {
             throw nsm_e;
         }
-        catch (SecurityException s_e)
+        catch(SecurityException s_e)
         {
             throw s_e;
         }
 
         // our policy is to make all public methods callable except the ones defined in java.lang.Object
-        if (method.getDeclaringClass () == Class.forName ("java.lang.Object"))
-            throw new XmlRpcException (0, "Invoker can't call methods defined in java.lang.Object");
+        if (method.getDeclaringClass() == Class.forName("java.lang.Object"))
+        {
+            throw new XmlRpcException(0, "Invoker can't call methods defined in java.lang.Object");
+        }
 
         // invoke
         Object returnValue = null;
         try
         {
-            returnValue = method.invoke (invokeTarget, argValues);
+            returnValue = method.invoke(invokeTarget, argValues);
         }
-        catch (IllegalAccessException iacc_e)
+        catch(IllegalAccessException iacc_e)
         {
             throw iacc_e;
         }
-        catch (IllegalArgumentException iarg_e)
+        catch(IllegalArgumentException iarg_e)
         {
             throw iarg_e;
         }
-        catch (InvocationTargetException it_e)
+        catch(InvocationTargetException it_e)
         {
             if (XmlRpc.debug)
-                it_e.getTargetException ().printStackTrace ();
+            {
+                it_e.getTargetException().printStackTrace();
+            }
             // check whether the thrown exception is XmlRpcException
             Throwable t = it_e.getTargetException();
             if (t instanceof XmlRpcException)
-                throw (XmlRpcException) t;
+            {
+                throw(XmlRpcException) t;
+            }
             // It is some other exception
-            throw new Exception (t.toString ());
+            throw new Exception(t.toString());
         }
-
         return returnValue;
     }
-
 }
