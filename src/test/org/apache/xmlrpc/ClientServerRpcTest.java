@@ -150,6 +150,8 @@ public class ClientServerRpcTest
         InetAddress localhost = null;
         try
         {
+            // localhost will be a random network interface on a
+            // multi-homed host.
             localhost = InetAddress.getLocalHost();
         }
         catch (UnknownHostException e)
@@ -157,8 +159,9 @@ public class ClientServerRpcTest
             fail(e.toString());
         }
 
-        // WebServer (contains its own XmlRpcServer instance)
-        webServer = new WebServer(SERVER_PORT, localhost);
+        // WebServer (contains its own XmlRpcServer instance, binds to
+        // INADDR_ANY)
+        webServer = new WebServer(SERVER_PORT);
         webServer.addHandler(HANDLER_NAME, new TestHandler());
 
         // XML-RPC client(s)
