@@ -107,6 +107,12 @@
       <email>leonardr@collab.net</email>
       <organization>CollabNet, Inc.</organization>
     </developer>
+    <developer>
+      <name>John Wilson</name>
+      <id>jwilson</id>
+      <email>tug@wilson.co.uk</email>
+      <organization>The Wilson Partnership</organization>
+    </developer>
   </developers>
 
   <dependencies>
