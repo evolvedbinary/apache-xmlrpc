@@ -232,7 +232,7 @@ public class XmlRpcServer
                 {
                     writeError (code, message, writer);
                 }
-                catch (XmlRpcException xrx)
+                catch (XmlRpcException e)
                 {
                     // Unlikely to occur, as we just sent a struct
                     // with an int and a string.
