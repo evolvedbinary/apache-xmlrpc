@@ -902,7 +902,6 @@ public abstract class XmlRpc extends HandlerBase
 
 /**
  * Wraps a <code>DateFormat</code> instance to provide thread safety.
- * FIXME: this seems like a lot of sync overhead and could be done better...
  */
 class Formatter
 {
@@ -914,15 +913,12 @@ class Formatter
      */
     public Formatter()
     {
-        // FIXME: this seems like a lot of overhead...shouldn't
-        // the instance also be declared as static?
         f = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
     }
 
     /**
-     *
-     * @param d
-     * @return
+     * @param d The date to format.
+     * @return the formatted date.
      */
     public synchronized String format(Date d)
     {
@@ -930,10 +926,9 @@ class Formatter
     }
 
     /**
-     *
-     * @param s
-     * @return
-     * @throws ParseException
+     * @param s The text to parse a date from.
+     * @return The parsed date.
+     * @throws ParseException If the date could not be parsed.
      */
     public synchronized Date parse(String s) throws ParseException
     {
