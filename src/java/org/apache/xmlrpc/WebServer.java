@@ -368,7 +368,7 @@ public class WebServer
             }
             else
             {
-                notify ();
+                this.notify ();
             }
         }
 
@@ -388,7 +388,7 @@ public class WebServer
                     releaseRunner (this);
                     try
                     {
-                        wait ();
+                        this.wait ();
                     }
                     catch (InterruptedException ir)
                     {
