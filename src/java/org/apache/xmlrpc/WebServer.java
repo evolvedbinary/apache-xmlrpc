@@ -64,6 +64,7 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -248,16 +249,18 @@ public class WebServer implements Runnable
         InetAddress addr = address;
         if (addr == null)
         {
-            InetAddress[] addrs = InetAddress.getAllByName("127.0.0.1");
-            if (addrs.length > 0 &&
-                "127.0.0.1".equals(addrs[0].getHostAddress()))
+            try
             {
-                addr = addrs[0];
+                addr = InetAddress.getByName("127.0.0.1");
             }
-            else
+            catch (UnknownHostException useDefault)
             {
-                // This is not necessarilly the loopback interface -- it
-                // could be one of your external network interfaces.
+                // This is not necessarilly the loopback interface on
+                // a multi-homed host.
+            }
+
+            if (addr == null)
+            {
                 addr = InetAddress.getLocalHost();
             }
         }
