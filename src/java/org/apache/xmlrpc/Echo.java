@@ -61,9 +61,9 @@ import java.util.Vector;
  * A simple handler which echos its input parameters.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @version $Id$
  */
-public class Echo
-    implements XmlRpcHandler
+public class Echo implements XmlRpcHandler
 {
     /**
      * Echos <code>parameters</code>.
@@ -72,8 +72,8 @@ public class Echo
      * @param parameters Handler input parameters.
      * @return The input parameters.
      */
-    public Object execute (String method, Vector parameters)
-        throws Exception
+    public Object execute(String method, Vector parameters)
+            throws Exception
     {
         return parameters;
     }

@@ -55,14 +55,16 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @version $Id$
  */
-class ServerInputStream 
-    extends InputStream
+class ServerInputStream extends InputStream
 {
     // bytes remaining to be read from the input stream. This is
     // initialized from CONTENT_LENGTH (or getContentLength()).
@@ -74,12 +76,22 @@ class ServerInputStream
 
     private BufferedInputStream in;
 
+    /**
+     *
+     * @param in
+     * @param available
+     */
     public ServerInputStream(BufferedInputStream in, int available)
     {
         this.in = in;
         this.available = available;
     }
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     public int read() throws IOException
     {
         if (available > 0)
@@ -90,15 +102,29 @@ class ServerInputStream
         else if (available == -1)
         {
             return in.read ();
-        }            
+        }
         return -1;
     }
 
+    /**
+     *
+     * @param b
+     * @return
+     * @throws IOException
+     */
     public int read(byte b[]) throws IOException
     {
         return read(b, 0, b.length);
     }
 
+    /**
+     *
+     * @param b
+     * @param off
+     * @param len
+     * @return
+     * @throws IOException
+     */
     public int read(byte b[], int off, int len) throws IOException
     {
         if (available > 0)
@@ -126,6 +152,12 @@ class ServerInputStream
         return -1;
     }
 
+    /**
+     *
+     * @param n
+     * @return
+     * @throws IOException
+     */
     public long skip(long n) throws IOException
     {
         long skip = in.skip(n);
@@ -136,18 +168,30 @@ class ServerInputStream
         return skip;
     }
 
+    /**
+     *
+     * @param readlimit
+     */
     public void mark(int readlimit)
     {
         in.mark(readlimit);
         markedAvailable = available;
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void reset() throws IOException
     {
         in.reset();
         available = markedAvailable;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean markSupported()
     {
         return true;

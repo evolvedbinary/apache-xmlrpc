@@ -55,9 +55,13 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Vector;
 
 /**
@@ -67,37 +71,51 @@ import java.util.Vector;
  * initialization parameter <code>url</code>.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @version $Id$
  */
-public class XmlRpcProxyServlet 
-    extends HttpServlet
+public class XmlRpcProxyServlet extends HttpServlet
 {
     private XmlRpcServer xmlrpc;
 
-    public void init (ServletConfig config) throws ServletException
+    /**
+     *
+     * @param config
+     * @throws ServletException
+     */
+    public void init(ServletConfig config) throws ServletException
     {
-        if ("true".equalsIgnoreCase (config.getInitParameter ("debug")))
-            XmlRpc.setDebug (true);
-        String url = config.getInitParameter ("url");
-        xmlrpc = new XmlRpcServer ();
+        if ("true".equalsIgnoreCase(config.getInitParameter("debug")))
+        {
+            XmlRpc.setDebug(true);
+        }
+        String url = config.getInitParameter("url");
+        xmlrpc = new XmlRpcServer();
         try
         {
-            xmlrpc.addHandler ("$default", new XmlRpcClientLite (url));
+            xmlrpc.addHandler("$default", new XmlRpcClientLite(url));
         }
         catch (Exception x)
         {
-            throw new ServletException ("Invalid URL: "+url + " ("+
-                    x.toString () + ")");
+            throw new ServletException("Invalid URL: " + url + " ("
+                    + x.toString () + ")");
         }
     }
 
-    public void doPost(HttpServletRequest req,
-            HttpServletResponse res) throws ServletException, IOException
+    /**
+     *
+     * @param req
+     * @param res
+     * @throws ServletException
+     * @throws IOException
+     */
+    public void doPost(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException
     {
-        byte[] result = xmlrpc.execute (req.getInputStream ());
+        byte[] result = xmlrpc.execute(req.getInputStream ());
         res.setContentType("text/xml");
-        res.setContentLength (result.length);
+        res.setContentLength(result.length);
         OutputStream output = res.getOutputStream();
-        output.write (result);
-        output.flush ();
+        output.write(result);
+        output.flush();
     }
 }

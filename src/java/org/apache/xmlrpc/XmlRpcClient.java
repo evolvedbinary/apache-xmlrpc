@@ -55,20 +55,29 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import org.xml.sax.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.EmptyStackException;
+import java.util.Hashtable;
+import java.util.Stack;
+import java.util.Vector;
+import org.xml.sax.AttributeList;
+import org.xml.sax.SAXException;
 
 /**
- * A multithreaded, reusable XML-RPC client object. Use this if you need a full-grown
- * HTTP client(e.g. for Proxy and Cookies support). If you don't need that, <code>XmlRpcClientLite</code>
- * may work better for you.
- * 
+ * A multithreaded, reusable XML-RPC client object. Use this if you need a
+ * full-grown HTTP client(e.g. for Proxy and Cookies support). If you don't need
+ * that, <code>XmlRpcClientLite</code> may work better for you.
+ *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @version $Id$
  */
-public class XmlRpcClient 
-    implements XmlRpcHandler
+public class XmlRpcClient implements XmlRpcHandler
 {
     protected URL url;
     private String auth;
@@ -90,34 +99,35 @@ public class XmlRpcClient
     }
 
     /**
-      * Construct a XML-RPC client for the URL represented by this String.
-      */
+     * Construct a XML-RPC client for the URL represented by this String.
+     */
     public XmlRpcClient(String url) throws MalformedURLException
     {
         this.url = new URL(url);
     }
 
     /**
-      * Construct a XML-RPC client for the specified hostname and port.
-      */
-    public XmlRpcClient(String hostname,
-            int port) throws MalformedURLException
+     * Construct a XML-RPC client for the specified hostname and port.
+     */
+    public XmlRpcClient(String hostname, int port) throws MalformedURLException
     {
         this.url = new URL("http://" + hostname + ':' + port + "/RPC2");
     }
 
     /**
-      * Return the URL for this XML-RPC client.
-      */
+     * Return the URL for this XML-RPC client.
+     */
     public URL getURL()
     {
         return url;
     }
 
     /**
-      * Sets Authentication for this client. This will be sent as Basic Authentication header
-      * to the server as described in <a href="http://www.ietf.org/rfc/rfc2617.txt">http://www.ietf.org/rfc/rfc2617.txt</a>.
-      */
+     * Sets Authentication for this client. This will be sent as Basic
+     * Authentication header to the server as described in
+     * <a href="http://www.ietf.org/rfc/rfc2617.txt">
+     * http://www.ietf.org/rfc/rfc2617.txt</a>.
+     */
     public void setBasicAuthentication(String user, String password)
     {
         if (user == null || password == null)
@@ -126,22 +136,21 @@ public class XmlRpcClient
         }
         else
         {
-            auth = new String(
-                Base64.encode((user + ':' + password)
-                .getBytes())).trim();
+            auth = new String(Base64.encode((user + ':' + password)
+                    .getBytes())).trim();
         }
     }
 
-
     /**
-      * Generate an XML-RPC request and send it to the server. Parse the result and
-      * return the corresponding Java object.
-      *
-      * @exception XmlRpcException: If the remote host returned a fault message.
-      * @exception IOException: If the call could not be made because of lower level problems.
-      */
-    public Object execute(String method,
-            Vector params) throws XmlRpcException, IOException
+     * Generate an XML-RPC request and send it to the server. Parse the result
+     * and return the corresponding Java object.
+     *
+     * @exception XmlRpcException: If the remote host returned a fault message.
+     * @exception IOException: If the call could not be made because of lower
+     *          level problems.
+     */
+    public Object execute(String method, Vector params)
+            throws XmlRpcException, IOException
     {
         Worker worker = getWorker(false);
         try
@@ -156,13 +165,13 @@ public class XmlRpcClient
     }
 
     /**
-      * Generate an XML-RPC request and send it to the server in a new thread.
-      * This method returns immediately.
-      * If the callback parameter is not null, it will be called later to handle the result or error when the call is finished.
-      *
-      */
+     * Generate an XML-RPC request and send it to the server in a new thread.
+     * This method returns immediately.
+     * If the callback parameter is not null, it will be called later to handle
+     * the result or error when the call is finished.
+     */
     public void executeAsync(String method, Vector params,
-                             AsyncCallback callback)
+            AsyncCallback callback)
     {
         // if at least 4 threads are running, don't create any new ones,
         // just enqueue the request.
@@ -184,12 +193,17 @@ public class XmlRpcClient
         }
     }
 
-    synchronized Worker getWorker(boolean async)
-        throws IOException
+    /**
+     *
+     * @param async
+     * @return
+     * @throws IOException
+     */
+    synchronized Worker getWorker(boolean async) throws IOException
     {
         try
         {
-            Worker w =(Worker) pool.pop();
+            Worker w = (Worker) pool.pop();
             if (async)
             {
                 asyncWorkers += 1;
@@ -219,8 +233,9 @@ public class XmlRpcClient
     }
 
     /**
-       * Release possibly big per-call object references to allow them to be garbage collected
-       */
+     * Release possibly big per-call object references to allow them to be
+     * garbage collected
+     */
     synchronized void releaseWorker(Worker w, boolean async)
     {
         w.result = null;
@@ -239,7 +254,12 @@ public class XmlRpcClient
         }
     }
 
-
+    /**
+     *
+     * @param method
+     * @param params
+     * @param callback
+     */
     synchronized void enqueue(String method, Vector params,
             AsyncCallback callback)
     {
@@ -255,6 +275,10 @@ public class XmlRpcClient
         }
     }
 
+    /**
+     *
+     * @return
+     */
     synchronized CallData dequeue()
     {
         if (first == null)
@@ -273,6 +297,9 @@ public class XmlRpcClient
         return call;
     }
 
+    /**
+     *
+     */
     class Worker extends XmlRpc implements Runnable
     {
         boolean fault;
@@ -285,11 +312,20 @@ public class XmlRpcClient
 
         CallData call;
 
+        /**
+         *
+         */
         public Worker()
         {
             super();
         }
 
+        /**
+         *
+         * @param method
+         * @param params
+         * @param callback
+         */
         public void start(String method, Vector params,
                 AsyncCallback callback)
         {
@@ -298,6 +334,9 @@ public class XmlRpcClient
             t.start();
         }
 
+        /**
+         *
+         */
         public void run()
         {
             while (call != null)
@@ -341,17 +380,16 @@ public class XmlRpcClient
         /**
          * Execute an XML-RPC call.
          */
-        Object execute(String method,
-                Vector params) throws XmlRpcException, IOException
+        Object execute(String method, Vector params)
+                throws XmlRpcException, IOException
         {
             fault = false;
             long now = 0;
 
             if (XmlRpc.debug)
             {
-                System.err.println("Client calling procedure '" + method +
-                                   "' with parameters " + params);
-
+                System.err.println("Client calling procedure '" + method
+                        + "' with parameters " + params);
                 now = System.currentTimeMillis();
             }
 
@@ -422,25 +460,25 @@ public class XmlRpcClient
             }
             if (XmlRpc.debug)
             {
-                System.err.println("Spent "+
-                       (System.currentTimeMillis() - now) + " in request");
+                System.err.println("Spent " + (System.currentTimeMillis() - now)
+                        + " in request");
             }
             return result;
         }
 
         /**
-          * Called when the return value has been parsed.
-          */
+         * Called when the return value has been parsed.
+         */
         void objectParsed(Object what)
         {
             result = what;
         }
 
         /**
-          * Generate an XML-RPC request from a method name and a parameter vector.
-          */
-        void writeRequest(XmlWriter writer, String method,
-                Vector params) throws IOException, XmlRpcException
+         * Generate an XML-RPC request from a method name and a parameter vector.
+         */
+        void writeRequest(XmlWriter writer, String method, Vector params)
+                throws IOException, XmlRpcException
         {
             writer.startElement("methodCall");
             writer.startElement("methodName");
@@ -459,10 +497,10 @@ public class XmlRpcClient
         }
 
         /**
-          * Overrides method in XmlRpc to handle fault repsonses.
-          */
-        public void startElement(String name,
-                AttributeList atts) throws SAXException
+         * Overrides method in XmlRpc to handle fault repsonses.
+         */
+        public void startElement(String name, AttributeList atts)
+                throws SAXException
         {
             if ("fault".equals(name))
             {
@@ -483,10 +521,10 @@ public class XmlRpcClient
         CallData next;
 
         /**
-         * Make a call to be queued and then executed by the next free async thread
+         * Make a call to be queued and then executed by the next free async
+         * thread
          */
-        public CallData(String method, Vector params,
-                AsyncCallback callback)
+        public CallData(String method, Vector params, AsyncCallback callback)
         {
             this.method = method;
             this.params = params;
@@ -496,8 +534,8 @@ public class XmlRpcClient
     }
 
     /**
-      * Just for testing.
-      */
+     * Just for testing.
+     */
     public static void main(String args[]) throws Exception
     {
         // XmlRpc.setDebug(true);
@@ -511,8 +549,7 @@ public class XmlRpcClient
             {
                 try
                 {
-                    v.addElement(
-                            new Integer(Integer.parseInt(args[i])));
+                    v.addElement(new Integer(Integer.parseInt(args[i])));
                 }
                 catch(NumberFormatException nfx)
                 {
@@ -532,7 +569,8 @@ public class XmlRpcClient
         catch(Exception x)
         {
             System.err.println(x);
-            System.err.println("Usage: java org.apache.xmlrpc.XmlRpcClient <url> <method> <arg> ....");
+            System.err.println("Usage: java org.apache.xmlrpc.XmlRpcClient "
+                    + "<url> <method> <arg> ....");
             System.err.println("Arguments are sent as integers or strings.");
         }
     }

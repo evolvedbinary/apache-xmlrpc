@@ -57,21 +57,25 @@ package org.apache.xmlrpc;
 
 import java.util.Vector;
 
-public class AuthDemo 
-    implements AuthenticatedXmlRpcHandler
+/**
+ *
+ * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @version $Id$
+ */
+public class AuthDemo implements AuthenticatedXmlRpcHandler
 {
-    public Object execute (String method, 
-                           Vector v, 
-                           String user, 
-                           String password) 
-        throws Exception
+    /**
+     *
+     */
+    public Object execute(String method, Vector v, String user, String password)
+            throws Exception
     {
         // our simplistic authentication guidelines never fail ;)
-        if (user == null || user.startsWith ("bad"))
+        if (user == null || user.startsWith("bad"))
         {
-            throw new XmlRpcException (5, "Sorry, you're not allowed in here!");
-        }            
-        
-        return ("Hello "+user);
+            throw new XmlRpcException(5, "Sorry, you're not allowed in here!");
+        }
+
+        return ("Hello " + user);
     }
 }

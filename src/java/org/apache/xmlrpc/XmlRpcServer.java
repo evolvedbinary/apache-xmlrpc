@@ -55,18 +55,26 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.*;
-import java.util.*;
-import java.lang.reflect.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.EmptyStackException;
+import java.util.Hashtable;
+import java.util.Stack;
+import java.util.Vector;
 
 /**
- * A multithreaded, reusable XML-RPC server object. The name may be misleading 
- * because this does not open any server sockets. Instead it is fed by passing 
- * an XML-RPC input stream to the execute method. If you want to open a 
+ * A multithreaded, reusable XML-RPC server object. The name may be misleading
+ * because this does not open any server sockets. Instead it is fed by passing
+ * an XML-RPC input stream to the execute method. If you want to open a
  * HTTP listener, use the WebServer class instead.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @version $Id$
  */
 public class XmlRpcServer
 {
@@ -145,6 +153,10 @@ public class XmlRpcServer
         return retval;
     }
 
+    /**
+     *
+     * @return
+     */
     private final Worker getWorker()
     {
         try
@@ -204,12 +216,19 @@ public class XmlRpcServer
             }
         }
 
+        /**
+         *
+         * @param is
+         * @param user
+         * @param password
+         * @return
+         */
         private byte[] executeInternal(InputStream is, String user,
-                                        String password)
+                String password)
         {
             byte[] result;
             long now = 0;
-    
+
             if (XmlRpc.debug)
             {
                 now = System.currentTimeMillis();
@@ -250,30 +269,32 @@ public class XmlRpcServer
                 {
                     if (dot > -1)
                     {
-                        throw new Exception("RPC handler object \""+
-                                handlerName + "\" not found and no default handler registered.");
+                        throw new Exception("RPC handler object \""
+                                + handlerName + "\" not found and no default "
+                                + "handler registered.");
                     }
                     else
                     {
-                        throw new Exception("RPC handler object not found for \""+
-                                methodName + "\": no default handler registered.");
+                        throw new Exception("RPC handler object not found for \""
+                                + methodName
+                                + "\": no default handler registered.");
                     }
                 }
 
                 Object outParam;
                 if (handler instanceof AuthenticatedXmlRpcHandler)
                 {
-                    outParam =((AuthenticatedXmlRpcHandler) handler).
-                            execute(methodName, inParams, user, password);
+                    outParam =((AuthenticatedXmlRpcHandler) handler)
+                            .execute(methodName, inParams, user, password);
                 }
                 else
                 {
-                    outParam =((XmlRpcHandler) handler).execute(
-                            methodName, inParams);
+                    outParam =((XmlRpcHandler) handler)
+                            .execute(methodName, inParams);
                 }
                 if (XmlRpc.debug)
                 {
-                    System.err.println("outparam = "+outParam);
+                    System.err.println("outparam = " + outParam);
                 }
                 writer = new XmlWriter(buffer);
                 writeResponse(outParam, writer);
@@ -300,15 +321,15 @@ public class XmlRpcServer
                 }
                 catch(UnsupportedEncodingException encx)
                 {
-                    System.err.println("XmlRpcServer attempted to use " +
-                                       "unsupported encoding: " + encx);
+                    System.err.println("XmlRpcServer attempted to use "
+                            + "unsupported encoding: " + encx);
                     // NOTE: If we weren't already using the default
                     // encoding, we could try it here.
                 }
                 catch(IOException iox)
                 {
-                    System.err.println("XmlRpcServer experienced I/O error " +
-                                       "writing error response: " + iox);
+                    System.err.println("XmlRpcServer experienced I/O error "
+                            + "writing error response: " + iox);
                 }
 
                 String message = x.toString();
@@ -324,8 +345,8 @@ public class XmlRpcServer
                 {
                     // Unlikely to occur, as we just sent a struct
                     // with an int and a string.
-                    System.err.println("Unable to send error response to " +
-                                       "client: " + e);
+                    System.err.println("Unable to send error response to "
+                            + "client: " + e);
                 }
 
                 // If we were able to create a XmlWriter, we should
@@ -351,15 +372,15 @@ public class XmlRpcServer
                     {
                         // This is non-fatal, but worth logging a
                         // warning for.
-                        System.err.println("Exception closing output stream: " +
-                                           iox);
+                        System.err.println("Exception closing output stream: "
+                                + iox);
                     }
                 }
             }
             if (XmlRpc.debug)
             {
-                System.err.println("Spent "+
-                       (System.currentTimeMillis() - now) + " millis in request");
+                System.err.println("Spent " + (System.currentTimeMillis() - now)
+                        + " millis in request");
             }
             return result;
         }
@@ -377,7 +398,7 @@ public class XmlRpcServer
           * Writes an XML-RPC response to the XML writer.
           */
         void writeResponse(Object param, XmlWriter writer)
-            throws XmlRpcException, IOException
+                throws XmlRpcException, IOException
         {
             writer.startElement("methodResponse");
             // if (param == null) param = ""; // workaround for Frontier bug
@@ -393,7 +414,7 @@ public class XmlRpcServer
          * Writes an XML-RPC error response to the XML writer.
          */
         void writeError(int code, String message, XmlWriter writer)
-            throws XmlRpcException, IOException
+                throws XmlRpcException, IOException
         {
             // System.err.println("error: "+message);
             Hashtable h = new Hashtable();
@@ -405,9 +426,7 @@ public class XmlRpcServer
             writer.endElement("fault");
             writer.endElement("methodResponse");
         }
-
     } // end of inner class Worker
-
 } // XmlRpcServer
 
 /**
@@ -430,9 +449,10 @@ class Invoker implements XmlRpcHandler
         }
     }
 
-    // main method, sucht methode in object, wenn gefunden dann aufrufen.
-    public Object execute(String methodName,
-            Vector params) throws Exception
+    /**
+     * main method, sucht methode in object, wenn gefunden dann aufrufen.
+     */
+    public Object execute(String methodName, Vector params) throws Exception
     {
         // Array mit Classtype bilden, ObjectAry mit Values bilden
         Class[] argClasses = null;
@@ -470,8 +490,10 @@ class Invoker implements XmlRpcHandler
         {
             System.err.println("Searching for method: " + methodName);
             for (int i = 0; i < argClasses.length; i++)
-                System.err.println("Parameter " + i + ": " +
-                        argClasses[i] + " = " + argValues[i]);
+            {
+                System.err.println("Parameter " + i + ": " + argClasses[i]
+                        + " = " + argValues[i]);
+            }
         }
 
         try
@@ -492,8 +514,8 @@ class Invoker implements XmlRpcHandler
         // the ones defined in java.lang.Object.
         if (method.getDeclaringClass() == Object.class)
         {
-            throw new XmlRpcException(0, "Invoker can't call methods " +
-                                      "defined in java.lang.Object");
+            throw new XmlRpcException(0, "Invoker can't call methods "
+                    + "defined in java.lang.Object");
         }
 
         // invoke

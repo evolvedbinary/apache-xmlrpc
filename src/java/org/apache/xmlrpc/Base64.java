@@ -317,6 +317,4 @@ public final class  Base64
         }
         return decodedData;
     }
-
-
 }

@@ -59,17 +59,16 @@ import java.util.Vector;
 
 /**
  * An XML-RPC handler that also handles user authentication.
- * 
+ *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
+ * @version $Id$
  */
 public interface AuthenticatedXmlRpcHandler
 {
     /**
      * Return the result, or throw an Exception if something went wrong.
      */
-    public Object execute (String method, 
-                           Vector params, 
-                           String user,
-                           String password) 
-        throws Exception;
+    public Object execute(String method, Vector params, String user,
+            String password)
+            throws Exception;
 }

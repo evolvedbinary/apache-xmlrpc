@@ -55,9 +55,17 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.EmptyStackException;
+import java.util.Stack;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * A minimal web server that exclusively handles XML-RPC requests.
@@ -65,9 +73,9 @@ import java.util.*;
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:jvanzyl@apache.org">Jason van Zyl</a>
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @version $Id$
  */
-public class WebServer
-    implements Runnable
+public class WebServer implements Runnable
 {
     protected XmlRpcServer xmlrpc;
     protected ServerSocket serverSocket;
@@ -91,29 +99,34 @@ public class WebServer
     private static final String STAR = "*";
 
     /**
-     * This <em>can</em> be called from command line, but you'll have to edit and recompile
-     * to change the server port or handler objects. By default, it sets up the following responders:
-     * <ul><li> A java.lang.String object
-     * <li> The java.lang.Math class (making its static methods callable via XML-RPC)
-     * <li> An Echo handler that returns the argument array
+     * This <em>can</em> be called from command line, but you'll have to edit
+     * and recompile to change the server port or handler objects. By default,
+     * it sets up the following responders:
+     * <ul>
+     *   <li> A java.lang.String object </li>
+     *   <li> The java.lang.Math class (making its static methods callable via
+     *        XML-RPC) </li>
+     *   <li> An Echo handler that returns the argument array </li>
      * </ul>
      */
-    public static void main (String args[])
+    public static void main(String args[])
     {
-        System.err.println ("Usage: java " + WebServer.class.getName() +
-                            " <port>");
+        System.err.println("Usage: java " + WebServer.class.getName()
+                + " <port>");
         int p = 8080;
         if (args.length > 0)
+        {
             try
             {
-                p = Integer.parseInt (args[0]);
+                p = Integer.parseInt(args[0]);
             }
             catch (NumberFormatException nfx)
             {
-                System.err.println ("Error parsing port number: "+args[0]);
+                System.err.println("Error parsing port number: " + args[0]);
             }
+        }
         // XmlRpc.setDebug (true);
-        XmlRpc.setKeepAlive (true);
+        XmlRpc.setKeepAlive(true);
         try
         {
             WebServer webserver = new WebServer(p);
@@ -123,30 +136,30 @@ public class WebServer
             webserver.addHandler("math", Math.class);
             webserver.addHandler("auth", new AuthDemo());
             webserver.addHandler("$default", new Echo());
-            // XmlRpcClients can be used as Proxies in XmlRpcServers which is a cool feature for applets.
-            webserver.addHandler("mttf", new XmlRpcClient("http://www.mailtothefuture.com:80/RPC2"));
-            System.err.println("started web server on port "+p);
+            // XmlRpcClients can be used as Proxies in XmlRpcServers which is a
+            // cool feature for applets.
+            webserver.addHandler("mttf", new XmlRpcClient(
+                    "http://www.mailtothefuture.com:80/RPC2"));
+            System.err.println("started web server on port " + p);
         }
         catch (IOException x)
         {
-            System.err.println("Error creating web server: "+x);
+            System.err.println("Error creating web server: " + x);
         }
     }
 
     /**
-      * Creates a Web server at the specified port number.
-      */
-    public WebServer(int port)
-        throws IOException
+     * Creates a Web server at the specified port number.
+     */
+    public WebServer(int port) throws IOException
     {
         this(port, null);
     }
 
     /**
-      * Creates a Web server at the specified port number and IP address.
-      */
-    public WebServer(int port, InetAddress add)
-        throws IOException
+     * Creates a Web server at the specified port number and IP address.
+     */
+    public WebServer(int port, InetAddress add) throws IOException
     {
         this.port = port;
         xmlrpc = new XmlRpcServer();
@@ -163,7 +176,6 @@ public class WebServer
         {
             throw new IOException(e.getMessage());
         }
-
         start();
     }
 
@@ -174,8 +186,9 @@ public class WebServer
      *
      * @exception Exception Error creating listener socket.
      */
-    protected ServerSocket createServerSocket(int port, int backlog, InetAddress add)
-        throws Exception
+    protected ServerSocket createServerSocket(int port, int backlog,
+            InetAddress add)
+            throws Exception
     {
         return new ServerSocket(port, backlog, add);
     }
@@ -188,12 +201,15 @@ public class WebServer
      * @see #createServerSocket(int port, int backlog, InetAddress add)
      */
     public void setupServerSocket(int port, int backlog, InetAddress add)
-        throws Exception
+            throws Exception
     {
         serverSocket = createServerSocket(port, backlog, add);
         serverSocket.setSoTimeout(4096);
     }
 
+    /**
+     *
+     */
     public void start()
     {
         listener = new Thread(this, "XML-RPC Weblistener");
@@ -201,42 +217,41 @@ public class WebServer
     }
 
     /**
-      * Register a handler object with this name. Methods of this objects will be
-      * callable over XML-RPC as "name.method".
-      */
+     * Register a handler object with this name. Methods of this objects will be
+     * callable over XML-RPC as "name.method".
+     */
     public void addHandler(String name, Object target)
     {
         xmlrpc.addHandler(name, target);
     }
 
     /**
-      * Remove a handler object that was previously registered with this server.
-      */
+     * Remove a handler object that was previously registered with this server.
+     */
     public void removeHandler(String name)
     {
         xmlrpc.removeHandler(name);
     }
 
     /**
-      * Switch client filtering on/off.
-      * @see #acceptClient(java.lang.String)
-      * @see #denyClient(java.lang.String)
-      */
+     * Switch client filtering on/off.
+     * @see #acceptClient(java.lang.String)
+     * @see #denyClient(java.lang.String)
+     */
     public void setParanoid(boolean p)
     {
         paranoid = p;
     }
 
     /**
-      * Add an IP address to the list of accepted clients. The parameter can contain '*' as wildcard
-      * character, e.g. "192.168.*.*". You must call setParanoid(true) in order for this to have any
-      * effect.
-      *
-      * @see #denyClient(java.lang.String)
-      * @see #setParanoid(boolean)
-      */
-    public void acceptClient(String address)
-        throws IllegalArgumentException
+     * Add an IP address to the list of accepted clients. The parameter can
+     * contain '*' as wildcard character, e.g. "192.168.*.*". You must call
+     * setParanoid(true) in order for this to have any effect.
+     *
+     * @see #denyClient(java.lang.String)
+     * @see #setParanoid(boolean)
+     */
+    public void acceptClient(String address) throws IllegalArgumentException
     {
         try
         {
@@ -245,20 +260,19 @@ public class WebServer
         }
         catch (Exception x)
         {
-            throw new IllegalArgumentException("\"" +
-                address +
-                "\" does not represent a valid IP address");
+            throw new IllegalArgumentException("\"" + address
+                    + "\" does not represent a valid IP address");
         }
     }
 
     /**
-      * Add an IP address to the list of denied clients. The parameter can contain '*' as wildcard
-      * character, e.g. "192.168.*.*". You must call setParanoid(true) in order for this to have any
-      * effect.
-      *
-      * @see #acceptClient(java.lang.String)
-      * @see #setParanoid(boolean)
-      */
+     * Add an IP address to the list of denied clients. The parameter can
+     * contain '*' as wildcard character, e.g. "192.168.*.*". You must call
+     * setParanoid(true) in order for this to have any effect.
+     *
+     * @see #acceptClient(java.lang.String)
+     * @see #setParanoid(boolean)
+     */
     public void denyClient(String address) throws IllegalArgumentException
     {
         try
@@ -268,12 +282,16 @@ public class WebServer
         }
         catch (Exception x)
         {
-            throw new IllegalArgumentException("\"" +
-                address +
-                "\" does not represent a valid IP address");
+            throw new IllegalArgumentException("\"" + address
+                    + "\" does not represent a valid IP address");
         }
     }
 
+    /**
+     *
+     * @param s
+     * @return
+     */
     protected boolean checkSocket(Socket s)
     {
         int l = deny.size();
@@ -299,8 +317,8 @@ public class WebServer
     }
 
     /**
-      * Listens for client requests until stopped.
-      */
+     * Listens for client requests until stopped.
+     */
     public void run()
     {
         try
@@ -313,7 +331,7 @@ public class WebServer
                     if (!paranoid || checkSocket(socket))
                     {
                         Runner runner = getRunner();
-                        runner.handle (socket);
+                        runner.handle(socket);
                     }
                     else
                     {
@@ -327,22 +345,20 @@ public class WebServer
                 }
                 catch (Exception ex)
                 {
-                    System.err.println(
-                            "Exception in XML-RPC listener loop (" +
-                            ex + ").");
+                    System.err.println("Exception in XML-RPC listener loop ("
+                            + ex + ").");
                 }
                 catch (Error err)
                 {
-                    System.err.println(
-                            "Error in XML-RPC listener loop (" + err +
-                            ").");
+                    System.err.println("Error in XML-RPC listener loop ("
+                            + err + ").");
                 }
             }
         }
         catch (Exception exception)
         {
-            System.err.println( "Error accepting XML-RPC connections (" +
-                    exception + ").");
+            System.err.println("Error accepting XML-RPC connections ("
+                    + exception + ").");
         }
         finally
         {
@@ -359,8 +375,8 @@ public class WebServer
     }
 
     /**
-      * Stop listening on the server port.
-      */
+     * Stop listening on the server port.
+     */
     public void shutdown()
     {
         // Stop accepting client connections
@@ -368,7 +384,7 @@ public class WebServer
         {
             Thread l = listener;
             listener = null;
-            l.interrupt ();
+            l.interrupt();
         }
 
         // Shutdown our Runner-based threads
@@ -388,6 +404,10 @@ public class WebServer
         }
     }
 
+    /**
+     *
+     * @return
+     */
     protected Runner getRunner()
     {
         try
@@ -398,15 +418,19 @@ public class WebServer
         {
             if (runners.activeCount () > 255)
             {
-                throw new RuntimeException ("System overload");
+                throw new RuntimeException("System overload");
             }
             return new Runner();
         }
     }
 
-    void releaseRunner (Runner runner)
+    /**
+     *
+     * @param runner
+     */
+    void releaseRunner(Runner runner)
     {
-        threadpool.push (runner);
+        threadpool.push(runner);
     }
 
     /**
@@ -423,8 +447,7 @@ public class WebServer
          *
          * @param socket The source to read the client's request from.
          */
-        public synchronized void handle(Socket socket)
-            throws IOException
+        public synchronized void handle(Socket socket) throws IOException
         {
             con = new Connection(socket);
             count = 0;
@@ -446,7 +469,7 @@ public class WebServer
         {
             while (con != null && Thread.currentThread() == thread)
             {
-                con.run ();
+                con.run();
                 count++;
                 con = null;
 
@@ -470,6 +493,9 @@ public class WebServer
         }
     }
 
+    /**
+     *
+     */
     class Connection implements Runnable
     {
         private Socket socket;
@@ -478,6 +504,11 @@ public class WebServer
         private String user, password;
         byte[] buffer;
 
+        /**
+         *
+         * @param socket
+         * @throws IOException
+         */
         public Connection (Socket socket) throws IOException
         {
             // set read timeout to 30 seconds
@@ -488,6 +519,9 @@ public class WebServer
             output = new BufferedOutputStream(socket.getOutputStream());
         }
 
+        /**
+         *
+         */
         public void run()
         {
             try
@@ -497,7 +531,8 @@ public class WebServer
                 do
                 {
                     // reset user authentication
-                    user = password = null;
+                    user = null;
+                    password = null;
                     String line = readLine();
                     // Netscape sends an extra \n\r after bodypart, swallow it
                     if (line != null && line.length() == 0)
@@ -506,7 +541,7 @@ public class WebServer
                     }
                     if (XmlRpc.debug)
                     {
-                        System.err.println (line);
+                        System.err.println(line);
                     }
                     int contentLength = -1;
 
@@ -515,7 +550,8 @@ public class WebServer
                     String method = tokens.nextToken();
                     String uri = tokens.nextToken();
                     String httpversion = tokens.nextToken();
-                    keepalive = XmlRpc.getKeepAlive() && HTTP_11.equals(httpversion);
+                    keepalive = XmlRpc.getKeepAlive()
+                            && HTTP_11.equals(httpversion);
                     do
                     {
                         line = readLine();
@@ -534,8 +570,7 @@ public class WebServer
                             if (lineLower.startsWith("connection:"))
                             {
                                 keepalive = XmlRpc.getKeepAlive() &&
-                                        lineLower.indexOf ("keep-alive")
-                                        > -1;
+                                        lineLower.indexOf("keep-alive") > -1;
                             }
                             if (lineLower.startsWith("authorization: basic "))
                             {
@@ -545,13 +580,11 @@ public class WebServer
                     }
                     while (line != null && line.length() != 0);
 
-                    if ("POST".equalsIgnoreCase (method))
+                    if ("POST".equalsIgnoreCase(method))
                     {
-                        ServerInputStream sin =
-                                new ServerInputStream (input,
+                        ServerInputStream sin = new ServerInputStream(input,
                                 contentLength);
-                        byte result[] =
-                                xmlrpc.execute (sin, user, password);
+                        byte result[] = xmlrpc.execute(sin, user, password);
                         output.write(httpversion.getBytes());
                         output.write(ok);
                         output.write(server);
@@ -565,8 +598,8 @@ public class WebServer
                         }
                         output.write(ctype);
                         output.write(clength);
-                        output.write(Integer.toString(
-                                result.length).getBytes());
+                        output.write(Integer.toString(result.length)
+                                .getBytes());
                         output.write(doubleNewline);
                         output.write(result);
                         output.flush();
@@ -577,8 +610,8 @@ public class WebServer
                         output.write(" 400 Bad Request\r\n".getBytes());
                         output.write(server);
                         output.write("\r\n".getBytes());
-                        output.write(("Method "+method +
-                                " not implemented (try POST)").getBytes());
+                        output.write(("Method " + method
+                                + " not implemented (try POST)").getBytes());
                         output.flush();
                         keepalive = false;
                     }
@@ -589,8 +622,8 @@ public class WebServer
             {
                 if (XmlRpc.debug)
                 {
-                    System.err.println (exception);
-                    exception.printStackTrace ();
+                    System.err.println(exception);
+                    exception.printStackTrace();
                 }
             }
             finally
@@ -608,6 +641,11 @@ public class WebServer
             }
         }
 
+        /**
+         *
+         * @return
+         * @throws IOException
+         */
         private String readLine() throws IOException
         {
             if (buffer == null)
@@ -629,22 +667,25 @@ public class WebServer
                 }
                 if (count >= buffer.length)
                 {
-                    throw new IOException ("HTTP Header too long");
+                    throw new IOException("HTTP Header too long");
                 }
             }
-            return new String (buffer, 0, count);
+            return new String(buffer, 0, count);
         }
 
+        /**
+         *
+         * @param line
+         */
         private void parseAuth(String line)
         {
             try
             {
-                byte[] c =
-                        Base64.decode (line.substring(21).getBytes());
-                String str = new String (c);
-                int col = str.indexOf (':');
-                user = str.substring (0, col);
-                password = str.substring (col + 1);
+                byte[] c = Base64.decode(line.substring(21).getBytes());
+                String str = new String(c);
+                int col = str.indexOf(':');
+                user = str.substring(0, col);
+                password = str.substring(col + 1);
             }
             catch (Throwable ignore)
             {
@@ -652,19 +693,26 @@ public class WebServer
         }
     }
 
+    /**
+     *
+     */
     class AddressMatcher
     {
         int pattern[];
 
-        public AddressMatcher (String address) throws Exception
+        /**
+         *
+         * @param address
+         * @throws Exception
+         */
+        public AddressMatcher(String address) throws Exception
         {
             pattern = new int[4];
             StringTokenizer st = new StringTokenizer(address, ".");
             if (st.countTokens() != 4)
             {
-                throw new Exception ("\"" +
-                    address +
-                    "\" does not represent a valid IP address");
+                throw new Exception("\"" + address
+                        + "\" does not represent a valid IP address");
             }
             for (int i = 0; i < 4; i++)
             {
@@ -680,6 +728,11 @@ public class WebServer
             }
         }
 
+        /**
+         *
+         * @param address
+         * @return
+         */
         public boolean matches (byte address[])
         {
             for (int i = 0; i < 4; i++)

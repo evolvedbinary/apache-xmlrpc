@@ -55,72 +55,95 @@ package org.apache.xmlrpc.applet;
  * <http://www.apache.org/>.
  */
 
-
-import java.applet.*;
-import java.util.*;
+import java.applet.Applet;
 import java.io.IOException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Vector;
 
 
 /**
- *  An applet that provides basic XML-RPC client functionality. 
+ * An applet that provides basic XML-RPC client functionality.
+ *
+ * @version $Id$
  */
 public class XmlRpcApplet extends Applet {
-    
+
     SimpleXmlRpcClient client;
 
 
-    /** 
-     * Initialize the XML-RPC client, trying to get the port number from the applet parameter tags. 
-     * The default for port is 80. The client connects to the server this applet came from.
+    /**
+     * Initialize the XML-RPC client, trying to get the port number from the
+     * applet parameter tags. The default for port is 80. The client connects to
+     * the server this applet came from.
      */
-    public void initClient () {
-	int port = 80;
-	String p = getParameter ("PORT");
-	if (p != null) try {
-	    port = Integer.parseInt (p);
-	} catch (NumberFormatException nfx) {
-	    System.out.println ("Error parsing port: "+nfx);
-	}
-	initClient (port);
+    public void initClient()
+    {
+        int port = 80;
+        String p = getParameter("PORT");
+        if (p != null)
+        {
+            try
+            {
+                port = Integer.parseInt(p);
+            }
+            catch (NumberFormatException nfx)
+            {
+                System.out.println("Error parsing port: " + nfx);
+            }
+        }
+        initClient(port);
     }
 
-    /** 
-     * Initialize the XML-RPC client with the specified port and the server this applet came from.
+    /**
+     * Initialize the XML-RPC client with the specified port and the server this
+     * applet came from.
      */
-    public void initClient (int port) {
-	String uri = getParameter ("URI");
-	if (uri == null)
-	    uri = "/RPC2";
-	else if (!uri.startsWith ("/"))
-	    uri = "/"+uri;
-	initClient (port, uri);
+    public void initClient(int port)
+    {
+        String uri = getParameter("URI");
+        if (uri == null)
+        {
+            uri = "/RPC2";
+        }
+        else if (!uri.startsWith("/"))
+        {
+            uri = "/" + uri;
+        }
+        initClient(port, uri);
     }
 
-    /** 
-     * Initialize the XML-RPC client with the specified port and request path and the server this applet came from.
+    /**
+     * Initialize the XML-RPC client with the specified port and request path
+     * and the server this applet came from.
      */
-    public void initClient (int port, String uri) {
-	String host = getCodeBase ().getHost ();
-	try {
-	    URL url = new URL ("http://"+host+":"+port+uri);
-	    System.out.println ("XML-RPC URL: "+url);
-	    client = new SimpleXmlRpcClient (url); 
-	} catch (MalformedURLException unlikely) {
-	    System.out.println ("Error constructing XML-RPC client for "+host+":"+port+": "+unlikely);
-	}
+    public void initClient(int port, String uri)
+    {
+        String host = getCodeBase().getHost();
+        try
+        {
+            URL url = new URL("http://" + host + ":" + port + uri);
+            System.out.println("XML-RPC URL: " + url);
+            client = new SimpleXmlRpcClient(url);
+        }
+        catch (MalformedURLException unlikely)
+        {
+            System.out.println("Error constructing XML-RPC client for "
+                    + host + ":" + port + ": " + unlikely);
+        }
     }
-    
-    /** 
+
+    /**
      * Calls the XML-RPC server with the specified methodname and argument list.
      */
-    public Object execute (String methodName, Vector arguments) 
-    throws XmlRpcException, IOException {
-    	if (client == null)
-    	    initClient ();
-	Object returnValue = null;
-	return returnValue = client.execute (methodName, arguments); 
+    public Object execute(String methodName, Vector arguments)
+            throws XmlRpcException, IOException
+    {
+        if (client == null)
+        {
+            initClient ();
+        }
+        Object returnValue = null;
+        return returnValue = client.execute(methodName, arguments);
     }
-    
-
 }
