@@ -70,9 +70,7 @@ public interface AuthenticatedXmlRpcHandler
      * Return the result, or throw an Exception if something went wrong.
      *
      * @throws AuthenticationFailed If authentication fails, an
-     * exception marked using the {@link
-     * org.apache.xmlrpc.AuthenticationFailed} interface must be
-     * thrown.
+     * exception of this type must be thrown.
      * @see org.apache.xmlrpc.AuthenticationFailed
      */
     public Object execute(String method, Vector params, String user,
