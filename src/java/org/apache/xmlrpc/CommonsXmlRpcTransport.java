@@ -76,20 +76,28 @@ import org.apache.commons.httpclient.methods.PostMethod;
  * @version $Id$
  * @since 1.2
  */
-public class CommonsXmlRpcTransport implements XmlRpcTransport {
+public class CommonsXmlRpcTransport implements XmlRpcTransport 
+{
     
+    protected PostMethod method;
+
     /** Creates a new instance of CommonsXmlRpcTransport */
-    public CommonsXmlRpcTransport(URL url, HttpClient client) {
+    public CommonsXmlRpcTransport(URL url, HttpClient client) 
+    {
         this.url = url;
-        if (client == null) {
+        if (client == null) 
+        {
             HttpClient newClient = new HttpClient();
             this.client = newClient;
-        } else {
+        } 
+        else 
+        {
             this.client = client;
         }
     }
     
-    public CommonsXmlRpcTransport(URL url) {
+    public CommonsXmlRpcTransport(URL url) 
+    {
         this(url, null);
     }
     
@@ -98,8 +106,9 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport {
     private final Header userAgentHeader = new Header("User-Agent", XmlRpc.version);
     private boolean http11 = false; // defaults to HTTP 1.0
     
-    public InputStream sendXmlRpc(byte[] request) throws IOException, XmlRpcClientException {
-        PostMethod method = new PostMethod(url.toString());
+    public InputStream sendXmlRpc(byte[] request) throws IOException, XmlRpcClientException 
+    {
+        method = new PostMethod(url.toString());
         method.setHttp11(http11);
         method.setRequestHeader(new Header("Content-Type", "text/xml"));
         method.setRequestHeader(userAgentHeader);
@@ -112,11 +121,20 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport {
         return method.getResponseBodyAsStream();
     }
     
-    public void setHttp11(boolean http11) {
+    public void setHttp11(boolean http11) 
+    {
         this.http11 = http11;
     }
     
-    public void setUserAgent(String userAgent) {
+    public void setUserAgent(String userAgent) 
+    {
         userAgentHeader.setValue(userAgent);
+    }
+
+    public void endClientRequest()
+    throws XmlRpcClientException
+    {
+        // Rlease connection resources
+        method.releaseConnection();
     }
 }

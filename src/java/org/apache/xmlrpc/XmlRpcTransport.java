@@ -68,6 +68,24 @@ import java.io.IOException;
  */
 public interface XmlRpcTransport
 {
+  /**
+   * Send an XML-RPC message. This method is called to send a message to the
+   * other party.
+   *
+   * @param request the request in network encoding.
+   *
+   * @throws IOException if an IOException occurs in the IO level of the transport.
+   * @throws XmlRpcClientException if an exception occurs in the transport.
+   */
   public InputStream sendXmlRpc(byte [] request)
   throws IOException, XmlRpcClientException;
+
+  /**
+   * End an XML-RPC request. This method is called by the XmlRpcClient when then
+   * request has been sent and the response (or an exception) recieved.
+   *
+   * @throws XmlRpcClientException if an exception occurs in the transport.
+   */
+  public void endClientRequest()
+  throws XmlRpcClientException;
 }

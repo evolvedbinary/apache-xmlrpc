@@ -147,12 +147,6 @@ class LiteXmlRpcTransport implements XmlRpcTransport
                 }
             }
 
-            // eepalive is always false if XmlRpc.keepalive is false
-            if (!keepalive)
-            {
-                closeConnection ();
-            }
-
             return in;
         }
         catch (IOException iox)
@@ -324,6 +318,15 @@ class LiteXmlRpcTransport implements XmlRpcTransport
     public void setBasicAuthentication(String user, String password)
     {
         auth = HttpUtil.encodeBasicAuthentication(user, password);
+    }
+
+    public void endClientRequest()
+    {
+        // eepalive is always false if XmlRpc.keepalive is false
+        if (!keepalive)
+        {
+            closeConnection ();
+        }
     }
 
     /**

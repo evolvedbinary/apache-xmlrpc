@@ -75,6 +75,7 @@ public class DefaultXmlRpcTransport implements XmlRpcTransport
 {
     protected URL url;
     protected String auth;
+    protected URLConnection con;
 
     /**
      * Create a new DefaultXmlRpcTransport with the specified URL and basic
@@ -104,7 +105,7 @@ public class DefaultXmlRpcTransport implements XmlRpcTransport
     public InputStream sendXmlRpc(byte [] request)
     throws IOException
     {
-        URLConnection con = url.openConnection();
+        con = url.openConnection();
         con.setDoInput(true);
         con.setDoOutput(true);
         con.setUseCaches(false);
@@ -132,5 +133,18 @@ public class DefaultXmlRpcTransport implements XmlRpcTransport
     public void setBasicAuthentication(String user, String password)
     {
         auth = HttpUtil.encodeBasicAuthentication(user, password);
+    }
+
+    public void endClientRequest()
+    throws XmlRpcClientException
+    {
+        try
+        {
+            con.getInputStream().close();
+        }
+        catch (Exception e)
+        {
+            throw new XmlRpcClientException("Exception closing URLConnection", e);
+        }
     }
 }

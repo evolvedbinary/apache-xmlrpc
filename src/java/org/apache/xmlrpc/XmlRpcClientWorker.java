@@ -136,6 +136,14 @@ public class XmlRpcClientWorker
                 System.out.println("Spent " + (System.currentTimeMillis() - now)
                                    + " millis in request/process/response");
             }
+            try
+            {
+                transport.endClientRequest();
+            }
+            catch (RuntimeException re)
+            {
+                throw new XmlRpcClientException("Transport exception in endClientRequest()", re);
+            }
         }
     }
 

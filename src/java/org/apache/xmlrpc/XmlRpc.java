@@ -56,6 +56,7 @@ package org.apache.xmlrpc;
  */
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
@@ -188,6 +189,15 @@ public abstract class XmlRpc extends HandlerBase
      */
     static String encoding = XmlWriter.ISO8859_1;
 
+    /**
+     * Java's name for the input encoding we're using.  Defaults to
+     * <code>null</code>, signifying the platform default. This may
+     * need to be overridden on platforms where the default encoding
+     * is not compatible with ASCII (eg. EBCDIC) but the network is
+     * still ASCII-like.
+     */
+    static String inputEncoding = null;
+ 
     private TypeFactory typeFactory;
 
     /**
@@ -342,6 +352,28 @@ public abstract class XmlRpc extends HandlerBase
     }
 
     /**
+     * Set the input encoding of the XML.
+     * This is used only if set.
+     *
+     * @param enc The Java name of the encoding.
+     */
+    public static void setInputEncoding(String enc)
+    {
+        inputEncoding = enc;
+    }
+
+    /**
+     * Return the input encoding. This may be null. This is always a
+     * Java encoding name, it is not transformed.
+     *
+     * @return the Java encoding name to use, if set, otherwise null.
+     */
+    public static String getInputEncoding ()
+    {
+        return inputEncoding;
+    }
+
+    /**
      * Gets the maximum number of threads used at any given moment.
      */
     public static int getMaxThreads()
@@ -440,7 +472,14 @@ public abstract class XmlRpc extends HandlerBase
         }
         try
         {
-            parser.parse(new InputSource (is));
+            if(inputEncoding == null)
+            {         
+              parser.parse(new InputSource (is));
+            }
+            else
+            {
+              parser.parse( new InputSource( new InputStreamReader(is, inputEncoding)));
+            }
         }
         finally
         {
