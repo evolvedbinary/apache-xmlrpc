@@ -76,25 +76,31 @@ import org.apache.xmlrpc.util.HttpUtil;
  */
 public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory 
 {
-    // Default properties to pass to transport factory
+    // Default properties for new http transports
     protected URL url;
     protected String auth;
 
-    protected static XmlRpcTransportFactory secureTransportFactory;
+    protected static XmlRpcTransportFactory httpsTransportFactory;
 
-    public static final String DEFAULT_SSL_PROVIDER = "comnetsun";
+    public static final String DEFAULT_HTTPS_PROVIDER = "comnetsun";
 
-    private static Hashtable sslTransports = new Hashtable (1);
+    private static Hashtable transports = new Hashtable (1);
 
     static
     {
 	// A mapping of short identifiers to the fully qualified class names of
-	// common SSL transport factories. If more mappings are added here,
-	// increase the size of the sslTransports Hashtable used to store them.
-        sslTransports.put("comnetsun", "org.apache.xmlrpc.secure.sunssl.SunSSLTransportFactory");
+	// common transport factories. If more mappings are added here,
+	// increase the size of the transports Hashtable used to store them.
+        transports.put("comnetsun", "org.apache.xmlrpc.secure.sunssl.SunSSLTransportFactory");
     }
 
-    public static void setTransport(String transport, Properties properties)
+    public static void setHTTPSTransport(String transport, Properties properties)
+        throws XmlRpcClientException
+    {
+      httpsTransportFactory = createTransportFactory(transport, properties);    
+    }
+
+    public static XmlRpcTransportFactory createTransportFactory(String transport, Properties properties)
         throws XmlRpcClientException
     {
         String transportFactoryClassName = null;
@@ -104,7 +110,7 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
 
         try
         {
-            transportFactoryClassName = (String) sslTransports.get(transport);
+            transportFactoryClassName = (String) transports.get(transport);
             if (transportFactoryClassName == null)
             {
                 // Identifier lookup failed, assuming we were provided
@@ -119,8 +125,7 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
                 new Object [] { properties });
             if (transportFactoryInstance instanceof XmlRpcTransportFactory)
             {
-                secureTransportFactory = (XmlRpcTransportFactory) 
-                    transportFactoryInstance;
+                return (XmlRpcTransportFactory) transportFactoryInstance;
             }
             else
             {
@@ -178,17 +183,17 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
     {
         if ("https".equals(url.getProtocol()))
         {
-          if (secureTransportFactory == null)
+          if (httpsTransportFactory == null)
           {
              Properties properties = new Properties();
 
              properties.put(XmlRpcTransportFactory.TRANSPORT_URL, url);
              properties.put(XmlRpcTransportFactory.TRANSPORT_AUTH, auth);
 
-             setTransport(DEFAULT_SSL_PROVIDER, properties);
+             setHTTPSTransport(DEFAULT_HTTPS_PROVIDER, properties);
           }
   
-          return secureTransportFactory.createTransport();
+          return httpsTransportFactory.createTransport();
         }
         
         return new DefaultXmlRpcTransport(url);
@@ -202,11 +207,22 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
      */
     public void setBasicAuthentication(String user, String password)
     {
-        auth = HttpUtil.encodeBasicAuthentication(user, password);
+        setProperty(TRANSPORT_AUTH, HttpUtil.encodeBasicAuthentication(user, password));
     }
 
-    public URL getURL() 
+    public void setProperty(String propertyName, Object value)
     {
-        return url;
+        if (httpsTransportFactory != null)
+        {
+           httpsTransportFactory.setProperty(propertyName, value);
+        }
+        if (TRANSPORT_AUTH.equals(propertyName))
+        {
+          auth = (String) value;
+        }
+        else if (TRANSPORT_URL.equals(propertyName))
+        {
+          url = (URL) value;
+        }
     }
 }

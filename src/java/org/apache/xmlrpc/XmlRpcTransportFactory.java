@@ -90,4 +90,12 @@ public interface XmlRpcTransportFactory
      */
     public XmlRpcTransport createTransport()
     throws XmlRpcClientException;
+
+    /**
+     * Set a property for all newly created transports.
+     *
+     * @param propertyName the property to set.
+     * @param value the value to set it to.
+     */
+    public void setProperty(String propertyName, Object value);
 }

@@ -176,4 +176,16 @@ public class SunSSLTransportFactory implements XmlRpcTransportFactory
     {
        return new DefaultXmlRpcTransport(url, auth);
     }
+
+    public void setProperty(String propertyName, Object value)
+    {
+        if (TRANSPORT_AUTH.equals(propertyName))
+        {
+          auth = (String) value;
+        }
+        else if (TRANSPORT_URL.equals(propertyName))
+        {
+          url = (URL) value;
+        }
+    }
 }
