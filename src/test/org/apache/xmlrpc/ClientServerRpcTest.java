@@ -56,6 +56,7 @@ package org.apache.xmlrpc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import junit.framework.Test;
@@ -75,6 +76,8 @@ public class ClientServerRpcTest
      * The name of our RPC handler.
      */
     private static final String HANDLER_NAME = "TestHandler";
+
+    private WebServer webServer;
 
     private XmlRpcServer server;
 
@@ -103,6 +106,9 @@ public class ClientServerRpcTest
      */
     public void setUp() 
     {
+        // WebServer
+        //webServer = new WebServer();
+
         // Server
         XmlRpc.setDebug(true);
         server = new XmlRpcServer();
@@ -125,6 +131,8 @@ public class ClientServerRpcTest
         client = null;
         // TODO: Shut down server
         server = null;
+        // TODO: Shut down web server
+        webServer = null;
         XmlRpc.setDebug(false);
     }
 
@@ -135,6 +143,8 @@ public class ClientServerRpcTest
     {
         try
         {
+            InputStream in = null;
+            //server.execute(in);
             throw new Exception("testServer() not implemented");
             // TODO: Test the Server directly
         }
