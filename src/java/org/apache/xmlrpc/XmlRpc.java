@@ -241,7 +241,7 @@ public abstract class XmlRpc
     /**
      * Gets the maximum number of threads used at any given moment.
      */
-    public int getMaxThreads()
+    public static int getMaxThreads()
     {
         return maxThreads;
     }
@@ -249,7 +249,7 @@ public abstract class XmlRpc
     /**
      * Sets the maximum number of threads used at any given moment.
      */
-    public void setMaxThreads(int maxThreads)
+    public static void setMaxThreads(int maxThreads)
     {
         this.maxThreads = maxThreads;
     }
