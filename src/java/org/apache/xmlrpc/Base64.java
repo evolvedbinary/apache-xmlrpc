@@ -170,7 +170,7 @@ public final class  Base64
         int      fewerThan24bits   = lengthDataBits%TWENTYFOURBITGROUP;
         int      numberTriplets    = lengthDataBits/TWENTYFOURBITGROUP;
         byte     encodedData[]     = null;
-	int      encodedDataLength = 0;
+        int      encodedDataLength = 0;
 
         if (fewerThan24bits != 0)
         {
@@ -183,20 +183,20 @@ public final class  Base64
             encodedDataLength = numberTriplets * 4;
         }
 
-	// allow extra length for the separator
+        // allow extra length for the separator
         int nbrChunks = (CHUNK_SEPARATOR.length == 0 ? 0 :
                          (int) Math.ceil((float) encodedDataLength / CHUNK_SIZE));
 
-	encodedDataLength += (nbrChunks - 1) * CHUNK_SEPARATOR.length;
-	encodedData = new byte[encodedDataLength];
+        encodedDataLength += nbrChunks * CHUNK_SEPARATOR.length;
+        encodedData = new byte[encodedDataLength];
 
         byte k = 0, l = 0, b1 = 0, b2 = 0, b3 = 0;
 
         int encodedIndex = 0;
         int dataIndex   = 0;
         int i           = 0;
-	int nextSeparatorIndex = CHUNK_SIZE;
-	int chunksSoFar = 0;
+        int nextSeparatorIndex = CHUNK_SIZE;
+        int chunksSoFar = 0;
 
         //log.debug("number of triplets = " + numberTriplets);
         for ( i = 0; i<numberTriplets; i++ )
@@ -225,17 +225,17 @@ public final class  Base64
                 lookUpBase64Alphabet[ (l <<2 ) | val3 ];
             encodedData[encodedIndex+3] = lookUpBase64Alphabet[ b3 & 0x3f ];
 
-	    encodedIndex += 4;
+            encodedIndex += 4;
 
-	    // this assumes that CHUNK_SIZE % 4 == 0
-	    if(encodedIndex == nextSeparatorIndex){
-		System.arraycopy(CHUNK_SEPARATOR, 0, encodedData,
+            // this assumes that CHUNK_SIZE % 4 == 0
+            if(encodedIndex == nextSeparatorIndex){
+                System.arraycopy(CHUNK_SEPARATOR, 0, encodedData,
                                  encodedIndex, CHUNK_SEPARATOR.length);
-		chunksSoFar++;
-		nextSeparatorIndex = (CHUNK_SIZE * (chunksSoFar + 1)) + 
+                chunksSoFar++;
+                nextSeparatorIndex = (CHUNK_SIZE * (chunksSoFar + 1)) +
                                      (chunksSoFar * CHUNK_SEPARATOR.length);
-		encodedIndex += CHUNK_SEPARATOR.length;
-	    }
+                encodedIndex += CHUNK_SEPARATOR.length;
+            }
         }
 
         // form integral number of 6-bit groups
@@ -270,6 +270,11 @@ public final class  Base64
             encodedData[encodedIndex + 2] = lookUpBase64Alphabet[ l<<2 ];
             encodedData[encodedIndex + 3] = PAD;
         }
+
+        // we also add a separator to the end of the final chunk.
+        if(chunksSoFar < nbrChunks)
+            System.arraycopy(CHUNK_SEPARATOR, 0, encodedData,
+                             encodedDataLength - CHUNK_SEPARATOR.length, CHUNK_SEPARATOR.length);
 
         return encodedData;
     }
@@ -353,16 +358,20 @@ public final class  Base64
     /**
      * Discards any whitespace from a base-64 encoded block.
      *
+     * Any other non-base-64 characters will be silently
+     * discarded. This complies with the RFC, although a warning or
+     * exception would also be RFC compliant (and is actually
+     * recommended).
+     *
      * @param data The base-64 encoded data to discard the whitespace
      * from.
      * @return The data, less whitespace (see RFC 2045).
      */
     static byte[] discardWhitespace(byte[] data)
     {
-        // Locate any regions of whitespace within our data.
-        int nbrToDiscard = 0;
-        Vector discardRegions = new Vector();
-        boolean discarding = false;
+        byte groomedData[] = new byte[data.length];
+        int bytesCopied = 0;
+
         for (int i = 0; i < data.length; i++)
         {
             switch (data[i])
@@ -371,45 +380,23 @@ public final class  Base64
             case (byte) '\n':
             case (byte) '\r':
             case (byte) '\t':
-                if (!discarding)
-                {
-                    int[] region = { i, data.length };
-                    discardRegions.addElement(region);
-                    discarding = true;
-                }
-                nbrToDiscard++;
                 break;
-
             default:
-                if (discarding)
-                {
-                    // End region to discard.
-                    ((int []) discardRegions.lastElement())[1] = i;
-                    discarding = false;
+                if(isBase64(data[i])){
+                   groomedData[bytesCopied++] = data[i];
+                }
+                else{
+                    // according to the RFC, we could raise a warning
+                    // or exception here
                 }
             }
         }
 
-        if (nbrToDiscard > 0)
-        {
-            // Groom whitespace from the data.
-            byte[] groomed = new byte[data.length - nbrToDiscard];
-            int srcOffset = 0;
-            int destOffset = 0;
-            int[] region = null;
-            Enumeration enum = discardRegions.elements();
-            while (enum.hasMoreElements())
-            {
-                region = (int []) enum.nextElement();
-                int len = region[0] - srcOffset;
-                System.arraycopy(data, srcOffset, groomed, destOffset, len);
-                destOffset += len;
-                srcOffset = region[1];
-            }
-            System.arraycopy(data, srcOffset, groomed, destOffset,
-                             data.length - region[1]);
-            data = groomed;
-        }
-        return data;
+        byte packedData[] = new byte[bytesCopied];
+
+        System.arraycopy(groomedData, 0, packedData,
+                             0, bytesCopied);
+
+        return packedData;
     }
 }
