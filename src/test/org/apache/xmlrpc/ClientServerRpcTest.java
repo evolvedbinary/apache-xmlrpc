@@ -79,6 +79,11 @@ public class ClientServerRpcTest
     private static final String HANDLER_NAME = "TestHandler";
 
     /**
+     * The number of RPCs to make for each test.
+     */
+    private static final int NBR_REQUESTS = 1000;
+
+    /**
      * The value to use in our request parameter.
      */
     private static final String REQUEST_PARAM_VALUE = "foobar";
@@ -165,7 +170,8 @@ public class ClientServerRpcTest
     {
         try
         {
-            for (int i = 0; i < 300; i++)
+            long time = System.currentTimeMillis();
+            for (int i = 0; i < NBR_REQUESTS; i++)
             {
                 InputStream in =
                     new ByteArrayInputStream(RPC_REQUEST.getBytes());
@@ -173,6 +179,11 @@ public class ClientServerRpcTest
                 assertTrue("Response did not contain " + REQUEST_PARAM_XML,
                            response.indexOf(REQUEST_PARAM_XML) != -1);
             }
+            time = System.currentTimeMillis() - time;
+            System.out.println("Total time elapsed for " + NBR_REQUESTS +
+                               " iterations: " + time + " milliseconds");
+            System.out.println("Average time: " + (time / NBR_REQUESTS) +
+                               " milliseconds");
         }
         catch (Exception e)
         {
@@ -186,6 +197,7 @@ public class ClientServerRpcTest
      */
     public void testRpc()
     {
+        int nbrIterations = 300;
         try
         {
             throw new Exception("testRpc() not implemented");
