@@ -64,7 +64,7 @@ import java.util.Vector;
  * a XML-RPC call.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  */
 public class Invoker implements XmlRpcHandler

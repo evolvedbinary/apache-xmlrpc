@@ -80,7 +80,7 @@ import uk.co.wilson.xml.MinML;
  * @see org.apache.xmlrpc.XmlRpcClient
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @version $Id$
  */

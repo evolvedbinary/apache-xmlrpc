@@ -63,7 +63,7 @@ import java.util.Vector;
  *
  * @author <a href="mailto:adam@megacz.com">Adam Megacz</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  * @since 1.2
  */
 public class SystemHandler

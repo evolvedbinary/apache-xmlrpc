@@ -71,7 +71,7 @@ import junit.framework.TestSuite;
 /**
  * Tests XmlRpc run-time.
  *
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  * @version $Id$
  */
 public class ClientServerRpcTest

@@ -65,7 +65,7 @@ import junit.framework.TestSuite;
 /**
  * Tests XmlWriter.
  *
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  * @version $Id$
  */
 public class XmlWriterTest

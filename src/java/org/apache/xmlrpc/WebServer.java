@@ -76,7 +76,7 @@ import org.apache.commons.codec.binary.Base64;
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:jvanzyl@apache.org">Jason van Zyl</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  */
 public class WebServer implements Runnable
 {

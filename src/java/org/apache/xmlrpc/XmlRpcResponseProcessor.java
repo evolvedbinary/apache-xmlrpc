@@ -66,7 +66,7 @@ import java.util.Hashtable;
  *
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  * @since 1.2
  */
 public class XmlRpcResponseProcessor

@@ -58,7 +58,7 @@ package org.apache.xmlrpc;
 /**
  * Thrown as the result of an authentication failure.
  *
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  * @see org.apache.xmlrpc.AuthenticatedXmlRpcHandler
  * @since 1.2
  */

@@ -64,7 +64,7 @@ import java.util.Date;
  * Wraps a <code>DateFormat</code> instance to provide thread safety.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  */
 public class DateTool
 {

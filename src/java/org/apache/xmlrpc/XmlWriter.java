@@ -77,7 +77,7 @@ import org.apache.commons.codec.EncoderException;
  * your byte buffer.
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author Daniel L. Rall
  */
 class XmlWriter extends OutputStreamWriter
 {
