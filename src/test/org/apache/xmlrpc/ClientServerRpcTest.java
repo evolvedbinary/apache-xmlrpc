@@ -54,6 +54,7 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,14 +84,19 @@ public class ClientServerRpcTest
     private static final String REQUEST_PARAM_VALUE = "foobar";
 
     /**
+     * The value to use in our request parameter.
+     */
+    private static final String REQUEST_PARAM_XML =
+        "<value>" + REQUEST_PARAM_VALUE + "</value>";
+
+    /**
      * A RPC request of our echo server in XML.
      */
     private static final String RPC_REQUEST =
         "<?xml version=\"1.0\"?>\n" +
         "<methodCall>\n" +
         " <methodName>" + HANDLER_NAME + ".echo</methodName>\n" +
-        " <params><param><value>" + REQUEST_PARAM_VALUE +
-        "</value></param></params>\n" +
+        " <params><param>" + REQUEST_PARAM_XML + "</param></params>\n" +
         "</methodCall>\n";
 
     private WebServer webServer;
@@ -159,10 +165,10 @@ public class ClientServerRpcTest
     {
         try
         {
-            InputStream in = null;
-            //server.execute(in);
-            throw new Exception("testServer() not implemented");
-            // TODO: Test the Server directly
+            InputStream in = new ByteArrayInputStream(RPC_REQUEST.getBytes());
+            byte[] response = server.execute(in);
+            assertTrue("Response did not contain " + REQUEST_PARAM_VALUE,
+                       new String(response).indexOf(REQUEST_PARAM_XML) != -1);
         }
         catch (Exception e)
         {
