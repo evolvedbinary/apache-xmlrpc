@@ -75,13 +75,8 @@ import junit.framework.TestSuite;
  * @version $Id$
  */
 public class ClientServerRpcTest
-    extends TestCase 
+    extends LocalServerRpcTest
 {
-    /**
-     * The name of our RPC handler.
-     */
-    private static final String HANDLER_NAME = "TestHandler";
-
     /**
      * The identifier or fully qualified class name of the SAX driver
      * to use.  This is generally <code>uk.co.wilson.xml.MinML</code>,
@@ -96,35 +91,10 @@ public class ClientServerRpcTest
      */
     private static final int NBR_REQUESTS = 1000;
 
-    private static final int SERVER_PORT = 8081;
-
-    /**
-     * The value to use in our request parameter.
-     */
-    private static final String REQUEST_PARAM_VALUE = "foobar";
-
     /**
      * The number of calls to batch in the multicall.
      */
     private static final int NUM_MULTICALLS = 10;
-
-    /**
-     * The value to use in our request parameter.
-     */
-    private static final String REQUEST_PARAM_XML =
-        "<value>" + REQUEST_PARAM_VALUE + "</value>";
-
-    /**
-     * A RPC request of our echo server in XML.
-     */
-    private static final String RPC_REQUEST =
-        "<?xml version=\"1.0\"?>\n" +
-        "<methodCall>\n" +
-        " <methodName>" + HANDLER_NAME + ".echo</methodName>\n" +
-        " <params><param>" + REQUEST_PARAM_XML + "</param></params>\n" +
-        "</methodCall>\n";
-
-    private WebServer webServer;
 
     private XmlRpcServer server;
 
@@ -170,8 +140,7 @@ public class ClientServerRpcTest
         webServerSysHandler.addSystemHandler("multicall", new MultiCall());
 
         // WebServer (contains its own XmlRpcServer instance)
-        webServer = new WebServer(SERVER_PORT, localhost);
-        webServer.addHandler(HANDLER_NAME, new TestHandler());
+        setUpWebServer();
         webServer.addHandler("system", webServerSysHandler);
 
         // XML-RPC client(s)
@@ -203,7 +172,7 @@ public class ClientServerRpcTest
     {
         try
         {
-            webServer.start();
+            startWebServer();
         }
         catch (RuntimeException e)
         {
@@ -219,7 +188,7 @@ public class ClientServerRpcTest
     {
         try
         {
-            webServer.shutdown();
+            stopWebServer();
         }
         catch (Exception e)
         {
@@ -313,12 +282,4 @@ public class ClientServerRpcTest
             fail(e.getMessage());
         }
     }   
- 
-    protected class TestHandler
-    {
-        public String echo(String message)
-        {
-            return message;
-        }
-    }
 }
