@@ -347,12 +347,12 @@ public abstract class XmlRpc extends HandlerBase
 
         if (debug)
         {
-            System.err.println("Beginning parsing XML input stream");
+            System.out.println("Beginning parsing XML input stream");
         }
         parser.parse(new InputSource (is));
         if (debug)
         {
-            System.err.println ("Spent " + (System.currentTimeMillis() - now)
+            System.out.println ("Spent " + (System.currentTimeMillis() - now)
                     + " millis parsing");
         }
     }
@@ -385,7 +385,7 @@ public abstract class XmlRpc extends HandlerBase
 
         if (debug)
         {
-            System.err.println("endElement: " + name);
+            System.out.println("endElement: " + name);
         }
 
         // finalize character data, if appropriate
@@ -447,12 +447,11 @@ public abstract class XmlRpc extends HandlerBase
     {
         if (debug)
         {
-            System.err.println("startElement: " + name);
+            System.out.println("startElement: " + name);
         }
 
         if ("value".equals(name))
         {
-            // System.err.println ("starting value");
             Value v = new Value();
             values.push(v);
             currentValue = v;
@@ -582,7 +581,7 @@ public abstract class XmlRpc extends HandlerBase
          */
         public void setType(int type)
         {
-            // System.err.println ("setting type to "+types[type]);
+            //System.out.println ("setting type to "+types[type]);
             this.type = type;
             switch (type)
             {
