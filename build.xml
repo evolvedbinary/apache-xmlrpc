@@ -5,11 +5,14 @@
   <!-- Properties which are not allowed to be overridden -->
   <property name="version" value="2.0-a1-dev"/>
 
+  <!-- Allow any locally-specified values to override the defaults -->
+  <property file="build.properties" />
+
   <!-- Allow any user specific values to override the defaults -->
   <property file="${user.home}/build.properties" />
 
   <!-- Set default values for the build -->
-  <property file="build.properties" />
+  <property file="default.properties" />
 
   <!-- Construct compile classpath -->
   <path id="classpath">
