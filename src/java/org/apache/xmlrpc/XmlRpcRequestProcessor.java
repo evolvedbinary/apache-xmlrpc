@@ -59,8 +59,8 @@ import java.io.InputStream;
 import java.util.Vector;
 
 /**
- * Process an InputStream and produce and XmlRpcRequest.  This is
- * class NOT thread safe.
+ * Process an InputStream and produce and XmlRpcRequest.  This class
+ * is NOT thread safe.
  *
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
