@@ -226,13 +226,13 @@ class XmlWriter extends OutputStreamWriter
             Hashtable struct = (Hashtable) obj;
             for (Enumeration e = struct.keys(); e.hasMoreElements(); )
             {
-                String nextkey = (String) e.nextElement();
-                Object nextval = struct.get(nextkey);
+                String key = (String) e.nextElement();
+                Object value = struct.get(key);
                 startElement("member");
                 startElement("name");
-                write(nextkey);
+                chardata(key);
                 endElement("name");
-                writeObject(nextval);
+                writeObject(value);
                 endElement("member");
             }
             endElement("struct");
