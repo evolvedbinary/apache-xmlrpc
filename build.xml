@@ -213,7 +213,7 @@
   <!-- ================================================================== -->
 
   <target name="compile-tests"
-    depends="check.junit,compile"
+    depends="prepare,check.junit,compile"
     description="Compiles testing source code">
     
     <mkdir dir="${build.test.dest}"/>
@@ -236,7 +236,7 @@
 
   <target name="test"
     depends="compile-tests"
-    description="Runs unit tests">
+    description="Runs unit and run-time tests">
     
     <echo>
       Running all JUnit tests
@@ -260,12 +260,6 @@
       </batchtest>
     </junit>
   </target>
-
-  <!--
-  <target name="rttest"
-    description="Runs run-time tests">
-  </target>
-  -->
 
   <!-- ================================================================== -->
   <!-- D O C S                                                            -->
