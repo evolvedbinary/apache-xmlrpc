@@ -64,7 +64,6 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -226,6 +225,11 @@ public class WebServer implements Runnable
      * hook method for subclasses to override when they desire
      * different flavor of socket (i.e. a <code>SSLServerSocket</code>).
      *
+     * @param port
+     * @param backlog
+     * @param addr If <code>null</code>, binds to
+     * <code>INADDR_ANY</code>, meaning that all network interfaces on
+     * a multi-homed host will be listening.
      * @exception Exception Error creating listener socket.
      */
     protected ServerSocket createServerSocket(int port, int backlog,
@@ -246,25 +250,6 @@ public class WebServer implements Runnable
     private synchronized void setupServerSocket(int backlog)
             throws Exception
     {
-        InetAddress addr = address;
-        if (addr == null)
-        {
-            try
-            {
-                addr = InetAddress.getByName("127.0.0.1");
-            }
-            catch (UnknownHostException useDefault)
-            {
-                // This is not necessarilly the loopback interface on
-                // a multi-homed host.
-            }
-
-            if (addr == null)
-            {
-                addr = InetAddress.getLocalHost();
-            }
-        }
-
         // Since we can't reliably set SO_REUSEADDR until JDK 1.4 is
         // the standard, try to (re-)open the server socket several
         // times.  Some OSes (Linux and Solaris, for example), hold on
@@ -275,7 +260,7 @@ public class WebServer implements Runnable
         {
             try
             {
-                serverSocket = createServerSocket(port, backlog, addr);
+                serverSocket = createServerSocket(port, backlog, address);
             }
             catch (BindException e)
             {
@@ -289,12 +274,12 @@ public class WebServer implements Runnable
             }
         }
 
-
         if (XmlRpc.debug)
         {
             StringBuffer msg = new StringBuffer();
             msg.append("Opened XML-RPC server socket for ");
-            msg.append(addr.getHostName()).append(':').append(port);
+            msg.append(address != null ? address.getHostName() : "localhost");
+            msg.append(':').append(port);
             if (attempt > 1)
             {
                 msg.append(" after ").append(attempt).append(" tries");
