@@ -136,7 +136,7 @@
     </dependency>
     <dependency>
       <id>commons-logging</id>
-      <version>1.0</version>
+      <version>1.0.2</version>
       <url>http://jakarta.apache.org/commons/logging.html</url>
     </dependency>
     <dependency>
