@@ -186,20 +186,66 @@
   <!-- ================================================================== -->
 
   <target name="clean">
-    <delete dir="${build.dir}"/>
     <delete file="${final.name}.tar.gz"/>
     <delete file="${final.name}.zip"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${test.reportsDirectory}"/>
   </target>
 
   <!-- ================================================================== -->
   <!-- T E S T                                                            -->
   <!-- ================================================================== -->
 
-  <!--
-  <target name="test"
-    description="Runs unit tests">
+  <target name="compile-tests"
+    depends="compile"
+    description="Compiles testing source code">
+    
+    <mkdir dir="${build.test.dest}"/>
+
+    <javac srcdir="${src.test.dir}"
+      destdir="${build.test.dest}"
+      includes="**/*Test.java"
+      excludes="**/package.html"
+      debug="${debug}"
+      deprecation="${deprecation}"
+      optimize="${optimize}">
+      <classpath refid="classpath"/>
+      <classpath>
+        <pathelement path="${build.dest}"/>
+        <pathelement path="${build.test.dest}"/>
+      </classpath>
+    </javac>
+    
   </target>
 
+  <target name="test"
+    depends="compile-tests"
+    description="Runs unit tests">
+    
+    <echo>
+      Running all JUnit tests
+    </echo>
+    
+    <delete dir="${test.reportsDirectory}"/>
+    <mkdir dir="${test.reportsDirectory}"/>
+    
+    <junit printSummary="yes">
+      <formatter type="plain"/>
+      <classpath refid="classpath"/>
+      <classpath>
+        <pathelement path="${build.dest}"/>
+        <pathelement path="${build.test.dest}"/>
+      </classpath>
+      <batchtest todir="${test.reportsDirectory}">
+        <fileset dir="${build.test.dest}">
+          <include name="**/*Test.class"/>
+          <!-- <exclude name="**/*ServletTest.class"/> -->
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--
   <target name="rttest"
     description="Runs run-time tests">
   </target>
