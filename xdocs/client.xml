@@ -17,10 +17,15 @@
       the standard Java API</li>
       <li><a href="/xmlrpc/apidocs/org/apache//xmlrpc/XmlRpcClientLite.html">org.apache.xmlrpc.XmlRpcClientLite</a> provides its own lightweight
       HTTP client implementation.</li></ul>
-      <p>XmlRpcClientLite is usually faster, but if you need full HTTP support
-      (e.g. Proxies, Redirect etc), you should use XmlRpcClient.Both client
-      classes provide the same interface, which includes
-      methods for synchronous and asynchronous calls.
+
+      <p>If you need full HTTP support (e.g. Proxies, Redirect etc),
+      you should use XmlRpcClient.  If you don't need full HTTP
+      support and are concerned about performance, you should
+      experiment with both XmlRpcClient and XmlRpcClientLite.  On some
+      platforms XmlRpcClient may be faster, while on others
+      XmlRpcClientLite may be faster.  Both client classes provide the
+      same interface, which includes methods for synchronous and
+      asynchronous calls.
       </p>
     </section>
     <section name="Synchronous XML-RPC Calls">
