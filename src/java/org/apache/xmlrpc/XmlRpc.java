@@ -381,8 +381,10 @@ public abstract class XmlRpc
             writer.endElement ("struct");
         }
         else
+        {
             throw new RuntimeException ("unsupported Java type: " +
                     what.getClass ());
+        }
         writer.endElement ("value");
     }
 
@@ -399,12 +401,13 @@ public abstract class XmlRpc
     /**
      * Method called by SAX driver.
      */
-    public void characters (char ch[], int start,
-            int length) throws SAXException
+    public void characters (char ch[], int start, int length)
+        throws SAXException
     {
-        if (!readCdata)
-            return;
-        cdata.append (ch, start, length);
+        if (readCdata)
+        {
+            cdata.append (ch, start, length);
+        }
     }
 
     /**
@@ -426,11 +429,11 @@ public abstract class XmlRpc
 
         if ("value".equals (name))
         {
+            // Only handle top level objects or objects contained in
+            // arrays here.  For objects contained in structs, wait
+            // for </member> (see code below).
             int depth = values.size ();
-            // Only handle top level objects or objects contained in arrays here.
-            // For objects contained in structs, wait for </member> (see code below).
-            if (depth < 2 ||
-                    values.elementAt (depth - 2).hashCode () != STRUCT)
+            if (depth < 2 || values.elementAt(depth - 2).hashCode() != STRUCT)
             {
                 Value v = currentValue;
                 values.pop ();
@@ -442,7 +445,8 @@ public abstract class XmlRpc
                 }
                 else
                 {
-                    // add object to sub-array; if current container is a struct, add later (at </member>)
+                    // Add object to sub-array; if current container
+                    // is a struct, add later (at </member>).
                     currentValue = (Value) values.peek ();
                     currentValue.endElement (v);
                 }
@@ -637,7 +641,6 @@ public abstract class XmlRpc
                     }
                     catch (ParseException p)
                     {
-                        // System.err.println ("Exception while parsing date: "+p);
                         throw new RuntimeException (p.getMessage ());
                     }
                     break;
