@@ -74,6 +74,11 @@ public class XmlRpcServer
 {
     private Stack pool;
     private int nbrWorkers;
+
+    /**
+     * We want the <code>$default</code> handler to always be
+     * available.
+     */
     private DefaultHandlerMapping handlerMapping;
 
     /**
