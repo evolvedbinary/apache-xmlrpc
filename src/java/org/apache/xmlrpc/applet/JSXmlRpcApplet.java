@@ -161,7 +161,7 @@ public class JSXmlRpcApplet extends XmlRpcApplet {
     public Object execute (String methodName) {
 	// XmlRpcSupport.setDebug (true);
 	errorMessage = null;
-	showStatus (Connecting to Server...");
+	showStatus ("Connecting to Server...");
 	Object returnValue = null;
 	try {
 	    returnValue = execute (methodName, arguments);
