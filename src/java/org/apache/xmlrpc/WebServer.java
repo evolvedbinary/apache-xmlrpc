@@ -612,7 +612,7 @@ public class WebServer
         {
             if (buffer == null)
             {
-                buffer = new byte[512];
+                buffer = new byte[2048];
             }
             int next;
             int count = 0;
@@ -627,7 +627,7 @@ public class WebServer
                 {
                     buffer[count++] = (byte) next;
                 }
-                if (count >= 512)
+                if (count >= buffer.length)
                 {
                     throw new IOException ("HTTP Header too long");
                 }

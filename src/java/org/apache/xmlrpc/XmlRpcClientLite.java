@@ -357,7 +357,7 @@ public class XmlRpcClientLite
         private String readLine () throws IOException
         {
             if (buffer == null)
-                buffer = new byte[512];
+                buffer = new byte[2048];
             int next;
             int count = 0;
             while (true)
@@ -367,7 +367,7 @@ public class XmlRpcClientLite
                     break;
                 if (next != '\r')
                     buffer[count++] = (byte) next;
-                if (count >= 512)
+                if (count >= buffer.length)
                     throw new IOException ("HTTP Header too long");
             }
             return new String (buffer, 0, count);
