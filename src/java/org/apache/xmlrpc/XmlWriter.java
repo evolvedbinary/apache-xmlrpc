@@ -104,6 +104,11 @@ class XmlWriter extends OutputStreamWriter
     protected static final Base64 base64Codec = new Base64();
 
     /**
+     * Class to delegate type decoding to.
+     */
+    protected static TypeDecoder typeDecoder;
+
+    /**
      * Mapping between Java encoding names and "real" names used in
      * XML prolog.
      */
@@ -113,6 +118,7 @@ class XmlWriter extends OutputStreamWriter
     {
         encodings.put(UTF8, "UTF-8");
         encodings.put(ISO8859_1, "ISO-8859-1");
+        typeDecoder = new DefaultTypeDecoder();
     }
 
     /**
@@ -177,7 +183,7 @@ class XmlWriter extends OutputStreamWriter
         {
             chardata(obj.toString());
         }
-        else if (obj instanceof Integer)
+        else if (typeDecoder.isXmlRpcI4(obj))
         {
             startElement("int");
             write(obj.toString());
@@ -189,7 +195,7 @@ class XmlWriter extends OutputStreamWriter
             write(((Boolean) obj).booleanValue() ? "1" : "0");
             endElement("boolean");
         }
-        else if (obj instanceof Double || obj instanceof Float)
+        else if (typeDecoder.isXmlRpcDouble(obj))
         {
             startElement("double");
             write(obj.toString());
@@ -358,5 +364,10 @@ class XmlWriter extends OutputStreamWriter
                 }
             }
         }
+    }
+
+    protected static void setTypeDecoder(TypeDecoder newTypeDecoder)
+    {
+        typeDecoder = newTypeDecoder;
     }
 }
