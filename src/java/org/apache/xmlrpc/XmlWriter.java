@@ -211,11 +211,14 @@ class XmlWriter extends OutputStreamWriter
         else if (obj instanceof byte[])
         {
             startElement("base64");
-            try {
-                this.write(base64Codec.encode((byte[]) obj));
+            try
+            {
+                this.write((byte[]) base64Codec.encode(obj));
             }
-            catch (EncoderException e) {
-                throw new XmlRpcClientException("Unable to Base 64 encode byte array", e);
+            catch (EncoderException e)
+            {
+                throw new XmlRpcClientException
+                    ("Unable to Base 64 encode byte array", e);
             }
             endElement("base64");
         }

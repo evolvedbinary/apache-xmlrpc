@@ -127,8 +127,9 @@ public class DefaultTypeFactory
 
     public Object createBase64(String cdata)
     {
-        try {
-            return base64Codec.decode(cdata.getBytes());
+        try
+        {
+            return base64Codec.decode((Object) cdata.getBytes());
         }
         catch (DecoderException e) {
             //TODO: consider throwing an exception here?

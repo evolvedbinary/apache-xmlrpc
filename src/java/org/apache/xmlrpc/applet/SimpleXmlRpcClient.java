@@ -249,11 +249,15 @@ class XmlRpcSupport extends HandlerBase
         else if (what instanceof byte[])
         {
             writer.startElement("base64");
-            try {
-                writer.write(base64.encode((byte[]) what));
+            try
+            {
+                writer.write((byte[]) base64.encode(what));
             }
-            catch (EncoderException e) {
-                throw new RuntimeException("Incompatible version of org.apache.commons.codec.binary.Base64 used, and an error occurred.");
+            catch (EncoderException e)
+            {
+                throw new RuntimeException("Possibly incompatible version " +
+                                           "of '" + Base64.class.getName() +
+                                           "' used: " + e);
             }
             writer.endElement("base64");
         }
@@ -647,13 +651,15 @@ class XmlRpcSupport extends HandlerBase
                     }
                     break;
                 case BASE64:
-                    try {
-                        value = base64.decode(cdata.getBytes());
+                    try
+                    {
+                        value = base64.decode((Object) cdata.getBytes());
                     }
                     catch (DecoderException e) {
-                        /* FIXME: what should we do here?  Probably an Exception?
-                         * tabling because this class is slated for complete overhaul
-                         * using the core library.
+                        /* FIXME: We should Probably throw an
+                         * Exception here.  Punting because this class
+                         * is slated for complete overhaul using the
+                         * core library.
                          */ 
                         value = cdata;
                     }

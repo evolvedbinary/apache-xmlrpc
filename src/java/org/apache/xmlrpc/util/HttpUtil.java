@@ -85,14 +85,18 @@ public class HttpUtil
         }
         else
         {
-            try {
-                auth = new String(base64.encode((user + ':' + password)
-                        .getBytes())).trim();
+            try
+            {
+                Object bytes = (user + ':' + password).getBytes();
+                auth = new String((byte[]) base64.encode(bytes)).trim();
             }
-            catch (EncoderException e) {
-                // EncoderException is never thrown in the body of Base64.encode(byte[]) in version 1.1
-                // TODO: possibly throw an exception from this method or refactor this class
-                throw new RuntimeException("Incompatible version of org.apache.commons.codec.binary.Base64 used, and an error condition was encountered.");
+            catch (EncoderException e)
+            {
+                // EncoderException is never thrown in the body of
+                // Base64.encode(byte[]) in Commons Codec 1.1.
+                throw new RuntimeException("Possibly incompatible version of '"
+                                           + Base64.class.getName() +
+                                           "' used: " + e);
             }
         }
         return auth;
