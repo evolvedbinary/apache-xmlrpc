@@ -14,6 +14,7 @@ src/        Location of Java sources.
 xdocs/      XmlRpc documention in DocBook format.
 docs/       The rendered documentation in HTML format.
 
+
 --------------------------------------------------------------------------
 R E Q U I R E M E N T S
 --------------------------------------------------------------------------
@@ -21,6 +22,7 @@ R E Q U I R E M E N T S
 To build the XmlRpc package, you need to have Ant (and JDK 1.2+) installed
 (http://jakarta.apache.org/ant/).  Execute "ant -help" from this directory
 to get basic help or just "ant" to build the jars.
+
 
 --------------------------------------------------------------------------
 B U I L D I N G
@@ -39,6 +41,16 @@ servlet.jar
 
 These properties define full paths to JARs files.
 
+If you are using the Eclipse IDE, Apache's XML-RPC package comes ready
+with basic .classpath and .project files. Simply create a
+sub-directory named "lib" and add the following files:
+
+    commons-codec-1.2.jar
+    commons-httpclient-2.0.jar
+    junit.jar
+    servlet.jar
+
+
 --------------------------------------------------------------------------
 R U N N I N G
 --------------------------------------------------------------------------
@@ -46,4 +58,3 @@ R U N N I N G
 The default SAX parser that is used is the MinML parser which is
 included in the download. If you want to use an alternative parser
 you have to make sure it is included in your CLASSPATH.
-
