@@ -1,6 +1,6 @@
 // Copyright (c) 2000, 2001 The Wilson Partnership.
 // All Rights Reserved.
-// @(#)MinML.java, 1.3, 22th May 2001
+// @(#)MinML.java, 1.6, 11th November 2001
 // Author: John Wilson - tug@wilson.co.uk
 
 package uk.co.wilson.xml;
@@ -73,22 +73,23 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
   public static final int emitStartElement = 1;
   public static final int emitEndElement = 2;
   public static final int emitCharacters = 3;
-  public static final int saveAttributeName = 4;
-  public static final int saveAttributeValue = 5;
-  public static final int startComment = 6;
-  public static final int endComment = 7;
-  public static final int incLevel = 8;
-  public static final int decLevel = 9;
-  public static final int startCDATA = 10;
-  public static final int endCDATA = 11;
-  public static final int processCharRef = 12;
-  public static final int writeCdata = 13;
-  public static final int exitParser = 14;
-  public static final int parseError = 15;
-  public static final int discardAndChange = 16;
-  public static final int discardSaveAndChange = 17;
-  public static final int saveAndChange = 18;
-  public static final int change = 19;
+  public static final int emitCharactersSave = 4;
+  public static final int saveAttributeName = 5;
+  public static final int saveAttributeValue = 6;
+  public static final int startComment = 7;
+  public static final int endComment = 8;
+  public static final int incLevel = 9;
+  public static final int decLevel = 10;
+  public static final int startCDATA = 11;
+  public static final int endCDATA = 12;
+  public static final int processCharRef = 13;
+  public static final int writeCdata = 14;
+  public static final int exitParser = 15;
+  public static final int parseError = 16;
+  public static final int discardAndChange = 17;
+  public static final int discardSaveAndChange = 18;
+  public static final int saveAndChange = 19;
+  public static final int change = 20;
 
   public static final int inSkipping = 0;
   public static final int inSTag = 1;
@@ -103,14 +104,15 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
   public static final int inETag1 = 10;
   public static final int inMTTag = 11;
   public static final int inTag = 12;
-  public static final int inPI = 13;
-  public static final int inPI1 = 14;
-  public static final int inPossiblySkipping = 15;
-  public static final int inCharData = 16;
-  public static final int inCDATA = 17;
-  public static final int inCDATA1 = 18;
-  public static final int inComment =19;
-  public static final int inDTD = 20;
+  public static final int inTag1 = 13;
+  public static final int inPI = 14;
+  public static final int inPI1 = 15;
+  public static final int inPossiblySkipping = 16;
+  public static final int inCharData = 17;
+  public static final int inCDATA = 18;
+  public static final int inCDATA1 = 19;
+  public static final int inComment =20;
+  public static final int inDTD = 21;
 
   public MinML(final int initialBufferSize, final int bufferIncrement) {
     this.initialBufferSize = initialBufferSize;
@@ -156,14 +158,15 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
   final MinMLBuffer buffer = new MinMLBuffer(in);
   int currentChar = 0, charCount = 0;
   int level = 0;
+  int mixedContentLevel = -1;
   String elementName = null;
   String state = operands[inSkipping];
 
-    lineNumber = 1;
-    columnNumber = 0;
+    this.lineNumber = 1;
+    this.columnNumber = 0;
 
     try {
-main: while(true) {
+      while(true) {
         charCount++;
 
         //
@@ -179,7 +182,7 @@ main: while(true) {
         } else {
         final int charClass = charClasses[currentChar + 1];
 
-          if (charClass == -1) fatalError("Document contains illegal control character with value " + currentChar, lineNumber, columnNumber);
+          if (charClass == -1) fatalError("Document contains illegal control character with value " + currentChar, this.lineNumber, this.columnNumber);
 
           if (charClass == 12) {
             if (currentChar == '\r') {
@@ -192,17 +195,17 @@ main: while(true) {
 
               if (charCount != -1) charCount = 0;
 
-              lineNumber++;
-              columnNumber = 0;
+              this.lineNumber++;
+              this.columnNumber = 0;
             }
           }
 
           transition = state.charAt(charClass);
        }
 
-        columnNumber++;
+        this.columnNumber++;
 
-        final String operand = operands[transition >>> 8];
+        String operand = operands[transition >>> 8];
 
         switch (transition & 0XFF) {
           case endStartName:
@@ -214,17 +217,19 @@ main: while(true) {
           case emitStartElement:
           // emit start element
 
-          final Writer newWriter = extDocumentHandler.startElement(elementName, attrs,
-                                                                   (tags.empty()) ?
-                                                                     extDocumentHandler.startDocument(buffer)
-                                                                   :
-                                                                     buffer.getWriter());
+          final Writer newWriter = this.extDocumentHandler.startElement(elementName, attrs,
+                                                                        (this.tags.empty()) ?
+                                                                          this.extDocumentHandler.startDocument(buffer)
+                                                                        :
+                                                                          buffer.getWriter());
 
             buffer.pushWriter(newWriter);
-            tags.push(elementName);
+            this.tags.push(elementName);
 
             attributeValues.removeAllElements();
             attributeNames.removeAllElements();
+
+            if (mixedContentLevel != -1) mixedContentLevel++;
 
             if (currentChar != '/') break;  // change state to operand
 
@@ -234,33 +239,47 @@ main: while(true) {
           // emit end element
 
             try {
-            final String begin = (String)tags.pop();
+            final String begin = (String)this.tags.pop();
 
               buffer.popWriter();
               elementName = buffer.getString();
 
               if (currentChar != '/' && !elementName.equals(begin)) {
                 fatalError("end tag </" + elementName + "> does not match begin tag <" + begin + ">",
-                           lineNumber, columnNumber);
+                           this.lineNumber, this.columnNumber);
               } else {
-                documentHandler.endElement(begin);
+                this.documentHandler.endElement(begin);
 
-                if (tags.empty()) {
-                  documentHandler.endDocument();
+                if (this.tags.empty()) {
+                  this.documentHandler.endDocument();
                   return;
                 }
               }
             }
             catch (final EmptyStackException e) {
-              fatalError("end tag at begining of document", lineNumber, columnNumber);
+              fatalError("end tag at begining of document", this.lineNumber, this.columnNumber);
             }
-            break;  // change state to operand
 
+            if (mixedContentLevel != -1 && --mixedContentLevel == 0)
+              operand = operands[inCharData];
+
+            break;  // change state to operand
 
           case emitCharacters:
           // emit characters
 
             buffer.flush();
+            break;  // change state to operand
+
+          case emitCharactersSave:
+          // emit characters and save current character
+
+            if (mixedContentLevel == -1) mixedContentLevel = 0;
+
+            buffer.flush();
+
+            buffer.saveChar((char)currentChar);
+
             break;  // change state to operand
 
           case saveAttributeName:
@@ -342,15 +361,13 @@ main: while(true) {
 
             currentChar = buffer.read();
 
-            state = operands[inCharData]; // patch to fix "&lt;&lt;&amp;&amp;" problem
-
             while (true) {
               if ("#amp;&pos;'quot;\"gt;>lt;<".charAt(crefState) == currentChar) {
                 crefState++;
 
                 if (currentChar == ';') {
                   buffer.write("#amp;&pos;'quot;\"gt;>lt;<".charAt(crefState));
-                  continue main;
+                  break;
 
                 } else if (currentChar == '#') {
                 final int radix;
@@ -378,10 +395,10 @@ main: while(true) {
 
                   if (currentChar == ';' && charRef != -1) {
                     buffer.write(charRef);
-                    continue main;
+                    break;
                   }
 
-                  break;  // bad char reference
+                  fatalError("invalid Character Entitiy", this.lineNumber, this.columnNumber);
                 } else {
                   currentChar = buffer.read();
                 }
@@ -396,15 +413,16 @@ main: while(true) {
 //                               l     t     ;
 //                               15    16    17
 
-                if (crefState == 255) break;  // bad char reference
+                if (crefState == 255) fatalError("invalid Character Entitiy", this.lineNumber, this.columnNumber);
               }
             }
-           // drop through to report error and exit
+
+            break;
 
           case parseError:
           // report fatal error
 
-            fatalError(operand, lineNumber, columnNumber);
+            fatalError(operand, this.lineNumber, this.columnNumber);
             // drop through to exit parser
 
           case exitParser:
@@ -447,12 +465,12 @@ main: while(true) {
       }
     }
     catch (final IOException e) {
-      errorHandler.fatalError(new SAXParseException(e.toString(), null, null, lineNumber, columnNumber, e));
+      this.errorHandler.fatalError(new SAXParseException(e.toString(), null, null, this.lineNumber, this.columnNumber, e));
     }
     finally {
-      errorHandler = this;
-      documentHandler = extDocumentHandler = this;
-      tags.removeAllElements();
+      this.errorHandler = this;
+      this.documentHandler = this.extDocumentHandler = this;
+      this.tags.removeAllElements();
     }
   }
 
@@ -482,17 +500,17 @@ main: while(true) {
   }
 
   public void setDocumentHandler(final org.xml.sax.DocumentHandler handler) {
-   documentHandler = (handler == null) ? this : handler;
-   extDocumentHandler = this;
+   this.documentHandler = (handler == null) ? this : handler;
+   this.extDocumentHandler = this;
   }
 
   public void setDocumentHandler(final DocumentHandler handler) {
-   documentHandler = extDocumentHandler = (handler == null) ? this : handler;
-   documentHandler.setDocumentLocator(this);
+   this.documentHandler = this.extDocumentHandler = (handler == null) ? this : handler;
+   this.documentHandler.setDocumentLocator(this);
   }
 
   public void setErrorHandler(final ErrorHandler handler) {
-   errorHandler = (handler == null) ? this : handler;
+   this.errorHandler = (handler == null) ? this : handler;
   }
 
   public void setDocumentLocator(final Locator locator) {
@@ -502,7 +520,7 @@ main: while(true) {
   }
 
   public Writer startDocument(final Writer writer) throws SAXException {
-    documentHandler.startDocument();
+    this.documentHandler.startDocument();
     return writer;
   }
 
@@ -515,7 +533,7 @@ main: while(true) {
   public Writer startElement(final String name, final AttributeList attributes, final Writer writer)
         throws SAXException
   {
-    documentHandler.startElement(name, attributes);
+    this.documentHandler.startElement(name, attributes);
     return writer;
   }
 
@@ -551,15 +569,15 @@ main: while(true) {
   }
 
   public int getLineNumber () {
-    return lineNumber;
+    return this.lineNumber;
   }
 
   public int getColumnNumber () {
-    return columnNumber;
+    return this.columnNumber;
   }
 
   private void fatalError(final String msg, final int lineNumber, final int columnNumber) throws SAXException {
-    errorHandler.fatalError(new SAXParseException(msg, null, null, lineNumber, columnNumber));
+    this.errorHandler.fatalError(new SAXParseException(msg, null, null, lineNumber, columnNumber));
   }
 
   private class MinMLBuffer extends Writer {
@@ -598,7 +616,7 @@ main: while(true) {
     }
 
     public void pushWriter(final Writer writer) {
-      tags.push(this.writer);
+      MinML.this.tags.push(this.writer);
 
       this.writer = (writer == null) ? this : writer;
 
@@ -614,7 +632,7 @@ main: while(true) {
         if (!flushed && writer != this) writer.flush();
       }
       finally {
-        writer = (Writer)tags.pop();
+        writer = (Writer)MinML.this.tags.pop();
         flushed = written = false;
       }
     }
@@ -635,8 +653,8 @@ main: while(true) {
         if (count != 0) {
           if (written) {
             _flush();
-          } else if (count >= (chars.length - bufferIncrement)) {
-          final char[] newChars = new char[chars.length + bufferIncrement];
+          } else if (count >= (chars.length - MinML.this.bufferIncrement)) {
+          final char[] newChars = new char[chars.length + MinML.this.bufferIncrement];
 
             System.arraycopy(chars, 0, newChars, 0, count);
             chars = newChars;
@@ -659,7 +677,7 @@ main: while(true) {
         try {
           if (writer == this) {
             try {
-              documentHandler.characters(chars, 0, count);
+              MinML.this.documentHandler.characters(chars, 0, count);
             }
             catch (final SAXException e) {
               throw new IOException(e.toString());
@@ -710,33 +728,33 @@ main: while(true) {
   };
 
   private static final String[] operands = {
-    "\u0c13\u150f\u150f\u150f\u150f\u150f\u150f\u150f\u150f\u150f\u150f\u150f\u0013\u000e\u150f",
-    "\u160f\u0f00\u0b00\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u0112\u0200\u170f\u0112",
-    "\u160f\u0f01\u0b01\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u0213\u170f\u0412",
-    "\u160f\u0f01\u0b01\u160f\u180f\u180f\u180f\u180f\u180f\u180f\u180f\u180f\u0313\u170f\u0412",
-    "\u180f\u180f\u180f\u180f\u180f\u0604\u180f\u180f\u180f\u180f\u180f\u0412\u0513\u170f\u0412",
-    "\u180f\u180f\u180f\u180f\u180f\u0604\u180f\u180f\u180f\u180f\u180f\u180f\u0513\u170f\u180f",
-    "\u190f\u190f\u190f\u190f\u190f\u190f\u0713\u0813\u190f\u190f\u190f\u190f\u0613\u170f\u190f",
-    "\u0712\u0712\u0712\u1a0c\u0712\u0712\u0305\u0712\u0712\u0712\u0712\u0712\u0712\u170f\u0712",
-    "\u0812\u0812\u0812\u1a0c\u0812\u0812\u0812\u0305\u0812\u0812\u0812\u0812\u0812\u170f\u0812",
-    "\u160f\u0002\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u0912\u0913\u170f\u0912",
-    "\u1b0f\u1b0f\u0903\u1b0f\u1b0f\u1b0f\u1b0f\u1b0f\u1113\u1b0f\u1b0f\u1b0f\u1b0f\u170f\u1b0f",
-    "\u160f\u0013\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u160f\u170f\u160f",
-    "\u160f\u1c0f\u0913\u160f\u0d13\u160f\u160f\u160f\u1113\u160f\u160f\u160f\u160f\u170f\u0111",
-    "\u0d13\u0d13\u0d13\u0d13\u0e13\u0d13\u0d13\u0d13\u0d13\u0d13\u0d13\u0d13\u0d13\u170f\u0d13",
-    "\u0d13\u0013\u0d13\u0d13\u0e13\u0d13\u0d13\u0d13\u0d13\u0d13\u0d13\u0d13\u0d13\u170f\u0d13",
-    "\u0c10\u100d\u100d\u1a0c\u100d\u100d\u100d\u100d\u100d\u100d\u100d\u100d\u0f12\u170f\u100d",
-    "\u0a13\u100d\u100d\u1a0c\u100d\u100d\u100d\u100d\u100d\u100d\u100d\u100d\u100d\u170f\u100d",
-    "\u1d0f\u1d0f\u1d0f\u1d0f\u1d0f\u1d0f\u1d0f\u1d0f\u1d0f\u120a\u1d0f\u1306\u1d0f\u170f\u1413",
-    "\u120d\u120d\u120d\u120d\u120d\u120d\u120d\u120d\u120d\u120d\u100b\u120d\u120d\u170f\u120d",
-    "\u1313\u1313\u1313\u1313\u1313\u1313\u1313\u1313\u1313\u1313\u1313\u0007\u1313\u170f\u1313",
-    "\u1408\u0009\u1413\u1413\u1413\u1413\u1413\u1413\u1413\u1413\u1413\u1413\u1413\u170f\u1413",
+    "\u0d14\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u0014\u000f\u1610",
+    "\u1710\u1000\u0b00\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u0113\u0200\u1810\u0113",
+    "\u1710\u1001\u0b01\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u0214\u1810\u0413",
+    "\u1710\u1001\u0b01\u1710\u1910\u1910\u1910\u1910\u1910\u1910\u1910\u1910\u0314\u1810\u0413",
+    "\u1910\u1910\u1910\u1910\u1910\u0605\u1910\u1910\u1910\u1910\u1910\u0413\u0514\u1810\u0413",
+    "\u1910\u1910\u1910\u1910\u1910\u0605\u1910\u1910\u1910\u1910\u1910\u1910\u0514\u1810\u1910",
+    "\u1a10\u1a10\u1a10\u1a10\u1a10\u1a10\u0714\u0814\u1a10\u1a10\u1a10\u1a10\u0614\u1810\u1a10",
+    "\u0713\u0713\u0713\u070d\u0713\u0713\u0306\u0713\u0713\u0713\u0713\u0713\u0713\u1810\u0713",
+    "\u0813\u0813\u0813\u080d\u0813\u0813\u0813\u0306\u0813\u0813\u0813\u0813\u0813\u1810\u0813",
+    "\u1710\u1002\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u0913\u0914\u1810\u0913",
+    "\u1b10\u1b10\u0903\u1b10\u1b10\u1b10\u1b10\u1b10\u1214\u1b10\u1b10\u1b10\u1b10\u1810\u0104",
+    "\u1710\u1014\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1810\u1710",
+    "\u1710\u1c10\u0911\u1710\u0e11\u1710\u1710\u1710\u1211\u1710\u1710\u1710\u1710\u1810\u0112",
+    "\u1710\u1c10\u0911\u1710\u0e11\u1710\u1710\u1710\u1211\u1710\u1710\u1710\u1710\u1810\u0112",
+    "\u0e14\u0e14\u0e14\u0e14\u0f14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u1810\u0e14",
+    "\u0e14\u0014\u0e14\u0e14\u0f14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u1810\u0e14",
+    "\u0c14\u110e\u110e\u110d\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u1013\u1810\u110e",
+    "\u0a14\u110e\u110e\u110d\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u1810\u110e",
+    "\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u130b\u1d10\u1407\u1d10\u1810\u1514",
+    "\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u110c\u130e\u130e\u1810\u130e",
+    "\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u0008\u1414\u1810\u1414",
+    "\u1509\n\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1810\u1514",
     "expected Element",
     "unexpected character in tag",
     "unexpected end of file found",
     "attribute name not followed by '='",
     "invalid attribute value",
-    "invalid Character Entity",
     "expecting end tag",
     "empty tag",
     "unexpected character after <!"
