@@ -95,7 +95,7 @@ public class Base64Test
         "aW5nIGlzIGRlc2lnbmVkIHRvIHJlcHJlc2VudCBhcmJpdHJhcnkgc2VxdWVuY2VzIG9mCm9jdGV0\n" +
         "cyBpbiBhIGZvcm0gdGhhdCBuZWVkIG5vdCBiZSBodW1hbmx5IHJlYWRhYmxlLiBBCjY1LWNoYXJh\n" +
         "Y3RlciBzdWJzZXQgKFtBLVphLXowLTkrLz1dKSBvZiBVUy1BU0NJSSBpcyB1c2VkLAplbmFibGlu\n" +
-        "ZyA2IGJpdHMgdG8gYmUgcmVwcmVzZW50ZWQgcGVyIHByaW50YWJsZSBjaGFyYWN0ZXIu";
+        "ZyA2IGJpdHMgdG8gYmUgcmVwcmVzZW50ZWQgcGVyIHByaW50YWJsZSBjaGFyYWN0ZXIu\n";
 
 
     /**
