@@ -1,326 +1,322 @@
 package org.apache.xmlrpc;
 
-// We can replace this with some apache code I'm sure. jvz.
-
-//////////////////////license & copyright header/////////////////////////
-//                                                                     //
-//    Base64 - encode/decode data using the Base64 encoding scheme     //
-//                                                                     //
-//                Copyright (c) 1998 by Kevin Kelley                   //
-//                                                                     //
-// This library is free software; you can redistribute it and/or       //
-// modify it under the terms of the GNU Lesser General Public          //
-// License as published by the Free Software Foundation; either        //
-// version 2.1 of the License, or (at your option) any later version.  //
-//                                                                     //
-// This library is distributed in the hope that it will be useful,     //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of      //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
-// GNU Lesser General Public License for more details.                 //
-//                                                                     //
-// You should have received a copy of the GNU Lesser General Public    //
-// License along with this library; if not, write to the Free Software //
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA           //
-// 02111-1307, USA, or contact the author:                             //
-//                                                                     //
-// Kevin Kelley <kelley@ruralnet.net> - 30718 Rd. 28, La Junta, CO,    //
-// 81050  USA.                                                         //
-//                                                                     //
-////////////////////end license & copyright header///////////////////////
-
-import java.io.*; // needed only for main() method.
-
+/*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
+ * ====================================================================
+ *
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution, if
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowlegement may appear in the software itself,
+ *    if and wherever such third-party acknowlegements normally appear.
+ *
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ *    Foundation" must not be used to endorse or promote products derived
+ *    from this software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache"
+ *    nor may "Apache" appear in their names without prior written
+ *    permission of the Apache Group.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ * [Additional notices, if required by prior licensing conditions]
+ *
+ */
 
 /**
-*   Provides encoding of raw bytes to base64-encoded characters, and
-*  decoding of base64 characters to raw bytes.
-*
-* @author Kevin Kelley (kelley@ruralnet.net)
-* @version 1.3
-* @date 06 August 1998
-* @modified 14 February 2000
-* @modified 22 September 2000
-*/
-public class Base64
+ * This class provides encode/decode for RFC 2045 Base64 as defined by
+ * RFC 2045, N. Freed and N. Borenstein.  <a
+ * href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>:
+ * Multipurpose Internet Mail Extensions (MIME) Part One: Format of
+ * Internet Message Bodies. Reference 1996
+ *
+ * @author Jeffrey Rodriguez
+ * @version $Id$
+ */
+public final class  Base64
 {
+    static private final int  BASELENGTH         = 255;
+    static private final int  LOOKUPLENGTH       = 64;
+    static private final int  TWENTYFOURBITGROUP = 24;
+    static private final int  EIGHTBIT           = 8;
+    static private final int  SIXTEENBIT         = 16;
+    static private final int  SIXBIT             = 6;
+    static private final int  FOURBYTE           = 4;
+    static private final int  SIGN               = -128;
+    static private final byte PAD                = (byte) '=';
+    static private byte [] base64Alphabet       = new byte[BASELENGTH];
+    static private byte [] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
+    //static private final Log log = LogSource.getInstance("org.apache.commons.util.Base64");
 
-    /**
-    * returns an array of base64-encoded characters to represent the
-    * passed data array.
-    *
-    * @param data the array of bytes to encode
-    * @return base64-coded character array.
-    */
-    static public char[] encode(byte[] data)
-    {
-        char[] out = new char[((data.length + 2) / 3) * 4];
-
-        //
-        // 3 bytes encode to 4 chars.  Output is always an even
-        // multiple of 4 characters.
-        //
-        for (int i = 0, index = 0; i < data.length; i += 3, index += 4)
-        {
-            boolean quad = false;
-            boolean trip = false;
-
-            int val = (0xFF & (int) data[i]);
-            val <<= 8;
-            if ((i + 1) < data.length)
-            {
-                val |= (0xFF & (int) data[i + 1]);
-                trip = true;
-            }
-            val <<= 8;
-            if ((i + 2) < data.length)
-            {
-                val |= (0xFF & (int) data[i + 2]);
-                quad = true;
-            }
-            out[index + 3] = alphabet[(quad ? (val & 0x3F) : 64)];
-            val >>= 6;
-            out[index + 2] = alphabet[(trip ? (val & 0x3F) : 64)];
-            val >>= 6;
-            out[index + 1] = alphabet[val & 0x3F];
-            val >>= 6;
-            out[index + 0] = alphabet[val & 0x3F];
-        }
-        return out;
-    }
-
-    /**
-      * Decodes a BASE-64 encoded stream to recover the original
-      * data. White space before and after will be trimmed away,
-      * but no other manipulation of the input will be performed.
-      *
-      * As of version 1.2 this method will properly handle input
-      * containing junk characters (newlines and the like) rather
-      * than throwing an error. It does this by pre-parsing the
-      * input and generating from that a count of VALID input
-      * characters.
-      **/
-    static public byte[] decode(char[] data)
-    {
-        // as our input could contain non-BASE64 data (newlines,
-        // whitespace of any sort, whatever) we must first adjust
-        // our count of USABLE data so that...
-        // (a) we don't misallocate the output array, and
-        // (b) think that we miscalculated our data length
-        //     just because of extraneous throw-away junk
-
-        int tempLen = data.length;
-        for (int ix = 0; ix < data.length; ix++)
-        {
-            if ((data[ix] > 255) || codes[data[ix]] < 0)
-                --tempLen; // ignore non-valid chars and padding
-        }
-        // calculate required length:
-        //  -- 3 bytes for every 4 valid base64 chars
-        //  -- plus 2 bytes if there are 3 extra base64 chars,
-        //     or plus 1 byte if there are 2 extra.
-
-        int len = (tempLen / 4) * 3;
-        if ((tempLen % 4) == 3)
-            len += 2;
-        if ((tempLen % 4) == 2)
-            len += 1;
-
-        byte[] out = new byte[len];
-
-
-
-        int shift = 0; // # of excess bits stored in accum
-        int accum = 0; // excess bits
-        int index = 0;
-
-        // we now go through the entire array (NOT using the 'tempLen' value)
-        for (int ix = 0; ix < data.length; ix++)
-        {
-            int value = (data[ix] > 255) ? -1 : codes[data[ix]];
-
-            if (value >= 0)// skip over non-code
-
-            {
-                accum <<= 6; // bits shift up by 6 each time thru
-                shift += 6; // loop, with new bits being put in
-                accum |= value; // at the bottom.
-                if (shift >= 8)// whenever there are 8 or more shifted in,
-
-                {
-                    shift -= 8; // write them out (from the top, leaving any
-                    out[index++] = // excess at the bottom for next iteration.
-                            (byte)((accum >> shift) & 0xff);
-                }
-            }
-            // we will also have skipped processing a padding null byte ('=') here;
-            // these are used ONLY for padding to an even length and do not legally
-            // occur as encoded data. for this reason we can ignore the fact that
-            // no index++ operation occurs in that special case: the out[] array is
-            // initialized to all-zero bytes to start with and that works to our
-            // advantage in this combination.
-        }
-
-        // if there is STILL something wrong we just have to throw up now!
-        if (index != out.length)
-        {
-            throw new Error("Miscalculated data length (wrote " +
-                    index + " instead of " + out.length + ")");
-        }
-
-        return out;
-    }
-
-
-    //
-    // code characters for values 0..63
-    //
-    static private char[] alphabet =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" .toCharArray();
-
-    //
-    // lookup table for converting base64 characters to value in range 0..63
-    //
-    static private byte[] codes = new byte[256];
     static
     {
-        for (int i = 0; i < 256; i++)
-            codes[i] = -1;
-        for (int i = 'A'; i <= 'Z'; i++)
-            codes[i] = (byte)(i - 'A');
-        for (int i = 'a'; i <= 'z'; i++)
-            codes[i] = (byte)(26 + i - 'a');
-        for (int i = '0'; i <= '9'; i++)
-            codes[i] = (byte)(52 + i - '0');
-        codes['+'] = 62;
-        codes['/'] = 63;
+        for (int i = 0; i < BASELENGTH; i++ )
+        {
+            base64Alphabet[i] = -1;
+        }
+        for (int i = 'Z'; i >= 'A'; i--)
+        {
+            base64Alphabet[i] = (byte) (i - 'A');
+        }
+        for (int i = 'z'; i>= 'a'; i--)
+        {
+            base64Alphabet[i] = (byte) (i - 'a' + 26);
+        }
+        for (int i = '9'; i >= '0'; i--)
+        {
+            base64Alphabet[i] = (byte) (i - '0' + 52);
+        }
+
+        base64Alphabet['+']  = 62;
+        base64Alphabet['/']  = 63;
+
+        for (int i = 0; i <= 25; i++ )
+            lookUpBase64Alphabet[i] = (byte) ('A' + i);
+
+        for (int i = 26,  j = 0; i <= 51; i++, j++ )
+            lookUpBase64Alphabet[i] = (byte) ('a'+ j);
+
+        for (int i = 52,  j = 0; i <= 61; i++, j++ )
+            lookUpBase64Alphabet[i] = (byte) ('0' + j);
+
+        lookUpBase64Alphabet[62] = (byte) '+';
+        lookUpBase64Alphabet[63] = (byte) '/';
     }
 
-
-
-
-    ///////////////////////////////////////////////////
-    // remainder (main method and helper functions) is
-    // for testing purposes only, feel free to clip it.
-    ///////////////////////////////////////////////////
-
-    public static void main(String[] args)
+    public static boolean isBase64( String isValidString )
     {
-        boolean decode = false;
+        return isArrayByteBase64(isValidString.getBytes());
+    }
 
-        if (args.length == 0)
-        {
-            System.out.println("usage:  java Base64 [-d[ecode]] filename");
-            System.exit(0);
-        }
-        for (int i = 0; i < args.length; i++)
-        {
-            if ("-decode".equalsIgnoreCase(args[i]))
-                decode = true;
-            else if ("-d".equalsIgnoreCase(args[i]))
-                decode = true;
-        }
+    public static boolean isBase64( byte octect )
+    {
+        //shall we ignore white space? JEFF??
+        return (octect == PAD || base64Alphabet[octect] != -1);
+    }
 
-        String filename = args[args.length - 1];
-        File file = new File(filename);
-        if (!file.exists())
+    public static boolean isArrayByteBase64( byte[] arrayOctect )
+    {
+        int length = arrayOctect.length;
+        if (length == 0)
         {
-            System.out.println("Error:  file '" + filename + "' doesn't exist!");
-            System.exit(0);
+            // shouldn't a 0 length array be valid base64 data?
+            // return false;
+            return true;
         }
-
-        if (decode)
+        for (int i=0; i < length; i++)
         {
-            char[] encoded = readChars(file);
-            byte[] decoded = decode(encoded);
-            writeBytes(file, decoded);
+            if ( !Base64.isBase64(arrayOctect[i]) )
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * Encodes hex octects into Base64.
+     *
+     * @param binaryData Array containing binary data to encode.
+     * @return Base64-encoded data.
+     */
+    public static byte[] encode( byte[] binaryData )
+    {
+        int      lengthDataBits    = binaryData.length*EIGHTBIT;
+        int      fewerThan24bits   = lengthDataBits%TWENTYFOURBITGROUP;
+        int      numberTriplets    = lengthDataBits/TWENTYFOURBITGROUP;
+        byte     encodedData[]     = null;
+
+
+        if (fewerThan24bits != 0)
+        {
+            //data not divisible by 24 bit
+            encodedData = new byte[ (numberTriplets + 1 ) * 4 ];
         }
         else
         {
-            byte[] decoded = readBytes(file);
-            char[] encoded = encode(decoded);
-            writeChars(file, encoded);
+            // 16 or 8 bit
+            encodedData = new byte[ numberTriplets * 4 ];
         }
+
+        byte k = 0, l = 0, b1 = 0, b2 = 0, b3 = 0;
+
+        int encodedIndex = 0;
+        int dataIndex   = 0;
+        int i           = 0;
+        //log.debug("number of triplets = " + numberTriplets);
+        for ( i = 0; i<numberTriplets; i++ )
+        {
+            dataIndex = i*3;
+            b1 = binaryData[dataIndex];
+            b2 = binaryData[dataIndex + 1];
+            b3 = binaryData[dataIndex + 2];
+
+            //log.debug("b1= " + b1 +", b2= " + b2 + ", b3= " + b3);
+
+            l  = (byte)(b2 & 0x0f);
+            k  = (byte)(b1 & 0x03);
+
+            encodedIndex = i * 4;
+            byte val1 = ((b1 & SIGN)==0)?(byte)(b1>>2):(byte)((b1)>>2^0xc0);
+            byte val2 = ((b2 & SIGN)==0)?(byte)(b2>>4):(byte)((b2)>>4^0xf0);
+            byte val3 = ((b3 & SIGN)==0)?(byte)(b3>>6):(byte)((b3)>>6^0xfc);
+
+            encodedData[encodedIndex]   = lookUpBase64Alphabet[ val1 ];
+            //log.debug( "val2 = " + val2 );
+            //log.debug( "k4   = " + (k<<4) );
+            //log.debug(  "vak  = " + (val2 | (k<<4)) );
+            encodedData[encodedIndex+1] =
+                lookUpBase64Alphabet[ val2 | ( k<<4 )];
+            encodedData[encodedIndex+2] =
+                lookUpBase64Alphabet[ (l <<2 ) | val3 ];
+            encodedData[encodedIndex+3] = lookUpBase64Alphabet[ b3 & 0x3f ];
+        }
+
+        // form integral number of 6-bit groups
+        dataIndex    = i*3;
+        encodedIndex = i*4;
+        if (fewerThan24bits == EIGHTBIT )
+        {
+            b1 = binaryData[dataIndex];
+            k = (byte) ( b1 &0x03 );
+            //log.debug("b1=" + b1);
+            //log.debug("b1<<2 = " + (b1>>2) );
+            byte val1 = ((b1 & SIGN)==0)?(byte)(b1>>2):(byte)((b1)>>2^0xc0);
+            encodedData[encodedIndex]     = lookUpBase64Alphabet[ val1 ];
+            encodedData[encodedIndex + 1] = lookUpBase64Alphabet[ k<<4 ];
+            encodedData[encodedIndex + 2] = PAD;
+            encodedData[encodedIndex + 3] = PAD;
+        }
+        else if (fewerThan24bits == SIXTEENBIT)
+        {
+
+            b1 = binaryData[dataIndex];
+            b2 = binaryData[dataIndex +1 ];
+            l = (byte) (b2 & 0x0f);
+            k = (byte) (b1 & 0x03);
+
+            byte val1 = ((b1 & SIGN) == 0)?(byte)(b1>>2):(byte)((b1)>>2^0xc0);
+            byte val2 = ((b2 & SIGN) == 0)?(byte)(b2>>4):(byte)((b2)>>4^0xf0);
+
+            encodedData[encodedIndex]     = lookUpBase64Alphabet[ val1 ];
+            encodedData[encodedIndex + 1] =
+                lookUpBase64Alphabet[ val2 | ( k<<4 )];
+            encodedData[encodedIndex + 2] = lookUpBase64Alphabet[ l<<2 ];
+            encodedData[encodedIndex + 3] = PAD;
+        }
+
+        return encodedData;
     }
 
-    private static byte[] readBytes(File file)
+    /**
+     * Decodes Base64 data into octects
+     *
+     * @param binaryData Byte array containing Base64 data
+     * @return Array containing decoded data.
+     */
+    public static byte[] decode( byte[] base64Data )
     {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try
+        // handle the edge case, so we don't have to worry about it later
+        if(base64Data.length == 0) { return new byte[0]; }
+
+        int      numberQuadruple    = base64Data.length/FOURBYTE;
+        byte     decodedData[]      = null;
+        byte     b1=0,b2=0,b3=0, b4=0, marker0=0, marker1=0;
+
+        // Throw away anything not in base64Data
+
+        int encodedIndex = 0;
+        int dataIndex    = 0;
         {
-            InputStream fis = new FileInputStream(file);
-            InputStream is = new BufferedInputStream(fis);
-            int count = 0;
-            byte[] buf = new byte[16384];
-            while ((count = is.read(buf)) != -1)
+            // this sizes the output array properly - rlw
+            int lastData = base64Data.length;
+            // ignore the '=' padding
+            while (base64Data[lastData-1] == PAD)
             {
-                if (count > 0)
-                    baos.write(buf, 0, count);
+                if (--lastData == 0)
+                {
+                    return new byte[0];
+                }
             }
-            is.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+            decodedData = new byte[ lastData - numberQuadruple ];
         }
 
-        return baos.toByteArray();
-    }
-
-    private static char[] readChars(File file)
-    {
-        CharArrayWriter caw = new CharArrayWriter();
-        try
+        for (int i = 0; i < numberQuadruple; i++)
         {
-            Reader fr = new FileReader(file);
-            Reader in = new BufferedReader(fr);
-            int count = 0;
-            char[] buf = new char[16384];
-            while ((count = in.read(buf)) != -1)
+            dataIndex = i * 4;
+            marker0   = base64Data[dataIndex + 2];
+            marker1   = base64Data[dataIndex + 3];
+
+            b1 = base64Alphabet[base64Data[dataIndex]];
+            b2 = base64Alphabet[base64Data[dataIndex +1]];
+
+            if (marker0 != PAD && marker1 != PAD)
             {
-                if (count > 0)
-                    caw.write(buf, 0, count);
+                //No PAD e.g 3cQl
+                b3 = base64Alphabet[ marker0 ];
+                b4 = base64Alphabet[ marker1 ];
+
+                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 ) ;
+                decodedData[encodedIndex + 1] =
+                    (byte)(((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) );
+                decodedData[encodedIndex + 2] = (byte)( b3<<6 | b4 );
             }
-            in.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+            else if (marker0 == PAD)
+            {
+                //Two PAD e.g. 3c[Pad][Pad]
+                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 ) ;
+            }
+            else if (marker1 == PAD)
+            {
+                //One PAD e.g. 3cQ[Pad]
+                b3 = base64Alphabet[ marker0 ];
 
-        return caw.toCharArray();
+                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 );
+                decodedData[encodedIndex + 1] =
+                    (byte)(((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) );
+            }
+            encodedIndex += 3;
+        }
+        return decodedData;
     }
 
-    private static void writeBytes(File file, byte[] data)
-    {
-        try
-        {
-            OutputStream fos = new FileOutputStream(file);
-            OutputStream os = new BufferedOutputStream(fos);
-            os.write(data);
-            os.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private static void writeChars(File file, char[] data)
-    {
-        try
-        {
-            Writer fos = new FileWriter(file);
-            Writer os = new BufferedWriter(fos);
-            os.write(data);
-            os.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    ///////////////////////////////////////////////////
-    // end of test code.
-    ///////////////////////////////////////////////////
 
 }

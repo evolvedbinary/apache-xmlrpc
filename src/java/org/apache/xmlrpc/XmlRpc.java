@@ -587,7 +587,7 @@ public abstract class XmlRpc
                     }
                     break;
                 case BASE64:
-                    value = Base64.decode (cdata.toCharArray());
+                    value = Base64.decode (cdata.getBytes());
                     break;
                 case STRING:
                     value = cdata;
@@ -700,7 +700,8 @@ public abstract class XmlRpc
             else if (obj instanceof byte[])
             {
                 startElement("base64");
-                write(Base64.encode((byte[]) obj));
+                // FIXME: Yucky! Find a better way!
+                write(new String(Base64.encode((byte[]) obj)).toCharArray());
                 endElement("base64");
             }
             else if (obj instanceof Vector)

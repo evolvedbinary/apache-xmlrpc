@@ -69,8 +69,8 @@ class ServerInputStream
     // This is used in order to correctly return a -1 when all the
     // data POSTed was read. If this is left to -1, content length is
     // assumed as unknown and the standard InputStream methods will be used
-    long available = -1;
-    long markedAvailable;
+    private long available = -1;
+    private long markedAvailable;
 
     private BufferedInputStream in;
 
@@ -120,7 +120,9 @@ class ServerInputStream
             return read;
         }
         else if (available == -1)
-            return in.read (b, off, len);
+        {
+            return in.read(b, off, len);
+        }
         return -1;
     }
 
@@ -128,25 +130,26 @@ class ServerInputStream
     {
         long skip = in.skip(n);
         if (available > 0)
+        {
             available -= skip;
+        }
         return skip;
     }
 
-    public void mark (int readlimit)
+    public void mark(int readlimit)
     {
-        in.mark (readlimit);
+        in.mark(readlimit);
         markedAvailable = available;
     }
 
-    public void reset () throws IOException
+    public void reset() throws IOException
     {
-        in.reset ();
+        in.reset();
         available = markedAvailable;
     }
 
-    public boolean markSupported ()
+    public boolean markSupported()
     {
         return true;
     }
-
 }
