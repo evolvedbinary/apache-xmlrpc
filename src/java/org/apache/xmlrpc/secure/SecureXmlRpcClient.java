@@ -122,7 +122,9 @@ public class SecureXmlRpcClient
 	    }
 	} catch (Exception x) {
 	    System.err.println (x);
-	    System.err.println ("Usage: java helma.xmlrpc.XmlRpcClient <url> <method> <arg> ....");
+	    System.err.println ("Usage: java " +
+                            SecureXmlRpcClient.class.getName() +
+                            " <url> <method> [args]");
 	    System.err.println ("Arguments are sent as integers or strings.");
 	}
     }
