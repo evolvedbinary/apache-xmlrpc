@@ -2,11 +2,6 @@
 X M L - R P C
 --------------------------------------------------------------------------
 
-When I checked out the latest sources from the helma CVS repository
-to add the SSL extensions I didn't see the applet classes. If these
-were removed unintentionally than someone should probably add
-them back.
-
 I will add my tests back in for the SSL stuff ASAP. I have
 to adapt my scripts not to use $ANT_HOME.
 
