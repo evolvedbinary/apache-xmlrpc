@@ -22,6 +22,11 @@
                 configurable. (dlr)
               </li>
 
+              <li>
+                Added XmlRpcTest which includes a unit test for
+                XmlWriter. (dlr)
+              </li>
+
             </ul>
           </li>
 
