@@ -59,10 +59,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Tests Base64.
+ * Tests our Base64 encoding/decoding implementation.
  *
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
- * @version $Id$
+ * @since 1.2
  */
 public class Base64Test
     extends TestCase 
@@ -90,22 +90,6 @@ public class Base64Test
         return new TestSuite(Base64Test.class);
     }
 
-    /**
-     * Setup the test.
-     */
-    public void setUp() 
-    {
-        XmlRpc.setDebug(true);
-    }
-   
-    /**
-     * Tear down the test.
-     */
-    public void tearDown() 
-    {
-        XmlRpc.setDebug(false);
-    }
-
     public void testWriter()
         throws Exception
     {
@@ -118,7 +102,7 @@ public class Base64Test
                 byte[] encoded = Base64.encode(raw);
                 byte[] decoded = Base64.decode(encoded);
                 assertTrue(bytesEqual(raw, decoded));
-                assertEquals(TEST_DATA[i], new String(decoded));
+                assertEquals(TEST_DATA[i], String.valueOf(decoded));
             }
         }
         catch (Exception e)
