@@ -63,16 +63,14 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Tests XmlRpc.
+ * Tests XmlWriter.
  *
  * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  * @version $Id$
  */
-public class XmlRpcTest
+public class XmlWriterTest
     extends TestCase 
 {
-    private XmlRpcExtension xmlRpc;
-
     /**
      * Constructor
      */
@@ -86,7 +84,7 @@ public class XmlRpcTest
      */
     public static Test suite() 
     {
-        return new TestSuite(XmlRpcTest.class);
+        return new TestSuite(XmlWriterTest.class);
     }
 
     /**
@@ -95,7 +93,6 @@ public class XmlRpcTest
     public void setUp() 
     {
         XmlRpc.setDebug(true);
-        xmlRpc = new XmlRpcExtension();
     }
    
     /**
@@ -103,41 +100,13 @@ public class XmlRpcTest
      */
     public void tearDown() 
     {
-        xmlRpc = null;
         XmlRpc.setDebug(false);
     }
 
-    /**
-     * Tests the XmlRpc.
-     */
-    public void testXmlRpc()
+    public void testWriter()
+        throws Exception
     {
         try
-        {
-            // Test the XmlWriter
-            xmlRpc.testWriter();
-
-            // TODO: Test the XmlRpc class itself
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-    }
-
-    private class XmlRpcExtension
-        extends XmlRpc
-    {
-        /**
-         * A no-op for our test extension
-         */
-        public void objectParsed(Object obj)
-        {
-        }
-
-        protected void testWriter()
-            throws Exception
         {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             XmlWriter writer = new XmlWriter(buffer);
@@ -153,6 +122,11 @@ public class XmlRpcTest
             writer.flush();
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
             assertTrue(buffer.toString().endsWith(postProlog));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
 }
