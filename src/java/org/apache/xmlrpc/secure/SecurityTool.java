@@ -428,9 +428,19 @@ public class SecurityTool
     }        
 
     /**
-     * Get the key store password.
+     * Set the trust store password.
      *
-     * @return String key store password.
+     * @param String  trust store password.
+     */
+    public static void setTrustStorePassword(String x)
+    {
+        trustStorePassword = x;
+    }        
+
+    /**
+     * Get the trust store password.
+     *
+     * @return String trust store password.
      */
     public static String getTrustStorePassword()
     {
@@ -438,7 +448,7 @@ public class SecurityTool
         {
             return System.getProperty(TRUST_STORE_PASSWORD);
         }
-        if (keyStorePassword == null)
+        if (trustStorePassword == null)
         {
             return DEFAULT_TRUST_STORE_PASSWORD;
         }
