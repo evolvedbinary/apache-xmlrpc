@@ -147,13 +147,16 @@ public abstract class XmlRpc
 
 
     /**
-      * Set the SAX Parser to be used. The argument can either be the full class name or
-      * a user friendly shortcut if the parser is known to this class. The parsers that can
-      * currently be set by shortcut are listed in the main documentation page. If you are using
-      * another parser please send me the name of the SAX driver and I'll include it in a future release.
-      * If setDriver() is never called then the System property "sax.driver" is consulted. If that is not defined
-      * the driver defaults to OpenXML.
-      */
+     * Set the SAX Parser to be used. The argument can either be the
+     * full class name or a user friendly shortcut if the parser is
+     * known to this class. The parsers that can currently be set by
+     * shortcut are listed in the main documentation page. If you are
+     * using another parser please send me the name of the SAX driver
+     * and I'll include it in a future release.  If setDriver() is
+     * never called then the System property "sax.driver" is
+     * consulted. If that is not defined the driver defaults to
+     * OpenXML.
+     */
     public static void setDriver (String driver)
             throws ClassNotFoundException
     {
