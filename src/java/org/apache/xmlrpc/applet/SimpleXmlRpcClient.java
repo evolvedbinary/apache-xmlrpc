@@ -766,7 +766,7 @@ class XmlRpcSupport extends HandlerBase
          */
         public void write(char[] text)
         {
-            buf.append(text);
+            chardata(new String(text));
         }
 
         /**
@@ -775,7 +775,7 @@ class XmlRpcSupport extends HandlerBase
          */
         public void write(String text)
         {
-            buf.append(text);
+            chardata(text);
         }
 
         /**
