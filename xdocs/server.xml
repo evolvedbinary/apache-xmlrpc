@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<document>
+  <properties>
+    <title>Server</title>
+    <author email="hannes@helma.at">Hannes Wallnofer</author>
+  </properties>
+
+  <body>
+    <section name="Server">
+      <p>
+      </p>
+    </section>
+  </body>
+</document>
+
+<!--
+
+On the server side, you can either embed the XML-RPC library into an existing 
+server framework, or use the built-in special purpose HTTP server. Let's 
+first look at how to register handler objects to tell an XML-RPC server how to 
+map incoming requests to actual methods.
+
+-->

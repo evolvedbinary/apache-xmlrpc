@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<document>
+  <properties>
+    <title>Client Classes</title>
+    <author email="hannes@helma.at">Hannes Wallnofer</author>
+  </properties>
+
+  <body>
+    <section name="Client Classes">
+      <p>
+      </p>
+    </section>
+  </body>
+</document>
+
+<!--
+
+Helma provides two XML-RPC client classes. 
+<a href="/static/apidocs/helma/xmlrpc/XmlRpcClient.html">helma.xmlrpc.XmlRpcClient
+</a> uses java.net.URLConnection, the HTTP client that comes with the standard 
+Java API. <a href="/static/apidocs/helma/xmlrpc/XmlRpcClientLite.html">
+helma.xmlrpc.XmlRpcClientLite</a> extends this class to provide its own lightweight 
+HTTP client implementation. Both classes offer the same functionality and interface. 
+XmlRpcClientLite may be faster in many cases, but if you need full HTTP support 
+(e.g. Proxies, Redirect etc), you may be better off with XmlRpcClient.
+
+-->
