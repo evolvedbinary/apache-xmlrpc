@@ -146,12 +146,14 @@ class XmlWriter extends OutputStreamWriter
      * Writes the XML representation of a supported Java object type.
      *
      * @param obj The <code>Object</code> to write.
+     * @exception XmlRpcException Unsupported character data found.
      * @exception IOException Problem writing data.
      * @throws IllegalArgumentException If a <code>null</code>
      * parameter is passed to this method (not supported by the <a
      * href="http://xml-rpc.com/spec">XML-RPC specification</a>).
      */
-    public void writeObject(Object obj) throws IOException
+    public void writeObject(Object obj)
+        throws XmlRpcException, IOException
     {
         startElement("value");
         if (obj == null)
@@ -296,9 +298,11 @@ class XmlWriter extends OutputStreamWriter
      * Writes text as <code>PCDATA</code>.
      *
      * @param text The data to write.
-     * @throws IOException
+     * @exception XmlRpcException Unsupported character data found.
+     * @exception IOException Problem writing data.
      */
-    protected void chardata(String text) throws IOException
+    protected void chardata(String text)
+        throws XmlRpcException, IOException
     {
         int l = text.length ();
         for (int i = 0; i < l; i++)
@@ -323,9 +327,14 @@ class XmlWriter extends OutputStreamWriter
             default:
                 if (c < 0x20 || c > 0xff)
                 {
-                    write("&#");
-                    write(String.valueOf((int)c));
-                    write(';');
+                    // Though the XML-RPC spec allows any ASCII
+                    // characters except '<' and '&', the XML spec
+                    // does not allow this range of characters,
+                    // resulting in a parse error from most XML
+                    // parsers.
+                    throw new XmlRpcException(0, "Invalid character data " +
+                                              "corresponding to XML entity &#" +
+                                              String.valueOf((int) c) + ';');
                 }
                 else
                 {
