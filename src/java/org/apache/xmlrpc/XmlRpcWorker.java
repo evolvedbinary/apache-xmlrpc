@@ -121,7 +121,7 @@ public class XmlRpcWorker
             {
                 return ((AuthenticatedXmlRpcHandler) handler)
                     .execute(request.getMethodName(), request.getParameters(),
-                             request.getUsername(), request.getPassword());
+                             request.getUserName(), request.getPassword());
             }
             else
             {
