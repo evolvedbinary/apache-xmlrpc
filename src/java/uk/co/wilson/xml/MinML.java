@@ -1,6 +1,6 @@
 // Copyright (c) 2000, 2001 The Wilson Partnership.
 // All Rights Reserved.
-// @(#)MinML.java, 1.6, 11th November 2001
+// @(#)MinML.java, 1.7, 18th November 2001
 // Author: John Wilson - tug@wilson.co.uk
 
 package uk.co.wilson.xml;
@@ -72,24 +72,25 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
   public static final int endStartName = 0;
   public static final int emitStartElement = 1;
   public static final int emitEndElement = 2;
-  public static final int emitCharacters = 3;
-  public static final int emitCharactersSave = 4;
-  public static final int saveAttributeName = 5;
-  public static final int saveAttributeValue = 6;
-  public static final int startComment = 7;
-  public static final int endComment = 8;
-  public static final int incLevel = 9;
-  public static final int decLevel = 10;
-  public static final int startCDATA = 11;
-  public static final int endCDATA = 12;
-  public static final int processCharRef = 13;
-  public static final int writeCdata = 14;
-  public static final int exitParser = 15;
-  public static final int parseError = 16;
-  public static final int discardAndChange = 17;
-  public static final int discardSaveAndChange = 18;
-  public static final int saveAndChange = 19;
-  public static final int change = 20;
+  public static final int possiblyEmitCharacters = 3;
+  public static final int emitCharacters = 4;
+  public static final int emitCharactersSave = 5;
+  public static final int saveAttributeName = 6;
+  public static final int saveAttributeValue = 7;
+  public static final int startComment = 8;
+  public static final int endComment = 9;
+  public static final int incLevel = 10;
+  public static final int decLevel = 11;
+  public static final int startCDATA = 12;
+  public static final int endCDATA = 13;
+  public static final int processCharRef = 14;
+  public static final int writeCdata = 15;
+  public static final int exitParser = 16;
+  public static final int parseError = 17;
+  public static final int discardAndChange = 18;
+  public static final int discardSaveAndChange = 19;
+  public static final int saveAndChange = 20;
+  public static final int change = 21;
 
   public static final int inSkipping = 0;
   public static final int inSTag = 1;
@@ -205,7 +206,7 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
 
         this.columnNumber++;
 
-        String operand = operands[transition >>> 8];
+        final String operand = operands[transition >>> 8];
 
         switch (transition & 0XFF) {
           case endStartName:
@@ -245,7 +246,7 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
               elementName = buffer.getString();
 
               if (currentChar != '/' && !elementName.equals(begin)) {
-                fatalError("end tag </" + elementName + "> does not match begin tag <" + begin + ">",
+               fatalError("end tag </" + elementName + "> does not match begin tag <" + begin + ">",
                            this.lineNumber, this.columnNumber);
               } else {
                 this.documentHandler.endElement(begin);
@@ -260,8 +261,7 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
               fatalError("end tag at begining of document", this.lineNumber, this.columnNumber);
             }
 
-            if (mixedContentLevel != -1 && --mixedContentLevel == 0)
-              operand = operands[inCharData];
+            if (mixedContentLevel != -1) --mixedContentLevel;
 
             break;  // change state to operand
 
@@ -280,6 +280,12 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
 
             buffer.saveChar((char)currentChar);
 
+            break;  // change state to operand
+
+          case possiblyEmitCharacters:
+          // write any skipped whitespace if in mixed content
+
+            if (mixedContentLevel != -1) buffer.flush();
             break;  // change state to operand
 
           case saveAttributeName:
@@ -728,28 +734,28 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
   };
 
   private static final String[] operands = {
-    "\u0d14\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u1610\u0014\u000f\u1610",
-    "\u1710\u1000\u0b00\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u0113\u0200\u1810\u0113",
-    "\u1710\u1001\u0b01\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u0214\u1810\u0413",
-    "\u1710\u1001\u0b01\u1710\u1910\u1910\u1910\u1910\u1910\u1910\u1910\u1910\u0314\u1810\u0413",
-    "\u1910\u1910\u1910\u1910\u1910\u0605\u1910\u1910\u1910\u1910\u1910\u0413\u0514\u1810\u0413",
-    "\u1910\u1910\u1910\u1910\u1910\u0605\u1910\u1910\u1910\u1910\u1910\u1910\u0514\u1810\u1910",
-    "\u1a10\u1a10\u1a10\u1a10\u1a10\u1a10\u0714\u0814\u1a10\u1a10\u1a10\u1a10\u0614\u1810\u1a10",
-    "\u0713\u0713\u0713\u070d\u0713\u0713\u0306\u0713\u0713\u0713\u0713\u0713\u0713\u1810\u0713",
-    "\u0813\u0813\u0813\u080d\u0813\u0813\u0813\u0306\u0813\u0813\u0813\u0813\u0813\u1810\u0813",
-    "\u1710\u1002\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u0913\u0914\u1810\u0913",
-    "\u1b10\u1b10\u0903\u1b10\u1b10\u1b10\u1b10\u1b10\u1214\u1b10\u1b10\u1b10\u1b10\u1810\u0104",
-    "\u1710\u1014\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1710\u1810\u1710",
-    "\u1710\u1c10\u0911\u1710\u0e11\u1710\u1710\u1710\u1211\u1710\u1710\u1710\u1710\u1810\u0112",
-    "\u1710\u1c10\u0911\u1710\u0e11\u1710\u1710\u1710\u1211\u1710\u1710\u1710\u1710\u1810\u0112",
-    "\u0e14\u0e14\u0e14\u0e14\u0f14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u1810\u0e14",
-    "\u0e14\u0014\u0e14\u0e14\u0f14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u0e14\u1810\u0e14",
-    "\u0c14\u110e\u110e\u110d\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u1013\u1810\u110e",
-    "\u0a14\u110e\u110e\u110d\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u110e\u1810\u110e",
-    "\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u1d10\u130b\u1d10\u1407\u1d10\u1810\u1514",
-    "\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u130e\u110c\u130e\u130e\u1810\u130e",
-    "\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u1414\u0008\u1414\u1810\u1414",
-    "\u1509\n\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1514\u1810\u1514",
+    "\u0d15\u1611\u1611\u1611\u1611\u1611\u1611\u1611\u1611\u1611\u1611\u1611\u0015\u0010\u1611",
+    "\u1711\u1000\u0b00\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u0114\u0200\u1811\u0114",
+    "\u1711\u1001\u0b01\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u0215\u1811\u0414",
+    "\u1711\u1001\u0b01\u1711\u1911\u1911\u1911\u1911\u1911\u1911\u1911\u1911\u0315\u1811\u0414",
+    "\u1911\u1911\u1911\u1911\u1911\u0606\u1911\u1911\u1911\u1911\u1911\u0414\u0515\u1811\u0414",
+    "\u1911\u1911\u1911\u1911\u1911\u0606\u1911\u1911\u1911\u1911\u1911\u1911\u0515\u1811\u1911",
+    "\u1a11\u1a11\u1a11\u1a11\u1a11\u1a11\u0715\u0815\u1a11\u1a11\u1a11\u1a11\u0615\u1811\u1a11",
+    "\u0714\u0714\u0714\u070e\u0714\u0714\u0307\u0714\u0714\u0714\u0714\u0714\u0714\u1811\u0714",
+    "\u0814\u0814\u0814\u080e\u0814\u0814\u0814\u0307\u0814\u0814\u0814\u0814\u0814\u1811\u0814",
+    "\u1711\u1002\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u0914\u0915\u1811\u0914",
+    "\u1b11\u1b11\u0904\u1b11\u1b11\u1b11\u1b11\u1b11\u1215\u1b11\u1b11\u1b11\u1b11\u1811\u0105",
+    "\u1711\u1012\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1711\u1811\u1711",
+    "\u1711\u1c11\u0912\u1711\u0e12\u1711\u1711\u1711\u1212\u1711\u1711\u1711\u1711\u1811\u0113",
+    "\u1711\u1c11\u0912\u1711\u0e12\u1711\u1711\u1711\u1212\u1711\u1711\u1711\u1711\u1811\u0113",
+    "\u0e15\u0e15\u0e15\u0e15\u0f15\u0e15\u0e15\u0e15\u0e15\u0e15\u0e15\u0e15\u0e15\u1811\u0e15",
+    "\u0e15\u0015\u0e15\u0e15\u0f15\u0e15\u0e15\u0e15\u0e15\u0e15\u0e15\u0e15\u0e15\u1811\u0e15",
+    "\u0c03\u110f\u110f\u110e\u110f\u110f\u110f\u110f\u110f\u110f\u110f\u110f\u1014\u1811\u110f",
+    "\u0a15\u110f\u110f\u110e\u110f\u110f\u110f\u110f\u110f\u110f\u110f\u110f\u110f\u1811\u110f",
+    "\u1d11\u1d11\u1d11\u1d11\u1d11\u1d11\u1d11\u1d11\u1d11\u130c\u1d11\u1408\u1d11\u1811\u1515",
+    "\u130f\u130f\u130f\u130f\u130f\u130f\u130f\u130f\u130f\u130f\u110d\u130f\u130f\u1811\u130f",
+    "\u1415\u1415\u1415\u1415\u1415\u1415\u1415\u1415\u1415\u1415\u1415\u0009\u1415\u1811\u1415",
+    "\u150a\u000b\u1515\u1515\u1515\u1515\u1515\u1515\u1515\u1515\u1515\u1515\u1515\u1811\u1515",
     "expected Element",
     "unexpected character in tag",
     "unexpected end of file found",
