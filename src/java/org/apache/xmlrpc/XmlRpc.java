@@ -226,13 +226,12 @@ public abstract class XmlRpc
 
 
     /**
-      * Parse the input stream. For each root level object, method <code>objectParsed</code>
-      * is called.
+      * Parse the input stream. For each root level object, method
+      * <code>objectParsed</code> is called.
       */
     synchronized void parse (InputStream is)
         throws Exception
     {
-
         // reset values (XmlRpc objects are reusable)
         errorLevel = NONE;
         errorMsg = null;
@@ -269,6 +268,8 @@ public abstract class XmlRpc
         parser.setDocumentHandler (this);
         parser.setErrorHandler (this);
 
+        if (debug)
+            System.err.println("Beginning parsing XML input stream");
         parser.parse (new InputSource (is));
         if (debug)
             System.err.println ("Spent "+
@@ -276,7 +277,8 @@ public abstract class XmlRpc
     }
 
     /**
-      * Writes the XML representation of a supported Java object to the XML writer.
+      * Writes the XML representation of a supported Java object to
+      * the XML writer.
       */
     void writeObject (Object what, XmlWriter writer)
     {
