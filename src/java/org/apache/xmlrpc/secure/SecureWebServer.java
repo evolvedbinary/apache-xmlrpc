@@ -90,25 +90,28 @@ public class SecureWebServer
     implements SecurityConstants
 {
     /**
-      * Creates a secure web server at the specified port number.
-      *
-      * @param int port number of secure web server.
-      */
+     * Creates a secure web server configured to run on the specified
+     * port number.
+     *
+     * @param int port number of secure web server.
+     * @see #SecureWebServer(int, InetAddress)
+     */
     public SecureWebServer (int port) throws IOException
     {
         this(port, null);
     }
 
     /**
-      * Creates a secure web server at the specified port 
-      * number and IP address.
-      *
-      * @param int port number of the secure web server
-      * @param InetAddress ip address to bind to.
-      */
-    public SecureWebServer (int port, InetAddress add) throws IOException
+     * Creates a secure web server configured to run on the specified
+     * port number and IP address.
+     *
+     * @param int port number of the secure web server
+     * @param addr The IP address to bind to.
+     * @see org.apache.xmlrpc.WebServer#WebServer(int, InetAddress)
+     */
+    public SecureWebServer(int port, InetAddress addr) throws IOException
     {
-        super(port,add);
+        super(port, addr);
     }
 
     /**
