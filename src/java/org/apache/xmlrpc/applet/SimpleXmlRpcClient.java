@@ -189,7 +189,7 @@ class XmlRpcSupport extends HandlerBase {
 	} else if (what instanceof byte[]) {
 	    writer.startElement ("base64");
 	    // FIXME: Find a better way than creating a new String and converting to a char[]
-	    writer.write (new String(Base64.encode((byte[])what)).toCharArray());
+	    writer.write (Base64.encode((byte[])what));
 	    writer.endElement ("base64");
 	} else if (what instanceof Vector) {
 	    writer.startElement ("array");
@@ -570,7 +570,10 @@ class XmlRpcSupport extends HandlerBase {
     }
 
 
-    // A quick and dirty XML writer.
+    /**
+     * A quick and dirty XML writer.
+     * TODO: Replace with core package's XmlWriter class.
+     */
     class XmlWriter
     {
 
@@ -626,6 +629,11 @@ class XmlRpcSupport extends HandlerBase {
                         buf.append (c);
                 }
             }
+        }
+
+        public void write (byte[] text)
+        {
+            buf.append (text);
         }
 
         public void write (char[] text)
