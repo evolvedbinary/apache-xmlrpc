@@ -125,7 +125,11 @@ to /RPC2. This should be fixed in a newer version.
 </document>
 
 <!--
+Ideas: 
 
+o A section describing the bundled handlers, including a new
+<code>system.multicall</code> handler.
 
+http://www.xmlrpc.com/discuss/msgReader$1208
 
 -->
