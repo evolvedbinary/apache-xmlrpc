@@ -37,6 +37,7 @@
     <echo message="jcert.jar = ${jcert.jar}"/>
     <echo message="servlet.jar = ${servlet.jar}"/>
     <echo message="junit.jar = ${junit.jar}"/>
+    <echo message="commons-httpclient.jar = ${commons-httpclient.jar}"/>
     <echo message="commons-logging.jar = ${commons-logging.jar}"/>
   </target>
 
