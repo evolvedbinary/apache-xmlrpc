@@ -349,7 +349,8 @@ public class XmlRpcClient
             }
             catch (Exception x)
             {
-                x.printStackTrace ();
+                if (debug)
+                    x.printStackTrace ();
                 throw new IOException (x.getMessage ());
             }
             if (fault)
