@@ -64,6 +64,7 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -482,6 +483,15 @@ public class WebServer implements Runnable
                 try
                 {
                     Socket socket = serverSocket.accept();
+                    try
+                    {
+                        socket.setTcpNoDelay(true);
+                    }
+                    catch (SocketException socketOptEx)
+                    {
+                        System.err.println(socketOptEx);
+                    }
+
                     if (allowConnection(socket))
                     {
                         Runner runner = getRunner();
