@@ -114,9 +114,10 @@ public class XmlRpcResponseProcessor
      *
      * @param e The exception to process;
      * @param encoding The output encoding.
+     * @param code The XML-RPC faultCode.
      * @return byte[] The XML-RPC response.
      */
-    public byte[] encodeException(Exception x, String encoding)
+    public byte[] encodeException(Exception x, String encoding, int code)
     {
         if (XmlRpc.debug)
         {
@@ -149,8 +150,6 @@ public class XmlRpcResponseProcessor
 
         String message = x.toString();
         // Retrieve XmlRpcException error code(if possible).
-        int code = x instanceof XmlRpcException ?
-               ((XmlRpcException) x).code : 0;
         try
         {
             writeError(code, message, writer);
@@ -167,6 +166,18 @@ public class XmlRpcResponseProcessor
         return (writer != null ? buffer.toByteArray() : EMPTY_BYTE_ARRAY);
     }
 
+     /**
+     * Process an exception, and return output in the specified
+     * encoding.
+     *
+     * @param e The exception to process;
+     * @param encoding The output encoding.
+     * @return byte[] The XML-RPC response.
+     */
+    public byte[] encodeException(Exception x, String encoding)
+    {
+        return encodeException(x, encoding, (x instanceof XmlRpcException) ? ((XmlRpcException) x).code : 0);
+    }
      /**
       * Writes an XML-RPC response to the XML writer.
       */
