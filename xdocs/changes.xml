@@ -14,6 +14,18 @@
         <ul>
 
           <li>
+            <strong>08 Aug 2002</strong>
+            <ul>
+
+              <li>
+                XmlRpc.java, XmlWriter.java, DateUtil.java:  Extracted
+                inner and child class of the core XmlRpc class. (DLR)
+              </li>
+
+            </ul>
+          </li>
+
+          <li>
             <strong>07 Mar 2002</strong>
             <ul>
 
