@@ -8,7 +8,7 @@
 
   <body>
     <section name="About Apache XML-RPC">
-      <p>Apache XML-RPC is a Java implementation of <a href="http://www.xmlrpc.com">XML-RPC</a>,
+      <p>Apache XML-RPC is a Java implementation of <a href="http://www.xmlrpc.com/">XML-RPC</a>,
       a popular protocol that uses XML over HTTP to implement remote procedure calls.
 
       </p>

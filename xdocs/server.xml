@@ -35,7 +35,7 @@ one of the following things:</p>
     looking for public methods in the handler object corresponding to
     the method name and the parameter types of incoming requests.
     The input parameters of incoming XML-RPC requests must match the argument types of the Java method
-    (see <a href="/xml-rpc/types.html">conversion table</a>), or otherwise the method
+    (see <a href="types.html">conversion table</a>), or otherwise the method
     won't be found. The return value of the Java method must be supported
     by XML-RPC.
   </li>

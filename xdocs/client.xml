@@ -15,7 +15,7 @@
       <li><a href="/xmlrpc/apidocs/org/apache/xmlrpc/XmlRpcClient.html">org.apache.xmlrpc.XmlRpcClient
       </a> uses java.net.URLConnection, the HTTP client that comes with
       the standard Java API</li>
-      <li><a href="/xmlrpc/apidocs/org/apache//xmlrpc/XmlRpcClientLite.html">org.apache.xmlrpc.XmlRpcClientLite</a> provides its own lightweight
+      <li><a href="/xmlrpc/apidocs/org/apache/xmlrpc/XmlRpcClientLite.html">org.apache.xmlrpc.XmlRpcClientLite</a> provides its own lightweight
       HTTP client implementation.</li></ul>
 
       <p>If you need full HTTP support (e.g. Proxies, Redirect etc),

@@ -9,7 +9,7 @@
   <body>
     <section name="Type Mapping between XML-RPC and Java">
       <p>
-      The following table explains how data types are converted between their <a href="http://www.xmlrpc.com/spec">XML-RPC
+      The following table explains how data types are converted between their <a href="http://www.xmlrpc.com/spec/">XML-RPC
 representation</a> and Java.</p>
 
 <p>Note that the automatic invocation mechanism expects your classes to take the

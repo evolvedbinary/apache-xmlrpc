@@ -13,6 +13,18 @@
       <p>
         <ul>
 
+
+          <li>
+            <strong>10 Sep 2003</strong>
+            <ul>
+
+              <li>
+                CVS Repository Name has changed from <em>xml-rpc</em> to <em>ws-xmlrpc</em>.
+              </li>
+
+            </ul>
+          </li>
+
           <li>
             <strong>28 Jan 2003</strong>
             <ul>
