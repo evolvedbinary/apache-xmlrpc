@@ -111,10 +111,7 @@ public class SecureWebServer
         super(port,add);
     }
 
-    /**
-     * @see org.apache.xmlrpc.WebServer#createServerSocket(int port, int backlog, InetAddress add)
-     */
-    protected ServerSocket createServerSocket(int port, int backlog, InetAddress add)
+    public void setupServerSocket(int port, int backlog, InetAddress add)
         throws Exception
     {
         SecurityTool.setup();
@@ -133,7 +130,7 @@ public class SecureWebServer
             
         context.init(keyManagerFactory.getKeyManagers(), null, null);
         SSLServerSocketFactory sslSrvFact = context.getServerSocketFactory();
-        return (SSLServerSocket) sslSrvFact.createServerSocket(port);
+        serverSocket = (SSLServerSocket) sslSrvFact.createServerSocket(port);
     }
 
     /**

@@ -64,7 +64,6 @@ import java.util.*;
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:jvanzyl@apache.org">Jason van Zyl</a>
- * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
  */
 public class WebServer 
     implements Runnable
@@ -163,31 +162,10 @@ public class WebServer
         start();
     }
 
-    /**
-     * Factory method to manufacture the server socket.  Useful as a
-     * hook method for subclasses to override when they desire
-     * different flavor of socket (i.e. a <code>SSLServerSocket</code>).
-     *
-     * @exception Exception Error creating listener socket.
-     */
-    protected ServerSocket createServerSocket(int port, int backlog, InetAddress add)
+    public void setupServerSocket(int port, int x, InetAddress add) 
         throws Exception
     {
-        return new ServerSocket(port, backlog, add);
-    }
-
-    /**
-     * Initializes this server's listener socket with the specified
-     * attributes.  The <code>createServerSocket()</code> method can
-     * be overridden to change the flavor of socket used.
-     *
-     * @see #createServerSocket(int port, int backlog, InetAddress add)
-     */
-    public void setupServerSocket(int port, int backlog, InetAddress add)
-        throws Exception
-    {
-        serverSocket = createServerSocket(port, backlog, add);
-        serverSocket.setSoTimeout(4096);
+        this.serverSocket = new ServerSocket (port, x, add);
     }
 
     public void start()
@@ -307,11 +285,6 @@ public class WebServer
                     else
                         socket.close ();
                 }
-                catch (InterruptedIOException checkState)
-                {
-                    // Timeout while waiting for a client (from
-                    // SO_TIMEOUT)...try again if still listening.
-                }
                 catch (Exception ex)
                 {
                     System.err.println(
@@ -331,9 +304,7 @@ public class WebServer
             System.err.println( "Error accepting XML-RPC connections (" +
                     exception + ").");
         }
-        finally
-        {
-            System.err.println("Closing XML-RPC server socket.");
+        finally { System.err.println("Closing XML-RPC server socket.");
             try
             {
                 serverSocket.close();
@@ -341,8 +312,8 @@ public class WebServer
             }
             catch (IOException ignore)
                 {}
-        }
-    }
+        } }
+
 
     /**
       * Stop listening on the server port.
@@ -397,7 +368,7 @@ public class WebServer
             }
             else
             {
-                this.notify ();
+                notify ();
             }
         }
 
@@ -417,7 +388,7 @@ public class WebServer
                     releaseRunner (this);
                     try
                     {
-                        this.wait ();
+                        wait ();
                     }
                     catch (InterruptedException ir)
                     {
@@ -628,3 +599,4 @@ public class WebServer
         }
     }
 }
+

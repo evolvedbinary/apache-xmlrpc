@@ -157,13 +157,7 @@ public class XmlRpcServer
         {
             inParams = new Vector ();
             if (strbuf == null)
-            {
                 strbuf = new StringBuffer ();
-            }
-            else
-            {
-                strbuf.setLength (0);
-            }
 
             long now = System.currentTimeMillis ();
 
@@ -218,6 +212,7 @@ public class XmlRpcServer
                 XmlWriter writer = new XmlWriter (strbuf);
                 writeResponse (outParam, writer);
                 result = writer.getBytes ();
+
             }
             catch (Exception x)
             {

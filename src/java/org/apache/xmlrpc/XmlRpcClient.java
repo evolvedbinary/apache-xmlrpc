@@ -80,6 +80,11 @@ public class XmlRpcClient
     int workers = 0;
     int asyncWorkers = 0;
 
+
+    // average roundtrip of this method call. This is used to decide if
+    // additional threads are needed or not in async mode
+    int roundtrip = 1000;
+
     // a queue of calls to be handled asynchronously
     CallData first, last;
 
@@ -144,14 +149,16 @@ public class XmlRpcClient
             Vector params) throws XmlRpcException, IOException
     {
         Worker worker = getWorker (false);
+        long start = System.currentTimeMillis ();
         try
         {
             Object retval = worker.execute (method, params);
+            long end = System.currentTimeMillis ();
+            roundtrip = (int)((roundtrip * 4) + (end - start)) / 5;
             return retval;
         }
         finally { releaseWorker (worker, false);
-        }
-    }
+        } }
 
     /**
       * Generate an XML-RPC request and send it to the server in a new thread.
@@ -162,9 +169,7 @@ public class XmlRpcClient
     public void executeAsync (String method, Vector params,
             AsyncCallback callback)
     {
-        // if at least 4 threads are running, don't create any new ones,
-	// just enqueue the request.
-        if (asyncWorkers >= 4)
+        if (asyncWorkers > 2)
         {
             enqueue (method, params, callback);
             return;
@@ -173,7 +178,7 @@ public class XmlRpcClient
         try
         {
             worker = getWorker (true);
-            worker.start (method, params, callback);
+            worker.executeAsync (method, params, callback);
         }
         catch (IOException iox)
         {
@@ -242,6 +247,8 @@ public class XmlRpcClient
     {
         if (first == null)
             return null;
+        if (asyncWorkers > 4 && asyncWorkers * 4 > roundtrip)
+            return null;
         CallData call = first;
         if (first == last)
             first = last = null;
@@ -265,7 +272,7 @@ public class XmlRpcClient
         }
 
 
-        public void start (String method, Vector params,
+        public void executeAsync (String method, Vector params,
                 AsyncCallback callback)
         {
             this.call = new CallData (method, params, callback);
@@ -277,19 +284,16 @@ public class XmlRpcClient
         {
             while (call != null)
             {
-                executeAsync (call.method, call.params, call.callback);
+                runAsync (call.method, call.params, call.callback);
                 call = dequeue ();
             }
-            releaseWorker (this, true);
+            releaseWorker (this, false);
         }
 
-
-        /**
-         * Execute an XML-RPC call and handle asyncronous callback.
-         */
-        void executeAsync (String method, Vector params, AsyncCallback callback)
+        void runAsync (String method, Vector params, AsyncCallback callback)
         {
             Object res = null;
+            long start = System.currentTimeMillis ();
             try
             {
                 res = execute (method, params);
@@ -307,11 +311,10 @@ public class XmlRpcClient
                     catch (Exception ignore)
                     {}
             }
+            long end = System.currentTimeMillis ();
+            roundtrip = (int)((roundtrip * 4) + (end - start)) / 5;
         }
 
-        /**
-         * Execute an XML-RPC call.
-         */
         Object execute (String method,
                 Vector params) throws XmlRpcException, IOException
         {
@@ -323,8 +326,6 @@ public class XmlRpcClient
 
                 if (strbuf == null)
                     strbuf = new StringBuffer ();
-                else
-                    strbuf.setLength (0);
 
                 XmlWriter writer = new XmlWriter (strbuf);
                 writeRequest (writer, method, params);
@@ -349,8 +350,7 @@ public class XmlRpcClient
             }
             catch (Exception x)
             {
-                if (debug)
-                    x.printStackTrace ();
+                x.printStackTrace ();
                 throw new IOException (x.getMessage ());
             }
             if (fault)

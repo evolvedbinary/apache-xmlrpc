@@ -76,7 +76,7 @@ import org.xml.sax.*;
 public abstract class XmlRpc 
     extends HandlerBase
 {
-    public static final String version = "Apache XML-RPC 1.0";
+    public static final String version = "helma XML-RPC 1.0";
 
     String methodName;
 
@@ -85,7 +85,6 @@ public abstract class XmlRpc
     private static Hashtable saxDrivers = new Hashtable ();
     static
     {
-        saxDrivers.put ("xerces", "org.apache.xerces.parsers.SAXParser");
         saxDrivers.put ("xp", "com.jclark.xml.sax.Driver");
         saxDrivers.put ("ibm1", "com.ibm.xml.parser.SAXDriver");
         saxDrivers.put ("ibm2", "com.ibm.xml.parsers.SAXParser");
@@ -118,6 +117,7 @@ public abstract class XmlRpc
     static final int BASE64 = 5;
     static final int STRUCT = 6;
     static final int ARRAY = 7;
+    static final int NIL = 8;
 
     // Error level + message
     int errorLevel;
@@ -133,9 +133,10 @@ public abstract class XmlRpc
     // for debugging output
     public static boolean debug = false;
     final static String types[] = {"String", "Integer", "Boolean", "Double",
-    "Date", "Base64", "Struct", "Array"};
+    "Date", "Base64", "Struct", "Array", "Nil"};
 
     // mapping between java encoding names and "real" names used in XML prolog.
+    // if you use an encoding not listed here send feedback to xmlrpc@helma.org
 
     static String encoding = "ISO8859_1";
     static Properties encodings = new Properties ();
@@ -189,9 +190,6 @@ public abstract class XmlRpc
         encoding = enc;
     }
 
-    /**
-      * Return the encoding, transforming to the canonical name if possible.
-      */
     public String getEncoding ()
     {
         return encodings.getProperty (encoding, encoding);
@@ -246,10 +244,9 @@ public abstract class XmlRpc
         if (parserClass == null)
         {
             // try to get the name of the SAX driver from the System properties
-            // setDriver (System.getProperty (
-            //     "sax.driver", "org.apache.xerces.parsers.SAXParser"));
+            //setDriver (System.getProperty ("sax.driver", "org.openxml.parser.XMLSAXParser"));
             setDriver (System.getProperty (
-                "sax.driver", "uk.co.wilson.xml.MinML"));
+                "sax.driver", "org.apache.xerces.parsers.SAXParser"));
         }
 
         Parser parser = null;
@@ -281,7 +278,8 @@ public abstract class XmlRpc
         writer.startElement ("value");
         if (what == null)
         {
-            throw new RuntimeException ("null value not supported by XML-RPC");
+            // try sending experimental <ni/> element
+            writer.emptyElement ("nil");
         }
         else if (what instanceof String)
         {
@@ -506,6 +504,8 @@ public abstract class XmlRpc
             currentValue.setType (STRUCT);
         else if ("array".equals (name))
             currentValue.setType (ARRAY);
+        else if ("nil".equals (name))
+            currentValue.setType (NIL);
     }
 
 
@@ -634,7 +634,7 @@ public abstract class XmlRpc
 
         public XmlWriter (StringBuffer buf)
         {
-            // The default encoding used for XML-RPC is ISO-8859-1 for pragmatical reasons.
+            // The encoding used for XML-RPC is ISO-8859-1 for pragmatical reasons (Frontier/Win).
             this (buf, encoding);
         }
 
@@ -644,7 +644,7 @@ public abstract class XmlRpc
             this.enc = enc;
             // get name of encoding for XML prolog
             String encName = encodings.getProperty (enc, enc);
-            buf.append ("<?xml version=\"1.0\" encoding=\"" + encName + "\"?>");
+            buf.append ("<?xml version=\"1.0\" encoding=\""+encName + "\"?>");
         }
 
         public void startElement (String elem)
@@ -679,9 +679,6 @@ public abstract class XmlRpc
                 {
                     case '<' :
                         buf.append ("&lt;");
-                        break;
-                    case '>' :
-                        buf.append ("&gt;");
                         break;
                     case '&' :
                         buf.append ("&amp;");
