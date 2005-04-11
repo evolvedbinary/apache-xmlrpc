@@ -78,7 +78,7 @@ abstract public class LocalServerRpcTest
      */
     protected static final String REQUEST_PARAM_VALUE = "foobar";
 
-    protected static final int SERVER_PORT;
+	protected static int SERVER_PORT;
 
     /**
      * The value to use in our request parameter.
@@ -100,16 +100,6 @@ abstract public class LocalServerRpcTest
         super(message);
     }
     
-    /**
-     * Static constructor
-     * - initializes test port
-     * 
-     * TODO: can we initialize this from a properties file?
-     */
-    static {
-        SERVER_PORT = 8081;
-    }
-
     protected WebServer webServer;
 
     /**
@@ -117,7 +107,7 @@ abstract public class LocalServerRpcTest
      *
      * @param port Port to use for the WebServer
      */
-    private void setUpWebServer(int port) {
+	private void setUpWebServer(int port) {
         webServer = new WebServer(port);
         webServer.addHandler(HANDLER_NAME, new TestHandler());
     }
@@ -126,7 +116,7 @@ abstract public class LocalServerRpcTest
      * Sets up the @link WebServer with the default port.
      */
     protected void setUpWebServer() {
-        setUpWebServer(SERVER_PORT);
+		setUpWebServer(SERVER_PORT);
     }
 
     /**
@@ -134,6 +124,7 @@ abstract public class LocalServerRpcTest
      */
     protected void startWebServer() {
         webServer.start();
+		SERVER_PORT = webServer.serverSocket.getLocalPort();
     }
     
     /**

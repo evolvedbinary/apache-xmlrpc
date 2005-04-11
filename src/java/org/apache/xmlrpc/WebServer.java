@@ -304,6 +304,17 @@ public class WebServer implements Runnable
      */
     public void start()
     {
+        try
+        {
+            setupServerSocket(50);
+        }
+        catch (Exception e)
+        {
+            listener = null;
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+
         // The listener reference is released upon shutdown().
         if (listener == null)
         {
@@ -468,17 +479,6 @@ public class WebServer implements Runnable
      */
     public void run()
     {
-        try
-        {
-            setupServerSocket(50);
-        }
-        catch (Exception e)
-        {
-            listener = null;
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-
         try
         {
             while (listener != null)

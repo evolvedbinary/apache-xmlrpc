@@ -123,18 +123,6 @@ public class ClientServerRpcTest
         server = new XmlRpcServer();
         server.addHandler(HANDLER_NAME, new TestHandler());
 
-        InetAddress localhost = null;
-        try
-        {
-            // localhost will be a random network interface on a
-            // multi-homed host.
-            localhost = InetAddress.getLocalHost();
-        }
-        catch (UnknownHostException e)
-        {
-            fail(e.toString());
-        }
-
         // Setup system handler
         SystemHandler webServerSysHandler = new SystemHandler();
         webServerSysHandler.addSystemHandler("multicall", new MultiCall());
@@ -142,19 +130,6 @@ public class ClientServerRpcTest
         // WebServer (contains its own XmlRpcServer instance)
         setUpWebServer();
         webServer.addHandler("system", webServerSysHandler);
-
-        // XML-RPC client(s)
-        try
-        {
-            String hostName = localhost.getHostName();
-            client = new XmlRpcClient(hostName, SERVER_PORT);
-            //liteClient = new XmlRpcClientLite(hostName, SERVER_PORT);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            fail(e.toString());
-        }
     }
 
     /**
@@ -175,6 +150,31 @@ public class ClientServerRpcTest
             startWebServer();
         }
         catch (RuntimeException e)
+        {
+            e.printStackTrace();
+            fail(e.toString());
+        }
+
+        InetAddress localhost = null;
+        try
+        {
+            // localhost will be a random network interface on a
+            // multi-homed host.
+            localhost = InetAddress.getLocalHost();
+        }
+        catch (UnknownHostException e)
+        {
+            fail(e.toString());
+        }
+
+		// XML-RPC client(s)
+        try
+        {
+            String hostName = localhost.getHostName();
+            client = new XmlRpcClient(hostName, SERVER_PORT);
+            //liteClient = new XmlRpcClientLite(hostName, SERVER_PORT);
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
             fail(e.toString());
