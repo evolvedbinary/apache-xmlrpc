@@ -95,6 +95,7 @@ public class XmlRpcClientWorker
             now = System.currentTimeMillis();
         }
 
+		boolean endClientDone = false;
         try
         {
             byte [] request = requestProcessor.encodeRequestBytes(xmlRpcRequest, responseProcessor.getEncoding());
@@ -106,6 +107,8 @@ public class XmlRpcClientWorker
             }
             else
             {
+		      endClientDone = true;
+			  transport.endClientRequest();
               return response;
             }
         }
@@ -136,14 +139,16 @@ public class XmlRpcClientWorker
                 System.out.println("Spent " + (System.currentTimeMillis() - now)
                                    + " millis in request/process/response");
             }
-            try
-            {
-                transport.endClientRequest();
-            }
-            catch (RuntimeException re)
-            {
-                throw new XmlRpcClientException("Transport exception in endClientRequest()", re);
-            }
+			if (!endClientDone)
+			{
+				try
+	            {
+	                transport.endClientRequest();
+	            }
+	            catch (Throwable ignore)
+	            {
+	            }
+			}
         }
     }
 
