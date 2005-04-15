@@ -31,6 +31,7 @@
   <!-- ================================================================== -->
   
   <target name="env" description="Dumps the environment settings">
+    <echo message="lib.repo = ${lib.repo}"/>
     <echo message="java.home = ${java.home}"/>
     <echo message="user.home = ${user.home}"/>
     <echo message="jsse.jar = ${jsse.jar}"/>
@@ -53,7 +54,7 @@
     </get>
     <get dest="${lib.repo}/commons-logging-1.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-logging/jars/commons-logging-1.0.2.jar">
     </get>
-    <get dest="${lib.repo}/commons-codec-1.1.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-codec/jars/commons-codec-1.1.jar">
+    <get dest="${lib.repo}/commons-codec-1.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-codec/jars/commons-codec-1.2.jar">
     </get>
     <get dest="${lib.repo}/servletapi-2.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//servletapi/jars/servletapi-2.2.jar">
     </get>
