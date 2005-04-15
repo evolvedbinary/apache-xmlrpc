@@ -54,11 +54,10 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import junit.framework.*;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the LiteXmlRpcTransport implementation.

@@ -55,9 +55,8 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.util.*;
-import java.io.IOException;
 import java.net.URL;
+import java.util.Vector;
 
 public class AsyncBenchmark 
     implements Runnable

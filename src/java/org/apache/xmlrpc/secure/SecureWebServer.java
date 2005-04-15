@@ -55,25 +55,20 @@ package org.apache.xmlrpc.secure;
  * <http://www.apache.org/>.
  */
 
-import com.sun.net.ssl.KeyManager;
-import com.sun.net.ssl.KeyManagerFactory;
-import com.sun.net.ssl.SSLContext;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.security.KeyStore;
-import java.security.Provider;
-import java.security.Security;
-import javax.net.ServerSocketFactory;
+
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 
-import org.apache.xmlrpc.AuthDemo;
-import org.apache.xmlrpc.Echo;
 import org.apache.xmlrpc.WebServer;
 import org.apache.xmlrpc.XmlRpc;
 import org.apache.xmlrpc.XmlRpcServer;
+
+import com.sun.net.ssl.KeyManagerFactory;
+import com.sun.net.ssl.SSLContext;
 
 /**
  * A minimal web server that exclusively handles XML-RPC requests

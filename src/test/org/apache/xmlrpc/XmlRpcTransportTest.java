@@ -55,11 +55,10 @@ package org.apache.xmlrpc;
  */
 
 import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import junit.framework.*;
 
 /**
  * Abstract Test class to be extended by the tests for each Transport.

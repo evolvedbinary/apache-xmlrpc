@@ -55,10 +55,9 @@ package org.apache.xmlrpc.secure;
  * <http://www.apache.org/>.
  */
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import org.xml.sax.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Vector;
 
 import org.apache.xmlrpc.XmlRpcClient;
 

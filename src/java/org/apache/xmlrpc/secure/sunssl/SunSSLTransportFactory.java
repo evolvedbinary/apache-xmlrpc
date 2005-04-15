@@ -54,27 +54,22 @@ package org.apache.xmlrpc.secure.sunssl;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Properties;
-
-import java.security.Security;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Properties;
 
-import org.apache.xmlrpc.secure.SecurityTool;
-import org.apache.xmlrpc.XmlRpcTransportFactory;
 import org.apache.xmlrpc.DefaultXmlRpcTransport;
 import org.apache.xmlrpc.XmlRpcTransport;
+import org.apache.xmlrpc.XmlRpcTransportFactory;
+import org.apache.xmlrpc.secure.SecurityTool;
 
-import com.sun.net.ssl.X509TrustManager;
 import com.sun.net.ssl.HostnameVerifier;
-import com.sun.net.ssl.SSLContext;
 import com.sun.net.ssl.HttpsURLConnection;
+import com.sun.net.ssl.SSLContext;
+import com.sun.net.ssl.X509TrustManager;
 
 /**
  * Interface from XML-RPC to the HTTPS transport based on the
