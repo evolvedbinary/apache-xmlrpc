@@ -55,9 +55,8 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.IOException;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Vector;
 
 /**

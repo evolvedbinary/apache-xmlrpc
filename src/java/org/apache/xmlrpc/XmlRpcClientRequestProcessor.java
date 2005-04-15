@@ -55,10 +55,9 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Vector;
 
 /**
  * Process an XML-RPC client request into a byte array or directly onto

@@ -55,19 +55,12 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.EmptyStackException;
-import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
-import org.xml.sax.AttributeList;
-import org.xml.sax.SAXException;
 
 /**
  * A multithreaded, reusable XML-RPC client object. Use this if you

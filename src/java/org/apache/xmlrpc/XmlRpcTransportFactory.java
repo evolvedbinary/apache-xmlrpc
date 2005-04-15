@@ -55,8 +55,6 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.InputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 /**

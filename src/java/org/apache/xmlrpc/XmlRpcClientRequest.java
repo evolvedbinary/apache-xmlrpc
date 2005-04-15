@@ -55,7 +55,6 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.util.Vector;
 
 /**
  * Interface to an XML-RPC request made by a client.

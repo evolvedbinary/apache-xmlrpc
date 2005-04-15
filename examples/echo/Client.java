@@ -56,7 +56,6 @@
 
 import org.apache.xmlrpc.*;
 import java.util.Vector;
-import java.net.URL;
 import java.io.*;
 
 public class Client {

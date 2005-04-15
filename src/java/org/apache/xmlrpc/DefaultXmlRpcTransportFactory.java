@@ -55,14 +55,12 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.Properties;
-import java.util.Hashtable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Properties;
+
 import org.apache.xmlrpc.util.HttpUtil;
 
 /**

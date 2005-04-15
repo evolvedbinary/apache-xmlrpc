@@ -55,16 +55,13 @@ package org.apache.xmlrpc;
  * <http://www.apache.org/>.
  */
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URL;
-import java.util.Hashtable;
-import java.util.Vector;
 import java.util.StringTokenizer;
 
 import org.apache.xmlrpc.util.HttpUtil;
