@@ -1,0 +1,7 @@
+<project default="jar:install" xmlns:deploy="deploy">
+
+  <goal name ="xmlrpc:copy-deps" description="Copies the dependent JARs into lib">
+      <deploy:copy-deps todir="${basedir}/lib"/>
+  </goal>
+
+</project>

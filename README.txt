@@ -11,7 +11,7 @@ bin/        Temporary directory for building the project.
 lib/        Final location of the jar files
 examples/   Some examples and instructions on how to run them.
 src/        Location of Java sources.
-xdocs/      XmlRpc documention in DocBook format.
+xdocs/      XmlRpc documention in XDOC format.
 docs/       The rendered documentation in HTML format.
 
 
@@ -31,7 +31,7 @@ B U I L D I N G
 You can build the core XmlRpc package with the classes provided
 using JDK 1.2+. If you wish to use the Servlet and/or SSL extensions
 than you must set the following properties in either your
-${user.home}/build.properties file, or the build.properties
+${user.home}/build.properties file, or the default.properties
 file provided in the XmlRpc build/ directory:
 
 jsse.jar
@@ -42,13 +42,8 @@ servlet.jar
 These properties define full paths to JARs files.
 
 If you are using the Eclipse IDE, Apache's XML-RPC package comes ready
-with basic .classpath and .project files. Simply create a
-sub-directory named "lib" and add the following files:
-
-    commons-codec-1.2.jar
-    commons-httpclient-2.0.jar
-    junit.jar
-    servlet.jar
+with basic .classpath and .project files. Simply run "ant copy-deps" to
+populate the "lib" directory
 
 
 --------------------------------------------------------------------------

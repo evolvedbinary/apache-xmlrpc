@@ -27,10 +27,10 @@
   </path>
 
   <!-- ================================================================== -->
-  <!-- E N V I R O N M E N T                                             -->
+  <!-- E N V I R O N M E N T                                              -->
   <!-- ================================================================== -->
   
-  <target name="env">
+  <target name="env" description="Dumps the environment settings">
     <echo message="java.home = ${java.home}"/>
     <echo message="user.home = ${user.home}"/>
     <echo message="jsse.jar = ${jsse.jar}"/>
@@ -41,6 +41,26 @@
     <echo message="commons-httpclient.jar = ${commons-httpclient.jar}"/>
     <echo message="commons-logging.jar = ${commons-logging.jar}"/>
     <echo message="commons-codec.jar = ${commons-codec.jar}"/>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- D E P E N D E N C I E S                                            -->
+  <!-- ================================================================== -->
+
+  <target name="copy-deps" description="Copy dependent JARs into the lib folder">
+    <mkdir dir="${lib.repo}"/>
+    <get dest="${lib.repo}/commons-httpclient-2.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
+    </get>
+    <get dest="${lib.repo}/commons-logging-1.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-logging/jars/commons-logging-1.0.2.jar">
+    </get>
+    <get dest="${lib.repo}/commons-codec-1.1.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-codec/jars/commons-codec-1.1.jar">
+    </get>
+    <get dest="${lib.repo}/servletapi-2.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//servletapi/jars/servletapi-2.2.jar">
+    </get>
+    <get dest="${lib.repo}/fesi-1.1.5.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//fesi/jars/fesi-1.1.5.jar">
+    </get>
+    <get dest="${lib.repo}/junit-3.8.1.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//junit/jars/junit-3.8.1.jar">
+    </get>
   </target>
 
   <!-- ================================================================== -->
@@ -55,7 +75,7 @@
   <!-- I N I T                                                            -->
   <!-- ================================================================== -->
 
-  <target name="init" depends="env">
+  <target name="init" depends="env,copy-deps">
     <available 
       classname="com.sun.net.ssl.SSLContext"
       property="jsse.present"
@@ -149,7 +169,7 @@
   <!-- C O M P I L E                                                      -->
   <!-- ================================================================== -->
   
-  <target name="compile" depends="prepare">
+  <target name="compile" depends="prepare" description="Compiles the source code">
     <javac 
       srcdir="${src.dir}"
       destdir="${build.dest}"
@@ -190,7 +210,7 @@
   <!-- J A V A D O C S                                                    -->
   <!-- ================================================================== -->
   
-  <target name="javadocs" depends="prepare">
+  <target name="javadocs" depends="prepare" description="Create the JavaDocs">
     <mkdir dir="${javadoc.destdir}"/>
     <javadoc
       sourcepath="${src.dir}/java"
@@ -212,11 +232,15 @@
   <!-- C L E A N                                                          -->
   <!-- ================================================================== -->
 
-  <target name="clean">
+  <target name="clean" description="Deletes temporary files">
     <delete file="${final.name}.tar.gz"/>
     <delete file="${final.name}.zip"/>
+    <delete file="${final.name}-src.tar.gz"/>
+    <delete file="${final.name}-src.zip"/>
     <delete dir="${build.dir}"/>
     <delete dir="${test.reportsDirectory}"/>
+    <delete dir="${docs.dest}"/>
+    <delete dir="${lib.repo}"/>
   </target>
 
   <!-- ================================================================== -->
@@ -364,7 +388,8 @@
 
   <target 
     name="dist"
-    depends="jar,javadocs,docs">
+    depends="jar,javadocs,docs"
+    description="Build source and binary distribution">
 
     <property name="distDir" value="${build.dir}/${final.name}"/>
 
@@ -377,10 +402,11 @@
     </echo>
     
     <mkdir dir="${distDir}"/>
+    <mkdir dir="${docs.dest}"/>
 
     <!-- Copy README and LICENSE -->
     <copy todir="${distDir}" file="README.txt"/>
-    <copy todir="${distDir}" file="LICENSE"/>
+    <copy todir="${distDir}" file="LICENSE.txt"/>
 
     <!-- Copy Jars -->
     <copy todir="${distDir}">
@@ -390,8 +416,8 @@
     </copy>
 
     <!-- Copy documentation -->
-    <copy todir="${distDir}/docs">
-      <fileset dir="${docs.dest}">
+    <copy todir="${distDir}/docs/apidocs">
+      <fileset dir="${javadoc.destdir}">
         <include name="**"/>
       </fileset>
     </copy>
@@ -427,7 +453,7 @@
       </fileset>
     </delete>
     
-    <copy todir="${distDir}" file="build.properties"/>
+    <copy todir="${distDir}" file="default.properties"/>
     <copy todir="${distDir}" file="build.xml"/>
 
     <!-- Copy Source -->
