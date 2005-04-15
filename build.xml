@@ -52,15 +52,15 @@
     <mkdir dir="${lib.repo}"/>
     <get dest="${lib.repo}/commons-httpclient-2.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
     </get>
-    <get dest="${lib.repo}/commons-logging-1.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-logging/jars/commons-logging-1.0.2.jar">
+    <get dest="${lib.repo}/commons-logging-1.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-logging/jars/commons-logging-1.0.2.jar">
     </get>
-    <get dest="${lib.repo}/commons-codec-1.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-codec/jars/commons-codec-1.2.jar">
+    <get dest="${lib.repo}/commons-codec-1.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-codec/jars/commons-codec-1.2.jar">
     </get>
-    <get dest="${lib.repo}/servletapi-2.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//servletapi/jars/servletapi-2.2.jar">
+    <get dest="${lib.repo}/servletapi-2.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/servletapi/jars/servletapi-2.2.jar">
     </get>
-    <get dest="${lib.repo}/fesi-1.1.5.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//fesi/jars/fesi-1.1.5.jar">
+    <get dest="${lib.repo}/fesi-1.1.5.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/fesi/jars/fesi-1.1.5.jar">
     </get>
-    <get dest="${lib.repo}/junit-3.8.1.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//junit/jars/junit-3.8.1.jar">
+    <get dest="${lib.repo}/junit-3.8.1.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/junit/jars/junit-3.8.1.jar">
     </get>
   </target>
 

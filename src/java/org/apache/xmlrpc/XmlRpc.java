@@ -196,9 +196,10 @@ public abstract class XmlRpc extends HandlerBase
      * is not compatible with ASCII (eg. EBCDIC) but the network is
      * still ASCII-like.
      */
-    static String inputEncoding = null;
+    static String defaultInputEncoding = null;
  
     private TypeFactory typeFactory;
+	private String inputEncoding;
 
     /**
      * Creates a new instance with the {@link
@@ -227,6 +228,7 @@ public abstract class XmlRpc extends HandlerBase
             }
         }
         this.typeFactory = createTypeFactory(typeFactoryName);
+		this.inputEncoding = defaultInputEncoding;
     }
 
     /**
@@ -351,24 +353,48 @@ public abstract class XmlRpc extends HandlerBase
         return XmlWriter.canonicalizeEncoding(encoding);
     }
 
-    /**
-     * Set the input encoding of the XML.
+    /** Set the default input encoding of the XML.
      * This is used only if set.
      *
      * @param enc The Java name of the encoding.
+     * @see #setInputEncoding(String)
      */
-    public static void setInputEncoding(String enc)
+    public static void setDefaultInputEncoding(String enc)
+    {
+        defaultInputEncoding = enc;
+    }
+
+    /**
+     * Return the default input encoding. This may be null.
+     * This is always a Java encoding name, it is not transformed.
+     *
+     * @return the Java encoding name to use, if set, otherwise null.
+     * @see #getInputEncoding()
+     */
+    public static String getDefaultInputEncoding ()
+    {
+        return defaultInputEncoding;
+    }
+
+    /**
+     * Set the input encoding for this XmlRpc instance.  This can be
+     * used when the XMLRPC response does not contain the proper
+     * encoding information in the XML declaration.
+     *
+     * @param enc The Java name of the encoding.
+     */
+    public void setInputEncoding(String enc)
     {
         inputEncoding = enc;
     }
 
     /**
-     * Return the input encoding. This may be null. This is always a
-     * Java encoding name, it is not transformed.
+     * Get the input encoding for this XmlRpc instance.  This is a Java
+     * encoding name.
      *
-     * @return the Java encoding name to use, if set, otherwise null.
+     * @return The Java encoding name to use.  <code>null</code> if not set.
      */
-    public static String getInputEncoding ()
+    public String getInputEncoding()
     {
         return inputEncoding;
     }
