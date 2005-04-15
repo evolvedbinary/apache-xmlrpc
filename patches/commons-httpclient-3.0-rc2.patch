@@ -1,0 +1,32 @@
+Index: build.xml
+===================================================================
+RCS file: /home/cvs/ws-xmlrpc/build.xml,v
+retrieving revision 1.27
+diff -u -r1.27 build.xml
+--- build.xml	15 Apr 2005 19:52:38 -0000	1.27
++++ build.xml	15 Apr 2005 20:00:41 -0000
+@@ -50,7 +50,7 @@
+ 
+   <target name="copy-deps" description="Copy dependent JARs into the lib folder">
+     <mkdir dir="${lib.repo}"/>
+-    <get dest="${lib.repo}/commons-httpclient-2.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
++    <get dest="${lib.repo}/commons-httpclient-3.0-rc2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-3.0-rc2.jar">
+     </get>
+     <get dest="${lib.repo}/commons-logging-1.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven//commons-logging/jars/commons-logging-1.0.2.jar">
+     </get>
+Index: default.properties
+===================================================================
+RCS file: /home/cvs/ws-xmlrpc/default.properties,v
+retrieving revision 1.15
+diff -u -r1.15 default.properties
+--- default.properties	15 Apr 2005 19:52:38 -0000	1.15
++++ default.properties	15 Apr 2005 20:00:41 -0000
+@@ -30,7 +30,7 @@
+ # ${user.home}/build.properties file in order
+ # to build XmlRpc:
+ 
+-commons-httpclient.jar = ${lib.repo}/commons-httpclient-2.0.2.jar
++commons-httpclient.jar = ${lib.repo}/commons-httpclient-3.0-rc2.jar
+ commons-logging.jar = ${lib.repo}/commons-logging-1.0.2.jar
+ commons-codec.jar = ${lib.repo}/commons-codec-1.2.jar
+ jsse.jar = ${lib.repo}/jsse.jar
