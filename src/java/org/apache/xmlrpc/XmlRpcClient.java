@@ -91,6 +91,13 @@ public class XmlRpcClient implements XmlRpcHandler
     private CallData first, last;
 
     /**
+     * The maximum number of threads which can be used concurrently, by defaut use the one defined
+     * in XmlRpc
+     */
+    private int maxThreads = -1;
+
+    
+    /**
      * Construct a XML-RPC client with this URL and a specified transport
      * factory.
      */
@@ -128,6 +135,25 @@ public class XmlRpcClient implements XmlRpcHandler
         this(new URL("http://" + hostname + ':' + port + "/RPC2"));
     }
 
+    /**
+     * Set the MaxThreads for this Client
+     */
+    public void setMaxThreads(int maxThreads) 
+    {
+    	this.maxThreads = maxThreads;
+    }
+    
+    /**
+     * Get the MaxThreads for this Client
+     */
+    public int getMaxThreads() 
+    {
+    	if (maxThreads == -1)
+    		return (XmlRpc.getMaxThreads());
+    	
+    	return (maxThreads);
+    }
+    
     /**
      * Return the URL for this XML-RPC client.
      */
@@ -346,7 +372,7 @@ public class XmlRpcClient implements XmlRpcHandler
         }
         catch(EmptyStackException x)
         {
-            if (workers < XmlRpc.getMaxThreads())
+            if (workers < getMaxThreads())
             {
                 if (async)
                 {

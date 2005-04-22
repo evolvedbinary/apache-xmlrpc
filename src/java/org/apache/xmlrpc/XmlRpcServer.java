@@ -75,6 +75,12 @@ public class XmlRpcServer
     private int nbrWorkers;
 
     /**
+     * The maximum number of threads which can be used concurrently, by defaut use the one defined
+     * in XmlRpc
+     */
+    private int maxThreads = -1;
+
+    /**
      * We want the <code>$default</code> handler to always be
      * available.
      */
@@ -115,6 +121,25 @@ public class XmlRpcServer
         return handlerMapping;
     }
 
+    /**
+     * Set the MaxThreads for this Client
+     */
+    public void setMaxThreads(int maxThreads) 
+    {
+    	this.maxThreads = maxThreads;
+    }
+    
+    /**
+     * Get the MaxThreads for this Server
+     */
+    public int getMaxThreads() 
+    {
+    	if (maxThreads == -1)
+    		return (XmlRpc.getMaxThreads());
+    	
+    	return (maxThreads);
+    }
+    
     /**
      * Parse the request and execute the handler method, if one is
      * found. Returns the result as XML.  The calling Java code
@@ -172,7 +197,7 @@ public class XmlRpcServer
         }
         catch(EmptyStackException x)
         {
-            int maxThreads = XmlRpc.getMaxThreads();
+            int maxThreads = getMaxThreads();
             if (nbrWorkers < maxThreads)
             {
                 nbrWorkers += 1;
