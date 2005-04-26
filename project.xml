@@ -169,7 +169,7 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>       
-      <version>1.1</version>
+      <version>1.3</version>
       <url>http://jakarta.apache.org/commons/codec/index.html</url>
     </dependency>
     <dependency>
@@ -197,12 +197,12 @@
       <version>1.0.2</version>
       <url>http://java.sun.com/products/jsse/</url>
     </dependency -->
-    <dependency>
+    <!-- dependency>
       <groupId>fesi</groupId>
       <artifactId>fesi</artifactId>       
       <version>1.1.5</version>
       <url>http://home.worldcom.ch/jmlugrin/fesi/</url>
-    </dependency>
+    </dependency -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>       
@@ -245,7 +245,6 @@
   
   <reports>
     <report>maven-jdepend-plugin</report>
-    <report>maven-checkstyle-plugin</report>
     <report>maven-changes-plugin</report>
     <report>maven-changelog-plugin</report>
     <report>maven-developer-activity-plugin</report>
