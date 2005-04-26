@@ -48,7 +48,8 @@
   <!-- D E P E N D E N C I E S                                            -->
   <!-- ================================================================== -->
 
-  <target name="copy-deps" description="Copy dependent JARs into the lib folder">
+  <target name="copy-deps" description="Copy dependent JARs into the lib folder"
+     unless="have.deps" depends="setup.proxy">
     <mkdir dir="${lib.repo}"/>
     <get dest="${lib.repo}/commons-httpclient-2.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
     </get>
@@ -64,6 +65,17 @@
     </get>
   </target>
 
+  <target name="setup.proxy" depends="setup.proxy.if,setup.proxy.unless"/>
+
+  <target name="setup.proxy.if" if="http.proxyHost">
+    <echo>Using proxy server ${http.proxyHost} at port ${http.proxyPort}</echo>
+    <setproxy proxyhost="${http.proxyHost}" proxyport="${http.proxyPort}"/>
+  </target>
+
+  <target name="setup.proxy.unless" unless="http.proxyHost">
+    <echo>Property http.proxyHost not set, using no proxy</echo> 
+  </target>
+   
   <!-- ================================================================== -->
   <!-- U S A G E                                                          -->
   <!-- ================================================================== -->

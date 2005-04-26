@@ -3,3 +3,4 @@ test-reports
 *~
 maven.log
 build.properties
+lib

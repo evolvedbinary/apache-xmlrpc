@@ -24,11 +24,11 @@
 		<attributes>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-codec-1.2.jar">
+	<classpathentry kind="lib" path="lib/servletapi-2.2.jar">
 		<attributes>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/servletapi-2.2.jar">
+	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar">
 		<attributes>
 		</attributes>
 	</classpathentry>
