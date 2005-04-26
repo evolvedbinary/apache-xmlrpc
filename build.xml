@@ -59,8 +59,6 @@
     </get>
     <get dest="${lib.repo}/servletapi-2.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/servletapi/jars/servletapi-2.2.jar">
     </get>
-    <get dest="${lib.repo}/fesi-1.1.5.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/fesi/jars/fesi-1.1.5.jar">
-    </get>
     <get dest="${lib.repo}/junit-3.8.1.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/junit/jars/junit-3.8.1.jar">
     </get>
   </target>
