@@ -71,7 +71,7 @@ public class XmlWriterTest
         {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             XmlWriter writer = new XmlWriter(buffer, XmlWriter.ISO8859_1);
-            assertEquals(XmlRpc.encoding, writer.getEncoding());
+            assertTrue(writer.getEncoding().equals(XmlRpc.encoding));
             String foobar = "foobar";
             writer.writeObject(foobar);
             writer.flush();
