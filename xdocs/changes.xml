@@ -16,6 +16,9 @@
       <action dev="hgomez" type="update">
         Upgrading to Apache Licence 2.0
       </action>    
+      <action dev="hgomez" type="update">
+        CommonsXmlRpcTransport support gzip compression for request and reply 
+      </action>    
       <action dev="sgoeschl" type="update">
         Rewrote the xdocs/changes.xml to be used with the Maven build        
       </action>    
