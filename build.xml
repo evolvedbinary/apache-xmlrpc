@@ -3,7 +3,7 @@
 <project name="xmlrpc" default="jar" basedir=".">
 
   <!-- Properties which are not allowed to be overridden -->
-  <property name="version" value="2.0-a1-dev"/>
+  <property name="version" value="2.0-beta"/>
 
   <!-- Allow any locally-specified values to override the defaults -->
   <property file="build.properties" />
@@ -13,6 +13,12 @@
 
   <!-- Set default values for the build -->
   <property file="default.properties" />
+
+  <!-- Source version -->
+  <property name="source.version" value="1.2"/>
+
+  <!-- Target version -->
+  <property name="target.version" value="1.1"/>
 
   <!-- Construct compile classpath -->
   <path id="classpath">
@@ -187,6 +193,8 @@
       debug="${debug}"
       deprecation="${deprecation}"
       optimize="${optimize}"
+      source="${source.version}"
+      target="${target.version}"   
     >
       <classpath refid="classpath"/>
 
@@ -491,6 +499,14 @@
       </zipfileset>
     </zip>
 
+    <checksum algorithm="MD5" fileext=".md5">
+        <fileset dir=".">
+            <include name="${final.name}.tar.gz"/>   
+            <include name="${final.name}-src.tar.gz"/>   
+            <include name="${final.name}.zip"/>
+            <include name="${final.name}-src.zip"/>   
+        </fileset>
+    </checksum>
   </target>
 
 </project>

@@ -4,7 +4,7 @@
   <pomVersion>3</pomVersion>
   <name>xmlrpc</name>
   <id>xmlrpc</id>
-  <currentVersion>2.0-a1-dev</currentVersion>
+  <currentVersion>2.0-beta</currentVersion>
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://ws.apache.org/</url>
@@ -83,12 +83,6 @@
       <id>hannes</id>
       <email>hannes@apache.org</email>
       <organization></organization>
-    </developer>
-    <developer>
-      <name>Martin Poeschl</name>
-      <id>mpoeschl</id>
-      <email>mpoeschl@marmot.at</email>
-      <organization>Tucana.at</organization>
     </developer>
     <developer>
       <name>Daniel Rall</name>
