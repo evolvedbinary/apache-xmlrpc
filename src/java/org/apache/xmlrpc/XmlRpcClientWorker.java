@@ -36,7 +36,7 @@ public class XmlRpcClientWorker
      * Used as an internal marker value in {@link
      * #execute(XmlRpcClientRequest, XmlRpcTransport)}.
      */
-    private static final Object PROCESSING_ERROR = new Object();
+    private static final Object PROCESSING_ERROR_FLAG = new Object();
 
     public XmlRpcClientWorker()
     {
@@ -57,7 +57,7 @@ public class XmlRpcClientWorker
         throws XmlRpcException, XmlRpcClientException, IOException
     {
         long now = 0;
-        Object response = PROCESSING_ERROR;
+        Object response = PROCESSING_ERROR_FLAG;
 
         if (XmlRpc.debug)
         {
@@ -93,7 +93,7 @@ public class XmlRpcClientWorker
         {
             if (XmlRpc.debug)
             {
-                System.err.println("Spent " + (System.currentTimeMillis() - now)
+                System.out.println("Spent " + (System.currentTimeMillis() - now)
                                    + " millis in request/process/response");
             }
 
@@ -107,7 +107,7 @@ public class XmlRpcClientWorker
             {
                 // Don't clobber an earlier exception.
                 boolean haveFault = response instanceof XmlRpcException;
-                if (haveFault || response == PROCESSING_ERROR)
+                if (haveFault || response == PROCESSING_ERROR_FLAG)
                 {
                     System.err.println("Avoiding obscuring previous error " +
                                        "by supressing error encountered " +
