@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
  * @version $Id$
- * @since 1.2
+ * @since 2.0
  */
 public class XmlRpcClientResponseProcessor extends XmlRpc
 {
@@ -42,16 +42,15 @@ public class XmlRpcClientResponseProcessor extends XmlRpc
     protected boolean fault;
 
     /**
-     * Decode an XML-RPC response from the specified InputStream. This
-     * method will parse the input and return an Object. The result
-     * will be an XmlRpcException if the server returned a fault, or
-     * an Object if the server returned a result.
+     * Decode an XML-RPC response from the specified InputStream.
      *
-     * @param is the stream to read from.
-     * @return Object an XmlRpcException if an error occured, or the response.
+     * @param is The stream from which to read the response.
+     * @return The response, which will be a XmlRpcException if an
+     * error occured.
+     * @exception XmlRpcClientException
      */
     public Object decodeResponse(InputStream is)
-    throws XmlRpcClientException
+        throws XmlRpcClientException
     {
         result = null;
         fault = false;
@@ -80,12 +79,13 @@ public class XmlRpcClientResponseProcessor extends XmlRpc
      * it throws an exception then an exception occured locally when decoding
      * the response
      *
-     * @param result the result from the remote XML-RPC server.
-     * @throws XmlRpcClientException if the result could not be processed.
+     * @param result The response from the remote XML-RPC server.
+     * @return A XmlRpcException describing the error which occurred.
+     * @exception XmlRpcClientException if the result could not be processed.
      * @return XmlRpcException the processed response from the server.
      */
     protected XmlRpcException decodeException(Object result)
-    throws XmlRpcClientException
+        throws XmlRpcClientException
     {
         Hashtable exceptionData;
         

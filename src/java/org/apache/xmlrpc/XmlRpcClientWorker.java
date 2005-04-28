@@ -25,12 +25,18 @@ import java.io.IOException;
  * a request serially in a single thread.
  *
  * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @since 1.2
+ * @since 2.0
  */
 public class XmlRpcClientWorker
 {
     protected XmlRpcClientRequestProcessor requestProcessor;
     protected XmlRpcClientResponseProcessor responseProcessor;
+
+    /**
+     * Used as an internal marker value in {@link
+     * #execute(XmlRpcClientRequest, XmlRpcTransport)}.
+     */
+    private static final Object PROCESSING_ERROR = new Object();
 
     public XmlRpcClientWorker()
     {
@@ -46,33 +52,25 @@ public class XmlRpcClientWorker
         this.responseProcessor = responseProcessor;
     }
 
-    public Object execute(XmlRpcClientRequest xmlRpcRequest, XmlRpcTransport transport)
-    throws XmlRpcException, XmlRpcClientException, IOException
+    public Object execute(XmlRpcClientRequest xmlRpcRequest,
+                          XmlRpcTransport transport)
+        throws XmlRpcException, XmlRpcClientException, IOException
     {
         long now = 0;
-	Object response;
+        Object response = PROCESSING_ERROR;
 
         if (XmlRpc.debug)
         {
             now = System.currentTimeMillis();
         }
 
-		boolean endClientDone = false;
         try
         {
-            byte [] request = requestProcessor.encodeRequestBytes(xmlRpcRequest, responseProcessor.getEncoding());
+            byte[] request = requestProcessor.encodeRequestBytes
+                (xmlRpcRequest, responseProcessor.getEncoding());
             InputStream is  = transport.sendXmlRpc(request);
             response = responseProcessor.decodeResponse(is);
-            if (response instanceof XmlRpcException)
-            {
-              throw (XmlRpcException) response;
-            }
-            else
-            {
-		      endClientDone = true;
-			  transport.endClientRequest();
-              return response;
-            }
+            return response;
         }
         catch (IOException ioe)
         {
@@ -82,35 +80,57 @@ public class XmlRpcClientWorker
         {
             throw xrce;
         }
-        catch (XmlRpcException xre)
-        {
-            throw xre;
-        }
-        catch (Exception x)
+        catch (RuntimeException x)
         {
             if (XmlRpc.debug)
             {
                 x.printStackTrace();
             }
-            throw new XmlRpcClientException("Unexpected exception in client processing.", x);
+            throw new XmlRpcClientException
+                ("Unexpected exception in client processing", x);
         }
         finally
         {
             if (XmlRpc.debug)
             {
-                System.out.println("Spent " + (System.currentTimeMillis() - now)
+                System.err.println("Spent " + (System.currentTimeMillis() - now)
                                    + " millis in request/process/response");
             }
-			if (!endClientDone)
-			{
-				try
-	            {
-	                transport.endClientRequest();
-	            }
-	            catch (Throwable ignore)
-	            {
-	            }
-			}
+
+            // End the transport's session, handling any problem while
+            // avoiding hiding of any earlier exception.
+            try
+            {
+                transport.endClientRequest();
+            }
+            catch (Throwable t)
+            {
+                // Don't clobber an earlier exception.
+                boolean haveFault = response instanceof XmlRpcException;
+                if (haveFault || response == PROCESSING_ERROR)
+                {
+                    System.err.println("Avoiding obscuring previous error " +
+                                       "by supressing error encountered " +
+                                       "while ending request: " + t);
+                    if (haveFault)
+                    {
+                        throw (XmlRpcException) response;
+                    }
+                    // else we've already thrown an exception
+                }
+                else
+                {
+                    if (t instanceof XmlRpcException)
+                    {
+                        throw (XmlRpcException) t;
+                    }
+                    else
+                    {
+                        throw new XmlRpcClientException
+                            ("Unable to end request", t);
+                    }
+                }
+            }
         }
     }
 
@@ -119,8 +139,9 @@ public class XmlRpcClientWorker
      * re-used. Must attempt to clean up any state, and return true if it can
      * be re-used.
      *
-     * @return boolean true if this worker has been cleaned up and may be re-used.
+     * @return Whether this worker has been cleaned up and may be re-used.
      */
+    // ### isReusable() would be a better name for this set of methods
     protected boolean canReUse()
     {
         return responseProcessor.canReUse() && requestProcessor.canReUse();
