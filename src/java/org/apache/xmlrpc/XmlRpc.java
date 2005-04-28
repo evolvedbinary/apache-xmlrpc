@@ -310,7 +310,7 @@ public abstract class XmlRpc extends HandlerBase
      *
      * @see org.apache.xmlrpc.XmlWriter#canonicalizeEncoding(String)
      */
-    public String getEncoding ()
+    public String getEncoding()
     {
         return XmlWriter.canonicalizeEncoding(encoding);
     }
@@ -333,7 +333,7 @@ public abstract class XmlRpc extends HandlerBase
      * @return the Java encoding name to use, if set, otherwise null.
      * @see #getInputEncoding()
      */
-    public static String getDefaultInputEncoding ()
+    public static String getDefaultInputEncoding()
     {
         return defaultInputEncoding;
     }
@@ -410,7 +410,7 @@ public abstract class XmlRpc extends HandlerBase
         // reset values (XmlRpc objects are reusable)
         errorLevel = NONE;
         errorMsg = null;
-        values = new Stack ();
+        values = new Stack();
         if (cdata == null)
         {
             cdata = new StringBuffer(128);
@@ -462,7 +462,7 @@ public abstract class XmlRpc extends HandlerBase
         {
             if(inputEncoding == null)
             {         
-              parser.parse(new InputSource (is));
+              parser.parse(new InputSource(is));
             }
             else
             {
@@ -533,7 +533,7 @@ public abstract class XmlRpc extends HandlerBase
             // Only handle top level objects or objects contained in
             // arrays here.  For objects contained in structs, wait
             // for </member> (see code below).
-            int depth = values.size ();
+            int depth = values.size();
             if (depth < 2 || values.elementAt(depth - 2).hashCode() != STRUCT)
             {
                 Value v = currentValue;
@@ -718,10 +718,10 @@ public abstract class XmlRpc extends HandlerBase
             switch (type)
             {
                 case ARRAY:
-                    value = array = new Vector ();
+                    value = array = new Vector();
                     break;
                 case STRUCT:
-                    value = struct = new Hashtable ();
+                    value = struct = new Hashtable();
                     break;
             }
         }
