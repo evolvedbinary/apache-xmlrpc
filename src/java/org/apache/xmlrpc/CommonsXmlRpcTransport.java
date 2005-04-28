@@ -178,10 +178,14 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport
         client.getState().setCredentials(null, null, creds);
     }
 
+    /**
+     * Releases connection resources.
+     *
+     * @exception XmlRpcClientException
+     */
     public void endClientRequest()
-    throws XmlRpcClientException
+        throws XmlRpcClientException
     {
-        // Rlease connection resources
         method.releaseConnection();
     }
 }
