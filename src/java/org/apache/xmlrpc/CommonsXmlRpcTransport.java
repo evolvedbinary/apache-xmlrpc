@@ -42,7 +42,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
  *
  * @author <a href="mailto:rhoegg@isisnetworks.net">Ryan Hoegg</a>
  * @version $Id$
- * @since 1.2
+ * @since 2.0
  */
 public class CommonsXmlRpcTransport implements XmlRpcTransport 
 {
