@@ -57,6 +57,11 @@
       <name>1.2</name>
       <tag>XMLRPC_1_2_BRANCH</tag>
     </version>
+    <version>
+      <id>2.0-beta</id>
+      <name>2.0-beta</name>
+      <tag>v2_0beta</tag>
+    </version>    
   </versions>
 
   <branches>
