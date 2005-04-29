@@ -256,6 +256,10 @@
     <delete file="${final.name}.zip"/>
     <delete file="${final.name}-src.tar.gz"/>
     <delete file="${final.name}-src.zip"/>
+    <delete file="${final.name}.tar.gz.md5"/>
+    <delete file="${final.name}.zip.md5"/>
+    <delete file="${final.name}-src.tar.gz.md5"/>
+    <delete file="${final.name}-src.zip.md5"/>
     <delete dir="${build.dir}"/>
     <delete dir="${test.reportsDirectory}"/>
     <delete dir="${docs.dest}"/>
