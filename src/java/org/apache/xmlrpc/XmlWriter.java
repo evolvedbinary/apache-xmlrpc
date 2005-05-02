@@ -312,6 +312,11 @@ class XmlWriter extends OutputStreamWriter
         throws XmlRpcException, IOException
     {
         int l = text.length ();
+        String enc = super.getEncoding();
+        boolean isUnicode = UTF8.equals(enc) || "UTF-16".equals(enc);
+        // ### TODO: Use a buffer rather than going character by
+        // ### character to scale better for large text sizes.
+        //char[] buf = new char[32];
         for (int i = 0; i < l; i++)
         {
             char c = text.charAt (i);
@@ -332,16 +337,38 @@ class XmlWriter extends OutputStreamWriter
                 write(AMPERSAND_ENTITY);
                 break;
             default:
-                if (c < 0x20 || c > 0xff)
+                if (c < 0x20 || c > 0x7f)
                 {
                     // Though the XML-RPC spec allows any ASCII
                     // characters except '<' and '&', the XML spec
                     // does not allow this range of characters,
                     // resulting in a parse error from most XML
-                    // parsers.
-                    throw new XmlRpcException(0, "Invalid character data " +
-                                              "corresponding to XML entity &#" +
-                                              String.valueOf((int) c) + ';');
+                    // parsers.  However, the XML spec does require
+                    // XML parsers to support UTF-8 and UTF-16.
+                    if (isUnicode)
+                    {
+                        if (c < 0x20)
+                        {
+                            // Entity escape the character.
+                            write("&#");
+                            // ### Do we really need the String conversion?
+                            write(String.valueOf((int) c));
+                            write(';');
+                        }
+                        else // c > 0x7f
+                        {
+                            // Write the character in our encoding.
+                            write(new String(String.valueOf(c).getBytes(enc)));
+                        }
+                    }
+                    else
+                    {
+                        throw new XmlRpcException(0, "Invalid character data "
+                                                  + "corresponding to XML "
+                                                  + "entity &#"
+                                                  + String.valueOf((int) c)
+                                                  + ';');
+                    }
                 }
                 else
                 {
