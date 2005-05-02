@@ -40,8 +40,9 @@ public class XmlRpcClientRequestProcessor
      * @param encoding the Java name for the encoding to use.
      * @return byte [] the encoded request.
      */
-    public void encodeRequest(XmlRpcClientRequest request, String encoding, OutputStream out)
-    throws XmlRpcClientException, IOException
+    public void encodeRequest(XmlRpcClientRequest request, String encoding,
+                              OutputStream out)
+        throws XmlRpcClientException, IOException
     {
         XmlWriter writer;
 
@@ -57,7 +58,14 @@ public class XmlRpcClientRequestProcessor
         for (int i = 0; i < l; i++)
         {
             writer.startElement("param");
-            writer.writeObject(request.getParameter(i));
+            try
+            {
+                writer.writeObject(request.getParameter(i));
+            }
+            catch (XmlRpcException e)
+            {
+                throw new XmlRpcClientException("Failure writing request", e);
+            }
             writer.endElement("param");
         }
         writer.endElement("params");

@@ -29,11 +29,6 @@ package org.apache.xmlrpc;
 public class XmlRpcClientException extends XmlRpcException
 {
     /**
-     * The underlying cause of this exception.
-     */
-    public Throwable cause;
-
-    /**
      * Create an XmlRpcClientException with the given message and
      * underlying cause exception.
      *
@@ -42,25 +37,6 @@ public class XmlRpcClientException extends XmlRpcException
      */
     public XmlRpcClientException(String message, Throwable cause)
     {
-        super(0, message);
-        this.cause = cause;
-    }
-
-    /**
-     * Returns the cause of this throwable or null if the cause is nonexistent
-     * or unknown. (The cause is the throwable that caused this throwable to
-     * get thrown.)
-     * 
-     * This implementation returns the cause that was supplied via the constructor,
-     * according to the rules specified for a "legacy chained throwable" that
-     * predates the addition of chained exceptions to Throwable.
-     *
-     * See the <a
-     * href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/Throwable.html">JDK
-     * 1.4 Throwable documentation</a> for more information.
-     */
-    public Throwable getCause()
-    {
-        return cause;
+        super(0, message, cause);
     }
 }

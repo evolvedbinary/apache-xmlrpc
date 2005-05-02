@@ -133,13 +133,13 @@ class XmlWriter extends OutputStreamWriter
      * href="http://xml-rpc.com/spec">XML-RPC specification</a>).
      */
     public void writeObject(Object obj)
-        throws XmlRpcClientException, IOException
+        throws XmlRpcException, IOException
     {
         startElement("value");
         if (obj == null)
         {
-            throw new XmlRpcClientException
-                ("null values not supported by XML-RPC", null);
+            throw new XmlRpcException
+                (0, "null values not supported by XML-RPC");
         }
         else if (obj instanceof String)
         {
@@ -179,8 +179,8 @@ class XmlWriter extends OutputStreamWriter
             }
             catch (EncoderException e)
             {
-                throw new XmlRpcClientException
-                    ("Unable to Base 64 encode byte array", e);
+                throw new XmlRpcException
+                    (0, "Unable to Base 64 encode byte array", e);
             }
             endElement("base64");
         }
@@ -228,7 +228,7 @@ class XmlWriter extends OutputStreamWriter
         }
         else
         {
-            throw new XmlRpcClientException("unsupported Java type: "
+            throw new XmlRpcException(0, "Unsupported Java type: "
                                        + obj.getClass(), null);
         }
         endElement("value");
@@ -285,13 +285,18 @@ class XmlWriter extends OutputStreamWriter
      * Writes text as <code>PCDATA</code>.
      *
      * @param text The data to write.
-     * @exception XmlRpcClientException Unsupported character data found.
+     * @exception XmlRpcException Unsupported character data found.
      * @exception IOException Problem writing data.
      */
     protected void chardata(String text)
-        throws XmlRpcClientException, IOException
+        throws XmlRpcException, IOException
     {
         int l = text.length ();
+        String enc = super.getEncoding();
+        boolean isUnicode = UTF8.equals(enc) || "UTF-16".equals(enc);
+        // ### TODO: Use a buffer rather than going character by
+        // ### character to scale better for large text sizes.
+        //char[] buf = new char[32];
         for (int i = 0; i < l; i++)
         {
             char c = text.charAt (i);
@@ -312,16 +317,38 @@ class XmlWriter extends OutputStreamWriter
                 write(AMPERSAND_ENTITY);
                 break;
             default:
-                if (c < 0x20 || c > 0xff)
+                if (c < 0x20 || c > 0x7f)
                 {
                     // Though the XML-RPC spec allows any ASCII
                     // characters except '<' and '&', the XML spec
                     // does not allow this range of characters,
                     // resulting in a parse error from most XML
-                    // parsers.
-                    throw new XmlRpcClientException("Invalid character data " +
-                                              "corresponding to XML entity &#" +
-                                              String.valueOf((int) c) + ';', null);
+                    // parsers.  However, the XML spec does require
+                    // XML parsers to support UTF-8 and UTF-16.
+                    if (isUnicode)
+                    {
+                        if (c < 0x20)
+                        {
+                            // Entity escape the character.
+                            write("&#");
+                            // ### Do we really need the String conversion?
+                            write(String.valueOf((int) c));
+                            write(';');
+                        }
+                        else // c > 0x7f
+                        {
+                            // Write the character in our encoding.
+                            write(new String(String.valueOf(c).getBytes(enc)));
+                        }
+                    }
+                    else
+                    {
+                        throw new XmlRpcException(0, "Invalid character data "
+                                                  + "corresponding to XML "
+                                                  + "entity &#"
+                                                  + String.valueOf((int) c)
+                                                  + ';');
+                    }
                 }
                 else
                 {
