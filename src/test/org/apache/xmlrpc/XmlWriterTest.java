@@ -90,20 +90,20 @@ public class XmlWriterTest
             Object[] array = { foobar, thirtySeven };
             writer.writeObject(array);
             writer.flush();
-            postProlog += "<array><data>";
+            postProlog += "<value><array><data>";
             postProlog += "<value>" + foobar + "</value>";
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
-            postProlog += "</data></array>";
+            postProlog += "</data></array></value>";
             assertTrue(buffer.toString().endsWith(postProlog));
 
             Hashtable map = new Hashtable();
             map.put(foobar, thirtySeven);
             writer.writeObject(map);
             writer.flush();
-            postProlog += "<struct><member>";
+            postProlog += "<value><struct><member>";
             postProlog += "<name>" + foobar + "</name>";
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
-            postProlog += "</member></struct>";
+            postProlog += "</member></struct></value>";
             assertTrue(buffer.toString().endsWith(postProlog));
         }
         catch (Exception e)
