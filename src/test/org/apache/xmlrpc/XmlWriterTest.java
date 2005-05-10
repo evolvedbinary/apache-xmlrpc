@@ -81,7 +81,7 @@ public class XmlWriterTest
             String postProlog = "<value>" + foobar + "</value>";
             assertTrue(buffer.toString().endsWith(postProlog));
 
-            Integer thirtySeven = new Integer(37);;
+            Integer thirtySeven = new Integer(37);
             writer.writeObject(thirtySeven);
             writer.flush();
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
