@@ -18,6 +18,7 @@
 package org.apache.xmlrpc;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Hashtable;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -72,16 +73,37 @@ public class XmlWriterTest
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             XmlWriter writer = new XmlWriter(buffer, XmlWriter.ISO8859_1);
             assertTrue(writer.getEncoding().equals(XmlRpc.encoding));
+
             String foobar = "foobar";
             writer.writeObject(foobar);
             writer.flush();
             //System.err.println("buffer=" + new String(buffer.toByteArray()));
             String postProlog = "<value>" + foobar + "</value>";
             assertTrue(buffer.toString().endsWith(postProlog));
-            int thirtySeven = 37;
-            writer.writeObject(new Integer(37));
+
+            Integer thirtySeven = new Integer(37);;
+            writer.writeObject(thirtySeven);
             writer.flush();
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
+            assertTrue(buffer.toString().endsWith(postProlog));
+
+            Object[] array = { foobar, thirtySeven };
+            writer.writeObject(array);
+            writer.flush();
+            postProlog += "<array><data>";
+            postProlog += "<value>" + foobar + "</value>";
+            postProlog += "<value><int>" + thirtySeven + "</int></value>";
+            postProlog += "</data></array>";
+            assertTrue(buffer.toString().endsWith(postProlog));
+
+            Hashtable map = new Hashtable();
+            map.put(foobar, thirtySeven);
+            writer.writeObject(map);
+            writer.flush();
+            postProlog += "<struct><member>";
+            postProlog += "<name>" + foobar + "</name>";
+            postProlog += "<value><int>" + thirtySeven + "</int></value>";
+            postProlog += "</member></struct>";
             assertTrue(buffer.toString().endsWith(postProlog));
         }
         catch (Exception e)
