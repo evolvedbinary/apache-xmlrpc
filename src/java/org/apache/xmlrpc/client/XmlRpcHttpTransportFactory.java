@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.client;
 
 
 
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+
+/** Default implementation of a HTTP transport factory, based on the
+ * {@link java.net.HttpURLConnection} class.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class XmlRpcHttpTransportFactory extends XmlRpcTransportFactoryImpl {
+	private final XmlRpcHttpTransport HTTP_TRANSPORT;
+
+	/** Creates a new factory, which creates transports for the given client.
+	 * @param pClient The client, which is operating the factory.
+	 */
+	public XmlRpcHttpTransportFactory(XmlRpcClient pClient) {
+		super(pClient);
+		HTTP_TRANSPORT = new XmlRpcHttpTransport(getClient(), this);
+	 }
+
+	public XmlRpcTransport getTransport() { return HTTP_TRANSPORT; }
 }

@@ -1,0 +1,74 @@
+/*
+ * Copyright 1999,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.xmlrpc.common;
+
+import org.apache.xmlrpc.XmlRpcConfigImpl;
+
+
+/** Default implementation of a request configuration.
+ */
+public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
+		XmlRpcHttpRequestConfig {
+	private boolean gzipCompressing;
+	private boolean gzipRequesting;
+	private String basicUserName;
+	private String basicPassword;
+	/** Sets, whether gzip compression is being used for
+	 * transmitting the request.
+	 * @param pCompressing True for enabling gzip compression,
+	 * false otherwise.
+	 * @see #setGzipRequesting(boolean)
+	 */
+	public void setGzipCompressing(boolean pCompressing) {
+		gzipCompressing = pCompressing;
+	}
+
+	public boolean isGzipCompressing() {
+		return gzipCompressing;
+	}
+
+	/** Sets, whether gzip compression is requested for the
+	 * response.
+	 * @param pRequesting True for requesting gzip compression,
+	 * false otherwise.
+	 * @see #setGzipCompressing(boolean)
+	 */
+	public void setGzipRequesting(boolean pRequesting) {
+		gzipRequesting = pRequesting;
+	}
+
+	public boolean isGzipRequesting() {
+		return gzipRequesting;
+	}
+
+	/** Sets the user name for basic authentication.
+	 * @param pUser The user name.
+	 */
+	public void setBasicUserName(String pUser) {
+		basicUserName = pUser;
+	}
+
+	public String getBasicUserName() { return basicUserName; }
+
+	/** Sets the password for basic authentication.
+	 * @param pPassword The password.
+	 */
+	public void setBasicPassword(String pPassword) {
+		basicPassword = pPassword;
+	}
+
+	public String getBasicPassword() { return basicPassword; }
+}

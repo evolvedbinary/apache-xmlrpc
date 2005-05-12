@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.test;
+
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcLocalStreamTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Implementation of {@link org.apache.xmlrpc.test.BaseTestCase}
+ * for testing the {@link org.apache.xmlrpc.client.XmlRpcLocalStreamTransport}.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class LocalStreamTransportTest extends LocalTransportTest {
+	protected XmlRpcTransportFactory getTransportFactory(XmlRpcClient pClient) {
+		XmlRpcLocalStreamTransportFactory factory = new XmlRpcLocalStreamTransportFactory(pClient);
+		return factory;
+	}
 }

@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.serializer;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** A <code>TypeSerializer</code> is able to write a parameter
+ * or result object to the XML RPC request or response.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface TypeSerializer {
+	/** Writes the object <code>pObject</code> to the SAX handler
+	 * <code>pHandler</code>.
+	 * @param pHandler The destination handler.
+	 * @param pObject The object being written.
+	 * @throws SAXException Writing the object failed.
+	 */
+	void write(ContentHandler pHandler, Object pObject) throws SAXException;
 }

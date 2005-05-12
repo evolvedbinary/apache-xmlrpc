@@ -13,54 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.apache.xmlrpc.util;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.EncoderException;
+import java.io.UnsupportedEncodingException;
+import java.util.StringTokenizer;
 
-/**
- * Provides utility functions useful in HTTP communications
- *
- * @author <a href="mailto:rhoegg@isisnetworks.net">Ryan Hoegg</a>
+import org.apache.xmlrpc.common.XmlRpcStreamConfig;
+
+
+/** Provides utility functions useful in HTTP communications
  */
-public class HttpUtil
-{
-    private static final Base64 base64;
-    
-    static {
-        base64 = new Base64();
-    }
-    
-    private HttpUtil()
-    {
-        // private because currently we only offer static methods.
-    }
-    
-    public static String encodeBasicAuthentication(String user, String password)
-    {
-        String auth;
-        if (user == null || password == null)
-        {
-            auth = null;
+public class HttpUtil {
+	/** Creates the Base64 encoded credentials for HTTP Basic Authentication.
+	 * @param pUser User name, or null, if no Basic Authentication is being used.
+	 * @param pPassword Users password, or null, if no Basic Authentication is being used.
+	 * @param pEncoding Encoding being used for conversion of the credential string into a byte array.
+	 * @return Base64 encoded credentials, for use in the HTTP header 
+	 * @throws UnsupportedEncodingException The encoding <code>pEncoding</code> is invalid.
+	 */
+	public static String encodeBasicAuthentication(String pUser, String pPassword, String pEncoding) throws UnsupportedEncodingException {
+        if (pUser == null) {
+			return null;
         }
-        else
-        {
-            try
-            {
-                Object bytes = (user + ':' + password).getBytes();
-                auth = new String((byte[]) base64.encode(bytes)).trim();
+		String s = pUser + ':' + pPassword;
+		if (pEncoding == null) {
+			pEncoding = XmlRpcStreamConfig.DEFAULT_ENCODING;
+		}
+		return new String(Base64.encode(s.getBytes(pEncoding)));
+    }
+
+	/** Returns, whether the HTTP header value <code>pHeaderValue</code>
+	 * indicates, that GZIP encoding is used or may be used.
+	 * @param pHeaderValue The HTTP header value being parser. This is typically
+	 * the value of "Content-Encoding", or "Accept-Encoding".
+	 * @return True, if the header value suggests that GZIP encoding is or may
+	 * be used.
+	 */
+	public static boolean isUsingGzipEncoding(String pHeaderValue) {
+		if (pHeaderValue == null) {
+			return false;
+        }
+        for (StringTokenizer st = new StringTokenizer(pHeaderValue, ",");  st.hasMoreTokens();  ) {
+            String encoding = st.nextToken();
+            int offset = encoding.indexOf(';');
+            if (offset >= 0) {
+                encoding = encoding.substring(0, offset);
             }
-            catch (EncoderException e)
-            {
-                // EncoderException is never thrown in the body of
-                // Base64.encode(byte[]) in Commons Codec 1.1.
-                throw new RuntimeException("Possibly incompatible version of '"
-                                           + Base64.class.getName() +
-                                           "' used: " + e);
+            if ("gzip".equalsIgnoreCase(encoding.trim())) {
+            	return true;
             }
         }
-        return auth;
+        return false;
     }
 }

@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.client;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Abstract base implementation of an {@link org.apache.xmlrpc.client.XmlRpcTransport}.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public abstract class XmlRpcTransportImpl implements XmlRpcTransport {
+	private final XmlRpcClient client;
+
+	/** Creates a new instance.
+	 * @param pClient The client, which creates the transport.
+	 */
+	protected XmlRpcTransportImpl(XmlRpcClient pClient) {
+		client = pClient;
+	}
+
+	/** Returns the client, which created this transport.
+	 * @return The client.
+	 */
+	public XmlRpcClient getClient() { return client; }
 }

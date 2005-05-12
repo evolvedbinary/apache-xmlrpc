@@ -16,15 +16,16 @@
 package org.apache.xmlrpc;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** This exception is thrown, if the clients or servers maximum
+ * number of concurrent threads is exceeded.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class XmlRpcLoadException extends XmlRpcException {
+	private static final long serialVersionUID = 4050760511635272755L;
+
+	/** Creates a new instance.
+	 * @param pMessage Error description.
+	 */
+	public XmlRpcLoadException(String pMessage) {
+		super(0, pMessage, null);
+	}
 }

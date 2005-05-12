@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.serializer;
 
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** A {@link TypeSerializer} for floats.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class FloatSerializer extends TypeSerializerImpl {
+	/** Tag name of a float value.
+	 */
+	public static final String FLOAT_TAG = "float";
+
+	/** Fully qualified name of a float value.
+	 */
+	public static final String EX_FLOAT_TAG = "ex:float";
+
+	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
+		write(pHandler, FLOAT_TAG, EX_FLOAT_TAG, pObject.toString());
+	}
 }

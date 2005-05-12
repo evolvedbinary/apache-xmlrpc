@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.client;
+
+import java.net.URL;
+
+import org.apache.xmlrpc.common.XmlRpcHttpRequestConfig;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Extension of {@link org.apache.xmlrpc.client.XmlRpcClientConfig}
+ * for HTTP based transport. Provides details like server URL,
+ * user credentials, and so on.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface XmlRpcHttpClientConfig extends XmlRpcHttpRequestConfig {
+	/** Returns the HTTP servers URL.
+	 * @return XML-RPC servers URL; for example, this may be the URL of a
+	 * servlet
+	 */
+	URL getServerURL();
 }

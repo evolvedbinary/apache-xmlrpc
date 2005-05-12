@@ -16,15 +16,11 @@
 package org.apache.xmlrpc;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Interface of a request configuration. Depending on
+ * the transport, implementations will also implement
+ * additional interfaces like
+ * {@link org.apache.xmlrpc.common.XmlRpcStreamRequestConfig}.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface XmlRpcRequestConfig extends XmlRpcConfig {
+
 }

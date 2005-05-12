@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.server;
 
+import org.apache.xmlrpc.common.XmlRpcHttpConfig;
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** HTTP servers configuration.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface XmlRpcHttpServerConfig extends XmlRpcServerConfig, XmlRpcHttpConfig {
+	/** Returns, whether HTTP keepalive is being enabled.
+	 * @return True, if keepalive is enabled, false otherwise.
+	 */
+	boolean isKeepAliveEnabled();
 }

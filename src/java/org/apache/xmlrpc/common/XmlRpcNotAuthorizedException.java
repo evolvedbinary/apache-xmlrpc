@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.common;
+
+import org.apache.xmlrpc.XmlRpcException;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** This exception must be thrown, if the user isn't authenticated.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class XmlRpcNotAuthorizedException extends XmlRpcException {
+	private static final long serialVersionUID = 3258410629709574201L;
+
+	/** Creates a new instance with the given error message.
+	 * @param pMessage The error message.
+	 */
+	public XmlRpcNotAuthorizedException(String pMessage) {
+		super(0, pMessage);
+	}
 }

@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.server;
+
+import org.apache.xmlrpc.common.XmlRpcWorker;
+import org.apache.xmlrpc.common.XmlRpcWorkerFactory;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Server specific worker factory.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class XmlRpcServerWorkerFactory extends XmlRpcWorkerFactory {
+	/** Creates a new factory with the given controller.
+	 * @param pServer The factory controller.
+	 */
+	public XmlRpcServerWorkerFactory(XmlRpcServer pServer) {
+		super(pServer);
+	}
+
+	protected XmlRpcWorker newWorker() {
+		return new XmlRpcServerWorker(this);
+	}
 }

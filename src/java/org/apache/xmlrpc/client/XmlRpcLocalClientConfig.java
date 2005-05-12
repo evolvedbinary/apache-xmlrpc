@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.client;
+
+import org.apache.xmlrpc.server.XmlRpcServer;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Interface of a client configuration for local rpc calls. Local
+ * rpc calls are mainly useful for testing, because you don't need
+ * a running server.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface XmlRpcLocalClientConfig extends XmlRpcClientConfig {
+	/** Returns the {@link org.apache.xmlrpc.server.XmlRpcServer} being invoked.
+	 * @return Server object being invoked. This will typically
+	 * be a singleton instance, but could as well create a new
+	 * instance with any call.
+	 */
+	XmlRpcServer getXmlRpcServer();
 }

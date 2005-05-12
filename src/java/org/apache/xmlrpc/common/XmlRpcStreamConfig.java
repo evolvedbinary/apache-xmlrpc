@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.common;
+
+import org.apache.xmlrpc.XmlRpcConfig;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Interface of a configuration for a stream based transport.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface XmlRpcStreamConfig extends XmlRpcConfig {
+	/** Default encoding (UTF-8).
+	 */
+	public static final String DEFAULT_ENCODING = "UTF8";
+
+	/** Returns the encoding being used for data encoding, when writing
+	 * to a stream.
+	 * @return Suggested encoding, or null, if the {@link #DEFAULT_ENCODING}
+	 * is being used.
+	 */
+	String getEncoding();
 }

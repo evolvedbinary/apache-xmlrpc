@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.serializer;
 
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** A {@link TypeSerializer} for integers.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class I4Serializer extends TypeSerializerImpl {
+	/** Tag name of an i4 value.
+	 */
+	public static final String I4_TAG = "int";
+
+	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
+		write(pHandler, I4_TAG, pObject.toString());
+	}
 }

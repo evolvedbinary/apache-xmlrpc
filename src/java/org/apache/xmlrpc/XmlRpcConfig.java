@@ -16,15 +16,18 @@
 package org.apache.xmlrpc;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** A common base interface for
+ * {@link org.apache.xmlrpc.client.XmlRpcClientConfig}, and
+ * {@link org.apache.xmlrpc.server.XmlRpcServerConfig}.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface XmlRpcConfig {
+	/** Returns, whether support for extensions are enabled.
+	 * By default, extensions are disabled and your client is
+	 * interoperable with other XML-RPC implementations.
+	 * Interoperable XML-RPC implementations are those, which
+	 * are compliant to the
+	 * <a href="http://www.xmlrpc.org/spec">XML-RPC Specification</a>.
+	 * @return Whether extensions are enabled or not.
+	 */
+	boolean isEnabledForExtensions();
 }

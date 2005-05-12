@@ -13,18 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.parser;
+
+import java.text.ParseException;
+
+import org.apache.ws.commons.util.XsDateTimeFormat;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Parser for integer values.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class DateParser extends AtomicParser {
+	private static final XsDateTimeFormat f = new XsDateTimeFormat();
+
+	protected void setResult(String pResult) throws SAXException {
+		try {
+			super.setResult(f.parseObject(pResult.trim()));
+		} catch (ParseException e) {
+			throw new SAXParseException("Failed to parse integer value: " + pResult,
+										getDocumentLocator());
+		}
+	}
 }

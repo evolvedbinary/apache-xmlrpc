@@ -13,48 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.apache.xmlrpc;
 
-import java.util.Vector;
 
-/**
- * Default implementation of an XML-RPC request for both client and server.
- *
- * @author <a href="mailto:andrew@kungfoocoder.org">Andrew Evers</a>
- * @version $Id$
- * @since 1.2
+/** Interface to an XML-RPC request made by a client. Replaces the
+ * class <code>org.apache.xmlrpc.XmlRpcClientRequest</code> from
+ * Apache XML-RPC 2.0.
+ * @since 3.0
  */
-public class XmlRpcRequest
-implements XmlRpcServerRequest, XmlRpcClientRequest
-{
-    protected final String methodName;
-    protected final Vector parameters;
-
-    public XmlRpcRequest(String methodName, Vector parameters)
-    {
-        this.parameters = parameters;
-        this.methodName = methodName;
-    }
-
-    public int getParameterCount()
-    {
-        return parameters.size();
-    }
-    
-    public Vector getParameters()
-    {
-        return parameters;
-    }
-
-    public Object getParameter(int index)
-    {
-        return parameters.elementAt(index);
-    }
-
-    public String getMethodName()
-    {
-        return methodName;
-    }
+public interface XmlRpcRequest {
+	/** Returns the request configuration.
+	 * @return The request configuration.
+	 */
+	XmlRpcRequestConfig getConfig();
+	/** Returns the requests method name.
+	 * @return Name of the method being invoked.
+	 */
+    String getMethodName();
+	/** Returns the number of parameters.
+	 * @return Number of parameters.
+	 */
+	int getParameterCount();
+	/** Returns the parameter with index <code>pIndex</code>.
+	 * @param pIndex Number between 0 and {@link #getParameterCount()}-1.
+	 * @return Parameter being sent to the server.
+	 */
+    public Object getParameter(int pIndex);
 }

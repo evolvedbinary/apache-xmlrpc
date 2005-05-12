@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.client;
+
+import org.apache.xmlrpc.XmlRpcRequestConfig;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** This interface is being implemented by an Apache XML-RPC clients
+ * configuration object. Depending on the transport factory, a
+ * configuration object must implement additional methods. For
+ * example, an HTTP transport requires an instance of
+ * {@link org.apache.xmlrpc.client.XmlRpcHttpClientConfig}. A
+ * local transport requires an instance of
+ * {@link org.apache.xmlrpc.client.XmlRpcLocalClientConfig}.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface XmlRpcClientConfig extends XmlRpcRequestConfig {
 }

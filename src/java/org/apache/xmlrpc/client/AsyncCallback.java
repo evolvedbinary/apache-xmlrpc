@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.client;
+
+import org.apache.xmlrpc.XmlRpcRequest;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** A callback interface for an asynchronous XML-RPC call.
+ * @since 3.0
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
+public interface AsyncCallback {
+    /** Call went ok, handle result.
+     * @param pRequest The request being performed.
+     * @param pResult The result object, which was returned by the server.
      */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+    public void handleResult(XmlRpcRequest pRequest, Object pResult);
+
+    /** Something went wrong, handle error.
+     * @param pRequest The request being performed.
+     * @param pError The error being thrown.
+     */
+    public void handleError(XmlRpcRequest pRequest, Throwable pError);
 }

@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.parser;
+
+import org.xml.sax.ContentHandler;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** Interface of a SAX handler parsing a single parameter or
+ * result object.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public interface TypeParser extends ContentHandler {
+	/** Returns the parsed object.
+	 * @return The parameter or result object.
+	 * @throws IllegalStateException The method was invoked before
+	 * {@link org.xml.sax.ContentHandler#endDocument}.
+	 */
+	public Object getResult();
 }

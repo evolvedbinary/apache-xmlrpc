@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.serializer;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** A {@link TypeSerializer} for booleans.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class BooleanSerializer extends TypeSerializerImpl {
+	/** Tag name of a boolean value.
+	 */
+	public static final String BOOLEAN_TAG = "boolean";
+	private static final char[] TRUE = new char[]{'1'};
+	private static final char[] FALSE = new char[]{'0'};
+	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
+		write(pHandler, BOOLEAN_TAG, ((Boolean) pObject).booleanValue() ? TRUE : FALSE);
+	}
 }

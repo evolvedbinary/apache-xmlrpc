@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.common;
+
+import org.apache.xmlrpc.XmlRpcException;
 
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** This exception is thrown, if an attempt to use extensions
+ * is made, but extensions aren't explicitly enabled.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class XmlRpcExtensionException extends XmlRpcException {
+	private static final long serialVersionUID = 3617014169594311221L;
+
+	/** Creates a new instance with the given error message.
+	 * @param pMessage The error message.
+	 */
+	public XmlRpcExtensionException(String pMessage) {
+		super(0, pMessage);
+	}
 }

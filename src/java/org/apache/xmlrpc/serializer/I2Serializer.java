@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc;
+package org.apache.xmlrpc.serializer;
 
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-
-/** The XML-RPC server uses this interface to call a method of an RPC handler.
+/** A {@link TypeSerializer} for shorts.
  */
-public interface XmlRpcHandler {
-    /** Performs the request and returns the result object.
-     * @param pRequest The request being performed (method name and
-     * parameters.)
-     * @return The result object.
-     * @throws XmlRpcException Performing the request failed.
-     */
-    public Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+public class I2Serializer extends TypeSerializerImpl {
+	/** Tag name of an i2 value.
+	 */
+	public static final String I2_TAG = "short";
+
+	/** Fully qualified name of an i2 value.
+	 */
+	public static final String EX_I2_TAG = "ex:short";
+
+	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
+		write(pHandler, I2_TAG, EX_I2_TAG, pObject.toString());
+	}
 }
