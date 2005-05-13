@@ -89,9 +89,14 @@ public class XmlRpcHttpTransport extends XmlRpcStreamTransport {
 		}
 	}
 
+	protected void setContentType(XmlRpcHttpClientConfig pConfig, Object pConnection) throws XmlRpcClientException {
+		setRequestHeader(pConnection, "Content-Type", "text/html");
+	}
+
 	protected void initConnection(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws XmlRpcClientException {
 		super.initConnection(pConfig, pConnection);
 		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pConfig;
+		setContentType(config, pConnection);
 		setCredentials(config, pConnection);
 		setCompressionHeaders(config, pConnection);
 	}

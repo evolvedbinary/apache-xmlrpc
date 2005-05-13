@@ -52,12 +52,12 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 			super.setResult(pResult);
 		} else {
 			Map map = (Map) pResult;
-			String faultCode = (String) map.get("faultCode");
+			Integer faultCode = (Integer) map.get("faultCode");
 			if (faultCode == null) {
 				throw new SAXParseException("Missing faultCode", getDocumentLocator());
 			}
 			try {
-				errorCode = Integer.parseInt(faultCode);
+				errorCode = faultCode.intValue();
 			} catch (NumberFormatException e) {
 				throw new SAXParseException("Invalid faultCode: " + faultCode,
 											getDocumentLocator());
@@ -93,19 +93,33 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 				}
 				break;
 			case 2:
-				if (!"".equals(pURI)  ||  !"param".equals(pLocalName)) {
-					throw new SAXParseException("Expected param element, got "
-							+ new QName(pURI, pLocalName),
-							getDocumentLocator());
+				if (isSuccess) {
+					if (!"".equals(pURI)  ||  !"param".equals(pLocalName)) {
+						throw new SAXParseException("Expected param element, got "
+													+ new QName(pURI, pLocalName),
+													getDocumentLocator());
+					}
+				} else {
+					if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
+						startValueTag();
+					} else {
+						throw new SAXParseException("Expected value element, got "
+													+ new QName(pURI, pLocalName),
+													getDocumentLocator());
+					}
 				}
 				break;
 			case 3:
-				if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
-					startValueTag();
+				if (isSuccess) {
+					if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
+						startValueTag();
+					} else {
+						throw new SAXParseException("Expected value element, got "
+								+ new QName(pURI, pLocalName),
+								getDocumentLocator());
+					}
 				} else {
-					throw new SAXParseException("Expected value element, got "
-							+ new QName(pURI, pLocalName),
-							getDocumentLocator());
+					super.startElement(pURI, pLocalName, pQName, pAttrs);
 				}
 				break;
 			default:
@@ -139,19 +153,33 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 					break;
 				}
 			case 2:
-				if (!"".equals(pURI)  ||  !"param".equals(pLocalName)) {
-					throw new SAXParseException("Expected /param, got "
-												+ new QName(pURI, pLocalName),
-												getDocumentLocator());
+				if (isSuccess) {
+					if (!"".equals(pURI)  ||  !"param".equals(pLocalName)) {
+						throw new SAXParseException("Expected /param, got "
+													+ new QName(pURI, pLocalName),
+													getDocumentLocator());
+					}
+				} else {
+					if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
+						endValueTag();
+					} else {
+						throw new SAXParseException("Expected /value, got "
+								+ new QName(pURI, pLocalName),
+								getDocumentLocator());
+					}
 				}
 				break;
 			case 3:
-				if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
-					endValueTag();
+				if (isSuccess) {
+					if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
+						endValueTag();
+					} else {
+						throw new SAXParseException("Expected /value, got "
+								+ new QName(pURI, pLocalName),
+								getDocumentLocator());
+					}
 				} else {
-					throw new SAXParseException("Expected /value, got "
-							+ new QName(pURI, pLocalName),
-							getDocumentLocator());
+					super.endElement(pURI, pLocalName, pQName);
 				}
 				break;
 			default:

@@ -276,12 +276,7 @@ public class WebServer implements Runnable {
 					try {
 						if (allowConnection(socket)) {
 							final Connection con = new Connection(this, server, socket);
-							ThreadPool.Task task = new ThreadPool.Task(){
-								public void run() throws Throwable {
-									server.execute(con.getRequestConfig(), con);
-								}
-							};
-							if (pool.startTask(task)) {
+							if (pool.startTask(con)) {
 								socket = null;
 							} else {
 								log("Maximum load of " + pool.getMaxThreads()
@@ -359,5 +354,12 @@ public class WebServer implements Runnable {
 	 */
 	public synchronized void log(String pMessage) {
 		System.err.println(df.format(new Date()) + ", " + Thread.currentThread().getName() + ": " + pMessage);
+	}
+
+	/** Returns the {@link org.apache.xmlrpc.server.XmlRpcServer}.
+	 * @return The server object.
+	 */
+	public XmlRpcStreamServer getXmlRpcServer() {
+		return server;
 	}
 }

@@ -100,7 +100,7 @@ public class SerializerTest extends TestCase {
 		String expect =
 			"<?xml version=\"1.0\" encoding=\"US-ASCII\"?>"
 			+ "<methodCall xmlns:ex=\"http://ws.apache.org/xmlrpc/namespaces/extensions\">"
-			+ "<methodName>byteParam</methodName><params><param><value><ex:byte>3</ex:byte></value></param></params></methodCall>";
+			+ "<methodName>byteParam</methodName><params><param><value><ex:i1>3</ex:i1></value></param></params></methodCall>";
 		assertEquals(expect, got);
 	}
 

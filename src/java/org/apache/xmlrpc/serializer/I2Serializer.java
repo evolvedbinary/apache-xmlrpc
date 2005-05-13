@@ -23,11 +23,11 @@ import org.xml.sax.SAXException;
 public class I2Serializer extends TypeSerializerImpl {
 	/** Tag name of an i2 value.
 	 */
-	public static final String I2_TAG = "short";
+	public static final String I2_TAG = "i2";
 
 	/** Fully qualified name of an i2 value.
 	 */
-	public static final String EX_I2_TAG = "ex:short";
+	public static final String EX_I2_TAG = "ex:i2";
 
 	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
 		write(pHandler, I2_TAG, EX_I2_TAG, pObject.toString());

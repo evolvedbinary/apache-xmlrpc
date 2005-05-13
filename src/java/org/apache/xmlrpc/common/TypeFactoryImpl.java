@@ -155,7 +155,7 @@ public class TypeFactoryImpl implements TypeFactory {
 				return new FloatParser();
 			}
 		} else if ("".equals(pURI)) {
-			if (I4Serializer.I4_TAG.equals(pLocalName)) {
+			if (I4Serializer.INT_TAG.equals(pLocalName)  ||  I4Serializer.I4_TAG.equals(pLocalName)) {
 				return new I4Parser();
 			} else if (BooleanSerializer.BOOLEAN_TAG.equals(pLocalName)) {
 				return new BooleanParser();

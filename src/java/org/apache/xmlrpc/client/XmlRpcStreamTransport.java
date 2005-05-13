@@ -15,6 +15,8 @@
  */
 package org.apache.xmlrpc.client;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -161,7 +163,7 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) pRequest.getConfig();
 		Object connection = newConnection(config);
 		try {
-			initConnection(config, pRequest);
+			initConnection(config, connection);
 			OutputStream ostream = getOutputStream(config, connection);
 			try {
 				writeRequest(config, ostream, pRequest);
@@ -198,17 +200,41 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 	}
 
 	protected Object readResponse(XmlRpcStreamRequestConfig pConfig, InputStream pStream) throws XmlRpcException {
+		if (true) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				byte[] buffer = new byte[1024];
+				for (;;) {
+					int res = pStream.read(buffer);
+					if (res == -1) {
+						break;
+					} else if (res > 0) {
+						baos.write(buffer, 0, res);
+					}
+				}
+			} catch (IOException e) {
+				throw new XmlRpcClientException(e.getMessage(), e);
+			}
+			System.out.println("Input: " + new String(baos.toByteArray()));
+			pStream = new ByteArrayInputStream(baos.toByteArray());
+		}
+
 		InputSource isource = new InputSource(pStream);
 		XMLReader xr = newXMLReader();
+		XmlRpcResponseParser xp;
 		try {
-			XmlRpcResponseParser xp = new XmlRpcResponseParser(pConfig, getClient().getTypeFactory());
+			xp = new XmlRpcResponseParser(pConfig, getClient().getTypeFactory());
 			xr.setContentHandler(xp);
 			xr.parse(isource);
-			return xp.getResult();
 		} catch (SAXException e) {
 			throw new XmlRpcClientException("Failed to parse servers response: " + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new XmlRpcClientException("Failed to read servers response: " + e.getMessage(), e);
+		}
+		if (xp.isSuccess()) {
+			return xp.getResult();
+		} else {
+			throw new XmlRpcException(xp.getErrorCode(), xp.getErrorMessage());
 		}
 	}
 

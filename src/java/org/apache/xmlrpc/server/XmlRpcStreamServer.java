@@ -65,6 +65,10 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 		try {
 			xr.parse(new InputSource(pStream));
 		} catch (SAXException e) {
+			Exception ex = e.getException();
+			if (ex != null  &&  ex instanceof XmlRpcException) {
+				throw (XmlRpcException) ex;
+			}
 			throw new XmlRpcException("Failed to parse XML-RPC request: " + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new XmlRpcException("Failed to read XML-RPC request: " + e.getMessage(), e);
@@ -107,6 +111,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 		}
 		message = pError.getMessage();
 		try {
+			pError.printStackTrace();
 			getXmlRpcWriter(pConfig, pStream).write(pConfig, code, message);
 		} catch (SAXException e) {
 			throw new XmlRpcException("Failed to write XML-RPC response: " + e.getMessage(), e);
@@ -152,11 +157,11 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 						Object pConnection)
 			throws IOException, XmlRpcException {
 		try {
-			InputStream istream = getInputStream(pConfig, pConnection);
-			XmlRpcRequest request = getRequest(pConfig, istream);
 			Object result;
 			Throwable error;
 			try {
+				InputStream istream = getInputStream(pConfig, pConnection);
+				XmlRpcRequest request = getRequest(pConfig, istream);
 				result = execute(request);
 				error = null;
 			} catch (Throwable t) {

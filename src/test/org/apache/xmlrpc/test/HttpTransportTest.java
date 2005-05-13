@@ -21,6 +21,8 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcHttpTransportFactory;
 import org.apache.xmlrpc.client.XmlRpcTransportFactory;
+import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 import org.apache.xmlrpc.webserver.WebServer;
 
 
@@ -28,11 +30,15 @@ import org.apache.xmlrpc.webserver.WebServer;
  * {@link org.apache.xmlrpc.client.XmlRpcHttpTransport}.
  */
 public class HttpTransportTest extends BaseTestCase {
-	private WebServer webServer = new WebServer(0);
+	private final WebServer webServer = new WebServer(0);
 	private boolean isActive;
 
 	public void setUp() throws Exception {
 		if (!isActive) {
+			XmlRpcServer server = webServer.getXmlRpcServer();
+			server.setHandlerMapping(getHandlerMapping());
+			XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) server.getConfig();
+			serverConfig.setEnabledForExtensions(true);
 			webServer.start();
 			isActive = true;
 		}

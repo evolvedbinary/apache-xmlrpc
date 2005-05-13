@@ -122,7 +122,7 @@ public class XmlRpcWriter {
 		handler.startElement("", "fault", "fault", ZERO_ATTRIBUTES);
 		Map map = new HashMap();
         map.put("faultCode", new Integer(pCode));
-        map.put("faultString", pMessage);
+        map.put("faultString", pMessage == null ? "" : pMessage);
 		writeValue(map);
 		handler.endElement("", "fault", "fault");
 		handler.endElement("", "methodResponse", "methodResponse");
