@@ -15,45 +15,51 @@
  */
 package org.apache.xmlrpc.parser;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
 
+import org.apache.xmlrpc.util.Base64;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 
-/** Abstract base implementation of {@link org.apache.xmlrpc.parser.TypeParser}
- * for parsing an atomic value.
+/** A parser for base64 elements.
  */
-public abstract class AtomicParser extends TypeParserImpl {
+public class ByteArrayParser extends TypeParserImpl {
 	private int level;
-	protected StringBuffer sb;
-
-	/** Creates a new instance.
-	 */
-	protected AtomicParser() {
-	}
-
-	protected abstract void setResult(String pResult) throws SAXException;
+	private ByteArrayOutputStream baos;
+	private Base64.Decoder decoder;
 
 	public void startDocument() throws SAXException {
 		level = 0;
 	}
 
 	public void characters(char[] pChars, int pStart, int pLength) throws SAXException {
-		if (sb == null) {
+		if (baos == null) {
 			if (!isEmpty(pChars, pStart, pLength)) {
 				throw new SAXParseException("Unexpected non-whitespace characters",
 											getDocumentLocator());
 			}
 		} else {
-			sb.append(pChars, pStart, pLength);
+			try {
+				decoder.write(pChars, pStart, pLength);
+			} catch (IOException e) {
+				throw new SAXParseException("Failed to decode base64 stream.", getDocumentLocator(), e);
+			}
 		}
 	}
 
 	public void endElement(String pURI, String pLocalName, String pQName) throws SAXException {
 		if (--level == 0) {
-			setResult(sb.toString());
+			try {
+				decoder.flush();
+			} catch (IOException e) {
+				throw new SAXParseException("Failed to decode base64 stream.", getDocumentLocator(), e);
+			}
+			setResult(baos.toByteArray());
 		} else {
 			throw new SAXParseException("Unexpected end tag in atomic element: "
 										+ new QName(pURI, pLocalName),
@@ -63,7 +69,12 @@ public abstract class AtomicParser extends TypeParserImpl {
 
 	public void startElement(String pURI, String pLocalName, String pQName, Attributes pAttrs) throws SAXException {
 		if (level++ == 0) {
-			sb = new StringBuffer();
+			baos = new ByteArrayOutputStream();
+			decoder = new Base64.Decoder(1024){
+				protected void writeBuffer() throws IOException {
+					baos.write(byteBuffer, 0, byteBufferOffset);
+				}
+			};
 		} else {
 			throw new SAXParseException("Unexpected start tag in atomic element: "
 										+ new QName(pURI, pLocalName),

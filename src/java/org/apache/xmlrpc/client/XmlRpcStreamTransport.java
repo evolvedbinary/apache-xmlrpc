@@ -219,7 +219,12 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		try {
 			xw.write(pRequest);
 		} catch (SAXException e) {
-			throw new XmlRpcClientException("Failed to send request: " + e.getMessage(), e);
+			Exception ex = e.getException();
+			if (ex != null  &&  ex instanceof XmlRpcException) {
+				throw (XmlRpcException) ex;
+			} else {
+				throw new XmlRpcClientException("Failed to send request: " + e.getMessage(), e);
+			}
 		}
 	}
 }

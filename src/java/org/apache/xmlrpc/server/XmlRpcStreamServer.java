@@ -88,7 +88,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 	protected void writeResponse(XmlRpcStreamRequestConfig pConfig, OutputStream pStream,
 								 Object pResult) throws XmlRpcException {
 		try {
-			getXmlRpcWriter(pConfig, pStream).write(pResult);
+			getXmlRpcWriter(pConfig, pStream).write(pConfig, pResult);
 		} catch (SAXException e) {
 			throw new XmlRpcException("Failed to write XML-RPC response: " + e.getMessage(), e);
 		}
@@ -107,7 +107,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 		}
 		message = pError.getMessage();
 		try {
-			getXmlRpcWriter(pConfig, pStream).write(code, message);
+			getXmlRpcWriter(pConfig, pStream).write(pConfig, code, message);
 		} catch (SAXException e) {
 			throw new XmlRpcException("Failed to write XML-RPC response: " + e.getMessage(), e);
 		}

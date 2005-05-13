@@ -15,9 +15,14 @@
  */
 package org.apache.xmlrpc.parser;
 
+import javax.xml.namespace.QName;
+
 import org.apache.ws.commons.util.NamespaceContextImpl;
+import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.TypeFactory;
+import org.apache.xmlrpc.common.XmlRpcExtensionException;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
+import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -62,8 +67,8 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 				text = null;
 			} else {
 				typeParser.endDocument();
-				typeParser = null;
 				addResult(typeParser.getResult());
+				typeParser = null;
 			}
 		} else {
 			throw new SAXParseException("Invalid state: Not inside value tag.",
@@ -97,7 +102,16 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 		if (inValueTag) {
 			if (typeParser == null) {
 				typeParser = factory.getParser(cfg, context, pURI, pLocalName);
-				typeParser.endElement(pURI, pLocalName, pQName);
+				if (typeParser == null) {
+					if (XmlRpcWriter.EXTENSIONS_URI.equals(pURI)  &&  !cfg.isEnabledForExtensions()) {
+						String msg = "The tag " + new QName(pURI, pLocalName) + " is invalid, if isEnabledForExtensions() == false.";
+						throw new SAXParseException(msg, getDocumentLocator(),
+													new XmlRpcExtensionException(msg));
+					} else {
+						throw new SAXParseException("Unknown type: " + new QName(pURI, pLocalName),
+													getDocumentLocator());
+					}
+				}
 				typeParser.setDocumentLocator(getDocumentLocator());
 				typeParser.startDocument();
 				if (text != null) {

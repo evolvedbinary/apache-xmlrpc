@@ -183,20 +183,22 @@ public abstract class BaseTestCase extends TestCase {
 			int sum = 0;
 			for (Iterator iter = pArg.entrySet().iterator();  iter.hasNext();  ) {
 				Map.Entry entry = (Map.Entry) iter.next();
-				sum += ((Integer) entry.getKey()).intValue() * ((Integer) entry.getValue()).intValue();
+				String key = (String) entry.getKey();
+				Integer value = (Integer) entry.getValue();
+				sum += Integer.parseInt(key) * value.intValue();
 			}
 			return sum;
 		}
 		/** Returns a map with the stringified values 0..pArg as
-		 * values and the corresponding integers as keys.
+		 * keys and the corresponding integers as values.
 		 * @param pArg Requested map size.
-		 * @return Map with the values "0".."pArg" as values ans
-		 * 0..pArg as keys.
+		 * @return Map with the keys "0".."pArg" and
+		 * 0..pArg as values.
 		 */
 		public Map mapResult(int pArg) {
 			Map result = new HashMap();
 			for (int i = 0;  i < pArg;  i++) {
-				result.put(new Integer(i), Integer.toString(i));
+				result.put(Integer.toString(i), new Integer(i));
 			}
 			return result;
 		}
@@ -502,9 +504,14 @@ public abstract class BaseTestCase extends TestCase {
 											  new Integer(3), new Long(4), "5"};
 		final String methodName = "Remote.objectArrayParam";
 		final Object[] params = new Object[]{objects};
-		Object result = getClient().execute(getConfig(), methodName, params);
-		assertEquals(new Integer(15), result);
-		result = getClient().execute(getExConfig(), methodName, params);
+		boolean ok = false;
+		try {
+			getClient().execute(getConfig(), methodName, params);
+		} catch (XmlRpcExtensionException e) {
+			ok = true;
+		}
+		assertTrue(ok);
+		Object result = getClient().execute(getExConfig(), methodName, params);
 		assertEquals(new Integer(15), result);
 	}
 
@@ -528,8 +535,8 @@ public abstract class BaseTestCase extends TestCase {
 	 */
 	public void testMapParam() throws Exception {
 		final Map map = new HashMap();
-		map.put(new Integer(2), new Integer(3));
-		map.put(new Integer(3), new Integer(5));
+		map.put("2", new Integer(3));
+		map.put("3", new Integer(5));
 		final String methodName = "Remote.mapParam";
 		final Object[] params = new Object[]{map};
 		Object result = getClient().execute(getConfig(), methodName, params);
@@ -540,10 +547,10 @@ public abstract class BaseTestCase extends TestCase {
 
 	private void checkMap(Map pResult) {
 		assertEquals(4, pResult.size());
-		assertEquals("0", pResult.get(new Integer(0)));
-		assertEquals("1", pResult.get(new Integer(1)));
-		assertEquals("2", pResult.get(new Integer(2)));
-		assertEquals("3", pResult.get(new Integer(3)));
+		assertEquals(new Integer(0), pResult.get("0"));
+		assertEquals(new Integer(1), pResult.get("1"));
+		assertEquals(new Integer(2), pResult.get("2"));
+		assertEquals(new Integer(3), pResult.get("3"));
 	}
 
 	/** Test, whether we can invoke a method, returning a map.

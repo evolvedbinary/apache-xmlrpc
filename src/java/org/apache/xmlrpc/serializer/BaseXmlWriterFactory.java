@@ -46,6 +46,7 @@ public class BaseXmlWriterFactory implements XmlWriterFactory {
 		}
 		xw.setEncoding(enc);
 		xw.setIndenting(false);
+		xw.setFlushing(true);
 		try {
 			xw.setWriter(new BufferedWriter(new OutputStreamWriter(pStream, enc)));
 		} catch (UnsupportedEncodingException e) {

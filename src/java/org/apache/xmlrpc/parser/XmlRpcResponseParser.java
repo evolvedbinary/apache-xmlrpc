@@ -83,9 +83,9 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 				break;
 			case 1:
 				if ("".equals(pURI)  &&  "params".equals(pLocalName)) {
-					isSuccess = false;
-				} else if ("".equals(pURI)  &&  "fault".equals(pLocalName)) {
 					isSuccess = true;
+				} else if ("".equals(pURI)  &&  "fault".equals(pLocalName)) {
+					isSuccess = false;
 				} else {
 					throw new SAXParseException("Expected params or fault element, got "
 												+ new QName(pURI, pLocalName),
@@ -93,33 +93,19 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 				}
 				break;
 			case 2:
-				if (isSuccess) {
-					if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
-						startValueTag();
-					} else {
-						throw new SAXParseException("Expected value element, got "
-													+ new QName(pURI, pLocalName),
-													getDocumentLocator());
-					}
-				} else {
-					if (!"".equals(pURI)  ||  !"param".equals(pLocalName)) {
-						throw new SAXParseException("Expected param element, got "
-													+ new QName(pURI, pLocalName),
-													getDocumentLocator());
-					}
+				if (!"".equals(pURI)  ||  !"param".equals(pLocalName)) {
+					throw new SAXParseException("Expected param element, got "
+							+ new QName(pURI, pLocalName),
+							getDocumentLocator());
 				}
 				break;
 			case 3:
-				if (isSuccess) {
-					super.startElement(pURI, pLocalName, pQName, pAttrs);
+				if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
+					startValueTag();
 				} else {
-					if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
-						startValueTag();
-					} else {
-						throw new SAXParseException("Expected value element, got "
-								+ new QName(pURI, pLocalName),
-								getDocumentLocator());
-					}
+					throw new SAXParseException("Expected value element, got "
+							+ new QName(pURI, pLocalName),
+							getDocumentLocator());
 				}
 				break;
 			default:
@@ -141,9 +127,9 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 				{
 					String tag;
 					if (isSuccess) {
-						tag = "fault";
-					} else {
 						tag = "params";
+					} else {
+						tag = "fault";
 					}
 					if (!"".equals(pURI)  ||  !tag.equals(pLocalName)) {
 						throw new SAXParseException("Expected /" + tag + " element, got "
@@ -153,33 +139,19 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 					break;
 				}
 			case 2:
-				{
-					String tag;
-					if (isSuccess) {
-						tag = "value";
-					} else {
-						tag = "param";
-					}
-					if (!"".equals(pURI)  ||  !tag.equals(pLocalName)) {
-						throw new SAXParseException("Expected /" + tag + ", got "
-								+ new QName(pURI, pLocalName),
-								getDocumentLocator());
-					} else if (isSuccess) {
-						endValueTag();
-					}
-					break;
+				if (!"".equals(pURI)  ||  !"param".equals(pLocalName)) {
+					throw new SAXParseException("Expected /param, got "
+												+ new QName(pURI, pLocalName),
+												getDocumentLocator());
 				}
+				break;
 			case 3:
-				if (isSuccess) {
-					super.endElement(pURI, pLocalName, pQName);
+				if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
+					endValueTag();
 				} else {
-					if ("".equals(pURI)  &&  "value".equals(pLocalName)) {
-						endValueTag();
-					} else {
-						throw new SAXParseException("Expected /value, got "
-													+ new QName(pURI, pLocalName),
-													getDocumentLocator());
-					}
+					throw new SAXParseException("Expected /value, got "
+							+ new QName(pURI, pLocalName),
+							getDocumentLocator());
 				}
 				break;
 			default:

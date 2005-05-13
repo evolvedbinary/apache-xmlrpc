@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.XmlRpcRequestConfig;
 import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.xml.sax.Attributes;
@@ -56,6 +57,11 @@ public class XmlRpcWriter {
 	 * @throws SAXException Writing the request failed.
 	 */
 	public void write(XmlRpcRequest pRequest) throws SAXException {
+		handler.startDocument();
+		boolean extensions = pRequest.getConfig().isEnabledForExtensions();
+		if (extensions) {
+			handler.startPrefixMapping("ex", XmlRpcWriter.EXTENSIONS_URI);
+		}
 		handler.startElement("", "methodCall", "methodCall", ZERO_ATTRIBUTES);
 		handler.startElement("", "methodName", "methodName", ZERO_ATTRIBUTES);
 		String s = pRequest.getMethodName();
@@ -70,13 +76,23 @@ public class XmlRpcWriter {
 		}
 		handler.endElement("", "params", "params");
         handler.endElement("", "methodCall", "methodCall");
+		if (extensions) {
+			handler.endPrefixMapping("ex");
+		}
+		handler.endDocument();
 	}
 
 	/** Writes a servers response to the output stream.
+	 * @param pConfig The request configuration.
 	 * @param pResult The result object.
 	 * @throws SAXException Writing the response failed.
 	 */
-	public void write(Object pResult) throws SAXException {
+	public void write(XmlRpcRequestConfig pConfig, Object pResult) throws SAXException {
+		handler.startDocument();
+		boolean extensions = pConfig.isEnabledForExtensions();
+		if (extensions) {
+			handler.startPrefixMapping("ex", XmlRpcWriter.EXTENSIONS_URI);
+		}
 		handler.startElement("", "methodResponse", "methodResponse", ZERO_ATTRIBUTES);
 		handler.startElement("", "params", "params", ZERO_ATTRIBUTES);
 		handler.startElement("", "param", "param", ZERO_ATTRIBUTES);
@@ -84,14 +100,24 @@ public class XmlRpcWriter {
 		handler.endElement("", "param", "param");
 		handler.endElement("", "params", "params");
 		handler.endElement("", "methodResponse", "methodResponse");
+		if (extensions) {
+			handler.endPrefixMapping("ex");
+		}
+		handler.endDocument();
 	}
 
 	/** Writes a servers error message to the output stream.
+	 * @param pConfig The request configuration.
 	 * @param pCode The error code
 	 * @param pMessage The error message
 	 * @throws SAXException Writing the error message failed.
 	 */
-	public void write(int pCode, String pMessage) throws SAXException {
+	public void write(XmlRpcRequestConfig pConfig, int pCode, String pMessage) throws SAXException {
+		handler.startDocument();
+		boolean extensions = pConfig.isEnabledForExtensions();
+		if (extensions) {
+			handler.startPrefixMapping("ex", XmlRpcWriter.EXTENSIONS_URI);
+		}
 		handler.startElement("", "methodResponse", "methodResponse", ZERO_ATTRIBUTES);
 		handler.startElement("", "fault", "fault", ZERO_ATTRIBUTES);
 		Map map = new HashMap();
@@ -100,6 +126,10 @@ public class XmlRpcWriter {
 		writeValue(map);
 		handler.endElement("", "fault", "fault");
 		handler.endElement("", "methodResponse", "methodResponse");
+		if (extensions) {
+			handler.endPrefixMapping("ex");
+		}
+		handler.endDocument();
 	}
 
 	/** Writes the XML representation of a Java object.

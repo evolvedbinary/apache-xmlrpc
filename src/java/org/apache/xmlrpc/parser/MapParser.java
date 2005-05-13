@@ -104,6 +104,8 @@ public class MapParser extends RecursiveTypeParserImpl {
 												+ new QName(pURI, pLocalName),
 												getDocumentLocator());
 				}
+				doneValue = inName = inValue = false;
+				name = null;
 				break;
 			case 2:
 				if (doneValue) {
@@ -143,10 +145,11 @@ public class MapParser extends RecursiveTypeParserImpl {
 				setResult(map);
 				break;
 			case 1:
-				inValue = inName = false;
 				break;
 			case 2:
-				if (inValue) {
+				if (inName) {
+					inName = false;
+				} else if (inValue) {
 					endValueTag();
 					doneValue = true;
 				}

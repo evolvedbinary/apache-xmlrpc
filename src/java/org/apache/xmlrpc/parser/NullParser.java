@@ -15,25 +15,19 @@
  */
 package org.apache.xmlrpc.parser;
 
-import javax.xml.namespace.QName;
-
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 
 /** SAX parser for a nil element (null value).
  */
-public class NullParser extends TypeParserImpl {
-	public void endElement(String pURI, String pLocalName, String pQName) throws SAXException {
-		throw new SAXParseException("Unexpected end tag within nil: "
-									+ new QName(pURI, pLocalName),
-									getDocumentLocator());
-	}
-
-	public void startElement(String pURI, String pLocalName, String pQName, Attributes pAttrs) throws SAXException {
-		throw new SAXParseException("Unexpected start tag within nil: "
-									+ new QName(pURI, pLocalName),
-									getDocumentLocator());
+public class NullParser extends AtomicParser {
+	protected void setResult(String pResult) throws SAXException {
+		if (pResult == null  ||  "".equals(pResult.trim())) {
+			super.setResult((Object) null);
+		} else {
+			throw new SAXParseException("Unexpected characters in nil element.",
+										getDocumentLocator());
+		}
 	}
 }

@@ -94,8 +94,9 @@ public class Base64 {
 		 */
 		public void write(byte[] pBuffer, int pOffset, int pLen) throws IOException {
 			for(int i = 0;  i < pLen;  i++) {
-				num = (num << 8) + pBuffer[pOffset++];
-				pLen--;
+				int b = pBuffer[pOffset++];
+				if (b < 0) { b += 256; }
+				num = (num << 8) + b;
 				if (++numBytes == 3) {
 					charBuffer[charOffset++] = intToBase64[num >> 18];
 					charBuffer[charOffset++] = intToBase64[(num >> 12) & 0x3f];
@@ -125,6 +126,7 @@ public class Base64 {
 					charBuffer[charOffset++] = intToBase64[num >> 10];
 					charBuffer[charOffset++] = intToBase64[(num >> 4) & 0x3f];
 					charBuffer[charOffset++] = intToBase64[(num << 2) & 0x3f];
+					charBuffer[charOffset++] = '=';
 				}
 				writeBuffer();
 				charOffset = 0;
@@ -179,6 +181,7 @@ public class Base64 {
 		};
 		try {
 			encoder.write(pBuffer, pOffset, pLen);
+			encoder.flush();
 		} catch (IOException e) {
 			throw new UndeclaredThrowableException(e);
 		}
@@ -217,7 +220,6 @@ public class Base64 {
 		public void write(char[] pData, int pOffset, int pLen) throws IOException {
 			for (int i = 0;  i < pLen;  i++) {
 				char c = pData[pOffset++];
-				pLen--;
 				if (c == '=') {
 					++eofBytes;
 					num = num << 6;
@@ -229,11 +231,12 @@ public class Base64 {
 							// Wait for the next '='
 							break;
 						case 4:
-							byteBuffer[byteBufferOffset++] = (byte) (num >> 8);
+							byteBuffer[byteBufferOffset++] = (byte) (num >> 16);
 							if (eofBytes == 1) {
-								byteBuffer[byteBufferOffset++] = (byte) ((num >> 8) & 0xff);
+								byteBuffer[byteBufferOffset++] = (byte) (num >> 8);
 							}
 							writeBuffer();
+							byteBufferOffset = 0;
 							break;
 						case 5:
 							throw new DecodingException("Trailing garbage detected");
@@ -269,13 +272,18 @@ public class Base64 {
 				}
 			}
 		}
-		/* Indicates, that no more data is being expected.
+		/** Indicates, that no more data is being expected. Writes all currently
+		 * buffered data to the destination by invoking {@link #writeBuffer()}.
 		 * @throws DecodingException Decoding failed (Unexpected end of file).
 		 * @throws IOException An invocation of the {@link #writeBuffer()} method failed.
 		 */
-		protected void finished() throws IOException {
+		public void flush() throws IOException {
 			if (numBytes != 0  &&  numBytes != 4) {
 				throw new DecodingException("Unexpected end of file");
+			}
+			if (byteBufferOffset > 0) {
+				writeBuffer();
+				byteBufferOffset = 0;
 			}
 		}
 	}
@@ -296,7 +304,7 @@ public class Base64 {
 				}
 			};
 			public void close() throws IOException {
-				decoder.finished();
+				decoder.flush();
 			}
 			public void flush() throws IOException {
 				decoder.writeBuffer();
@@ -316,12 +324,7 @@ public class Base64 {
 	 * @throws DecodingException The input character stream contained invalid data.
 	 */
 	public static byte[] decode(char[] pBuffer, int pOffset, int pLen) throws DecodingException {
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream(){
-			/** The original implementation would return a clone,
-			 * which we don't want.
-			 */
-			public byte[] toByteArray() { return buf; }
-		};
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Decoder d = new Decoder(1024){
 			protected void writeBuffer() throws IOException {
 				baos.write(byteBuffer, 0, byteBufferOffset);
@@ -329,6 +332,7 @@ public class Base64 {
 		};
 		try {
 			d.write(pBuffer, pOffset, pLen);
+			d.flush();
 		} catch (DecodingException e) {
 			throw e;
 		} catch (IOException e) {
@@ -342,7 +346,7 @@ public class Base64 {
 	 * @return Converted byte array
 	 * @throws DecodingException The input character stream contained invalid data.
 	 */
-	public byte[] decode(char[] pBuffer) throws DecodingException {
+	public static byte[] decode(char[] pBuffer) throws DecodingException {
 		return decode(pBuffer, 0, pBuffer.length);
 	}
 
@@ -351,7 +355,7 @@ public class Base64 {
 	 * @return Converted byte array
 	 * @throws DecodingException The input character stream contained invalid data.
 	 */
-	public byte[] decode(String pBuffer) throws DecodingException {
+	public static byte[] decode(String pBuffer) throws DecodingException {
 		return decode(pBuffer.toCharArray());
 	}
 }

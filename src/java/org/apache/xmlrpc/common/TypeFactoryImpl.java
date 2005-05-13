@@ -22,12 +22,14 @@ import java.util.Map;
 import org.apache.ws.commons.util.NamespaceContextImpl;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.parser.BooleanParser;
+import org.apache.xmlrpc.parser.ByteArrayParser;
 import org.apache.xmlrpc.parser.DateParser;
 import org.apache.xmlrpc.parser.DoubleParser;
 import org.apache.xmlrpc.parser.FloatParser;
 import org.apache.xmlrpc.parser.I1Parser;
 import org.apache.xmlrpc.parser.I2Parser;
 import org.apache.xmlrpc.parser.I4Parser;
+import org.apache.xmlrpc.parser.I8Parser;
 import org.apache.xmlrpc.parser.MapParser;
 import org.apache.xmlrpc.parser.NullParser;
 import org.apache.xmlrpc.parser.ObjectArrayParser;
@@ -87,7 +89,7 @@ public class TypeFactoryImpl implements TypeFactory {
 			if (pConfig.isEnabledForExtensions()) {
 				return NULL_SERIALIZER;
 			} else {
-				throw new SAXException("Null values aren't supported, if isEnabledForExtensions() == false");
+				throw new SAXException(new XmlRpcExtensionException("Null values aren't supported, if isEnabledForExtensions() == false"));
 			}
 		} else if (pObject instanceof String) {
 			return STRING_SERIALIZER;
@@ -95,13 +97,13 @@ public class TypeFactoryImpl implements TypeFactory {
 			if (pConfig.isEnabledForExtensions()) {
 				return BYTE_SERIALIZER;
 			} else {
-				throw new SAXException("Byte values aren't supported, if isEnabledForExtensions() == false");
+				throw new SAXException(new XmlRpcExtensionException("Byte values aren't supported, if isEnabledForExtensions() == false"));
 			}
 		} else if (pObject instanceof Short) {
 			if (pConfig.isEnabledForExtensions()) {
 				return SHORT_SERIALIZER;
 			} else {
-				throw new SAXException("Short values aren't supported, if isEnabledForExtensions() == false");
+				throw new SAXException(new XmlRpcExtensionException("Short values aren't supported, if isEnabledForExtensions() == false"));
 			}
 		} else if (pObject instanceof Integer) {
 			return I4_SERIALIZER;
@@ -109,7 +111,7 @@ public class TypeFactoryImpl implements TypeFactory {
 			if (pConfig.isEnabledForExtensions()) {
 				return LONG_SERIALIZER;
 			} else {
-				throw new SAXException("Short values aren't supported, if isEnabledForExtensions() == false");
+				throw new SAXException(new XmlRpcExtensionException("Long values aren't supported, if isEnabledForExtensions() == false"));
 			}
 		} else if (pObject instanceof Boolean) {
 			return BOOLEAN_SERIALIZER;
@@ -117,7 +119,7 @@ public class TypeFactoryImpl implements TypeFactory {
 			if (pConfig.isEnabledForExtensions()) {
 				return FLOAT_SERIALIZER;
 			} else {
-				throw new SAXException("Float values aren't supported, if isEnabledForExtensions() == false");
+				throw new SAXException(new XmlRpcExtensionException("Float values aren't supported, if isEnabledForExtensions() == false"));
 			}
 		} else if (pObject instanceof Double) {
 			return DOUBLE_SERIALIZER;
@@ -148,7 +150,7 @@ public class TypeFactoryImpl implements TypeFactory {
 			} else if (I2Serializer.I2_TAG.equals(pLocalName)) {
 				return new I2Parser();
 			} else if (I8Serializer.I8_TAG.equals(pLocalName)) {
-				return new I4Parser();
+				return new I8Parser();
 			} else if (FloatSerializer.FLOAT_TAG.equals(pLocalName)) {
 				return new FloatParser();
 			}
@@ -165,6 +167,8 @@ public class TypeFactoryImpl implements TypeFactory {
 				return new ObjectArrayParser(pConfig, pContext, this);
 			} else if (MapSerializer.STRUCT_TAG.equals(pLocalName)) {
 				return new MapParser(pConfig, pContext, this);
+			} else if (ByteArraySerializer.BASE_64_TAG.equals(pLocalName)) {
+				return new ByteArrayParser();
 			}
 		}
 		return null;
