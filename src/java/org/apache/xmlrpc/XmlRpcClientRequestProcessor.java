@@ -33,6 +33,13 @@ import java.io.OutputStream;
 public class XmlRpcClientRequestProcessor
 {
     /**
+     * Creates a new instance.
+     */
+    public XmlRpcClientRequestProcessor()
+    {
+    }
+	
+    /**
      * Encode a request from the XmlClientRpcRequest implementation to an
      * output stream in the specified character encoding.
      *

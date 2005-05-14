@@ -36,7 +36,7 @@ public class XmlRpcRequestProcessor extends XmlRpc
     /**
      * Creates a new instance.
      */
-    protected XmlRpcRequestProcessor()
+    public XmlRpcRequestProcessor()
     {
         requestParams = new Vector();
     }

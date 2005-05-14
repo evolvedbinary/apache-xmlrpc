@@ -42,6 +42,13 @@ public class XmlRpcClientResponseProcessor extends XmlRpc
     protected boolean fault;
 
     /**
+     * Creates a new instance.
+     */
+    public XmlRpcClientResponseProcessor()
+    {
+    }
+
+    /**
      * Decode an XML-RPC response from the specified InputStream.
      *
      * @param is The stream from which to read the response.

@@ -36,6 +36,13 @@ public class XmlRpcResponseProcessor
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     /**
+     * Creates a new instance.
+     */
+    public XmlRpcResponseProcessor()
+    {
+    }
+
+    /**
      * Process a successful response, and return output in the
      * specified encoding.
      *
