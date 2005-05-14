@@ -27,15 +27,12 @@ import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcClientRequestImpl;
-import org.apache.xmlrpc.client.XmlRpcHttpTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.apache.xmlrpc.util.Base64;
 import org.xml.sax.SAXException;
 
-import sun.misc.BASE64Encoder;
-
-import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 
@@ -48,7 +45,7 @@ public class SerializerTest extends TestCase {
 	 */
 	public SerializerTest() {
 		client = new XmlRpcClient();
-		client.setTransportFactory(new XmlRpcHttpTransportFactory(client));
+		client.setTransportFactory(new XmlRpcSunHttpTransportFactory(client));
 	}
 
 	protected XmlRpcClientConfigImpl getConfig() {

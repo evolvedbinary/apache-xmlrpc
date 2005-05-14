@@ -24,5 +24,13 @@
 		<attributes>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-logging.jar">
+		<attributes>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

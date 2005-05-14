@@ -111,7 +111,6 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 		}
 		message = pError.getMessage();
 		try {
-			pError.printStackTrace();
 			getXmlRpcWriter(pConfig, pStream).write(pConfig, code, message);
 		} catch (SAXException e) {
 			throw new XmlRpcException("Failed to write XML-RPC response: " + e.getMessage(), e);

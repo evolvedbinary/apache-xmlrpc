@@ -101,7 +101,7 @@ public class Connection implements ThreadPool.Task {
 	 * @return The connections request configuration.
 	 * @throws IOException Reading the request headers failed.
 	 */
-	public RequestData getRequestConfig() throws IOException {
+	private RequestData getRequestConfig() throws IOException {
 		RequestData result = new RequestData(this);
 		XmlRpcHttpServerConfig serverConfig = (XmlRpcHttpServerConfig) server.getConfig();
 		result.setBasicEncoding(serverConfig.getBasicEncoding());
@@ -113,14 +113,18 @@ public class Connection implements ThreadPool.Task {
 		// Netscape sends an extra \n\r after bodypart, swallow it
 		if (line != null && line.length() == 0) {
 			line = readLine();
+			if (line == null  ||  line.length() == 0) {
+				return null;
+			}
     	}
 
 		// tokenize first line of HTTP request
 		StringTokenizer tokens = new StringTokenizer(line);
 		String method = tokens.nextToken();
-        if (!"POST".equalsIgnoreCase(method)) {
+		if (!"POST".equalsIgnoreCase(method)) {
 			throw new BadRequestException(method);
-        }
+		}
+		result.setMethod(method);
 		tokens.nextToken(); // Skip URI
 		String httpVersion = tokens.nextToken();
 		result.setHttpVersion(httpVersion);
@@ -149,8 +153,11 @@ public class Connection implements ThreadPool.Task {
 
     public void run() {
         try {
-			for (;;) {
+			for (int i = 0;  ;  i++) {
 				RequestData data = getRequestConfig();
+				if (data == null) {
+					break;
+				}
 				server.execute(data, this);
 				output.flush();
 				if (!data.isKeepAlive()  ||  !data.isSuccess()) {

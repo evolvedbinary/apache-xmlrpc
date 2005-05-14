@@ -17,40 +17,45 @@ package org.apache.xmlrpc.test;
 
 import java.net.URL;
 
-import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-import org.apache.xmlrpc.client.XmlRpcHttpTransportFactory;
-import org.apache.xmlrpc.client.XmlRpcTransportFactory;
+import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 import org.apache.xmlrpc.webserver.WebServer;
 
 
-/** Implementation of {@link BaseTestCase} for testing the
- * {@link org.apache.xmlrpc.client.XmlRpcHttpTransport}.
+/** Abstract base class for providers, which require a webserver.
  */
-public class HttpTransportTest extends BaseTestCase {
-	private final WebServer webServer = new WebServer(0);
+public abstract class WebServerProvider extends ClientProviderImpl {
+	protected final WebServer webServer = new WebServer(0);
 	private boolean isActive;
 
-	public void setUp() throws Exception {
+	/** Creates a new instance.
+	 * @param pMapping The test servers handler mapping.
+	 */
+	protected WebServerProvider(XmlRpcHandlerMapping pMapping) {
+		super(pMapping);
+	}
+
+	public final XmlRpcClientConfigImpl getConfig() throws Exception {
+		initWebServer();
+		return getConfig(new URL("http://127.0.0.1:" + webServer.getPort() + "/"));
+	}
+
+	protected XmlRpcClientConfigImpl getConfig(URL pServerURL) throws Exception {
+		XmlRpcClientConfigImpl config = super.getConfig();
+		config.setServerURL(pServerURL);
+		return config;
+	}
+
+	protected void initWebServer() throws Exception {
 		if (!isActive) {
 			XmlRpcServer server = webServer.getXmlRpcServer();
-			server.setHandlerMapping(getHandlerMapping());
+			server.setHandlerMapping(mapping);
 			XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) server.getConfig();
 			serverConfig.setEnabledForExtensions(true);
 			webServer.start();
 			isActive = true;
 		}
-	}
-
-	protected XmlRpcTransportFactory getTransportFactory(XmlRpcClient pClient) {
-		return new XmlRpcHttpTransportFactory(pClient);
-	}
-
-	protected XmlRpcClientConfigImpl getConfig() throws Exception {
-		XmlRpcClientConfigImpl config = super.getConfig();
-		config.setServerURL(new URL("http://127.0.0.1:" + webServer.getPort() + "/"));
-		return config;
 	}
 }

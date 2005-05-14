@@ -19,18 +19,26 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcLocalTransportFactory;
 import org.apache.xmlrpc.client.XmlRpcTransportFactory;
+import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 
 
-/** Implementation of {@link org.apache.xmlrpc.test.BaseTestCase}
+/** Implementation of {@link org.apache.xmlrpc.test.BaseTest}
  * for testing the {@link org.apache.xmlrpc.client.XmlRpcLocalTransport}.
  */
-public class LocalTransportTest extends BaseTestCase {
+public class LocalTransportProvider extends ClientProviderImpl {
+	/** Creates a new instance.
+	 * @param pMapping The test servers handler mapping.
+	 */
+	public LocalTransportProvider(XmlRpcHandlerMapping pMapping) {
+		super(pMapping);
+	}
+
 	protected XmlRpcTransportFactory getTransportFactory(XmlRpcClient pClient) {
 		XmlRpcLocalTransportFactory factory = new XmlRpcLocalTransportFactory(pClient);
 		return factory;
 	}
 
-	protected XmlRpcClientConfigImpl getConfig() throws Exception {
+	public XmlRpcClientConfigImpl getConfig() throws Exception {
 		XmlRpcClientConfigImpl config = super.getConfig();
 		config.setXmlRpcServer(getXmlRpcServer());
 		return config;

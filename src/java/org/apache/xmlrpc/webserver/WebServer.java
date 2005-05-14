@@ -290,7 +290,7 @@ public class WebServer implements Runnable {
 					// Timeout while waiting for a client (from
 					// SO_TIMEOUT)...try again if still listening.
 				} catch (Throwable t) {
-					t.printStackTrace();
+					log(t);
 				}
 			}
 		} finally {
@@ -298,7 +298,7 @@ public class WebServer implements Runnable {
 				try {
 					serverSocket.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log(e);
 				}
 			}
 			

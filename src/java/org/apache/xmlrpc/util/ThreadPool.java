@@ -38,6 +38,7 @@ public class ThreadPool {
 		private Task task;
 		MyThread() {
 			super(threadGroup, threadGroup.getName() + "-" + num++);
+			setDaemon(true);
 		}
 		synchronized void shutdown() {
 			shuttingDown = true;

@@ -16,21 +16,21 @@
 package org.apache.xmlrpc.client;
 
 
-
-
-/** Default implementation of a HTTP transport factory, based on the
- * {@link java.net.HttpURLConnection} class.
+/** An HTTP transport factory, which is based on the Jakarta Commons
+ * HTTP Client.
  */
-public class XmlRpcHttpTransportFactory extends XmlRpcTransportFactoryImpl {
-	private final XmlRpcHttpTransport HTTP_TRANSPORT;
+public class XmlRpcCommonsTransportFactory extends XmlRpcTransportFactoryImpl {
+	private final XmlRpcCommonsTransport COMMONS_TRANSPORT;
 
-	/** Creates a new factory, which creates transports for the given client.
-	 * @param pClient The client, which is operating the factory.
+	/** Creates a new instance.
+	 * @param pClient The client, which is controlling the factory.
 	 */
-	public XmlRpcHttpTransportFactory(XmlRpcClient pClient) {
+	public XmlRpcCommonsTransportFactory(XmlRpcClient pClient) {
 		super(pClient);
-		HTTP_TRANSPORT = new XmlRpcHttpTransport(getClient(), this);
-	 }
+		COMMONS_TRANSPORT = new XmlRpcCommonsTransport(pClient, this);
+	}
 
-	public XmlRpcTransport getTransport() { return HTTP_TRANSPORT; }
+	public XmlRpcTransport getTransport() {
+		return COMMONS_TRANSPORT;
+	}
 }

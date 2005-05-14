@@ -215,7 +215,6 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 			} catch (IOException e) {
 				throw new XmlRpcClientException(e.getMessage(), e);
 			}
-			System.out.println("Input: " + new String(baos.toByteArray()));
 			pStream = new ByteArrayInputStream(baos.toByteArray());
 		}
 

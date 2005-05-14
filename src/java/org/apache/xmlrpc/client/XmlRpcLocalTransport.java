@@ -15,6 +15,7 @@
  */
 package org.apache.xmlrpc.client;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.xmlrpc.XmlRpcConfig;
@@ -35,13 +36,28 @@ public class XmlRpcLocalTransport extends XmlRpcTransportImpl {
 	private boolean isExtensionType(Object pObject) {
 		if (pObject == null) {
 			return true;
+		} else if (pObject instanceof Object[]) {
+			Object[] objects = (Object[]) pObject;
+			for (int i = 0;  i < objects.length;  i++) {
+				if (isExtensionType(objects[i])) {
+					return true;
+				}
+			}
+			return false;
+		} else if (pObject instanceof Map) {
+			Map map = (Map) pObject;
+			for (Iterator iter = map.entrySet().iterator();  iter.hasNext();  ) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				if (isExtensionType(entry.getKey())  ||  isExtensionType(entry.getValue())) {
+					return true;
+				}
+			}
+			return false;
 		} else {
 			return !(pObject instanceof Integer
 					 ||  pObject instanceof String
 					 ||  pObject instanceof byte[]
-					 ||  pObject instanceof Object[]
-					 ||  pObject instanceof Double
-					 ||  pObject instanceof Map);
+					 ||  pObject instanceof Double);
 		}
 	}
 

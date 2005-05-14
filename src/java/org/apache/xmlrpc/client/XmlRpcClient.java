@@ -48,7 +48,7 @@ import org.apache.xmlrpc.serializer.XmlWriterFactory;
  * @since 3.0
  */
 public class XmlRpcClient extends XmlRpcController {
-	private XmlRpcTransportFactory transportFactory = new XmlRpcHttpTransportFactory(this);
+	private XmlRpcTransportFactory transportFactory = new XmlRpcSunHttpTransportFactory(this);
 	private XmlRpcClientConfig config = new XmlRpcClientConfigImpl();
 	private XmlWriterFactory xmlWriterFactory = new DefaultXMLWriterFactory();
 
