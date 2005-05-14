@@ -4,3 +4,9 @@ test-reports
 maven.log
 build.properties
 lib
+xmlrpc-*.tar.gz
+*.asc
+*.md5
+xmlrpc-2*.zip
+bin
+docs
