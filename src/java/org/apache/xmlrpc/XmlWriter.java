@@ -32,7 +32,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.EncoderException;
 
 /**
- * A quick and dirty XML writer.  If you feed it a
+ * A XML writer intended for single-thread usage.  If you feed it a
  * <code>ByteArrayInputStream</code>, it may be necessary to call
  * <code>writer.flush()</code> before calling
  * <code>buffer.toByteArray()</code> to get the data written to
@@ -40,12 +40,13 @@ import org.apache.commons.codec.EncoderException;
  *
  * @author <a href="mailto:hannes@apache.org">Hannes Wallnoefer</a>
  * @author Daniel L. Rall
+ * @see <a href="http://www.xml.com/axml/testaxml.htm">Tim Bray's
+ * Annotated XML Spec</a>
  */
 class XmlWriter extends OutputStreamWriter
 {
     // Various XML pieces.
-    protected static final String PROLOG_START =
-        "<?xml version=\"1.0\" encoding=\"";
+    protected static final String PROLOG_START = "<?xml version=\"1.0";
     protected static final String PROLOG_END = "\"?>";
     protected static final String CLOSING_TAG_START = "</";
     protected static final String SINGLE_TAG_END = "/>";
@@ -54,14 +55,19 @@ class XmlWriter extends OutputStreamWriter
     protected static final String AMPERSAND_ENTITY = "&amp;";
 
     /**
-     * Java's name for the the ISO8859_1 encoding.
+     * Java's name for the ISO-8859-1 encoding.
      */
-    protected static final String ISO8859_1 = "ISO8859_1";
+    static final String ISO8859_1 = "ISO8859_1";
 
     /**
-     * Java's name for the the UTF8 encoding.
+     * Java's name for the UTF-8 encoding.
      */
-    protected static final String UTF8 = "UTF8";
+    static final String UTF8 = "UTF8";
+
+    /**
+     * Java's name for the UTF-16 encoding.
+     */
+    static final String UTF16 = "UTF-16";
     
     protected static final Base64 base64Codec = new Base64();
 
@@ -73,6 +79,8 @@ class XmlWriter extends OutputStreamWriter
     /**
      * Mapping between Java encoding names and "real" names used in
      * XML prolog.
+     *
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/intl/encoding.doc.html">Java character set names</a>
      */
     private static Properties encodings = new Properties();
 
@@ -90,23 +98,40 @@ class XmlWriter extends OutputStreamWriter
     private static DateTool dateTool = new DateTool();
 
     /**
+     * Whether the XML prolog has been written.
+     */
+    boolean hasWrittenProlog = false;
+
+    /**
      * Creates a new instance.
      *
      * @param out The stream to write output to.
-     * @param enc The encoding to using for outputing XML.
-     * @throws UnsupportedEncodingException Encoding unrecognized.
-     * @throws IOException Problem writing.
+     * @param enc The encoding to using for outputing XML.  Only UTF-8
+     * and UTF-16 are supported.  If another encoding is specified,
+     * UTF-8 will be used instead for widest XML parser
+     * interoperability.
+     * @exception UnsupportedEncodingException Since unsupported
+     * encodings are internally converted to UTF-8, this should only
+     * be seen as the result of an internal error.
      */
     public XmlWriter(OutputStream out, String enc)
-        throws UnsupportedEncodingException, IOException
+        throws UnsupportedEncodingException
     {
         // Super-class wants the Java form of the encoding.
-        super(out, enc);
+        super(out, forceUnicode(enc));
+    }
 
-        // Add the XML prolog (including the encoding in XML form).
-        write(PROLOG_START);
-        write(canonicalizeEncoding(enc));
-        write(PROLOG_END);
+    /**
+     * @param encoding A caller-specified encoding.
+     * @return An Unicode encoding.
+     */
+    private static String forceUnicode(String encoding)
+    {
+        if (encoding == null || !encoding.toUpperCase().startsWith("UTF"))
+        {
+            encoding = UTF8;
+        }
+        return encoding;
     }
 
     /**
@@ -116,10 +141,31 @@ class XmlWriter extends OutputStreamWriter
      * @param javaEncoding The name of the encoding as known by Java.
      * @return The XML encoding (if a mapping is available);
      * otherwise, the encoding as provided.
+     *
+     * @deprecated This method will not be visible in 2.0.
      */
     protected static String canonicalizeEncoding(String javaEncoding)
     {
         return encodings.getProperty(javaEncoding, javaEncoding);
+    }
+
+    /**
+     * A mostly pass-through implementation wrapping
+     * <code>OutputStreamWriter.write()</code> which assures that the
+     * XML prolog is written before any other data.
+     *
+     * @see java.io.OutputStreamWriter.write(char[], int, int)
+     */
+    public void write(char[] cbuf, int off, int len)
+        throws IOException
+    {
+        if (!hasWrittenProlog)
+        {
+            super.write(PROLOG_START, 0, PROLOG_START.length());
+            super.write(PROLOG_END, 0, PROLOG_END.length());
+            hasWrittenProlog = true;
+        }
+        super.write(cbuf, off, len);
     }
 
     /**
@@ -246,6 +292,17 @@ class XmlWriter extends OutputStreamWriter
     }
 
     /**
+     * Writes characters like '\r' (0xd) as "&amp;#13;".
+     */
+    private void writeCharacterReference(char c)
+        throws IOException
+    {
+        write("&#");
+        write(String.valueOf((int) c));
+        write(';');
+    }
+
+    /**
      *
      * @param elem
      * @throws IOException
@@ -292,8 +349,6 @@ class XmlWriter extends OutputStreamWriter
         throws XmlRpcException, IOException
     {
         int l = text.length ();
-        String enc = super.getEncoding();
-        boolean isUnicode = UTF8.equals(enc) || "UTF-16".equals(enc);
         // ### TODO: Use a buffer rather than going character by
         // ### character to scale better for large text sizes.
         //char[] buf = new char[32];
@@ -303,9 +358,12 @@ class XmlWriter extends OutputStreamWriter
             switch (c)
             {
             case '\t':
-            case '\r':
             case '\n':
                 write(c);
+                break;
+            case '\r':
+                // Avoid normalization of CR to LF.
+                writeCharacterReference(c);
                 break;
             case '<':
                 write(LESS_THAN_ENTITY);
@@ -317,44 +375,53 @@ class XmlWriter extends OutputStreamWriter
                 write(AMPERSAND_ENTITY);
                 break;
             default:
-                if (c < 0x20 || c > 0x7f)
+                // Though the XML spec requires XML parsers to support
+                // Unicode, not all such code points are valid in XML
+                // documents.  Additionally, previous to 2003-06-30
+                // the XML-RPC spec only allowed ASCII data (in
+                // <string> elements).  For interoperability with
+                // clients rigidly conforming to the pre-2003 version
+                // of the XML-RPC spec, we entity encode characters
+                // outside of the valid range for ASCII, too.
+                if (c > 0x7f || !isValidXMLChar(c))
                 {
-                    // Though the XML-RPC spec allows any ASCII
-                    // characters except '<' and '&', the XML spec
-                    // does not allow this range of characters,
-                    // resulting in a parse error from most XML
-                    // parsers.  However, the XML spec does require
-                    // XML parsers to support UTF-8 and UTF-16.
-                    if (isUnicode)
-                    {
-                        if (c < 0x20)
-                        {
-                            // Entity escape the character.
-                            write("&#");
-                            // ### Do we really need the String conversion?
-                            write(String.valueOf((int) c));
-                            write(';');
-                        }
-                        else // c > 0x7f
-                        {
-                            // Write the character in our encoding.
-                            write(new String(String.valueOf(c).getBytes(enc)));
-                        }
-                    }
-                    else
-                    {
-                        throw new XmlRpcException(0, "Invalid character data "
-                                                  + "corresponding to XML "
-                                                  + "entity &#"
-                                                  + String.valueOf((int) c)
-                                                  + ';');
-                    }
+                    // Replace the code point with a character reference.
+                    writeCharacterReference(c);
                 }
                 else
                 {
                     write(c);
                 }
             }
+        }
+    }
+
+    /**
+     * Section 2.2 of the XML spec describes which Unicode code points
+     * are valid in XML:
+     *
+     * <blockquote><code>#x9 | #xA | #xD | [#x20-#xD7FF] |
+     * [#xE000-#xFFFD] | [#x10000-#x10FFFF]</code></blockquote>
+     *
+     * Code points outside this set must be entity encoded to be
+     * represented in XML.
+     *
+     * @param c The character to inspect.
+     * @return Whether the specified character is valid in XML.
+     */
+    private static final boolean isValidXMLChar(char c)
+    {
+        switch (c)
+        {
+        case 0x9:
+        case 0xa:  // line feed, '\n'
+        case 0xd:  // carriage return, '\r'
+            return true;
+
+        default:
+            return ( (0x20 < c && c <= 0xd7ff) ||
+                     (0xe000 < c && c <= 0xfffd) ||
+                     (0x10000 < c && c <= 0x10ffff) );
         }
     }
 

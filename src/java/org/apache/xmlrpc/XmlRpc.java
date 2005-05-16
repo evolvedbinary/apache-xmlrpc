@@ -147,9 +147,10 @@ public abstract class XmlRpc extends HandlerBase
 
     /**
      * Java's name for the encoding we're using.  Defaults to
-     * <code>ISO8859_1</code>.
+     * <code>UTF8</code> (of which <code>ISO8859_1</code> is a
+     * subset).
      */
-    static String encoding = XmlWriter.ISO8859_1;
+    static String encoding = XmlWriter.UTF8;
 
     /**
      * Java's name for the input encoding we're using.  Defaults to

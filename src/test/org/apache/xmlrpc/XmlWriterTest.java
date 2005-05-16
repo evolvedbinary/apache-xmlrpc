@@ -33,6 +33,9 @@ import junit.framework.TestSuite;
 public class XmlWriterTest
     extends TestCase 
 {
+    private ByteArrayOutputStream buffer;
+    private XmlWriter writer;
+
     /**
      * Constructor
      */
@@ -55,6 +58,7 @@ public class XmlWriterTest
     public void setUp() 
     {
         XmlRpc.setDebug(true);
+        buffer = new ByteArrayOutputStream();
     }
    
     /**
@@ -65,27 +69,63 @@ public class XmlWriterTest
         XmlRpc.setDebug(false);
     }
 
-    public void testWriter()
+    public void testForceAlternateEncoding()
+        throws Exception
+    {
+        writer = new XmlWriter(buffer, null);
+        assertEquals("null should be forced to UTF-8",
+                     XmlWriter.UTF8, writer.getEncoding());
+
+        writer = new XmlWriter(buffer, XmlWriter.ISO8859_1);
+        assertEquals(XmlWriter.ISO8859_1 + " should be forced to " +
+                     XmlWriter.UTF8, XmlWriter.UTF8, writer.getEncoding());
+
+        writer = new XmlWriter(buffer, "ISO8859_15");
+        assertEquals("ISO8859_15 should be forced to " + XmlWriter.UTF8,
+                     XmlWriter.UTF8, writer.getEncoding());
+
+        writer = new XmlWriter(buffer, "EUC_JP");
+        assertEquals("EUC_JP should be forced to " + XmlWriter.UTF8,
+                     XmlWriter.UTF8, writer.getEncoding());
+
+        writer = new XmlWriter(buffer, XmlWriter.UTF16);
+        assertEquals(XmlWriter.UTF16 + " should remain " + XmlWriter.UTF16,
+                     XmlWriter.UTF16, writer.getEncoding());
+    }
+
+    public void testBasicResults()
         throws Exception
     {
         try
         {
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            XmlWriter writer = new XmlWriter(buffer, XmlWriter.ISO8859_1);
-            assertTrue(writer.getEncoding().equals(XmlRpc.encoding));
+            writer = new XmlWriter(buffer, XmlWriter.UTF8);
+
+            writer.write(new char[0], 0, 0);
+            writer.flush();
+            assertEquals("Unexpected or missing XML prolog",
+                         XmlWriter.PROLOG_START + XmlWriter.PROLOG_END,
+                         buffer.toString());
 
             String foobar = "foobar";
             writer.writeObject(foobar);
             writer.flush();
-            //System.err.println("buffer=" + new String(buffer.toByteArray()));
             String postProlog = "<value>" + foobar + "</value>";
-            assertTrue(buffer.toString().endsWith(postProlog));
+            assertTrue("Unexpected results from writing of String",
+                       buffer.toString().endsWith(postProlog));
 
             Integer thirtySeven = new Integer(37);
             writer.writeObject(thirtySeven);
             writer.flush();
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
-            assertTrue(buffer.toString().endsWith(postProlog));
+            assertTrue("Unexpected results from writing of Integer",
+                       buffer.toString().endsWith(postProlog));
+
+            Boolean flag = Boolean.TRUE;
+            writer.writeObject(flag);
+            writer.flush();
+            postProlog += "<value><boolean>1</boolean></value>";
+            assertTrue("Unexpected results from writing of Boolean",
+                       buffer.toString().endsWith(postProlog));
 
             Object[] array = { foobar, thirtySeven };
             writer.writeObject(array);
@@ -94,7 +134,8 @@ public class XmlWriterTest
             postProlog += "<value>" + foobar + "</value>";
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
             postProlog += "</data></array></value>";
-            assertTrue(buffer.toString().endsWith(postProlog));
+            assertTrue("Unexpected results from writing of Object[]",
+                       buffer.toString().endsWith(postProlog));
 
             Hashtable map = new Hashtable();
             map.put(foobar, thirtySeven);
@@ -104,12 +145,25 @@ public class XmlWriterTest
             postProlog += "<name>" + foobar + "</name>";
             postProlog += "<value><int>" + thirtySeven + "</int></value>";
             postProlog += "</member></struct></value>";
-            assertTrue(buffer.toString().endsWith(postProlog));
+            assertTrue("Unexpected results from writing of Hashtable",
+                       buffer.toString().endsWith(postProlog));
         }
         catch (Exception e)
         {
             e.printStackTrace();
             fail(e.getMessage());
         }
+    }
+
+    public void testWriteCharacterReference()
+        throws Exception
+    {
+        writer = new XmlWriter(buffer, null);
+        writer.hasWrittenProlog = true;
+        writer.writeObject(String.valueOf((char) 0x80));
+        writer.flush();
+        String postProlog = "<value>&#128;</value>";
+        assertTrue("Character reference not created as expected",
+                   buffer.toString().endsWith(postProlog));
     }
 }
