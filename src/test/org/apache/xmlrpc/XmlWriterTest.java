@@ -18,6 +18,7 @@
 package org.apache.xmlrpc;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Hashtable;
 
 import junit.framework.Test;
@@ -93,18 +94,43 @@ public class XmlWriterTest
                      XmlWriter.UTF16, writer.getEncoding());
     }
 
+    public void testProlog()
+        throws IOException
+    {
+        final String EXPECTED_PROLOG =
+            XmlWriter.PROLOG_START + XmlWriter.PROLOG_END;
+
+        writer = new XmlWriter(buffer, XmlWriter.UTF8);
+        writer.write(new char[0], 0, 0);
+        writer.flush();
+        assertEquals("Unexpected or missing XML prolog when writing char[]",
+                     EXPECTED_PROLOG, buffer.toString());
+        // Append a space using an overload, and assure non-duplication.
+        writer.write(' ');
+        writer.flush();
+        assertEquals("Unexpected or missing XML prolog when writing char",
+                     EXPECTED_PROLOG + ' ', buffer.toString());
+
+        buffer = new ByteArrayOutputStream();
+        writer = new XmlWriter(buffer, XmlWriter.UTF8);
+        writer.write("");
+        writer.flush();
+        assertEquals("Unexpected or missing XML prolog when writing String",
+                     EXPECTED_PROLOG, buffer.toString());
+        // Try again to assure it's not duplicated in the output.
+        writer.write("");
+        writer.flush();
+        assertEquals("Unexpected or missing XML prolog when writing String",
+                     EXPECTED_PROLOG, buffer.toString());
+        
+    }
+
     public void testBasicResults()
         throws Exception
     {
         try
         {
             writer = new XmlWriter(buffer, XmlWriter.UTF8);
-
-            writer.write(new char[0], 0, 0);
-            writer.flush();
-            assertEquals("Unexpected or missing XML prolog",
-                         XmlWriter.PROLOG_START + XmlWriter.PROLOG_END,
-                         buffer.toString());
 
             String foobar = "foobar";
             writer.writeObject(foobar);

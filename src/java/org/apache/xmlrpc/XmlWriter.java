@@ -54,6 +54,15 @@ class XmlWriter extends OutputStreamWriter
     protected static final String GREATER_THAN_ENTITY = "&gt;";
     protected static final String AMPERSAND_ENTITY = "&amp;";
 
+    private static final char[] PROLOG =
+        new char[PROLOG_START.length() + PROLOG_END.length()];
+    static
+    {
+        int len = PROLOG_START.length();
+        PROLOG_START.getChars(0, len, PROLOG, 0);
+        PROLOG_END.getChars(0, PROLOG_END.length(), PROLOG, len);
+    }
+
     /**
      * Java's name for the ISO-8859-1 encoding.
      */
@@ -161,11 +170,46 @@ class XmlWriter extends OutputStreamWriter
     {
         if (!hasWrittenProlog)
         {
-            super.write(PROLOG_START, 0, PROLOG_START.length());
-            super.write(PROLOG_END, 0, PROLOG_END.length());
+            super.write(PROLOG, 0, PROLOG.length);
             hasWrittenProlog = true;
         }
         super.write(cbuf, off, len);
+    }
+
+    /**
+     * A mostly pass-through implementation wrapping
+     * <code>OutputStreamWriter.write()</code> which assures that the
+     * XML prolog is written before any other data.
+     *
+     * @see java.io.OutputStreamWriter.write(char)
+     */
+    public void write(char c)
+        throws IOException
+    {
+        if (!hasWrittenProlog)
+        {
+            super.write(PROLOG, 0, PROLOG.length);
+            hasWrittenProlog = true;
+        }
+        super.write(c);
+    }
+
+    /**
+     * A mostly pass-through implementation wrapping
+     * <code>OutputStreamWriter.write()</code> which assures that the
+     * XML prolog is written before any other data.
+     *
+     * @see java.io.OutputStreamWriter.write(String, int, int)
+     */
+    public void write(String str, int off, int len)
+        throws IOException
+    {
+        if (!hasWrittenProlog)
+        {
+            super.write(PROLOG, 0, PROLOG.length);
+            hasWrittenProlog = true;
+        }
+        super.write(str, off, len);
     }
 
     /**
