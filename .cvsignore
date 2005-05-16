@@ -7,6 +7,6 @@ lib
 xmlrpc-*.tar.gz
 *.asc
 *.md5
-xmlrpc-2*.zip
+xmlrpc-*.zip
 bin
 docs
