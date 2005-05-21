@@ -44,6 +44,9 @@ public class ObjectArraySerializer extends TypeSerializerImpl {
 	}
 	protected void writeObject(ContentHandler pHandler, Object pObject) throws SAXException {
 		TypeSerializer ts = typeFactory.getSerializer(config, pObject);
+		if (ts == null) {
+			throw new SAXException("Unsupported Java type: " + pObject.getClass().getName());
+		}
 		ts.write(pHandler, pObject);
 	}
 	protected void writeData(ContentHandler pHandler, Object pObject) throws SAXException {

@@ -144,7 +144,7 @@ public class TypeFactoryImpl implements TypeFactory {
 				throw new SAXException(new XmlRpcExtensionException("DOM nodes aren't supported, if isEnabledForExtensions() == false"));
 			}
 		} else {
-			throw new SAXException("Unsupported Java type: " + pObject.getClass().getName());
+			return null;
 		}
 	}
 

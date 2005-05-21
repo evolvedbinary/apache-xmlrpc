@@ -52,6 +52,9 @@ public class MapSerializer extends TypeSerializerImpl {
 		pHandler.characters(pKey.toCharArray(), 0, pKey.length());
 		pHandler.endElement("", NAME_TAG, NAME_TAG);
 		TypeSerializer ts = typeFactory.getSerializer(config, pValue);
+		if (ts == null) {
+			throw new SAXException("Unsupported Java type: " + pValue.getClass().getName());
+		}
 		ts.write(pHandler, pValue);
 		pHandler.endElement("", MEMBER_TAG, MEMBER_TAG);
 	}

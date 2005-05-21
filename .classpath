@@ -1,36 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="lib/ws-commons-java5-src.zip" kind="lib" path="lib/ws-commons-java5.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="lib/ws-commons-util-src.zip" kind="lib" path="lib/ws-commons-util.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="src/test">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/junit-3.8.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-logging.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry sourcepath="lib/ws-commons-java5-src.zip" kind="lib" path="lib/ws-commons-java5.jar"/>
+	<classpathentry sourcepath="lib/ws-commons-util-src.zip" kind="lib" path="lib/ws-commons-util.jar"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/jaxmeapi-0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

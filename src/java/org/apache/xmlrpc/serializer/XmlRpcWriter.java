@@ -138,6 +138,9 @@ public class XmlRpcWriter {
 	 */
 	protected void writeValue(Object pObject) throws SAXException {
 		TypeSerializer serializer = typeFactory.getSerializer(config, pObject);
+		if (serializer == null) {
+			throw new SAXException("Unsupported Java type: " + pObject.getClass().getName());
+		}
 		serializer.write(handler, pObject);
 	}
 }
