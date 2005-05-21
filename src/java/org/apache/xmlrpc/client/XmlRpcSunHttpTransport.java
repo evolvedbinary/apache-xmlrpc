@@ -14,15 +14,16 @@ import org.apache.xmlrpc.util.HttpUtil;
  * {@link java.net.HttpURLConnection} class.
  */
 public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
+	private final String userAgent = super.getUserAgent() + " (Sun HTTP Transport)";
+
 	/** Creates a new instance.
 	 * @param pClient The client controlling this instance.
-	 * @param pFactory The factory creating this instance on behalf of the client.
 	 */
-	public XmlRpcSunHttpTransport(XmlRpcClient pClient, XmlRpcTransportFactoryImpl pFactory) {
-		super(pClient, pFactory);
+	public XmlRpcSunHttpTransport(XmlRpcClient pClient) {
+		super(pClient);
 	}
 
-	protected String getUserAgent() { return super.getUserAgent() + " (Sun HTTP Transport)"; }
+	protected String getUserAgent() { return userAgent; }
 
 	protected void setRequestHeader(Object pConnection, String pHeader, String pValue) {
 		URLConnection conn = (URLConnection) pConnection;
@@ -64,6 +65,20 @@ public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
 		} catch (IOException e) {
 			throw new XmlRpcClientException("Failed to obtain input stream from server", e);
 		}
+	}
+
+	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection,
+										 byte[] pContent)
+			throws XmlRpcClientException {
+		URLConnection conn = (URLConnection) pConnection;
+		try {
+			OutputStream ostream = conn.getOutputStream();
+			ostream.write(pContent);
+			ostream.close();
+		} catch (IOException e) {
+			throw new XmlRpcClientException("Failed to send request to server: " + e.getMessage(), e);
+		}
+		return newInputStream(pConfig, pConnection);
 	}
 
 	protected boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig, Object pConnection) {

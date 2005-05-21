@@ -15,6 +15,8 @@
  */
 package org.apache.xmlrpc.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
 
@@ -64,5 +66,32 @@ public class HttpUtil {
             }
         }
         return false;
+    }
+
+	/** Reads a header line from the input stream <code>pIn</code>
+	 * and converts it into a string.
+	 * @param pIn The input stream being read.
+	 * @param pBuffer A buffer being used for temporary storage.
+	 * The buffers length is a limit of the header lines length.
+	 * @return Next header line or null, if no more header lines
+	 * are available.
+	 * @throws IOException Reading the header line failed.
+	 */
+	public static String readLine(InputStream pIn, byte[] pBuffer) throws IOException {
+        int next;
+        int count = 0;
+        while (true) {
+            next = pIn.read();
+            if (next < 0 || next == '\n') {
+                break;
+            }
+            if (next != '\r') {
+                pBuffer[count++] = (byte) next;
+            }
+            if (count >= pBuffer.length) {
+                throw new IOException ("HTTP Header too long");
+            }
+        }
+        return new String(pBuffer, 0, count);
     }
 }

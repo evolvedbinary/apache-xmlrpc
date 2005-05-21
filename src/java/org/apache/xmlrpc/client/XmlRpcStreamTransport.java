@@ -42,7 +42,6 @@ import org.xml.sax.XMLReader;
  * the response,
  */
 public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
-	private final XmlRpcTransportFactory factory;
 	private static final SAXParserFactory spf;
 	static {
 		spf = SAXParserFactory.newInstance();
@@ -52,16 +51,8 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 
 	/** Creates a new instance on behalf of the given client.
 	 */
-	protected XmlRpcStreamTransport(XmlRpcClient pClient, XmlRpcTransportFactory pFactory) {
+	protected XmlRpcStreamTransport(XmlRpcClient pClient) {
 		super(pClient);
-		factory = pFactory;
-	}
-
-	/** Returns the factory, which created this transport.
-	 * @return The transport factory.
-	 */
-	public XmlRpcTransportFactory getFactory() {
-		return factory;
 	}
 
 	/** Creates the connection object. The connection object is a
@@ -126,6 +117,18 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 	protected abstract InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection)
 			throws XmlRpcException;
 
+	/** Creates a new input stream for reading the response.
+	 * @param pConfig The clients configuration.
+	 * @param pConnection The connection object.
+	 * @param pContent A byte array with the response.
+	 * @return Opened input stream for reading data.
+	 * @throws XmlRpcException Creating the input stream failed.
+	 */
+	protected abstract InputStream newInputStream(XmlRpcStreamRequestConfig pConfig,
+												  Object pConnection,
+												  byte[] pContent)
+			throws XmlRpcException;
+
 	/** Closes the opened input stream, indicating that no more data is being
 	 * read.
 	 * @param pStream The stream being closed.
@@ -146,9 +149,15 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 	 */
 	protected abstract boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig, Object pConnection);
 
-	protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection)
+	protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection,
+										 byte[] pContent)
 			throws XmlRpcException {
-		InputStream istream = newInputStream(pConfig, pConnection);
+		InputStream istream;
+		if (pContent == null) {
+			istream = newInputStream(pConfig, pConnection);
+		} else {
+			istream = newInputStream(pConfig, pConnection, pContent);
+		}
 		if (isResponseGzipCompressed(pConfig, pConnection)) {
 			try {
 				istream = new GZIPInputStream(istream);
@@ -159,12 +168,41 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		return istream;
 	}
 
+	/** If this method returns true, then the method
+	 * {@link #newInputStream(XmlRpcStreamRequestConfig, Object, byte[])}
+	 * will be invoked to create the response. Otherwise, the methods
+	 * {@link #getOutputStream(XmlRpcStreamRequestConfig, Object)}, and
+	 * {@link #newInputStream(XmlRpcStreamRequestConfig, Object)} will
+	 * be used.
+	 * @return Whether conversion into a byte array is required to create
+	 * the response.
+	 */
+	protected boolean isUsingByteArrayOutput(XmlRpcStreamRequestConfig pConfig) {
+		return false;
+	}
+
 	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
 		XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) pRequest.getConfig();
 		Object connection = newConnection(config);
 		try {
 			initConnection(config, connection);
-			OutputStream ostream = getOutputStream(config, connection);
+			OutputStream ostream;
+			ByteArrayOutputStream baos;
+			if (isUsingByteArrayOutput(config)) {
+				baos = new ByteArrayOutputStream();
+				if (config.isGzipCompressing()) {
+					try {
+						ostream = new GZIPOutputStream(baos);
+					} catch (IOException e) {
+						throw new XmlRpcClientException("Failed to create GZIPOutputStream: " + e.getMessage(), e);
+					}
+				} else {
+					ostream = baos;
+				}
+			} else {
+				baos = null;
+				ostream = getOutputStream(config, connection);
+			}
 			try {
 				writeRequest(config, ostream, pRequest);
 				closeOutputStream(ostream);
@@ -172,7 +210,7 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 			} finally {
 				if (ostream != null) { try { closeOutputStream(ostream); } catch (Throwable ignore) {} }
 			}
-			InputStream istream = getInputStream(config, connection);
+			InputStream istream = getInputStream(config, connection, baos == null ? null : baos.toByteArray());
 			Object result;
 			try {
 				result = readResponse(config, istream);

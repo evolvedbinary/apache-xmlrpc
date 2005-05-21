@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.xmlrpc.webserver;
+package org.apache.xmlrpc.util;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.io.IOException;
  * the <code>Content-Length</code> header: It guarantees to return
  * at most a given number of bytes.
  */
-class ServerInputStream extends InputStream {
+public class LimitedInputStream extends InputStream {
     // bytes remaining to be read from the input stream. This is
     // initialized from CONTENT_LENGTH (or getContentLength()).
     // This is used in order to correctly return a -1 when all the
@@ -37,7 +37,7 @@ class ServerInputStream extends InputStream {
      * @param pIn Input stream being read.
      * @param pAvailable Number of bytes available in <code>pIn</code>.
      */
-    public ServerInputStream(InputStream pIn, int pAvailable) {
+    public LimitedInputStream(InputStream pIn, int pAvailable) {
 		in = pIn;
         available = pAvailable;
     }

@@ -16,21 +16,16 @@
 package org.apache.xmlrpc.client;
 
 
-/** An HTTP transport factory, which is based on the Jakarta Commons
- * HTTP Client.
+/** Factory for the lite HTTP transport,
+ * {@link org.apache.xmlrpc.client.XmlRpcLiteTransport}.
  */
-public class XmlRpcCommonsTransportFactory extends XmlRpcTransportFactoryImpl {
-	private final XmlRpcCommonsTransport COMMONS_TRANSPORT;
-
+public class XmlRpcLiteHttpTransportFactory extends XmlRpcTransportFactoryImpl {
 	/** Creates a new instance.
-	 * @param pClient The client, which is controlling the factory.
+	 * @param pClient The client, which will invoke the factory.
 	 */
-	public XmlRpcCommonsTransportFactory(XmlRpcClient pClient) {
+	public XmlRpcLiteHttpTransportFactory(XmlRpcClient pClient) {
 		super(pClient);
-		COMMONS_TRANSPORT = new XmlRpcCommonsTransport(pClient);
 	}
 
-	public XmlRpcTransport getTransport() {
-		return COMMONS_TRANSPORT;
-	}
+	public XmlRpcTransport getTransport() { return new XmlRpcLiteHttpTransport(getClient()); }
 }

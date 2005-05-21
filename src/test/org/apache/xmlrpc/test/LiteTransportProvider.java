@@ -16,25 +16,25 @@
 package org.apache.xmlrpc.test;
 
 import org.apache.xmlrpc.client.XmlRpcClient;
-import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory;
 import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 
 
-
-
-/** Implementation of {@link BaseTest} for testing the
- * {@link org.apache.xmlrpc.client.XmlRpcSunHttpTransport}.
+/** Provider for testing the
+ * {@link org.apache.xmlrpc.client.XmlRpcLiteHttpTransport}.
  */
-public class SunHttpTransportProvider extends WebServerProvider {
+public class LiteTransportProvider extends WebServerProvider {
 	/** Creates a new instance.
 	 * @param pMapping The test servers handler mapping.
+	 * @param pContentLength Whether a Content-Length header is required.
 	 */
-	public SunHttpTransportProvider(XmlRpcHandlerMapping pMapping, boolean pContentLength) {
+	public LiteTransportProvider(XmlRpcHandlerMapping pMapping,
+								 boolean pContentLength) {
 		super(pMapping, pContentLength);
 	}
 
 	protected XmlRpcTransportFactory getTransportFactory(XmlRpcClient pClient) {
-		return new XmlRpcSunHttpTransportFactory(pClient);
+		return new XmlRpcLiteHttpTransportFactory(pClient);
 	}
 }

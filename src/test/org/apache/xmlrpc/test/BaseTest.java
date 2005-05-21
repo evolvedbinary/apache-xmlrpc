@@ -46,7 +46,10 @@ public class BaseTest extends TestCase {
 			providers = new ClientProvider[]{
 				new LocalTransportProvider(mapping),
 				new LocalStreamTransportProvider(mapping),
-				new SunHttpTransportProvider(mapping),
+				new LiteTransportProvider(mapping, true),
+				new LiteTransportProvider(mapping, false),
+				new SunHttpTransportProvider(mapping, true),
+				new SunHttpTransportProvider(mapping, false),
 				new CommonsProvider(mapping)
 			};
 		}

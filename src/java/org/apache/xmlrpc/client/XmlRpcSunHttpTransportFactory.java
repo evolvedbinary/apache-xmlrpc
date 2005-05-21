@@ -29,7 +29,7 @@ public class XmlRpcSunHttpTransportFactory extends XmlRpcTransportFactoryImpl {
 	 */
 	public XmlRpcSunHttpTransportFactory(XmlRpcClient pClient) {
 		super(pClient);
-		HTTP_TRANSPORT = new XmlRpcSunHttpTransport(getClient(), this);
+		HTTP_TRANSPORT = new XmlRpcSunHttpTransport(pClient);
 	 }
 
 	public XmlRpcTransport getTransport() { return HTTP_TRANSPORT; }

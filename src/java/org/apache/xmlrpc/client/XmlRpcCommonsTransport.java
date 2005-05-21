@@ -42,22 +42,22 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	private class CommonsConnection {
 		final HttpClient client = new HttpClient();
 		final PostMethod method;
-		final ByteArrayOutputStream content = new ByteArrayOutputStream();
 		CommonsConnection(XmlRpcHttpClientConfig pConfig) {
 			method = new PostMethod(pConfig.getServerURL().toString());
 	        method.setHttp11(true);
 		}
 	}
 
+	private String userAgent = super.getUserAgent() + " (Jakarta Commons httpclient Transport)";
+
 	/** Creates a new instance.
 	 * @param pClient The client, which will be invoking the transport.
-	 * @param pFactory The factory, which is creating the transport.
 	 */
-	public XmlRpcCommonsTransport(XmlRpcClient pClient, XmlRpcTransportFactoryImpl pFactory) {
-		super(pClient, pFactory);
+	public XmlRpcCommonsTransport(XmlRpcClient pClient) {
+		super(pClient);
 	}
 
-	protected String getUserAgent() { return super.getUserAgent() + " (Jakarta Commons httpclient Transport)"; }
+	protected String getUserAgent() { return userAgent; }
 
 	protected void setRequestHeader(Object pConnection, String pHeader, String pValue) {
 		PostMethod method = ((CommonsConnection) pConnection).method;
@@ -82,15 +82,27 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	}
 
 	protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws XmlRpcClientException {
-		return ((CommonsConnection) pConnection).content;
+		throw new IllegalStateException("Not implemented");
 	}
 
+	protected boolean isUsingByteArrayOutput(XmlRpcStreamRequestConfig pConfig) { return true; }
+
 	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws XmlRpcException {
+		throw new IllegalStateException("Not implemented");
+	}
+
+	protected void setContentLength(Object pConnection, int pLength) {
+		CommonsConnection conn = (CommonsConnection) pConnection;
+		PostMethod method = conn.method;
+		method.setRequestContentLength(pLength);
+	}
+
+	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection, byte[] pContents)
+			throws XmlRpcException {
 		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pConfig;
 		CommonsConnection conn = (CommonsConnection) pConnection;
 		PostMethod method = conn.method;
-		method.setRequestBody(new ByteArrayInputStream(conn.content.toByteArray()));
-		method.setRequestContentLength(conn.content.size());
+		method.setRequestBody(new ByteArrayInputStream(pContents));
 		HostConfiguration hostConfig;
 		try {
 			URI hostURI = new URI(config.getServerURL().toString());

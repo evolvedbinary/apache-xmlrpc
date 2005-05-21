@@ -29,12 +29,14 @@ import org.apache.xmlrpc.webserver.WebServer;
 public abstract class WebServerProvider extends ClientProviderImpl {
 	protected final WebServer webServer = new WebServer(0);
 	private boolean isActive;
+	private final boolean contentLength;
 
 	/** Creates a new instance.
 	 * @param pMapping The test servers handler mapping.
 	 */
-	protected WebServerProvider(XmlRpcHandlerMapping pMapping) {
+	protected WebServerProvider(XmlRpcHandlerMapping pMapping, boolean pContentLength) {
 		super(pMapping);
+		contentLength = pContentLength;
 	}
 
 	public final XmlRpcClientConfigImpl getConfig() throws Exception {
@@ -45,6 +47,7 @@ public abstract class WebServerProvider extends ClientProviderImpl {
 	protected XmlRpcClientConfigImpl getConfig(URL pServerURL) throws Exception {
 		XmlRpcClientConfigImpl config = super.getConfig();
 		config.setServerURL(pServerURL);
+		config.setContentLengthOptional(!contentLength);
 		return config;
 	}
 
@@ -54,6 +57,7 @@ public abstract class WebServerProvider extends ClientProviderImpl {
 			server.setHandlerMapping(mapping);
 			XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) server.getConfig();
 			serverConfig.setEnabledForExtensions(true);
+			serverConfig.setContentLengthOptional(!contentLength);
 			webServer.start();
 			isActive = true;
 		}

@@ -65,10 +65,9 @@ public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 
 	/** Creates a new instance.
 	 * @param pClient The client, which is controlling the transport.
-	 * @param pFactory The factory creating the transport.
 	 */
-	public XmlRpcLocalStreamTransport(XmlRpcClient pClient, XmlRpcLocalStreamTransportFactory pFactory) {
-		super(pClient, pFactory);
+	public XmlRpcLocalStreamTransport(XmlRpcClient pClient) {
+		super(pClient);
 	}
 
 	protected Object newConnection(XmlRpcStreamRequestConfig pConfig) throws XmlRpcClientException {
@@ -101,5 +100,9 @@ public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 
 	protected boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig, Object pConnection) {
 		return pConfig.isGzipRequesting();
+	}
+
+	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection, byte[] pContent) throws XmlRpcException {
+		throw new IllegalStateException("Not implemented");
 	}
 }

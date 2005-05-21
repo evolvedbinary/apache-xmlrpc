@@ -32,6 +32,7 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.server.XmlRpcHttpServerConfig;
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.Base64;
+import org.apache.xmlrpc.util.LimitedInputStream;
 import org.apache.xmlrpc.util.ThreadPool;
 
 
@@ -92,7 +93,14 @@ public class Connection implements ThreadPool.Task {
 		socket = pSocket;
 		// set read timeout to 30 seconds
         socket.setSoTimeout (30000);
-        input = new BufferedInputStream(socket.getInputStream());
+        input = new BufferedInputStream(socket.getInputStream()){
+    		/** It may happen, that the XML parser invokes close().
+    		 * Closing the input stream must not occur, because
+    		 * that would close the whole socket. So we suppress it.
+    		 */
+        	public void close() throws IOException {
+        	}
+        };
         output = new BufferedOutputStream(socket.getOutputStream());
 	}
 
@@ -218,7 +226,7 @@ public class Connection implements ThreadPool.Task {
 		if (contentLength == -1) {
 			return input;
 		} else {
-			return new ServerInputStream(input, contentLength);
+			return new LimitedInputStream(input, contentLength);
 		}
 	}
 
@@ -266,11 +274,13 @@ public class Connection implements ThreadPool.Task {
         output.write(serverName);
         output.write(pData.isKeepAlive() ? conkeep : conclose);
         output.write(ctype);
-        output.write(clength);
 		if (pContentLength != -1) {
+	        output.write(clength);
 			output.write(toHTTPBytes(Integer.toString(pContentLength)));
+	        output.write(doubleNewline);
+		} else {
+			output.write(newline);
 		}
-        output.write(doubleNewline);
 		pData.setSuccess(true);
 	}
 
@@ -318,8 +328,8 @@ public class Connection implements ThreadPool.Task {
 	        output.write(serverName);
 	        output.write(conclose);
 	        output.write(ctype);
-	        output.write(clength);
 			if (pContentLength != -1) {
+		        output.write(clength);
 				output.write(toHTTPBytes(Integer.toString(pContentLength)));
 			}
 	        output.write(doubleNewline);

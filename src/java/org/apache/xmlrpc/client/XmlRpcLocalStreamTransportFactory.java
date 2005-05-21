@@ -30,7 +30,7 @@ public class XmlRpcLocalStreamTransportFactory extends XmlRpcStreamTransportFact
 	 */
 	public XmlRpcLocalStreamTransportFactory(XmlRpcClient pClient) {
 		super(pClient);
-		LOCAL_STREAM_TRANSPORT = new XmlRpcLocalStreamTransport(pClient, this);
+		LOCAL_STREAM_TRANSPORT = new XmlRpcLocalStreamTransport(pClient);
 	}
 
 	public XmlRpcTransport getTransport() { return LOCAL_STREAM_TRANSPORT; }
