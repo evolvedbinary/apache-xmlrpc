@@ -18,7 +18,6 @@ package org.apache.xmlrpc.parser;
 import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.util.NamespaceContextImpl;
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcExtensionException;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;

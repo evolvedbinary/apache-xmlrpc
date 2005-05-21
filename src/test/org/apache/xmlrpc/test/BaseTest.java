@@ -16,12 +16,16 @@
 package org.apache.xmlrpc.test;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -30,6 +34,10 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcExtensionException;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import junit.framework.TestCase;
 
@@ -214,6 +222,40 @@ public class BaseTest extends TestCase {
 				result.put(Integer.toString(i), new Integer(i));
 			}
 			return result;
+		}
+		/** Returns the sum of all "int" nodes in <code>pNode</code>.
+		 * @param pNode The node being counted.
+		 * @return The sum of the values of all "int" nodes.
+		 */
+		public int nodeParam(Node pNode) {
+			if (pNode.getNodeType() != Node.DOCUMENT_NODE) {
+				throw new IllegalStateException("Expected document node, got " + pNode);
+			}
+			Element e = ((Document) pNode).getDocumentElement();
+			if (!ROOT_TAG.equals(e.getLocalName()) || !INT_URI.equals(e.getNamespaceURI())) {
+				throw new IllegalStateException("Expected root element 'root', got "
+												+ new QName(e.getNamespaceURI(), e.getLocalName()));
+			}
+			return count(pNode);
+		}
+		private int count(Node pNode) {
+			if (INT_TAG.equals(pNode.getLocalName())  &&  INT_URI.equals(pNode.getNamespaceURI())) {
+				StringBuffer sb = new StringBuffer();
+				for (Node child = pNode.getFirstChild();  child != null;  child = child.getNextSibling()) {
+					if (child.getNodeType() == Node.TEXT_NODE  ||  child.getNodeType() == Node.CDATA_SECTION_NODE) {
+						sb.append(child.getNodeValue());
+					}
+				}
+				return Integer.parseInt(sb.toString());
+			} else {
+				int result = 0;
+				for (Node child = pNode.getFirstChild();  child != null;  child = child.getNextSibling()) {
+					if (child.getNodeType() == Node.ELEMENT_NODE) {
+						result += count(child);
+					}
+				}
+				return result;
+			}
 		}
 	}
 
@@ -703,5 +745,46 @@ public class BaseTest extends TestCase {
 		checkMap((Map) result);
 		result = client.execute(getExConfig(pProvider), methodName, params);
 		checkMap((Map) result);
+	}
+
+	/** Test, whether we can invoke a method, passing a DOM
+	 * node as parameter.
+	 * @throws Exception The test failed.
+	 */
+	public void testNodeParam() throws Exception {
+		for (int i = 0;  i < providers.length;  i++) {
+			testNodeParam(providers[i]);
+		}
+	}
+
+	private static final String ROOT_TAG = "root";
+	private static final String INT_TAG = "int";
+	private static final String INT_URI = "http://ws.apache.org/xmlrpc/namespaces/testNodeParam";
+
+	private void testNodeParam(ClientProvider pProvider) throws Exception {
+		final String xml =
+			"<" + ROOT_TAG + " xmlns='" + INT_URI +"'>" +
+			"  <" + INT_TAG + ">1</" + INT_TAG + ">" +
+			"  <" + INT_TAG + ">2</" + INT_TAG + ">" +
+			"  <" + INT_TAG + ">3</" + INT_TAG + ">" +
+			"  <" + INT_TAG + ">4</" + INT_TAG + ">" +
+			"  <" + INT_TAG + ">5</" + INT_TAG + ">" +
+			"</" + ROOT_TAG + ">";
+		final String methodName = "Remote.nodeParam";
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setValidating(false);
+		dbf.setNamespaceAware(true);
+		Document doc = dbf.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+		final Object[] params = new Object[]{doc};
+		final XmlRpcClient client = pProvider.getClient();
+		Object result = client.execute(getExConfig(pProvider), methodName, params);
+		assertEquals(new Integer(1+2+3+4+5), result);
+		boolean ok = false;
+		try {
+			client.execute(getConfig(pProvider), methodName, params);
+		} catch (XmlRpcExtensionException e) {
+			ok = true;
+		}
+		assertTrue(ok);
 	}
 }

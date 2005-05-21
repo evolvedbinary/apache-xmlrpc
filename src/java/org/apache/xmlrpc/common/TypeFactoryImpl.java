@@ -31,6 +31,7 @@ import org.apache.xmlrpc.parser.I2Parser;
 import org.apache.xmlrpc.parser.I4Parser;
 import org.apache.xmlrpc.parser.I8Parser;
 import org.apache.xmlrpc.parser.MapParser;
+import org.apache.xmlrpc.parser.NodeParser;
 import org.apache.xmlrpc.parser.NullParser;
 import org.apache.xmlrpc.parser.ObjectArrayParser;
 import org.apache.xmlrpc.parser.TypeParser;
@@ -45,11 +46,13 @@ import org.apache.xmlrpc.serializer.I4Serializer;
 import org.apache.xmlrpc.serializer.I8Serializer;
 import org.apache.xmlrpc.serializer.ListSerializer;
 import org.apache.xmlrpc.serializer.MapSerializer;
+import org.apache.xmlrpc.serializer.NodeSerializer;
 import org.apache.xmlrpc.serializer.NullSerializer;
 import org.apache.xmlrpc.serializer.ObjectArraySerializer;
 import org.apache.xmlrpc.serializer.StringSerializer;
 import org.apache.xmlrpc.serializer.TypeSerializer;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
@@ -66,6 +69,7 @@ public class TypeFactoryImpl implements TypeFactory {
 	private static final TypeSerializer SHORT_SERIALIZER = new I2Serializer();
 	private static final TypeSerializer LONG_SERIALIZER = new I8Serializer();
 	private static final TypeSerializer FLOAT_SERIALIZER = new FloatSerializer();
+	private static final TypeSerializer NODE_SERIALIZER = new NodeSerializer();
 
 	private final XmlRpcController controller;
 
@@ -133,6 +137,12 @@ public class TypeFactoryImpl implements TypeFactory {
 			return new ListSerializer(this, pConfig);
 		} else if (pObject instanceof Map) {
 			return new MapSerializer(this, pConfig);
+		} else if (pObject instanceof Node) {
+			if (pConfig.isEnabledForExtensions()) {
+				return NODE_SERIALIZER;
+			} else {
+				throw new SAXException(new XmlRpcExtensionException("DOM nodes aren't supported, if isEnabledForExtensions() == false"));
+			}
 		} else {
 			throw new SAXException("Unsupported Java type: " + pObject.getClass().getName());
 		}
@@ -153,6 +163,8 @@ public class TypeFactoryImpl implements TypeFactory {
 				return new I8Parser();
 			} else if (FloatSerializer.FLOAT_TAG.equals(pLocalName)) {
 				return new FloatParser();
+			} else if (NodeSerializer.DOM_TAG.equals(pLocalName)) {
+				return new NodeParser();
 			}
 		} else if ("".equals(pURI)) {
 			if (I4Serializer.INT_TAG.equals(pLocalName)  ||  I4Serializer.I4_TAG.equals(pLocalName)) {

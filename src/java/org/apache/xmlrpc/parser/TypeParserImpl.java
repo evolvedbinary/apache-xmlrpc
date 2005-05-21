@@ -64,7 +64,7 @@ public abstract class TypeParserImpl implements TypeParser {
 	public void startDocument() throws SAXException {
 	}
 
-	protected boolean isEmpty(char[] pChars, int pStart, int pLength) {
+	protected static boolean isEmpty(char[] pChars, int pStart, int pLength) {
 		for (int i = 0;  i < pLength;  i++) {
 			if (!Character.isWhitespace(pChars[pStart+i])) {
 				return false;
