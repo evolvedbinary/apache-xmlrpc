@@ -15,19 +15,26 @@
  */
 package org.apache.xmlrpc.parser;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import org.apache.xmlrpc.XmlRpcException;
-import org.xml.sax.ContentHandler;
 
 
-/** Interface of a SAX handler parsing a single parameter or
- * result object.
+/** A parser for serializable objects.
  */
-public interface TypeParser extends ContentHandler {
-	/** Returns the parsed object.
-	 * @return The parameter or result object.
-	 * @throws XmlRpcException Creating the result object failed.
-	 * @throws IllegalStateException The method was invoked before
-	 * {@link org.xml.sax.ContentHandler#endDocument}.
-	 */
-	public Object getResult() throws XmlRpcException;
+public class SerializableParser extends ByteArrayParser {
+	public Object getResult() throws XmlRpcException {
+		try {
+			byte[] res = (byte[]) super.getResult();
+			ByteArrayInputStream bais = new ByteArrayInputStream(res);
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			return ois.readObject();
+		} catch (IOException e) {
+			throw new XmlRpcException("Failed to read result object: " + e.getMessage(), e);
+		} catch (ClassNotFoundException e) {
+			throw new XmlRpcException("Failed to load class for result object: " + e.getMessage(), e);
+		}
+	}
 }

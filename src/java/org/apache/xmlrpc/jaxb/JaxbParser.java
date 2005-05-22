@@ -1,11 +1,10 @@
 package org.apache.xmlrpc.jaxb;
 
-import java.lang.reflect.UndeclaredThrowableException;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshallerHandler;
 
+import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.parser.ExtParser;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -34,11 +33,12 @@ public class JaxbParser extends ExtParser {
 	}
 
 	protected String getTagName() { return JaxbSerializer.JAXB_TAG; }
-	public Object getResult() {
+
+	public Object getResult() throws XmlRpcException {
 		try {
 			return handler.getResult();
 		} catch (JAXBException e) {
-			throw new UndeclaredThrowableException(e);
+			throw new XmlRpcException("Failed to create result object: " + e.getMessage(), e);
 		}
 	}
 }

@@ -15,6 +15,7 @@
  */
 package org.apache.xmlrpc.common;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.apache.xmlrpc.parser.MapParser;
 import org.apache.xmlrpc.parser.NodeParser;
 import org.apache.xmlrpc.parser.NullParser;
 import org.apache.xmlrpc.parser.ObjectArrayParser;
+import org.apache.xmlrpc.parser.SerializableParser;
 import org.apache.xmlrpc.parser.TypeParser;
 import org.apache.xmlrpc.serializer.BooleanSerializer;
 import org.apache.xmlrpc.serializer.ByteArraySerializer;
@@ -49,6 +51,7 @@ import org.apache.xmlrpc.serializer.MapSerializer;
 import org.apache.xmlrpc.serializer.NodeSerializer;
 import org.apache.xmlrpc.serializer.NullSerializer;
 import org.apache.xmlrpc.serializer.ObjectArraySerializer;
+import org.apache.xmlrpc.serializer.SerializableSerializer;
 import org.apache.xmlrpc.serializer.StringSerializer;
 import org.apache.xmlrpc.serializer.TypeSerializer;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
@@ -70,6 +73,7 @@ public class TypeFactoryImpl implements TypeFactory {
 	private static final TypeSerializer LONG_SERIALIZER = new I8Serializer();
 	private static final TypeSerializer FLOAT_SERIALIZER = new FloatSerializer();
 	private static final TypeSerializer NODE_SERIALIZER = new NodeSerializer();
+	private static final TypeSerializer SERIALIZABLE_SERIALIZER = new SerializableSerializer();
 
 	private final XmlRpcController controller;
 
@@ -143,6 +147,12 @@ public class TypeFactoryImpl implements TypeFactory {
 			} else {
 				throw new SAXException(new XmlRpcExtensionException("DOM nodes aren't supported, if isEnabledForExtensions() == false"));
 			}
+		} else if (pObject instanceof Serializable) {
+			if (pConfig.isEnabledForExtensions()) {
+				return SERIALIZABLE_SERIALIZER;
+			} else {
+				throw new SAXException(new XmlRpcExtensionException("Serializable objects aren't supported, if isEnabledForExtensions() == false"));
+			}
 		} else {
 			return null;
 		}
@@ -165,6 +175,8 @@ public class TypeFactoryImpl implements TypeFactory {
 				return new FloatParser();
 			} else if (NodeSerializer.DOM_TAG.equals(pLocalName)) {
 				return new NodeParser();
+			} else if (SerializableSerializer.SERIALIZABLE_TAG.equals(pLocalName)) {
+				return new SerializableParser();
 			}
 		} else if ("".equals(pURI)) {
 			if (I4Serializer.INT_TAG.equals(pLocalName)  ||  I4Serializer.I4_TAG.equals(pLocalName)) {

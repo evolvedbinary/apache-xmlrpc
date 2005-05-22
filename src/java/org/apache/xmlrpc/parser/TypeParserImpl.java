@@ -15,6 +15,7 @@
  */
 package org.apache.xmlrpc.parser;
 
+import org.apache.xmlrpc.XmlRpcException;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -31,7 +32,7 @@ public abstract class TypeParserImpl implements TypeParser {
 	 * @param pResult The result object.
 	 */
 	public void setResult(Object pResult) { result = pResult; }
-	public Object getResult() { return result; }
+	public Object getResult() throws XmlRpcException { return result; }
 
 	/** Returns the document locator.
 	 * @return Locator object describing the current location within the

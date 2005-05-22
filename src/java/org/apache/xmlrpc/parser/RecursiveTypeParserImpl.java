@@ -18,6 +18,7 @@ package org.apache.xmlrpc.parser;
 import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.util.NamespaceContextImpl;
+import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcExtensionException;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
@@ -66,7 +67,11 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 				text = null;
 			} else {
 				typeParser.endDocument();
-				addResult(typeParser.getResult());
+				try {
+					addResult(typeParser.getResult());
+				} catch (XmlRpcException e) {
+					throw new SAXException(e);
+				}
 				typeParser = null;
 			}
 		} else {
