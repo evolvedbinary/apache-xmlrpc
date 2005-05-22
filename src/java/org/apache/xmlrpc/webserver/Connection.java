@@ -25,13 +25,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
+import org.apache.ws.commons.util.Base64;
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.server.XmlRpcHttpServerConfig;
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
-import org.apache.xmlrpc.util.Base64;
 import org.apache.xmlrpc.util.LimitedInputStream;
 import org.apache.xmlrpc.util.ThreadPool;
 

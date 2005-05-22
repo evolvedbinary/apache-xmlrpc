@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.apache.xmlrpc.util.Base64;
+import org.apache.ws.commons.util.Base64;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -71,8 +71,8 @@ public class ByteArrayParser extends TypeParserImpl {
 		if (level++ == 0) {
 			baos = new ByteArrayOutputStream();
 			decoder = new Base64.Decoder(1024){
-				protected void writeBuffer() throws IOException {
-					baos.write(byteBuffer, 0, byteBufferOffset);
+				protected void writeBuffer(byte[] pBytes, int pOffset, int pLen) throws IOException {
+					baos.write(pBytes, pOffset, pLen);
 				}
 			};
 		} else {

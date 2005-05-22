@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
 
+import org.apache.ws.commons.util.Base64;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 
 

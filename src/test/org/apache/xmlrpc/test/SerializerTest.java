@@ -30,7 +30,6 @@ import org.apache.xmlrpc.client.XmlRpcClientRequestImpl;
 import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
-import org.apache.xmlrpc.util.Base64;
 import org.xml.sax.SAXException;
 
 import junit.framework.TestCase;
@@ -70,21 +69,6 @@ public class SerializerTest extends TestCase {
 		XmlRpcWriter xrw = new XmlRpcWriter(pConfig, xw, client.getTypeFactory());
 		xrw.write(pRequest);
 		return sw.toString();
-	}
-
-	/** Test for the base64 decoder/encoder.
-	 * @throws Exception The test failed.
-	 */
-	public void testBase64() throws Exception {
-		for (int i = 0;  i <= 256;  i++) {
-			byte[] bytes = new byte[i];
-			for (int j = 0;  j < i;  j++) {
-				bytes[j] = (byte) j;
-			}
-			char[] chars = Base64.encode(bytes);
-			byte[] result = Base64.decode(chars);
-			assertTrue(Arrays.equals(bytes, result));
-		}
 	}
 
 	/** Test serialization of a byte parameter.

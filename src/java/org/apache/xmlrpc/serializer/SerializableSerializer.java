@@ -16,35 +16,40 @@
 package org.apache.xmlrpc.serializer;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import org.apache.ws.commons.util.Base64;
 import org.apache.ws.commons.util.Base64.Encoder;
+import org.apache.ws.commons.util.Base64.EncoderOutputStream;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
-
-
-/** A {@link TypeSerializer} for byte arrays.
+/** A {@link org.apache.xmlrpc.serializer.TypeSerializer} for
+ * instances of {@link java.io.Serializable}.
  */
-public class ByteArraySerializer extends TypeSerializerImpl {
+public class SerializableSerializer extends TypeSerializerImpl {
 	/** Tag name of a base64 value.
 	 */
-	public static final String BASE_64_TAG = "base64";
+	public static final String SERIALIZABLE_TAG = "serializable";
+	private static final String EX_SERIALIZABLE_TAG = "ex:" + SERIALIZABLE_TAG;
+
 	public void write(final ContentHandler pHandler, Object pObject) throws SAXException {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
-		pHandler.startElement("", BASE_64_TAG, BASE_64_TAG, ZERO_ATTRIBUTES);
-		byte[] buffer = (byte[]) pObject;
-		Encoder encoder = new Base64.SAXEncoder(buffer.length >= 1024 ? 1024 : ((buffer.length+3)/4)*4, pHandler);
+		pHandler.startElement("", SERIALIZABLE_TAG, EX_SERIALIZABLE_TAG, ZERO_ATTRIBUTES);
+		Encoder encoder = new Base64.SAXEncoder(4096, pHandler);
 		try {
-			encoder.write(buffer, 0, buffer.length);
-			encoder.flush();
+			OutputStream ostream = new EncoderOutputStream(encoder);
+			ObjectOutputStream oos = new ObjectOutputStream(ostream);
+			oos.writeObject(pObject);
+			oos.close();
 		} catch (Base64.SAXIOException e) {
 			throw e.getSAXException();
 		} catch (IOException e) {
 			throw new SAXException(e);
 		}
-		pHandler.endElement("", BASE_64_TAG, BASE_64_TAG);
+		pHandler.endElement("", SERIALIZABLE_TAG, EX_SERIALIZABLE_TAG);
 		pHandler.endElement("", VALUE_TAG, VALUE_TAG);
 	}
 }
