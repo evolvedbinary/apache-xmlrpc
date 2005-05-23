@@ -17,12 +17,15 @@ package org.apache.xmlrpc.test;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -256,6 +259,14 @@ public class BaseTest extends TestCase {
 				}
 				return result;
 			}
+		}
+
+		/** Returns the calendar value in milliseconds.
+		 * @param pCal Calendar object
+		 * @return <code>pCal.getTime().getTime()</code>.
+		 */
+		public long serializableParam(Calendar pCal) {
+			return pCal.getTime().getTime();
 		}
 	}
 
@@ -779,6 +790,39 @@ public class BaseTest extends TestCase {
 		final XmlRpcClient client = pProvider.getClient();
 		Object result = client.execute(getExConfig(pProvider), methodName, params);
 		assertEquals(new Integer(1+2+3+4+5), result);
+		boolean ok = false;
+		try {
+			client.execute(getConfig(pProvider), methodName, params);
+		} catch (XmlRpcExtensionException e) {
+			ok = true;
+		}
+		assertTrue(ok);
+	}
+
+	/** Test, whether we can invoke a method, passing an instance of
+	 * {@link java.io.Serializable} as an instance.
+	 * @throws Exception The test failed.
+	 */
+	public void testSerializableParam() throws Exception {
+		for (int i = 0;  i < providers.length;  i++) {
+			testSerializableParam(providers[i]);
+		}
+	}
+
+	private void testSerializableParam(ClientProvider pProvider) throws Exception {
+		final String methodName = "Remote.serializableParam";
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		cal.set(Calendar.YEAR, 2005);
+		cal.set(Calendar.MONTH, 5);
+		cal.set(Calendar.DAY_OF_MONTH, 23);
+		cal.set(Calendar.HOUR_OF_DAY, 8);
+		cal.set(Calendar.MINUTE, 4);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 5);
+		final Object[] params = new Object[]{cal};
+		final XmlRpcClient client = pProvider.getClient();
+		Object result = client.execute(getExConfig(pProvider), methodName, params);
+		assertEquals(new Long(cal.getTime().getTime()), result);
 		boolean ok = false;
 		try {
 			client.execute(getConfig(pProvider), methodName, params);
