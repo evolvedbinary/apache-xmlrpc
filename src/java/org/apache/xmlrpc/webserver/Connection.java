@@ -25,13 +25,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
-import org.apache.ws.commons.util.Base64;
+import javax.servlet.http.HttpUtils;
+
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfig;
-import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.server.XmlRpcHttpServerConfig;
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
+import org.apache.xmlrpc.util.HttpUtil;
 import org.apache.xmlrpc.util.LimitedInputStream;
 import org.apache.xmlrpc.util.ThreadPool;
 
@@ -148,9 +149,9 @@ public class Connection implements ThreadPool.Task {
 				} else if (lineLower.startsWith("connection:")) {
 					result.setKeepAlive(serverConfig.isKeepAliveEnabled()
 										&&  lineLower.indexOf("keep-alive") > -1);
-				} else if (lineLower.startsWith("authorization: basic ")) {
-					String credentials = line.substring("authorization: basic ".length());
-					parseAuth(result, credentials);
+				} else if (lineLower.startsWith("authorization:")) {
+					String credentials = line.substring("authorization:".length());
+					HttpUtil.parseAuthorization(result, credentials);
 				}
 			}
 		}
@@ -200,24 +201,7 @@ public class Connection implements ThreadPool.Task {
         return new String(buffer, 0, count, US_ASCII);
     }
 
-    /**
-     *
-     * @param line
-     */
-    private void parseAuth(XmlRpcHttpRequestConfigImpl pConfig, String pLine) {
-        try {
-            byte[] c = Base64.decode(pLine.toCharArray(), 0, pLine.length());
-            String str = new String(c, pConfig.getBasicEncoding());
-            int col = str.indexOf(':');
-			if (col >= 0) {
-				pConfig.setBasicUserName(str.substring(0, col));
-				pConfig.setBasicPassword(str.substring(col+1));
-			}
-        } catch (Throwable ignore) {
-        }
-    }
-
-	/** Returns the contents input stream.
+    /** Returns the contents input stream.
 	 * @param pData The request data
 	 * @return The contents input stream.
 	 */

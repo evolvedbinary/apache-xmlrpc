@@ -18,9 +18,11 @@ package org.apache.xmlrpc.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 import java.util.StringTokenizer;
 
 import org.apache.ws.commons.util.Base64;
+import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 
 
@@ -47,7 +49,7 @@ public class HttpUtil {
 
 	/** Returns, whether the HTTP header value <code>pHeaderValue</code>
 	 * indicates, that GZIP encoding is used or may be used.
-	 * @param pHeaderValue The HTTP header value being parser. This is typically
+	 * @param pHeaderValue The HTTP header value being parsed. This is typically
 	 * the value of "Content-Encoding", or "Accept-Encoding".
 	 * @return True, if the header value suggests that GZIP encoding is or may
 	 * be used.
@@ -67,6 +69,24 @@ public class HttpUtil {
             }
         }
         return false;
+    }
+
+	/** Returns, whether the HTTP header values in <code>pValues</code>
+	 * indicate, that GZIP encoding is used or may be used.
+	 * @param pValues The HTTP header values being parsed. These are typically
+	 * the values of "Content-Encoding", or "Accept-Encoding".
+	 * @return True, if the header values suggests that GZIP encoding is or may
+	 * be used.
+	 */
+	public static boolean isUsingGzipEncoding(Enumeration pValues) {
+		if (pValues != null) {
+			while (pValues.hasMoreElements()) {
+				if (isUsingGzipEncoding((String) pValues.nextElement())) {
+					return true;
+				}
+			}
+		}
+		return false;
     }
 
 	/** Reads a header line from the input stream <code>pIn</code>
@@ -95,4 +115,38 @@ public class HttpUtil {
         }
         return new String(pBuffer, 0, count);
     }
+
+	/** Parses an "Authorization" header and adds the username and password
+	 * to <code>pConfig</code>.
+	 * @param pConfig The request configuration being created.
+	 * @param pLine The header being parsed, including the "basic" part.
+	 */
+	public static void parseAuthorization(XmlRpcHttpRequestConfigImpl pConfig, String pLine) {
+		if (pLine == null) {
+			return;
+		}
+		pLine = pLine.trim();
+		StringTokenizer st = new StringTokenizer(pLine);
+		if (!st.hasMoreTokens()) {
+			return;
+		}
+		String type = st.nextToken();
+		if (!"basic".equalsIgnoreCase(type)) {
+			return;
+		}
+		if (!st.hasMoreTokens()) {
+			return;
+		}
+		String auth = st.nextToken();
+	    try {
+	        byte[] c = Base64.decode(auth.toCharArray(), 0, auth.length());
+	        String str = new String(c, pConfig.getBasicEncoding());
+	        int col = str.indexOf(':');
+			if (col >= 0) {
+				pConfig.setBasicUserName(str.substring(0, col));
+				pConfig.setBasicPassword(str.substring(col+1));
+			}
+	    } catch (Throwable ignore) {
+	    }
+	}
 }

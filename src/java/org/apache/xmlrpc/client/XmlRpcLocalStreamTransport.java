@@ -43,11 +43,11 @@ public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 			XmlRpcServer server = ((XmlRpcLocalClientConfig) pRequest.getConfig()).getXmlRpcServer();
 			return server.execute(pRequest);
 		}
-		protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
+		protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
 			LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
 			return new ByteArrayInputStream(lsc.ostream.toByteArray());
 		}
-		protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
+		protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
 			LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
 			lsc.istream = new ByteArrayOutputStream();
 			return lsc.istream;

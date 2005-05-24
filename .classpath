@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/jaxmeapi-0.4.jar"/>
+	<classpathentry kind="lib" path="lib/servletapi-2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

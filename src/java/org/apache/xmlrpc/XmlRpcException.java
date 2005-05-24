@@ -58,6 +58,14 @@ public class XmlRpcException extends Exception {
 		this(0, pMessage, pLinkedException);
     }
 
+    /** Creates a new instance with the given error message
+     * and error code 0.
+     * @param pMessage Detail message.
+     */
+    public XmlRpcException(String pMessage) {
+		this(0, pMessage, null);
+    }
+
     /** Creates a new instance with the given error code, error message
      * and cause.
      * @param pCode Error code.

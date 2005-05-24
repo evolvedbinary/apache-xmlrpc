@@ -58,11 +58,11 @@ class ConnectionServer extends XmlRpcStreamServer {
 		}
 	}
 
-	protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
+	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
 		return ((Connection) pConnection).getInputStream((RequestData) pConfig);
 	}
 
-	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
+	protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection) throws IOException {
 		return ((Connection) pConnection).getOutputStream(pConfig);
 	}
 

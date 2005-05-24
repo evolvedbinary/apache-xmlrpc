@@ -15,10 +15,13 @@
  */
 package org.apache.xmlrpc.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -133,18 +136,55 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 
 	/** Returns the connections input stream.
 	 */
-	protected abstract InputStream getInputStream(XmlRpcStreamRequestConfig pConfig,
+	protected abstract InputStream newInputStream(XmlRpcStreamRequestConfig pConfig,
 												  Object pConnection) throws IOException;
 
-	/** Returns the connections output stream.
+	protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig,
+										 Object pConnection) throws IOException {
+		InputStream istream = newInputStream(pConfig, pConnection);
+		if (pConfig.isEnabledForExtensions()  &&  pConfig.isGzipCompressing()) {
+			istream = new GZIPInputStream(istream);
+		}
+		return istream;
+	}
+
+	/** Creates the connections output stream.
 	 */
-	protected abstract OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
+	protected abstract OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig,
 												    Object pConnection) throws IOException;
+
+	/** Called to prepare the output stream. Typically used for enabling
+	 * compression, or similar filters.
+	 */
+	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
+										   OutputStream pStream) throws IOException {
+		if (pConfig.isEnabledForExtensions()  &&  pConfig.isGzipRequesting()) {
+			return new GZIPOutputStream(pStream);
+		} else {
+			return pStream;
+		}
+	}
+
+	/** Called to prepare the output stream, if content length is
+	 * required.
+	 */
+	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
+										   Object pConnection,
+										   int pSize) throws IOException {
+		return newOutputStream(pConfig, pConnection);
+	}
+
+	/** Returns, whether the requests content length is required.
+	 */
+	protected boolean isContentLengthRequired(XmlRpcStreamRequestConfig pConfig) {
+		return false;
+	}
 
 	/** Closes the connection, releasing all resources.
 	 */
 	protected abstract void closeConnection(Object pConnection) throws IOException;
 
+	/** Returns, whether the 
 	/** Processes a "connection". The "connection" is an opaque object, which is
 	 * being handled by the subclasses.
 	 * @param pConfig The request configuration.
@@ -158,20 +198,51 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 		try {
 			Object result;
 			Throwable error;
+			InputStream istream = null;
 			try {
-				InputStream istream = getInputStream(pConfig, pConnection);
+				istream = getInputStream(pConfig, pConnection);
 				XmlRpcRequest request = getRequest(pConfig, istream);
 				result = execute(request);
+				istream.close();
+				istream = null;
 				error = null;
 			} catch (Throwable t) {
 				result = null;
 				error = t;
+			} finally {
+				if (istream != null) { try { istream.close(); } catch (Throwable ignore) {} }
 			}
-			OutputStream ostream = getOutputStream(pConfig, pConnection);
-			if (error == null) {
-				writeResponse(pConfig, ostream, result);
+			boolean contentLengthRequired = isContentLengthRequired(pConfig);
+			ByteArrayOutputStream baos;
+			OutputStream ostream;
+			if (contentLengthRequired) {
+				baos = new ByteArrayOutputStream();
+				ostream = baos;
 			} else {
-				writeError(pConfig, ostream, error);
+				baos = null;
+				ostream = newOutputStream(pConfig, pConnection);
+			}
+			ostream = getOutputStream(pConfig, ostream);
+			try {
+				if (error == null) {
+					writeResponse(pConfig, ostream, result);
+				} else {
+					writeError(pConfig, ostream, error);
+				}
+				ostream.close();
+				ostream = null;
+			} finally {
+				if (ostream != null) { try { ostream.close(); } catch (Throwable ignore) {} }
+			}
+			if (baos != null) {
+				OutputStream dest = getOutputStream(pConfig, pConnection, baos.size());
+				try {
+					baos.writeTo(dest);
+					dest.close();
+					dest = null;
+				} finally {
+					if (dest != null) { try { dest.close(); } catch (Throwable ignore) {} }
+				}
 			}
 			closeConnection(pConnection);
 			pConnection = null;

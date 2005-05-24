@@ -17,7 +17,6 @@ package org.apache.xmlrpc.test;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
