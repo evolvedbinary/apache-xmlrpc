@@ -57,19 +57,24 @@ public class XmlRpcClientWorker
         throws XmlRpcException, XmlRpcClientException, IOException
     {
         long now = 0;
-        Object response = PROCESSING_ERROR_FLAG;
 
         if (XmlRpc.debug)
         {
             now = System.currentTimeMillis();
         }
 
+        boolean endClientRequestDone = false;
         try
         {
             byte[] request = requestProcessor.encodeRequestBytes
                 (xmlRpcRequest, responseProcessor.getEncoding());
             InputStream is  = transport.sendXmlRpc(request);
-            response = responseProcessor.decodeResponse(is);
+            Object response = responseProcessor.decodeResponse(is);
+            endClientRequestDone = true;
+            transport.endClientRequest();
+            if (response != null  &&  response instanceof XmlRpcException) {
+            	throw (XmlRpcException) response;
+            }
             return response;
         }
         catch (IOException ioe)
@@ -97,39 +102,15 @@ public class XmlRpcClientWorker
                                    + " millis in request/process/response");
             }
 
-            // End the transport's session, handling any problem while
-            // avoiding hiding of any earlier exception.
-            try
+            if (!endClientRequestDone)
             {
-                transport.endClientRequest();
-            }
-            catch (Throwable t)
-            {
-                // Don't clobber an earlier exception.
-                boolean haveFault = response instanceof XmlRpcException;
-                if (haveFault || response == PROCESSING_ERROR_FLAG)
-                {
-                    System.err.println("Avoiding obscuring previous error " +
-                                       "by supressing error encountered " +
-                                       "while ending request: " + t);
-                    if (haveFault)
-                    {
-                        throw (XmlRpcException) response;
-                    }
-                    // else we've already thrown an exception
-                }
-                else
-                {
-                    if (t instanceof XmlRpcException)
-                    {
-                        throw (XmlRpcException) t;
-                    }
-                    else
-                    {
-                        throw new XmlRpcClientException
-                            ("Unable to end request", t);
-                    }
-                }
+            	try
+            	{
+            		transport.endClientRequest();
+            	}
+            	catch (Throwable ignore)
+            	{
+            	}
             }
         }
     }
