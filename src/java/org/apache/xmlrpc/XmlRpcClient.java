@@ -265,10 +265,13 @@ public class XmlRpcClient implements XmlRpcHandler
         {
             try
             {
+                if (call == null)
+                    call = dequeue();
+
                 while (call != null)
                 {
-                    call = dequeue();
                     executeAsync(call.request, call.callback, call.transport);
+                    call = dequeue();
                 }
             }
             finally
