@@ -18,6 +18,10 @@ docs/       The rendered documentation in HTML format.
 --------------------------------------------------------------------------
 R E Q U I R E M E N T S
 --------------------------------------------------------------------------
+ 
+To run code using XMLRPC you need to have the commons-codec jar (1.3 works)
+in your CLASSPATH. You can get it at
+    http://jakarta.apache.org/commons/codec/index.html
 
 To build the XmlRpc package, you need to have Ant (and JDK 1.2+) installed
 (http://jakarta.apache.org/ant/).  Execute "ant -help" from this directory
