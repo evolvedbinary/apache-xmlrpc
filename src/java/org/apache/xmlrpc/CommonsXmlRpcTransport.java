@@ -46,6 +46,13 @@ import org.apache.commons.httpclient.methods.PostMethod;
  */
 public class CommonsXmlRpcTransport implements XmlRpcTransport 
 {
+    private URL           url;
+    private HttpClient    client;
+    private final Header  userAgentHeader = new Header("User-Agent", XmlRpc.version);
+    private boolean       http11          = false; // defaults to HTTP 1.0
+    private boolean       gzip            = false;
+    private boolean       rgzip           = false;
+    private Credentials   creds;
     
     protected PostMethod method;
 
@@ -53,6 +60,7 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport
     public CommonsXmlRpcTransport(URL url, HttpClient client) 
     {
         this.url = url;
+        
         if (client == null) 
         {
             HttpClient newClient = new HttpClient();
@@ -68,14 +76,6 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport
     {
         this(url, null);
     }
-    
-    private URL url;
-    private HttpClient client;
-    private final Header userAgentHeader = new Header("User-Agent", XmlRpc.version);
-    private boolean http11 = false; // defaults to HTTP 1.0
-    private boolean gzip = false;
-    private boolean rgzip = false;
-    private Credentials creds;
     
     public InputStream sendXmlRpc(byte[] request) throws IOException, XmlRpcClientException 
     {
@@ -166,6 +166,31 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport
         userAgentHeader.setValue(userAgent);
     }
 
+    /**
+     * Sets the socket timeout (<tt>SO_TIMEOUT</tt>) in milliseconds which is the 
+     * timeout for waiting for data. A timeout value of zero is interpreted as an 
+     * infinite timeout.
+     *
+     * @param newTimeoutInMilliseconds Timeout in milliseconds
+     */
+    public void setTimeout(int timeout)
+    {
+        client.setTimeout(timeout);
+    }
+    
+    /**
+     * Sets the timeout until a connection is etablished. A timeout value of 
+     * zero means the timeout is not used. The default value is zero.
+     * 
+     * @param newTimeoutInMilliseconds Timeout in milliseconds.
+     * 
+     * @see HttpConnection#setConnectionTimeout(int)
+     */
+    public void setConnectionTimeout(int ctimeout)
+    {
+        client.setConnectionTimeout(ctimeout);
+    }
+        
     /**
      * Sets Authentication for this client, very basic for now user/password
      * 
