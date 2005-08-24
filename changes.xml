@@ -1,0 +1,14 @@
+<document>
+  <properties>
+    <title>Changes in Apache XML-RPC</title>
+  </properties>
+  <body>
+    <release version="2.1" date="in CVS">
+      <action dev="jochen" type="fix" issue="XMLRPC-68"
+	      	 due-to="Johan Oskarson" due-to-email="johan@oskarsson.nu">
+	      The Webserver class was unable to handle basic authentication,
+	      because the BASE64 codec wasn't initialized.
+      </action>              
+    </release>
+  </body>
+</document>
