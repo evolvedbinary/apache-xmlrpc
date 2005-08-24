@@ -658,7 +658,6 @@ public class WebServer implements Runnable
         private BufferedInputStream input;
         private BufferedOutputStream output;
         private String user, password;
-        private Base64 base64Codec;
         byte[] buffer;
 
         /**
@@ -823,10 +822,11 @@ public class WebServer implements Runnable
          *
          * @param line
          */
-        private void parseAuth(String line)
+        private synchronized void parseAuth(String line)
         {
             try
             {
+            	Base64 base64Codec = new Base64();
                 byte[] c = base64Codec.decode(toHTTPBytes(line.substring(21)));
                 String str = new String(c);
                 int col = str.indexOf(':');
