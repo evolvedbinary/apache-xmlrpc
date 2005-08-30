@@ -463,9 +463,9 @@ class XmlWriter extends OutputStreamWriter
             return true;
 
         default:
-            return ( (0x20 < c && c <= 0xd7ff) ||
-                     (0xe000 < c && c <= 0xfffd) ||
-                     (0x10000 < c && c <= 0x10ffff) );
+            return ( (0x20 <= c && c <= 0xd7ff) ||
+                     (0xe000 <= c && c <= 0xfffd) ||
+                     (0x10000 <= c && c <= 0x10ffff) );
         }
     }
 

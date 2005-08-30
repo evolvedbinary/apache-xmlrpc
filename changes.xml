@@ -5,10 +5,15 @@
   <body>
     <release version="2.1" date="in CVS">
       <action dev="jochen" type="fix" issue="XMLRPC-68"
-	      	 due-to="Johan Oskarson" due-to-email="johan@oskarsson.nu">
+	      	 due-to="Johan Oskarson" due-to-email="johan oskarsson.nu">
 	      The Webserver class was unable to handle basic authentication,
 	      because the BASE64 codec wasn't initialized.
-      </action>              
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-69"
+      		 due-to="Claude Zervas" due-to-email="claude at utlco.com">
+      	  The characters 0x20, 0xe000, and 0x10000 have been escaped
+      	  without reason.
+      </action>
     </release>
   </body>
 </document>
