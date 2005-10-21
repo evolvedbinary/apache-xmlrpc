@@ -4,7 +4,7 @@
   <pomVersion>3</pomVersion>
   <name>xmlrpc</name>
   <id>xmlrpc</id>
-  <currentVersion>2.0</currentVersion>
+  <currentVersion>2.1-dev</currentVersion>
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://ws.apache.org/</url>
@@ -36,9 +36,9 @@
   <distributionDirectory>/www/www.apache.org/dist/ws/xmlrpc/</distributionDirectory>
 
   <repository>
-    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:ws-xmlrpc</connection>
-    <developerConnection>scm:cvs:ext:${maven.username}@cvs.apache.org:/home/cvs:ws-xmlrpc</developerConnection>
-    <url>http://cvs.apache.org/viewcvs/ws-xmlrpc/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/xmlrpc/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk/</developerConnection>
+    <url>http://svn.apache.org/repos/asf/webservices/xmlrpc/trunk/</url>
   </repository>
 
   <versions>

@@ -6,6 +6,22 @@
   </properties>
 
   <body>
+  
+    <release version="2.1-dev" date="as in SVN">
+      <action dev="sgoeschl" type="update">
+				Adding the SVN links to the project website
+      </action>          
+      <action dev="jochen" type="fix" due-to="Claude Zervas">
+				The characters 0x20, 0xe000, and 0x10000 have been escaped without reason (XMLRPC-69)
+      </action>          
+      <action dev="jochen" type="fix">
+        The Webserver class was not able to handle Basic authentication,
+				because the BASE64 codec wasn't initialized.
+      </action>          
+      <action dev="hgomez" type="update">
+        Add Timeout support for underlying HttpClient
+      </action>          
+    </release>
     <release version="2.0" date="2005-05-27">
       <action dev="sgoeschl" type="update">
         Upgrading to commons-codec-1.3.jar, commenting out the FESI jar
