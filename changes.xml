@@ -14,6 +14,10 @@
       	  The characters 0x20, 0xe000, and 0x10000 have been escaped
       	  without reason.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-73"
+      		due-to="Thomas Mohaupt" due-to-email="Thomas.Mohaupt at gmail.com">
+      	  The wrong version of commons-codec was downloaded by build.xml.
+      </action>
     </release>
   </body>
 </document>
