@@ -38,7 +38,8 @@ public class SerializableSerializer extends TypeSerializerImpl {
 	public void write(final ContentHandler pHandler, Object pObject) throws SAXException {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", SERIALIZABLE_TAG, EX_SERIALIZABLE_TAG, ZERO_ATTRIBUTES);
-		Encoder encoder = new Base64.SAXEncoder(4096, pHandler);
+		char[] buffer = new char[1024];
+		Encoder encoder = new Base64.SAXEncoder(buffer, 0, null, pHandler);
 		try {
 			OutputStream ostream = new EncoderOutputStream(encoder);
 			ObjectOutputStream oos = new ObjectOutputStream(ostream);

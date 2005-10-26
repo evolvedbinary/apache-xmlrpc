@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry sourcepath="lib/ws-commons-java5-src.zip" kind="lib" path="lib/ws-commons-java5.jar"/>
-	<classpathentry sourcepath="lib/ws-commons-util-src.zip" kind="lib" path="lib/ws-commons-util.jar"/>
-	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/jaxmeapi-0.4.jar"/>
-	<classpathentry kind="lib" path="lib/servletapi-2.2.jar"/>
-	<classpathentry kind="output" path="bin"/>
+  <classpathentry excluding="" kind="src" path="src/java">
+  </classpathentry>
+  <classpathentry output="target/test-classes" kind="src" path="src/test">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar">
+  </classpathentry>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/ws-commons-util/jars/ws-commons-util-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/ws-commons-java5/jars/ws-commons-java5-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jaxme/jars/jaxmeapi-0.5.jar">
+  </classpathentry>
+  <classpathentry kind="output" path="target/classes">
+  </classpathentry>
 </classpath>

@@ -25,8 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpUtils;
-
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;

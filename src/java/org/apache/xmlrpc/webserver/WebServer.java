@@ -248,7 +248,12 @@ public class WebServer implements Runnable {
 		}
 		return false;
 	}
-	
+
+	protected ThreadPool.Task newTask(WebServer pServer, XmlRpcStreamServer pXmlRpcServer,
+						   			  Socket pSocket) throws IOException {
+		return new Connection(pServer, pXmlRpcServer, pSocket);
+	}
+
 	/**
 	 * Listens for client requests until stopped.  Call {@link
 	 * #start()} to invoke this method, and {@link #shutdown()} to
@@ -275,8 +280,8 @@ public class WebServer implements Runnable {
 					
 					try {
 						if (allowConnection(socket)) {
-							final Connection con = new Connection(this, server, socket);
-							if (pool.startTask(con)) {
+							final ThreadPool.Task task = newTask(this, server, socket);
+							if (pool.startTask(task)) {
 								socket = null;
 							} else {
 								log("Maximum load of " + pool.getMaxThreads()
