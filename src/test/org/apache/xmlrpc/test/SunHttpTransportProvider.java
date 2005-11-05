@@ -29,6 +29,7 @@ import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 public class SunHttpTransportProvider extends WebServerProvider {
 	/** Creates a new instance.
 	 * @param pMapping The test servers handler mapping.
+	 * @param pContentLength Number of bytes being transmitted.
 	 */
 	public SunHttpTransportProvider(XmlRpcHandlerMapping pMapping, boolean pContentLength) {
 		super(pMapping, pContentLength);

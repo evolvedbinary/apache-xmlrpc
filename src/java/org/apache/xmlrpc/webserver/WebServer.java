@@ -52,7 +52,7 @@ public class WebServer implements Runnable {
 					if ("*".equals(next)) {
 						pattern[i] = 256;
 					} else {
-						pattern[i] = (byte) Integer.parseInt(next);
+						pattern[i] = Integer.parseInt(next);
 					}
 				}
 			} catch (Exception e) {

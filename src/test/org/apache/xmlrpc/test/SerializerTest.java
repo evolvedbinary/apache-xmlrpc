@@ -16,9 +16,10 @@
 package org.apache.xmlrpc.test;
 
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.apache.ws.commons.serialize.XMLWriter;
 import org.apache.ws.commons.serialize.XMLWriterImpl;
@@ -31,8 +32,6 @@ import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.xml.sax.SAXException;
-
-import junit.framework.TestCase;
 
 
 /** A test case for the various serializers.

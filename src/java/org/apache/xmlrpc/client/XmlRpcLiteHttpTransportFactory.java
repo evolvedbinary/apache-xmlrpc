@@ -17,7 +17,7 @@ package org.apache.xmlrpc.client;
 
 
 /** Factory for the lite HTTP transport,
- * {@link org.apache.xmlrpc.client.XmlRpcLiteTransport}.
+ * {@link org.apache.xmlrpc.client.XmlRpcLiteHttpTransport}.
  */
 public class XmlRpcLiteHttpTransportFactory extends XmlRpcTransportFactoryImpl {
 	/** Creates a new instance.

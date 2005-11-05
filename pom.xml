@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.ws.xmlrpc</groupId>
+    <artifactId>xmlrpc</artifactId>
+    <name>Apache XML-RPC</name>
+    <version>3.0-dev</version>
+    <description>
+        Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol
+        that uses XML over HTTP to implement remote procedure calls.
+        Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to
+        handle. Version 3 of Apache XML-RPC introduces several important vendor
+        extensions over the original XML-RPC specification.
+    </description>
+    <url>http://ws.apache.org/xmlrpc/</url>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://issues.apache.org/jira/browse/XMLRPC</url>
+    </issueManagement>
+    <ciManagement>
+      <system>Gump</system>
+      <url>http://vmgump.apache.org/gump/public/ws-xmlrpc/xmlrpc/index.html</url>
+    </ciManagement>
+    <inceptionYear>2001</inceptionYear>
+    <mailingLists>
+      <mailingList>
+        <name>XML-RPC Users</name>
+        <subscribe>xmlrpc-user-subscribe@ws.apache.org</subscribe>
+        <unsubscribe>xmlrpc-user-unsubscribe@ws.apache.org</unsubscribe>
+        <post>xmlrpc-user@ws.apache.org</post>
+        <archive>http://mail-archives.apache.org/mod_mbox/ws-xmlrpc-user/</archive>
+        <otherArchives>
+          <otherArchive>http://marc.theaimsgroup.com/?l=xmlrpc-user</otherArchive>
+        </otherArchives>
+      </mailingList>
+      <mailingList>
+        <name>XML-RPC Developers</name>
+        <subscribe>xmlrpc-dev-subscribe@ws.apache.org</subscribe>
+        <unsubscribe>xmlrpc-dev-unsubscribe@ws.apache.org</unsubscribe>
+        <post>xmlrpc-dev@ws.apache.org</post>
+        <archive>http://mail-archives.apache.org/mod_mbox/ws-xmlrpc-dev/</archive>
+        <otherArchives>
+          <otherArchive>http://marc.theaimsgroup.com/?l=xmlrpc-dev</otherArchive>
+        </otherArchives>
+      </mailingList>
+    </mailingLists>
+    <developers>
+        <developer>
+            <name>Andrew Evers</name>
+            <id>aevers</id>
+            <email>aevers@redwood.nl</email>
+        </developer>
+        <developer>
+            <name>Siegfried Goeschl</name>
+            <id>sgoeschl</id>
+            <email>sgoeschl@apache.org</email>
+        </developer>
+        <developer>
+            <name>Henri Gomez</name>
+            <id>hgomez</id>
+            <email>hgomez@apache.org</email>
+        </developer>
+        <developer>
+            <name>Ryan Hoegg</name>
+            <id>rhoegg</id>
+            <email>rhoegg@isisnetworks.net</email>
+            <organization>ISIS Networks</organization>
+        </developer>
+        <developer>
+            <name>Daniel Rall</name>
+            <id>dlr</id>
+            <email>dlr@finemaltcoding.com</email>
+            <organization>CollabNet, Inc.</organization>
+        </developer>
+        <developer>
+            <name>Leonard Richarson</name>
+            <id>leonardr</id>
+            <email>leonardr@collab.net</email>
+            <organization>CollabNet, Inc.</organization>
+        </developer>
+        <developer>
+            <name>Jon Scott Stevens</name>
+            <id>jon</id>
+            <email>jon@latchkey.com</email>
+            <organization>CollabNet, Inc.</organization>
+        </developer>
+        <developer>
+            <name>Hannes Wallnoefer</name>
+            <id>hannes</id>
+            <email>hannes@apache.org</email>
+        </developer>
+        <developer>
+            <name>Jochen Wiedmann</name>
+            <id>jochen</id>
+            <email>jochen.wiedmann@gmail.com</email>
+        </developer>
+        <developer>
+            <name>John Wilson</name>
+            <id>jwilson</id>
+            <email>tug@wilson.co.uk</email>
+            <organization>The Wilson Partnership</organization>
+        </developer>
+        <developer>
+            <name>Jason van Zyl</name>
+            <id>jvanzyl</id>
+            <email>jason@zenplex.com</email>
+            <organization>Zenplex</organization>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>http://svn.apache.org/repos/asf/webservices/xmlrpc/</connection>
+        <developerConnection>https://svn.apache.org/repos/asf/webservices/xmlrpc/</developerConnection>
+        <tag>b20050512_streaming</tag>
+        <url>http://svn.apache.org/viewcvs.cgi/webservices/xmlrpc/</url>
+    </scm>
+    <organization>
+        <name>Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+    </organization>
+    <build>
+        <sourceDirectory>src/java</sourceDirectory>
+        <testSourceDirectory>src/test</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>src/testResources</directory>
+            </testResource>
+        </testResources>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>2.0.2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ws-commons-util</groupId>
+            <artifactId>ws-commons-util</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ws-commons-java5</groupId>
+            <artifactId>ws-commons-java5</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jaxme</groupId>
+            <artifactId>jaxmeapi</artifactId>
+            <version>0.5</version>
+        </dependency>
+    </dependencies>
+</project>
+

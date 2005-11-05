@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.ThreadPool;
@@ -63,28 +63,34 @@ public class ServletWebServer extends WebServer {
 		public int getStatusCode() { return statusCode; }
 	}
 
+	private final HttpServlet servlet;
+
 	/** Creates a new instance, which is listening on all
 	 * local IP addresses and the given port.
+	 * @param pServlet The servlet, which is handling requests.
 	 * @param pPort The servers port number; 0 for a random
 	 * port being choosen.
 	 */
-	public ServletWebServer(int pPort) {
+	public ServletWebServer(HttpServlet pServlet, int pPort) {
 		super(pPort);
+		servlet = pServlet;
 	}
 
 	/** Creates a new instance, which is listening on the
 	 * given IP address and the given port.
+	 * @param pServlet The servlet, which is handling requests.
 	 * @param pPort The servers port number; 0 for a random
 	 * port being choosen.
 	 * @param pAddr The servers IP address.
 	 */
-	public ServletWebServer(int pPort, InetAddress pAddr) {
+	public ServletWebServer(HttpServlet pServlet, int pPort, InetAddress pAddr) {
 		super(pPort, pAddr);
+		servlet = pServlet;
 	}
 
 	protected ThreadPool.Task newTask(WebServer pWebServer,
 									  XmlRpcStreamServer pXmlRpcServer,
 									  Socket pSocket) throws IOException {
-		return new ServletConnection(pWebServer, pXmlRpcServer, pSocket);
+		return new ServletConnection(pWebServer, servlet, pXmlRpcServer, pSocket);
 	}
 }
