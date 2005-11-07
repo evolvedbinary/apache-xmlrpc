@@ -35,17 +35,27 @@ import org.apache.xmlrpc.server.XmlRpcServer;
  * method {@link #newXmlRpcHandlerMapping()}.
  */
 public class XmlRpcServlet extends HttpServlet {
-
 	private static final long serialVersionUID = 2348768267234L;
 	private XmlRpcServletServer server;
+
+	/** Returns the servlets instance of {@link XmlRpcServletServer}. 
+	 * @return The configurable instance of {@link XmlRpcServletServer}.
+	 */
+	public XmlRpcServletServer getXmlRpcServletServer() {
+		return server;
+	}
 
 	public void init(ServletConfig pConfig) throws ServletException {
 		super.init(pConfig);
 		try {
-			server = newXmlRpcServer();
+			server = newXmlRpcServer(pConfig);
 			server.setHandlerMapping(newXmlRpcHandlerMapping());
 		} catch (XmlRpcException e) {
-			log("Failed to create XmlRpcServer: " + e.getMessage(), e);
+			try {
+				log("Failed to create XmlRpcServer: " + e.getMessage(), e);
+			} catch (Throwable ignore) {
+			}
+			throw new ServletException(e);
 		}
 	}
 
@@ -53,7 +63,8 @@ public class XmlRpcServlet extends HttpServlet {
 	 * which is being used to process the requests. The default implementation
 	 * will simply invoke <code>new {@link XmlRpcServer}.
 	 */
-	protected XmlRpcServletServer newXmlRpcServer() throws XmlRpcException {
+	protected XmlRpcServletServer newXmlRpcServer(ServletConfig pConfig)
+			throws XmlRpcException {
 		return new XmlRpcServletServer();
 	}
 

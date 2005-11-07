@@ -23,7 +23,7 @@ public interface XmlRpcHttpConfig extends XmlRpcStreamConfig {
 	 * into bytes.
 	 * @return Encoding being used for basic HTTP authentication credentials,
 	 * or null, if the default encoding
-	 * ({@link org.apache.xmlrpc.common.XmlRpcStreamRequestConfig#DEFAULT_ENCODING})
+	 * ({@link org.apache.xmlrpc.common.XmlRpcStreamRequestConfig#UTF8_ENCODING})
 	 * is being used.
 	 */
 	String getBasicEncoding();

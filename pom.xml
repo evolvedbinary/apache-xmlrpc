@@ -170,6 +170,28 @@
             <artifactId>jaxmeapi</artifactId>
             <version>0.5</version>
         </dependency>
+		<!-- One should think, that the Xerces dependency is not
+		     required with Java 1.4 or Java 5. However, see
+		     http://jira.codehaus.org/browse/MNG-1303
+		     for why we add it here.
+		-->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.6.2</version>
+        </dependency>
     </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
 

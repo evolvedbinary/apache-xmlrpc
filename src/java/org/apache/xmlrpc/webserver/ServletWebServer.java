@@ -18,7 +18,12 @@ package org.apache.xmlrpc.webserver;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
@@ -70,10 +75,10 @@ public class ServletWebServer extends WebServer {
 	 * @param pServlet The servlet, which is handling requests.
 	 * @param pPort The servers port number; 0 for a random
 	 * port being choosen.
+	 * @throws ServletException Initializing the servlet failed.
 	 */
-	public ServletWebServer(HttpServlet pServlet, int pPort) {
-		super(pPort);
-		servlet = pServlet;
+	public ServletWebServer(HttpServlet pServlet, int pPort) throws ServletException {
+		this(pServlet, pPort, null);
 	}
 
 	/** Creates a new instance, which is listening on the
@@ -82,10 +87,31 @@ public class ServletWebServer extends WebServer {
 	 * @param pPort The servers port number; 0 for a random
 	 * port being choosen.
 	 * @param pAddr The servers IP address.
+	 * @throws ServletException Initializing the servlet failed.
 	 */
-	public ServletWebServer(HttpServlet pServlet, int pPort, InetAddress pAddr) {
+	public ServletWebServer(HttpServlet pServlet, int pPort, InetAddress pAddr)
+			throws ServletException {
 		super(pPort, pAddr);
 		servlet = pServlet;
+		servlet.init(new ServletConfig(){
+			public String getServletName() { return servlet.getClass().getName(); }
+			public ServletContext getServletContext() {
+				throw new IllegalStateException("Context not available");
+			}
+			public String getInitParameter(String pArg0) {
+				return null;
+			}
+		
+			public Enumeration getInitParameterNames() {
+				return new Enumeration(){
+					public boolean hasMoreElements() { return false; }
+					public Object nextElement() {
+						throw new NoSuchElementException();
+					}
+				};
+			}
+			
+		});
 	}
 
 	protected ThreadPool.Task newTask(WebServer pWebServer,

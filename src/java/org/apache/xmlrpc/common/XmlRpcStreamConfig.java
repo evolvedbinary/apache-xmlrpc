@@ -23,11 +23,11 @@ import org.apache.xmlrpc.XmlRpcConfig;
 public interface XmlRpcStreamConfig extends XmlRpcConfig {
 	/** Default encoding (UTF-8).
 	 */
-	public static final String DEFAULT_ENCODING = "UTF8";
+	public static final String UTF8_ENCODING = "UTF-8";
 
 	/** Returns the encoding being used for data encoding, when writing
 	 * to a stream.
-	 * @return Suggested encoding, or null, if the {@link #DEFAULT_ENCODING}
+	 * @return Suggested encoding, or null, if the {@link #UTF8_ENCODING}
 	 * is being used.
 	 */
 	String getEncoding();

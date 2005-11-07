@@ -17,19 +17,17 @@ package org.apache.xmlrpc.webserver;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.ThreadPool;
 
@@ -37,6 +35,8 @@ import org.apache.xmlrpc.util.ThreadPool;
 /** A minimal web server that exclusively handles XML-RPC requests.
  */
 public class WebServer implements Runnable {
+	private static final Log log = LogFactory.getLog(WebServer.class);
+
 	private class AddressMatcher {
 		private final int pattern[];
 		
@@ -79,7 +79,11 @@ public class WebServer implements Runnable {
 	private ThreadPool pool;
 	protected final List accept = new ArrayList();
 	protected final List deny = new ArrayList();
-	protected final XmlRpcStreamServer server = new ConnectionServer();
+	protected final XmlRpcStreamServer server = newXmlRpcStreamServer();
+
+	protected XmlRpcStreamServer newXmlRpcStreamServer(){
+		return new ConnectionServer();
+	}
 
 	// Inputs to setupServerSocket()
 	private InetAddress address;
@@ -339,26 +343,14 @@ public class WebServer implements Runnable {
 	 * @param pError The error being logged.
 	 */
 	public void log(Throwable pError) {
-		/* We could do a simple pError.printStackTrace() here,
-		 * but at the risk, that the stack trace could be
-		 * interrupted by other threads logging messages.
-		 * So we log to a StringWriter and do the actual
-		 * logging with a single println().
-		 */
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		pError.printStackTrace(pw);
-		pw.close();
-		log(sw.toString());
+		log.error(pError.getMessage(), pError);
 	}
-
-	private final DateFormat df = DateFormat.getDateTimeInstance();
 
 	/** Logs a message.
 	 * @param pMessage The being logged.
 	 */
 	public synchronized void log(String pMessage) {
-		System.err.println(df.format(new Date()) + ", " + Thread.currentThread().getName() + ": " + pMessage);
+		log.error(pMessage);
 	}
 
 	/** Returns the {@link org.apache.xmlrpc.server.XmlRpcServer}.

@@ -42,7 +42,7 @@ public class HttpUtil {
         }
 		String s = pUser + ':' + pPassword;
 		if (pEncoding == null) {
-			pEncoding = XmlRpcStreamConfig.DEFAULT_ENCODING;
+			pEncoding = XmlRpcStreamConfig.UTF8_ENCODING;
 		}
 		return new String(Base64.encode(s.getBytes(pEncoding)));
     }

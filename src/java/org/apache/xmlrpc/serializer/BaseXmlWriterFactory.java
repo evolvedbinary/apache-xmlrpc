@@ -42,7 +42,7 @@ public class BaseXmlWriterFactory implements XmlWriterFactory {
 		xw.setDeclarating(true);
 		String enc = pConfig.getEncoding();
 		if (enc == null) {
-			enc = XmlRpcStreamConfig.DEFAULT_ENCODING;
+			enc = XmlRpcStreamConfig.UTF8_ENCODING;
 		}
 		xw.setEncoding(enc);
 		xw.setIndenting(false);

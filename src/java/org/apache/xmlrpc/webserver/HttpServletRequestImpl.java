@@ -42,6 +42,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 
 
@@ -65,6 +66,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 	private final Map attributes = new HashMap();
 	private Map parameters;
 	private String characterEncoding;
+	private int contentBytesRemaining = -1;
 
 	/** Creates a new instance, which reads input from the given
 	 * socket.
@@ -83,7 +85,14 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         };
 		istream = new ServletInputStream(){
 			public int read() throws IOException {
-				return bis.read();
+				if (contentBytesRemaining == 0) {
+					return -1;
+				}
+				int c = bis.read();
+				if (c != -1  &&  contentBytesRemaining > 0) {
+					--contentBytesRemaining;
+				}
+				return c;
 			}
 		};
 
@@ -139,7 +148,11 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 			protocol = "HTTP";
 		}
 
-		for (line = HttpUtil.readLine(istream, buffer);  line != null  &&  line.length() > 0;  ) {
+		for (;;) {
+			line = HttpUtil.readLine(istream, buffer);
+			if (line == null  ||  line.length() == 0) {
+				break;
+			}
 			int off = line.indexOf(':');
 			if (off > 0) {
 				addHeader(line.substring(0, off), line.substring(off+1).trim());
@@ -147,6 +160,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 				throw new ServletWebServer.Exception(400, "Bad Request", "Unable to parse header line: " + line);
 			}
 		}
+		contentBytesRemaining = getIntHeader("content-length");
 	}
 
 	protected String readLine(byte[] pBuffer) throws IOException {
@@ -398,7 +412,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 		}
 		String encoding = getCharacterEncoding();
 		if (encoding == null) {
-			encoding = "UTF8";
+			encoding = XmlRpcStreamConfig.UTF8_ENCODING;
 		}
 		Map params = new HashMap();
 		String s = getQueryString();

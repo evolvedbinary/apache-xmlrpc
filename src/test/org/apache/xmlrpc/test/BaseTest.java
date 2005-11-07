@@ -60,7 +60,9 @@ public class BaseTest extends TestCase {
 				new LiteTransportProvider(mapping, false),
 				new SunHttpTransportProvider(mapping, true),
 				new SunHttpTransportProvider(mapping, false),
-				new CommonsProvider(mapping)
+				new CommonsProvider(mapping),
+				new ServletWebServerProvider(mapping, true),
+				new ServletWebServerProvider(mapping, false)
 			};
 		}
 	}

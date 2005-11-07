@@ -26,6 +26,8 @@ import java.util.zip.GZIPOutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.XmlRpcRequestConfig;
@@ -45,6 +47,7 @@ import org.xml.sax.XMLReader;
  * stream.
  */
 public abstract class XmlRpcStreamServer extends XmlRpcServer {
+	private static final Log log = LogFactory.getLog(XmlRpcStreamServer.class);
 	private static final SAXParserFactory spf;
 	private XmlWriterFactory writerFactory = new DefaultXMLWriterFactory();
 	static {
@@ -195,6 +198,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 	public void execute(XmlRpcStreamRequestConfig pConfig,
 						Object pConnection)
 			throws IOException, XmlRpcException {
+		log.debug("execute: ->");
 		try {
 			Object result;
 			Throwable error;
@@ -206,7 +210,9 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 				istream.close();
 				istream = null;
 				error = null;
+				log.debug("execute: Request performed successfully");
 			} catch (Throwable t) {
+				log.error("execute: Error while performing request", t);
 				result = null;
 				error = t;
 			} finally {
@@ -249,5 +255,6 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer {
 		} finally {
 			if (pConnection != null) { try { closeConnection(pConnection); } catch (Throwable ignore) {} }
 		}
+		log.debug("execute: <-");
 	}
 }

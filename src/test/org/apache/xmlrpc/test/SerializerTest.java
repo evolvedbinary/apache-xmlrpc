@@ -94,7 +94,7 @@ public class SerializerTest extends TestCase {
 		String expect =
 			"<?xml version=\"1.0\" encoding=\"US-ASCII\"?>"
 			+ "<methodCall>"
-			+ "<methodName>intParam</methodName><params><param><value><int>3</int></value></param></params></methodCall>";
+			+ "<methodName>intParam</methodName><params><param><value><i4>3</i4></value></param></params></methodCall>";
 		assertEquals(expect, got);
 	}
 
@@ -128,8 +128,8 @@ public class SerializerTest extends TestCase {
 			"<?xml version=\"1.0\" encoding=\"US-ASCII\"?>"
 			+ "<methodCall><methodName>mapParam</methodName>"
 			+ "<params><param><value><struct>"
-			+ "<member><name>3</name><value><int>5</int></value></member>"
-			+ "<member><name>2</name><value><int>3</int></value></member>"
+			+ "<member><name>3</name><value><i4>5</i4></value></member>"
+			+ "<member><name>2</name><value><i4>3</i4></value></member>"
 			+ "</struct></value></param></params></methodCall>";
 		assertEquals(expect, got);
 	}
