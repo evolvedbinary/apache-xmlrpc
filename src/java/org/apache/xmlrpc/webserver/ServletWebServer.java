@@ -117,6 +117,6 @@ public class ServletWebServer extends WebServer {
 	protected ThreadPool.Task newTask(WebServer pWebServer,
 									  XmlRpcStreamServer pXmlRpcServer,
 									  Socket pSocket) throws IOException {
-		return new ServletConnection(pWebServer, servlet, pXmlRpcServer, pSocket);
+		return new ServletConnection(servlet, pSocket);
 	}
 }

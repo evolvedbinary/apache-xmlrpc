@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.ThreadPool.Task;
 
 
@@ -31,26 +30,18 @@ import org.apache.xmlrpc.util.ThreadPool.Task;
  * servlet connection.
  */
 public class ServletConnection implements Task {
-	private final WebServer webServer;
 	private final HttpServlet servlet;
-	private final XmlRpcStreamServer xmlRpcServer;
 	private final Socket socket;
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
 
 	/** Creates a new instance.
-	 * @param pWebServer The webserver, which is creating this connection.
 	 * @param pServlet The servlet, which ought to handle the request.
-	 * @param pXmlRpcServer The XmlRpcServer being used.
 	 * @param pSocket The socket, to which the client is connected.
 	 * @throws IOException
 	 */
-	public ServletConnection(WebServer pWebServer, HttpServlet pServlet,
-							 XmlRpcStreamServer pXmlRpcServer,
-							 Socket pSocket) throws IOException {
-		webServer = pWebServer;
+	public ServletConnection(HttpServlet pServlet, Socket pSocket) throws IOException {
 		servlet = pServlet;
-		xmlRpcServer = pXmlRpcServer;
 		socket = pSocket;
 		request = new HttpServletRequestImpl(socket);
 		response = new HttpServletResponseImpl(socket);

@@ -155,7 +155,7 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 						conn.socket.shutdownOutput();
 					}
 				};
-				sendRequestHeaders((XmlRpcHttpClientConfig) pConfig, conn, conn.output);
+				sendRequestHeaders(conn, conn.output);
 				return conn.output;
 			} catch (ConnectException e) {
 				if (tries >= retries) {
@@ -180,8 +180,7 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		pOut.write(toHTTPBytes(pKey + ": " + pValue + "\r\n"));
 	}
 
-	private void sendRequestHeaders(XmlRpcHttpClientConfig pConfig,
-									Connection pConnection,
+	private void sendRequestHeaders(Connection pConnection,
 									OutputStream pOut) throws IOException {
 		pOut.write(("POST " + pConnection.uri + " HTTP/1.0\r\n").getBytes("US-ASCII"));
 		for (Iterator iter = pConnection.headers.entrySet().iterator();  iter.hasNext();  ) {
@@ -207,7 +206,7 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 			Connection conn = (Connection) pConnection;
 			conn.socket = new Socket(conn.hostname, conn.port);
 			conn.output = new BufferedOutputStream(conn.socket.getOutputStream());
-			sendRequestHeaders((XmlRpcHttpClientConfig) pConfig, conn, conn.output);
+			sendRequestHeaders(conn, conn.output);
 			conn.output.write(pContent);
 			conn.output.flush();
 		} catch (IOException e) {
