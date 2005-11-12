@@ -1,0 +1,72 @@
+           ------------------
+           XML-RPC Data Types
+           ------------------
+
+Data Types
+
+  The {{{http://www.xmlrpc.com/spec}XML-RPC specification}} defines the following
+  available data types:
+
+*--------------------+--------------------+-------------------------------------+
+| Java Type          | XML Tag Name       | Description                         |
+*--------------------+--------------------+-------------------------------------+
+| Integer            | <i4>, or           | A 32-bit, signed, and non-null,     |
+|                    | <int>              | integer value.                      |
+*--------------------+--------------------+-------------------------------------+
+| Boolean            | <boolean>          | A non-null, boolean value (0, or    |
+|                    |                    | 1).                                 |
+*--------------------+--------------------+-------------------------------------+
+| String             | <string>           | A string, non-null.                 |
+*--------------------+--------------------+-------------------------------------+
+| Double             | <double>           | A signed, non-null, double          |
+|                    |                    | precision, floating point number.   |
+|                    |                    | (64 bit)                            |
+*--------------------+--------------------+-------------------------------------+
+| java.util.Calendar | <dateTime.iso8601> | A pseudo ISO8601 timestamp, like    |
+| java.util.Date     |                    | 19980717T14:08:55. However,         |
+|                    |                    | compared to a true ISO8601 value,   |
+|                    |                    | milliseconds, and time zone         |
+|                    |                    | informations are missing.           |
+*--------------------+--------------------+-------------------------------------+
+| byte[]             | <base64>           | A base64 encoded byte array.        |
+*--------------------+--------------------+-------------------------------------+
+| java.util.Map      | <struct>           | A key value pair. The keys are      |
+|                    |                    | strings. The values may be any      |
+|                    |                    | valid data type, including another  |
+|                    |                    | map.                                |
+*--------------------+--------------------+-------------------------------------+
+| Object[]           | <array>            | An array of objects. The array      |
+| java.util.List     |                    | elements may be any valid data      |
+|                    |                    | type, including another array.      |
+*--------------------+--------------------+-------------------------------------+
+
+  If the property <<<enabledForExtensions>>> is set, then additional data
+  types become valid. (Both client and server do support this property.)
+
+*----------------------+--------------------+-------------------------------------+
+| Java Type            | XML Tag Name       | Description                         |
+*----------------------+--------------------+-------------------------------------+
+| None                 | <ex:nil>           | A typeless null value.              |
+*----------------------+--------------------+-------------------------------------+
+| Byte                 | <ex:i1>            | A 8-bit, signed, and non-null,      |
+|                      |                    | integer value.                      |
+*----------------------+--------------------+-------------------------------------+
+| Float                | <ex:float>         | A signed, non-null, double          |
+|                      |                    | precision, floating point number.   |
+|                      |                    | (32 bit)                            |
+*----------------------+--------------------+-------------------------------------+
+| org.w3c.dom.Node     | <ex:dom>           | A DOM node, which is being          |
+|                      |                    | transmitted as an embedded XML      |
+|                      |                    | fragment.                           |
+*----------------------+--------------------+-------------------------------------+
+| Short                | <ex:i2>            | A 16-bit, signed, and non-null,     |
+|                      |                    | integer value.                      |
+*----------------------+--------------------+-------------------------------------+
+| java.io.Serializable | <ex:serializable>  | An object, which is converted into  |
+|                      |                    | a serialized representation and     |
+|                      |                    | transmitted as a base 64 encoded    |
+|                      |                    | byte array.                         |
+*----------------------+--------------------+-------------------------------------+
+
+  In the above table, the prefix <<<ex>>> refers to the namespace URI
+  <<<http://ws.apache.org/xmlrpc/namespaces/extensions>>>.

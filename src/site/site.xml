@@ -1,0 +1,26 @@
+<project name="Maven">
+  <bannerLeft>
+    <name>Apache XML-RPC</name>
+    <src>http://ws.apache.org/xmlrpc/images/xmlrpc-logo.gif</src>
+    <href>http://ws.apache.org/xmlrpc/</href>
+  </bannerLeft>
+  <body>
+    <links>
+      <item name="Apache" href="http://www.apache.org/"/>
+      <item name="Webservices" href="http://ws.apache.org/"/>
+      <item name="XML-RPC" href="http://ws.apache.org/xmlrpc/"/>
+    </links>
+
+    <menu name="XML-RPC">
+      <item name="Overview"            href="/index.html"/>
+      <item name="Client Classes"      href="/client.html"/>
+      <item name="Server Side XML-RPC" href="/server.html"/>
+      <item name="XML-RPC Types"       href="/types.html"/>
+      <item name="Download"            href="/download.html"/>
+      <item name="FAQ"                 href="/faq.html"/>
+      <item name="Contributing"        href="/contributing.html"/>
+    </menu>
+
+    ${reports}
+
+  </body></project>
