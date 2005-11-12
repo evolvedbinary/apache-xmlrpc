@@ -4,13 +4,13 @@
     <groupId>org.apache.ws.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
     <name>Apache XML-RPC</name>
-    <version>3.0-dev</version>
+    <version>2.x-streaming-dev</version>
     <description>
         Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol
         that uses XML over HTTP to implement remote procedure calls.
         Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to
-        handle. Version 3 of Apache XML-RPC introduces several important vendor
-        extensions over the original XML-RPC specification.
+        handle. The streaming branch of Apache XML-RPC introduces several
+        important vendor extensions over the original XML-RPC specification.
     </description>
     <url>http://ws.apache.org/xmlrpc/</url>
     <issueManagement>
@@ -186,10 +186,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
         </plugins>
     </reporting>
