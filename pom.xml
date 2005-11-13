@@ -189,5 +189,16 @@
             </plugin>
         </plugins>
     </reporting>
+    <distributionManagement>
+        <repository>
+            <id>people.apache.org</id>
+            <name>Jochen's home directory on people.apache.org</name>
+            <url>scp://people.apache.org/home/jochen/public_html/xmlrpc/dist</url>
+        </repository>
+        <site>
+            <id>people.apache.org</id>
+            <name>Jochen's home directory on people.apache.org</name>
+            <url>scp://people.apache.org/home/jochen/public_html/xmlrpc/site</url>
+        </site>
+    </distributionManagement>
 </project>
-

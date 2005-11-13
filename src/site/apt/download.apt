@@ -4,8 +4,11 @@
 
 Downloading Apache XML-RPC
 
-  You can download the latest release version from the
-  {{{http://www.apache.org/dyn/closer.cgi/ws/xmlrpc/}distribution directory}}.
+  You can download the current version of the streaming branch from a
+  {{{http://people.apache.org/~jochen/xmlrpc/dist/}private distribution
+  directory}}. The latest release version is in the
+  {{{http://www.apache.org/dyn/closer.cgi/ws/xmlrpc/}official
+  distribution directory}}.
 
   Alternatively, you can get the latest code snapshot via
   {{{http://svn.apache.org/repos/asf/webservices/xmlrpc}Subversion}}.
