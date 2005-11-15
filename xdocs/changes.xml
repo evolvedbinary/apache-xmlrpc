@@ -8,6 +8,9 @@
   <body>
   
     <release version="2.1-dev" date="as in SVN">
+      <action dev="sgoeschl" type="fix">
+				Removing all CVS related content and fixed mailbox address
+      </action>          
       <action dev="sgoeschl" type="update">
 				Adding the SVN links to the project website
       </action>          
