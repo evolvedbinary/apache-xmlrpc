@@ -115,8 +115,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>http://svn.apache.org/repos/asf/webservices/xmlrpc/</connection>
-        <developerConnection>https://svn.apache.org/repos/asf/webservices/xmlrpc/</developerConnection>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/xmlrpc/</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/</developerConnection>
         <tag>b20050512_streaming</tag>
         <url>http://svn.apache.org/viewcvs.cgi/webservices/xmlrpc/</url>
     </scm>
