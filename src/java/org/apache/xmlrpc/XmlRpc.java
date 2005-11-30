@@ -17,18 +17,15 @@
 
 package org.apache.xmlrpc;
 
+import org.xml.sax.*;
+import uk.co.wilson.xml.MinML;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.Stack;
+import java.util.TimeZone;
 import java.util.Vector;
-import org.xml.sax.AttributeList;
-import org.xml.sax.HandlerBase;
-import org.xml.sax.InputSource;
-import org.xml.sax.Parser;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import uk.co.wilson.xml.MinML;
 
 /**
  * This abstract base class provides basic capabilities for XML-RPC,
@@ -235,7 +232,7 @@ public abstract class XmlRpc extends HandlerBase
         // If we're using the default, provide it immediately.
         if (c == null || DefaultTypeFactory.class.equals(c))
         {
-            return new DefaultTypeFactory();
+            return new DefaultTypeFactory(tz);
         }
 
         try
@@ -251,8 +248,17 @@ public abstract class XmlRpc extends HandlerBase
             {
                 e.printStackTrace();
             }
-            return new DefaultTypeFactory();
+            return new DefaultTypeFactory(tz);
         }
+    }
+
+    TimeZone tz;
+    
+    void setServerTimeZone(TimeZone z) {
+        tz = z;
+        }
+    TimeZone getServerTimeZone() {
+        return tz;
     }
 
     /**

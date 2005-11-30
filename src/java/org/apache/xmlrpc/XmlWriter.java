@@ -104,7 +104,7 @@ class XmlWriter extends OutputStreamWriter
      * Thread-safe wrapper for the <code>DateFormat</code> object used
      * to parse date/time values.
      */
-    private static DateTool dateTool = new DateTool();
+    DateTool dateTool = new DateTool();
 
     /**
      * Whether the XML prolog has been written.

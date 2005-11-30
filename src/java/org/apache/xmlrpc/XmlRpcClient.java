@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.TimeZone;
 
 /**
  * A multithreaded, reusable XML-RPC client object. Use this if you
@@ -347,10 +348,19 @@ public class XmlRpcClient implements XmlRpcHandler
                 {
                     workers += 1;
                 }
-                return new XmlRpcClientWorker();
+                return new XmlRpcClientWorker(getTimeZone());
             }
             throw new IOException("XML-RPC System overload");
         }
+    }
+
+    TimeZone tz;
+    public void setTimeZone(TimeZone z) {
+        tz = z;
+    }
+
+    public TimeZone getTimeZone() {
+        return tz;
     }
 
     /**

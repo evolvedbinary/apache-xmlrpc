@@ -19,6 +19,7 @@ package org.apache.xmlrpc;
 
 
 import java.text.ParseException;
+import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.DecoderException;
@@ -57,6 +58,10 @@ public class DefaultTypeFactory
      */
     public DefaultTypeFactory()
     {
+    }
+
+    public DefaultTypeFactory(TimeZone tz) {
+        dateTool.setTimeZone(tz);
     }
 
     public Object createInteger(String cdata)

@@ -17,11 +17,12 @@
 
 package org.apache.xmlrpc;
 
-import java.util.Hashtable;
-import java.io.InputStream;
-
 import org.xml.sax.AttributeList;
 import org.xml.sax.SAXException;
+
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.TimeZone;
 
 /**
  * Process an XML-RPC server response from a byte array or an
@@ -44,8 +45,9 @@ public class XmlRpcClientResponseProcessor extends XmlRpc
     /**
      * Creates a new instance.
      */
-    public XmlRpcClientResponseProcessor()
+    public XmlRpcClientResponseProcessor(TimeZone tz)
     {
+        setServerTimeZone(tz);
     }
 
     /**

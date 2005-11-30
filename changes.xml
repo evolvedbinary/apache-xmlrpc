@@ -22,6 +22,11 @@
       		due-to="Jimisola Laursen" due-to-email="lists@jimisola.com">
       	  Added the CommonsXmlRpcTransportFactory.
       </action>
+      <action dev="jochen" type="enhancement"
+            due-to="Henry Story" due-to-email="henry.story@bblfish.net">
+          Added the possibility to specify a timezone for interpreting
+          incoming date values.
+      </action>
     </release>
   </body>
 </document>

@@ -19,6 +19,7 @@ package org.apache.xmlrpc;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.TimeZone;
 
 /**
  * Tie together the XmlRequestProcessor and XmlResponseProcessor to handle
@@ -38,10 +39,10 @@ public class XmlRpcClientWorker
      */
     private static final Object PROCESSING_ERROR_FLAG = new Object();
 
-    public XmlRpcClientWorker()
+    public XmlRpcClientWorker(TimeZone tz)
     {
-        this(new XmlRpcClientRequestProcessor(), 
-             new XmlRpcClientResponseProcessor()
+        this(new XmlRpcClientRequestProcessor(tz),
+             new XmlRpcClientResponseProcessor(tz)
         );
     }
 

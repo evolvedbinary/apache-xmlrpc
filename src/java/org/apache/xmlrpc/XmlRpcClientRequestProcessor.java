@@ -20,6 +20,7 @@ package org.apache.xmlrpc;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.TimeZone;
 
 /**
  * Process an XML-RPC client request into a byte array or directly onto
@@ -32,11 +33,13 @@ import java.io.OutputStream;
  */
 public class XmlRpcClientRequestProcessor
 {
+    TimeZone tz;
     /**
      * Creates a new instance.
      */
-    public XmlRpcClientRequestProcessor()
+    public XmlRpcClientRequestProcessor(TimeZone tz)
     {
+        this.tz = tz;
     }
 	
     /**
@@ -45,7 +48,6 @@ public class XmlRpcClientRequestProcessor
      *
      * @param request the request to encode.
      * @param encoding the Java name for the encoding to use.
-     * @return byte [] the encoded request.
      */
     public void encodeRequest(XmlRpcClientRequest request, String encoding,
                               OutputStream out)
@@ -54,7 +56,7 @@ public class XmlRpcClientRequestProcessor
         XmlWriter writer;
 
         writer = new XmlWriter(out, encoding);
-       
+        writer.dateTool.setTimeZone(tz);
         writer.startElement("methodCall");
         writer.startElement("methodName");
         writer.write(request.getMethodName());
