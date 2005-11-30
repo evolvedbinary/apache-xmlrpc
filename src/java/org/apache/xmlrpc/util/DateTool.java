@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Wraps a <code>DateFormat</code> instance to provide thread safety.
@@ -52,6 +53,10 @@ public class DateTool
     public synchronized String format(Date d)
     {
         return df.format(d);
+    }
+
+    public synchronized void setTimeZone(TimeZone z) {
+        if (z != null) df.setTimeZone(z);
     }
 
     /**
