@@ -204,6 +204,18 @@ public class CommonsXmlRpcTransport implements XmlRpcTransport
     }
 
     /**
+     * Sets Authentication for this client.
+     *
+     * @param auth the <username>:<password> formed string used for basic \
+                authentication
+     */
+    public void setBasicAuthentication(String auth)
+    {
+        creds = new UsernamePasswordCredentials(auth);
+        client.getState().setCredentials(null, null, creds);
+    }
+
+    /**
      * Releases connection resources.
      *
      * @exception XmlRpcClientException

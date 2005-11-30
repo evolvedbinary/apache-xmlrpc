@@ -18,6 +18,10 @@
       		due-to="Thomas Mohaupt" due-to-email="Thomas.Mohaupt at gmail.com">
       	  The wrong version of commons-codec was downloaded by build.xml.
       </action>
+      <action dev="jochen" type="enhancement"
+      		due-to="Jimisola Laursen" due-to-email="lists@jimisola.com">
+      	  Added the CommonsXmlRpcTransportFactory.
+      </action>
     </release>
   </body>
 </document>
