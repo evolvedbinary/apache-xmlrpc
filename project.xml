@@ -4,7 +4,7 @@
   <pomVersion>3</pomVersion>
   <name>xmlrpc</name>
   <id>xmlrpc</id>
-  <currentVersion>2.1-dev</currentVersion>
+  <currentVersion>2.0.1-SNAPSHOT</currentVersion>
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://ws.apache.org/</url>
@@ -261,5 +261,4 @@
     <report>maven-faq-plugin</report>
     <report>maven-clover-plugin</report>
   </reports> 
-
 </project>

@@ -1,0 +1,32 @@
+<assembly>
+  <id>bin</id>
+  <includeSiteDirectory>true</includeSiteDirectory>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <includes>
+		<include>LICENSE.txt</include>
+		<include>NOTES</include>
+		<include>README.txt</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>examples</directory>
+    </fileSet>
+    <fileSet>
+      <directory>scripts</directory>
+    </fileSet>
+    <fileSet>
+      <directory>target/site</directory>
+      <outputDirectory>docs</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>target</directory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>
