@@ -1,6 +1,5 @@
 <assembly>
   <id>bin</id>
-  <includeSiteDirectory>true</includeSiteDirectory>
   <formats>
     <format>tar.gz</format>
   </formats>
@@ -19,11 +18,8 @@
       <directory>scripts</directory>
     </fileSet>
     <fileSet>
-      <directory>target/site</directory>
-      <outputDirectory>docs</outputDirectory>
-    </fileSet>
-    <fileSet>
       <directory>target</directory>
+      <outputDirectory>/</outputDirectory>
       <includes>
         <include>*.jar</include>
       </includes>

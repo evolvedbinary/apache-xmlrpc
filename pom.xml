@@ -138,30 +138,27 @@
 	        <plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.1-SNAPSHOT</version>
+                <configuration>
+                	<descriptor>src/main/assembly/bin.xml</descriptor>
+                	<includeSite>true</includeSite>
+<!--
+                	<descriptor>src/main/assembly/src.xml</descriptor>
+-->
+                </configuration>
+            </plugin>
+            <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
-                     	<id>src-assembly</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <descriptor>src/main/assembly/src.xml</descriptor>
-                        </configuration>
                         <goals>
-                            <goal>assembly</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>bin-assembly</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <descriptor>src/main/assembly/bin.xml</descriptor>
-                            <includeSite>true</includeSite>
-                        </configuration>
-                        <goals>
-                            <goal>assembly</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -198,13 +195,14 @@
     </reporting>
     <distributionManagement>
         <repository>
-            <id>apache</id>
-            <name>Apache Repository</name>
-            <url>scp://people.apache.org/www/www.apache.org/maven-repository</url>
+            <id>apache-maven</id>
+            <name>Apache Maven Repository</name>
+            <url>scp://people.apache.org/www/www.apache.org/dist/maven-repository</url>
         </repository>
         <snapshotRepository>
-            <id>apache.snapshots</id>
-            <name>Apache Development Repository</name>
+            <uniqueVersion>false</uniqueVersion>
+            <id>apache-maven-snapshots</id>
+            <name>Apache Maven Snapshot Repository</name>
             <url>scp://people.apache.org/www/cvs.apache.org/maven-snapshot-repository</url>
         </snapshotRepository>
         <site>
