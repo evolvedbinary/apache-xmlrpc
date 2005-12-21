@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<document>
+  <properties>
+    <title>Changes</title>
+    <author email="sgoeschl@apache.org">Siegfried Goeschl</author>
+  </properties>
+
+  <body>
+  
+    <release version="2.1-dev" date="as in SVN">
+      <action dev="sgoeschl" type="fix">
+				Removing all CVS related content and fixed mailbox address
+      </action>          
+      <action dev="sgoeschl" type="update">
+				Adding the SVN links to the project website
+      </action>          
+      <action dev="jochen" type="fix" due-to="Claude Zervas">
+				The characters 0x20, 0xe000, and 0x10000 have been escaped without reason (XMLRPC-69)
+      </action>          
+      <action dev="jochen" type="fix">
+        The Webserver class was not able to handle Basic authentication,
+				because the BASE64 codec wasn't initialized.
+      </action>          
+      <action dev="hgomez" type="update">
+        Add Timeout support for underlying HttpClient
+      </action>          
+    </release>
+    <release version="2.0" date="2005-05-27">
+      <action dev="sgoeschl" type="update">
+        Upgrading to commons-codec-1.3.jar, commenting out the FESI jar
+      </action>          
+      <action dev="sgoeschl" type="update">
+        Removed checkstyle report due to the tons of violations
+      </action>                
+    </release>
+    <release version="2.0-beta" date="2005-Apr-27">
+      <action dev="sgoeschl" type="fix">
+        Fixed broken ANT build after upgrading to commons-codec-1.3.jar
+      </action>          
+      <action dev="sgoeschl" type="update">
+        Upgrading to commons-codec-1.3.jar
+      </action>          
+      <action dev="hgomez" type="update">
+        Upgrading to Apache Licence 2.0
+      </action>    
+      <action dev="hgomez" type="update">
+        CommonsXmlRpcTransport support gzip compression for request and reply 
+      </action>    
+      <action dev="sgoeschl" type="update">
+        Rewrote the xdocs/changes.xml to be used with the Maven build        
+      </action>    
+      <action dev="sgoeschl" type="update">
+        Removed the dependency of fesi-1.1.5.jar since it is not used
+        with the current Ant/Maven build
+      </action>    
+      <action dev="sgoeschl" type="update">
+        Updated the Maven build to run nicely with Maven 1.0.2
+      </action>    
+      <action dev="sgoeschl" type="update">
+        Updated the ANT build to download dependend JARs automagically
+      </action>    
+    </release>
+  </body>
+</document>
+
