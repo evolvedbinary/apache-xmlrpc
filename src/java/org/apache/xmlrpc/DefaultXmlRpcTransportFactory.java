@@ -40,7 +40,7 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
     protected URL url;
     protected String auth;
 
-    protected static XmlRpcTransportFactory httpsTransportFactory;
+    protected XmlRpcTransportFactory httpsTransportFactory;
 
     public static final String DEFAULT_HTTPS_PROVIDER = "comnetsun";
 
@@ -54,7 +54,7 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
         transports.put("comnetsun", "org.apache.xmlrpc.secure.sunssl.SunSSLTransportFactory");
     }
 
-    public static void setHTTPSTransport(String transport, Properties properties)
+    public void setHTTPSTransport(String transport, Properties properties)
         throws XmlRpcClientException
     {
         httpsTransportFactory = createTransportFactory(transport, properties);    
@@ -156,7 +156,7 @@ public class DefaultXmlRpcTransportFactory implements XmlRpcTransportFactory
             return httpsTransportFactory.createTransport();
         }
          
-        return new DefaultXmlRpcTransport(url);
+        return new DefaultXmlRpcTransport(url, auth);
     }
     
     /**
