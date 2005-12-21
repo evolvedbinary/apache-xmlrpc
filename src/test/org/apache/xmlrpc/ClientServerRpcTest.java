@@ -68,7 +68,7 @@ public class ClientServerRpcTest
     {
         super(testName);
 
-        XmlRpc.setDebug(true);
+        XmlRpc.setDebug(false);
         try
         {
             XmlRpc.setDriver(SAX_DRIVER);
