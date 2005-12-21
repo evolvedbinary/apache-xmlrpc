@@ -15,9 +15,8 @@
     </menu>
     <menu name="Resources">
       <item name="Download"            href="/download.html"/>
-      <item name="Mailing Lists"       href="/lists.html"/>
       <item name="Contributing"        href="/contributing.html"/>
-      <item name="CVS Repository"      href="/cvs.html"/>
+      <item name="SVN Repository"      href="/svn.html"/>
     </menu>
   </body>
 </project>

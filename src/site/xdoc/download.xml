@@ -8,18 +8,11 @@
 
   <body>
     <section name="Downloading Apache XML-RPC">
-      <p>
-You can download the latest release version from the
-<a href="http://www.apache.org/dyn/closer.cgi/ws/xmlrpc/">distribution directory</a>.
-      </p>
-      <p>
-Alternatively, you can get the latest code snapshot via
-<a href="http://ws.apache.org/xmlrpc/cvs.html">anonymous CVS</a>.
-      </p>
-      <p>
-Information on how to build and use the software is included in the
-package.
-      </p>
+      <p> You can download the latest release version from the
+      		<a href="http://www.apache.org/dyn/closer.cgi/ws/xmlrpc/">distribution directory</a>. </p>
+      <p> Alternatively, you can get the latest code snapshot via
+      		<a href="http://ws.apache.org/xmlrpc/svn.html">Subversion</a>. </p>
+      <p> Information on how to build and use the software is included in the package. </p>
      </section>
   </body>
 </document>
