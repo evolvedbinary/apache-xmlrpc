@@ -16,7 +16,7 @@
 		<attributes>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar">
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar">
 		<attributes>
 		</attributes>
 	</classpathentry>

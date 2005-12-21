@@ -27,6 +27,9 @@
           Added the possibility to specify a timezone for interpreting
           incoming date values.
       </action>
+      <action dev="jochen" type="enhancement">
+          Upgrade to commons-httpclient 3.0.
+      </action>
     </release>
   </body>
 </document>

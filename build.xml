@@ -57,7 +57,7 @@
   <target name="copy-deps" description="Copy dependent JARs into the lib folder"
      unless="have.deps" depends="setup.proxy">
     <mkdir dir="${lib.repo}"/>
-    <get dest="${lib.repo}/commons-httpclient-2.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
+    <get dest="${lib.repo}/commons-httpclient-3.0.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-3.0.jar">
     </get>
     <get dest="${lib.repo}/commons-logging-1.0.2.jar" usetimestamp="true" ignoreerrors="true" src="http://www.ibiblio.org/maven/commons-logging/jars/commons-logging-1.0.2.jar">
     </get>
