@@ -58,7 +58,7 @@ public class XmlWriterTest
      */
     public void setUp() 
     {
-        XmlRpc.setDebug(true);
+        XmlRpc.setDebug(false);
         buffer = new ByteArrayOutputStream();
     }
    
