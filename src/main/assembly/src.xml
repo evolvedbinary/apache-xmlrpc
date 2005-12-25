@@ -1,0 +1,34 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>build.xml</include>
+        <include>changes.xml</include>
+        <include>default.properties</include>
+		<include>LICENSE.txt</include>
+		<include>maven.xml</include>
+		<include>NOTES</include>
+		<include>pom.xml</include>
+		<include>project.properties</include>
+		<include>project.xml</include>
+		<include>README.txt</include>
+		<include>.classpath</include>
+		<include>.cvsignore</include>
+		<include>.project</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>examples</directory>
+    </fileSet>
+    <fileSet>
+      <directory>scripts</directory>
+    </fileSet>
+    <fileSet>
+      <directory>src</directory>
+    </fileSet>
+  </fileSets>
+</assembly>
