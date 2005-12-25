@@ -25,9 +25,6 @@
       <directory>examples</directory>
     </fileSet>
     <fileSet>
-      <directory>patches</directory>
-    </fileSet>
-    <fileSet>
       <directory>scripts</directory>
     </fileSet>
     <fileSet>
