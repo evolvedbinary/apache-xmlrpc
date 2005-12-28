@@ -154,6 +154,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
           <tagBase>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/</tagBase>
+          <urlScm>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/branches/XMLRPC_2_0_BRANCH</urlScm>
         </configuration>
       </plugin>
     </plugins>
