@@ -149,7 +149,7 @@ class LiteXmlRpcTransport implements XmlRpcTransport
                 socket = new Socket(hostname, port);
             }
             catch (ConnectException e) {
-                if (tries >= retries) {
+                if (tries++ >= retries) {
                     throw e;
                 } else {
                     // log.debug("ConnectException: " + e.getMessage() + ", waiting " + new Integer(delayMillis).toString() + " milliseconds and retrying");

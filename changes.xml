@@ -3,7 +3,15 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
-    <release version="2.1" date="in CVS">
+    <release version="2.0.2" date="Not yet released">
+      <action dev="jochen" type="fix" issue="XMLRPC-67"
+             due-to="Mike Bailey" due-to-email="mike at blueoak.com">
+        A missing increment in LiteXmlRpcTransport.initConnection()
+        prevented, that the method could finally fail, resulting
+        in a never ending loop.
+      </action>
+    </release>
+    <release version="2.0.1" date="28-Dec-2005">
       <action dev="jochen" type="fix" issue="XMLRPC-68"
 	      	 due-to="Johan Oskarson" due-to-email="johan at oskarsson.nu">
 	      The Webserver class was unable to handle basic authentication,
