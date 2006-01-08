@@ -15,7 +15,6 @@
  */
 package org.apache.xmlrpc.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,9 +24,12 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
@@ -43,7 +45,7 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 		final PostMethod method;
 		CommonsConnection(XmlRpcHttpClientConfig pConfig) {
 			method = new PostMethod(pConfig.getServerURL().toString());
-	        method.setHttp11(true);
+			method.getParams().setVersion(HttpVersion.HTTP_1_1);
 		}
 	}
 
@@ -91,9 +93,6 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	}
 
 	protected void setContentLength(Object pConnection, int pLength) {
-		CommonsConnection conn = (CommonsConnection) pConnection;
-		PostMethod method = conn.method;
-		method.setRequestContentLength(pLength);
 	}
 
 	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, Object pConnection, byte[] pContents)
@@ -101,10 +100,10 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pConfig;
 		CommonsConnection conn = (CommonsConnection) pConnection;
 		PostMethod method = conn.method;
-		method.setRequestBody(new ByteArrayInputStream(pContents));
+		method.setRequestEntity(new ByteArrayRequestEntity(pContents, "text/xml"));
 		HostConfiguration hostConfig;
 		try {
-			URI hostURI = new URI(config.getServerURL().toString());
+			URI hostURI = new URI(config.getServerURL().toString(), false);
 			hostConfig = new HostConfiguration();
 			hostConfig.setHost(hostURI);
 		} catch (URIException e) {
@@ -124,7 +123,8 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 		String userName = pConfig.getBasicUserName();
 		if (userName != null) {
 			Credentials creds = new UsernamePasswordCredentials(userName, pConfig.getBasicPassword());
-			((CommonsConnection) pConnection).client.getState().setCredentials(null, null, creds);
+			AuthScope scope = new AuthScope(null, AuthScope.ANY_PORT, null, AuthScope.ANY_SCHEME);
+			((CommonsConnection) pConnection).client.getState().setCredentials(scope, creds);
 		}
 	}
 }

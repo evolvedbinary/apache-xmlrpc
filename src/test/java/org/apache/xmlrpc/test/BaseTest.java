@@ -17,13 +17,10 @@ package org.apache.xmlrpc.test;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
