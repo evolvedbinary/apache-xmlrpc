@@ -176,14 +176,9 @@
             <version>3.8.1</version>
         </dependency>
         <dependency>
-            <groupId>ws-commons-util</groupId>
+            <groupId>org.apache.ws.commons</groupId>
             <artifactId>ws-commons-util</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ws-commons-java5</groupId>
-            <artifactId>ws-commons-java5</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>jaxme</groupId>
@@ -221,4 +216,11 @@
             <url>scp://people.apache.org/home/jochen/public_html/xmlrpc/site</url>
         </site>
     </distributionManagement>
+    <repositories>
+        <repository>
+            <id>apache-maven-snapshots</id>
+            <name>Apache Maven Snapshot Repository</name>
+            <url>http://cvs.apache.org/maven-snapshot-repository</url>
+        </repository>
+    </repositories>
 </project>
