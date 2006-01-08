@@ -1,0 +1,18 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <includes>
+		<include>LICENSE.txt</include>
+		<include>pom.xml</include>
+		<include>.cvsignore</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>src</directory>
+    </fileSet>
+  </fileSets>
+</assembly>
