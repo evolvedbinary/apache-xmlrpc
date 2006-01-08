@@ -1,17 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="src/java"/>
-  <classpathentry kind="src" path="src/test" output="target/test-classes"/>
-  <classpathentry kind="src" path="src/testResources" output="target/test-classes"/>
-  <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" rootpath="JRE_SRCROOT" path="JRE_LIB" sourcepath="JRE_SRC"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/ws-commons-java5/ws-commons-java5/1.0/ws-commons-java5-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.1.3/log4j-1.1.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/2.0.2/xml-apis-2.0.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.2/commons-logging-1.0.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/ws-commons-util/ws-commons-util/1.0/ws-commons-util-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/jaxme/jaxmeapi/0.5/jaxmeapi-0.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/logkit/logkit/1.0.1/logkit-1.0.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/2.0.2/commons-httpclient-2.0.2.jar"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry sourcepath="JRE_SRC" kind="var" path="JRE_LIB"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

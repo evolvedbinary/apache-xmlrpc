@@ -125,19 +125,39 @@
         <url>http://www.apache.org/</url>
     </organization>
     <build>
-        <sourceDirectory>src/java</sourceDirectory>
-        <testSourceDirectory>src/test</testSourceDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
         <testResources>
             <testResource>
-                <directory>src/testResources</directory>
+                <directory>src/test/resources</directory>
             </testResource>
         </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.1-SNAPSHOT</version>
+                <configuration>
+                    <descriptors>
+                        <value>src/main/assembly/bin.xml</value>
+                        <value>src/main/assembly/src.xml</value>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     <dependencies>
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>2.0.2</version>
+            <version>3.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
