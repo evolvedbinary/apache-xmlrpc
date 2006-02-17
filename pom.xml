@@ -230,13 +230,13 @@
     <distributionManagement>
         <repository>
             <id>people.apache.org</id>
-            <name>Jochen's home directory on people.apache.org</name>
-            <url>scp://people.apache.org/home/jochen/public_html/xmlrpc/dist</url>
+            <name>Apache Maven Distributions</name>
+            <url>scp://people.apache.org/www/www.apache.org/dist/maven-repository</url>
         </repository>
         <site>
             <id>people.apache.org</id>
-            <name>Jochen's home directory on people.apache.org</name>
-            <url>scp://people.apache.org/home/jochen/public_html/xmlrpc/site</url>
+            <name>XML-RPC directory on ws.apache.org</name>
+            <url>scp://people.apache.org/www/ws.apache.org/xmlrpc</url>
         </site>
     </distributionManagement>
     <repositories>
