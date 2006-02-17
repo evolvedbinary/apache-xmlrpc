@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ws-xmlrpc-HEAD</name>
-	<comment></comment>
+	<name>ws-xmlrpc-3</name>
+	<comment>Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol
+        that uses XML over HTTP to implement remote procedure calls.
+        Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to
+        handle. Version 3 of Apache XML-RPC introduces several important vendor
+        extensions over the original XML-RPC specification.</comment>
 	<projects>
 	</projects>
 	<buildSpec>

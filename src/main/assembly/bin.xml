@@ -3,19 +3,12 @@
   <formats>
     <format>tar.gz</format>
   </formats>
+  <includeSiteDirectory>true</includeSiteDirectory>
   <fileSets>
     <fileSet>
       <includes>
 		<include>LICENSE.txt</include>
-		<include>NOTES</include>
-		<include>README.txt</include>
       </includes>
-    </fileSet>
-    <fileSet>
-      <directory>examples</directory>
-    </fileSet>
-    <fileSet>
-      <directory>scripts</directory>
     </fileSet>
     <fileSet>
       <directory>target</directory>
