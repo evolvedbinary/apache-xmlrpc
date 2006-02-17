@@ -1,0 +1,19 @@
+                         ------------
+                         Contributing
+                         ------------
+
+Contributing
+
+  A great {{{http://jakarta.apache.org/site/contributing.html}description}}
+  of contributing to Apache XML-RPC is available from the Jakarta
+  project.
+
+Submitting Patches
+
+  The preferred patch format is unidiff. Emails containing
+  patches should be sent to the mailing list xmlrpc-dev@ws.apache.org, and
+  prefix their subject lines with <<[PATCH]>>. Patches are also
+  accepted via the {{{http://issues.apache.org/jira/browse/XMLRPC}issue tracker}}.
+  The Jakarta project provides a description of
+  {{{http://jakarta.apache.org/site/source.html}life with ASF source code}}
+  -- look for the <<Patches>> section.

@@ -1,0 +1,80 @@
+<faqs title="FAQ">
+  <part id="general">
+    <faq id="state">
+      <question>What is the state of Apache XML-RPC, version 3?</question>
+      <answer>
+        <p>It is alpha software. In other words, it is not yet
+          sufficiently mature. Most possibly, lots of details
+          will change in the near future. Give it a try, if
+          you like, but do not expect to use it without
+          modifications in the medium term.</p>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="client">
+    <faq id="compression_request">
+      <question>How do I enable request compression?</question>
+      <answer>
+        <p>That's simple: Set the properties "enabledForExtensions"
+          and "gzipCompressing". That said, note the following
+          hints:</p>
+        <ul>
+          <li>Setting these properties will only work, if the XML-RPC
+            server is aware of request compression. Compression is a
+            violation of the XML-RPC specification, so typically the
+            server will refuse the request, unless it is an Apache
+            XML-RPC server with version 2 or later. (Apache XML-RPC 2
+            supports request compression, although it was officially
+            designed to be strictly compliant to the XML-RPC specification.
+            However, noone was aware, that compression violates the
+            specification. :-)</li>
+          <li>Compressing the request doesn't mean that the response
+            will also be compressed. You need to request response
+            compression to achieve that.</li>
+        </ul>
+      </answer>
+    </faq>
+
+    <faq id="compression_response">
+      <question>How do I enable response compression?</question>
+      <answer>
+        <p>That's as simple as enabling request compression: Set the
+          properties "enabledForExtensions" and "gzipRequesting".
+          That said, note the following hints:</p>
+        <ul>
+          <li>Requesting gzip compression is a standard HTTP feature.
+            In other words, you may safely request compression from
+            any XML-RPC server, even if it doesn't run Apache XML-RPC.
+            </li>
+          <li>However, requesting compression doesn't necessarily mean,
+            that the response *is* compressed. It depends on the server.</li>
+        </ul>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="server">
+    <faq id="streaming_mode">
+      <question>How do I enable streaming mode?</question>
+      <answer>
+        <p>Set the property "enabledForExtensions". Note, that enabling
+          the streaming mode doesn't mean, that all responses are served
+          in streaming mode. It depends on the clients:</p>
+        <ul>
+          <li>If a client sends a content-length header, then the server
+            assumes, that the client is a traditional XML-RPC application
+            and doesn't support the vendor extensions from Apache XML-RPC.
+            Consequently, the server assumes, that it needs to set the
+            content-length header itself and disables the streaming mode
+            for that particular request.</li>
+          <li>However, if the client doesn't send a content-length header,
+            then the server assumes that it will be able to accept any
+            standard HTTP/1.1 request and enable the streaming mode.
+            Streaming mode means, in particular, that the response will
+            not contain a content-length header.</li>
+        </ul>
+      </answer>
+    </faq>
+  </part>
+</faqs>

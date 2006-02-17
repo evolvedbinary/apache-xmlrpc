@@ -1,0 +1,15 @@
+                 ---------
+                 Downloads
+                 ---------
+
+Downloading Apache XML-RPC
+
+  You can download the current version of Apache XML-RPC from
+  {{{http://www.apache.org/dyn/closer.cgi/ws/xmlrpc/}
+  distribution directory}}.
+
+  Alternatively, you can get the latest code snapshot via
+  {{{http://svn.apache.org/repos/asf/webservices/xmlrpc/trunk}Subversion}}.
+
+  Information on how to build and use the software is included in the
+  package.
