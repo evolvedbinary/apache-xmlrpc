@@ -76,5 +76,27 @@
         </ul>
       </answer>
     </faq>
+
+    <faq id="basic_authentication">
+      <question>How do I enable streaming mode?</question>
+      <answer>
+        <p>Set the property "enabledForExtensions". Note, that enabling
+          the streaming mode doesn't mean, that all responses are served
+          in streaming mode. It depends on the clients:</p>
+        <ul>
+          <li>If a client sends a content-length header, then the server
+            assumes, that the client is a traditional XML-RPC application
+            and doesn't support the vendor extensions from Apache XML-RPC.
+            Consequently, the server assumes, that it needs to set the
+            content-length header itself and disables the streaming mode
+            for that particular request.</li>
+          <li>However, if the client doesn't send a content-length header,
+            then the server assumes that it will be able to accept any
+            standard HTTP/1.1 request and enable the streaming mode.
+            Streaming mode means, in particular, that the response will
+            not contain a content-length header.</li>
+        </ul>
+      </answer>
+    </faq>
   </part>
 </faqs>

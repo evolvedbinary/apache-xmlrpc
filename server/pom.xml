@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.xmlrpc</groupId>
+    <artifactId>xmlrpc</artifactId>
+    <version>3.0b1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <groupId>org.apache.xmlrpc</groupId>
+  <artifactId>xmlrpc-server</artifactId>
+  <name>Apache XML-RPC Server Library</name>
+  <version>3.0b1-SNAPSHOT</version>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-common</artifactId>
+      <version>3.0b1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>
