@@ -15,7 +15,6 @@
  */
 package org.apache.xmlrpc.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +31,7 @@ import org.apache.xmlrpc.common.ClientStreamConnection;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
+import org.apache.xmlrpc.util.SAXParsers;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -43,13 +43,6 @@ import org.xml.sax.XMLReader;
  * the response,
  */
 public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
-	private static final SAXParserFactory spf;
-	static {
-		spf = SAXParserFactory.newInstance();
-		spf.setNamespaceAware(true);
-		spf.setValidating(false);
-	}
-
 	/** Creates a new instance on behalf of the given client.
 	 */
 	protected XmlRpcStreamTransport(XmlRpcClient pClient) {
@@ -228,14 +221,8 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		}
 	}
 
-	protected XMLReader newXMLReader() throws XmlRpcClientException {
-		try {
-			return spf.newSAXParser().getXMLReader();
-		} catch (ParserConfigurationException e) {
-			throw new XmlRpcClientException("Failed to create XMLReader: " + e.getMessage(), e);
-		} catch (SAXException e) {
-			throw new XmlRpcClientException("Failed to create XMLReader: " + e.getMessage(), e);
-		}
+	protected XMLReader newXMLReader() throws XmlRpcException {
+		return SAXParsers.newXMLReader();
 	}
 
 	protected Object readResponse(XmlRpcStreamRequestConfig pConfig, InputStream pStream) throws XmlRpcException {

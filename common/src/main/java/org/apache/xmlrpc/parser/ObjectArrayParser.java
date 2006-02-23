@@ -97,7 +97,7 @@ public class ObjectArrayParser extends RecursiveTypeParserImpl {
 				}
 				startValueTag();
 				break;
-			case 3:
+			default:
 				super.startElement(pURI, pLocalName, pQName, pAttrs);
 				break;
 		}

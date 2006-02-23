@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
@@ -38,6 +35,7 @@ import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.serializer.DefaultXMLWriterFactory;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.apache.xmlrpc.serializer.XmlWriterFactory;
+import org.apache.xmlrpc.util.SAXParsers;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -51,25 +49,12 @@ import org.xml.sax.XMLReader;
 public abstract class XmlRpcStreamServer extends XmlRpcServer
 		implements XmlRpcStreamRequestProcessor {
 	private static final Log log = LogFactory.getLog(XmlRpcStreamServer.class);
-	private static final SAXParserFactory spf;
 	private XmlWriterFactory writerFactory = new DefaultXMLWriterFactory();
-	static {
-		spf = SAXParserFactory.newInstance();
-		spf.setNamespaceAware(true);
-		spf.setValidating(false);
-	}
 
 	protected XmlRpcRequest getRequest(final XmlRpcStreamRequestConfig pConfig,
 									   InputStream pStream) throws XmlRpcException {
 		final XmlRpcRequestParser parser = new XmlRpcRequestParser(pConfig, getTypeFactory());
-		final XMLReader xr;
-		try {
-			xr = spf.newSAXParser().getXMLReader();
-		} catch (ParserConfigurationException e) {
-			throw new XmlRpcException("Unable to create XML parser: " + e.getMessage(), e);
-		} catch (SAXException e) {
-			throw new XmlRpcException("Unable to create XML parser: " + e.getMessage(), e);
-		}
+		final XMLReader xr = SAXParsers.newXMLReader();
 		xr.setContentHandler(parser);
 		try {
 			xr.parse(new InputSource(pStream));

@@ -35,6 +35,7 @@ import org.apache.xmlrpc.parser.NodeParser;
 import org.apache.xmlrpc.parser.NullParser;
 import org.apache.xmlrpc.parser.ObjectArrayParser;
 import org.apache.xmlrpc.parser.SerializableParser;
+import org.apache.xmlrpc.parser.StringParser;
 import org.apache.xmlrpc.parser.TypeParser;
 import org.apache.xmlrpc.serializer.BooleanSerializer;
 import org.apache.xmlrpc.serializer.ByteArraySerializer;
@@ -192,6 +193,8 @@ public class TypeFactoryImpl implements TypeFactory {
 				return new MapParser(pConfig, pContext, this);
 			} else if (ByteArraySerializer.BASE_64_TAG.equals(pLocalName)) {
 				return new ByteArrayParser();
+			} else if (StringSerializer.STRING_TAG.equals(pLocalName)) {
+				return new StringParser();
 			}
 		}
 		return null;

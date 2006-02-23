@@ -114,6 +114,12 @@
             <organization>Zenplex</organization>
         </developer>
     </developers>
+    <contributors>
+        <contributor>
+            <name>Walter Mundt</name>
+            <email>Walter.Mundt@coleengineering.com</email>
+        </contributor>
+    </contributors>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -223,6 +229,10 @@
     </dependencies>
     <reporting>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changes-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>

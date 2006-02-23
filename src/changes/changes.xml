@@ -1,0 +1,64 @@
+<document>
+  <properties>
+    <title>Changes in Apache XML-RPC</title>
+  </properties>
+  <body>
+    <release version="3.0-SNAPSHOT" date="Not yet released">
+      <action dev="jochen" type="fix" due-to="Walter Mundt"
+          due-to-email="Walter.Mundt@coleengineering.com">
+          Nested object arrays could not be parsed.
+      </action>
+      <action dev="jochen" type="fix" due-to="Walter Mundt"
+          due-to-email="Walter.Mundt@coleengineering.com">
+          The "string" tag could not be parsed.
+      </action>
+      <action dev="jochen" type="enhancement">
+        The project is now splitted into three jar files:
+        common, client, and server.
+      </action>
+    </release>
+    <release version="3.0a1" date="17-Feb-2005">
+      <action dev="jochen" type="enhancement">
+        Complete rewrite, adding vendor extensions:
+        Streaming mode, support for all primitive Java types,
+        nulls, DOM elements, and JAXB objects.
+      </action>
+    </release>
+    <release version="2.0.2" date="Not yet released">
+      <action dev="jochen" type="fix" issue="XMLRPC-67"
+             due-to="Mike Bailey" due-to-email="mike at blueoak.com">
+        A missing increment in LiteXmlRpcTransport.initConnection()
+        prevented, that the method could finally fail, resulting
+        in a never ending loop.
+      </action>
+    </release>
+    <release version="2.0.1" date="28-Dec-2005">
+      <action dev="jochen" type="fix" issue="XMLRPC-68"
+	      	 due-to="Johan Oskarson" due-to-email="johan at oskarsson.nu">
+	      The Webserver class was unable to handle basic authentication,
+	      because the BASE64 codec wasn't initialized.
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-69"
+      		 due-to="Claude Zervas" due-to-email="claude at utlco.com">
+      	  The characters 0x20, 0xe000, and 0x10000 have been escaped
+      	  without reason.
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-73"
+      		due-to="Thomas Mohaupt" due-to-email="Thomas.Mohaupt at gmail.com">
+      	  The wrong version of commons-codec was downloaded by build.xml.
+      </action>
+      <action dev="jochen" type="enhancement"
+      		due-to="Jimisola Laursen" due-to-email="lists@jimisola.com">
+      	  Added the CommonsXmlRpcTransportFactory.
+      </action>
+      <action dev="jochen" type="enhancement"
+            due-to="Henry Story" due-to-email="henry.story@bblfish.net">
+          Added the possibility to specify a timezone for interpreting
+          incoming date values.
+      </action>
+      <action dev="jochen" type="enhancement">
+          Upgrade to commons-httpclient 3.0.
+      </action>
+    </release>
+  </body>
+</document>
