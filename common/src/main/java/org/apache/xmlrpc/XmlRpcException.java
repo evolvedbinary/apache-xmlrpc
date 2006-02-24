@@ -82,8 +82,8 @@ public class XmlRpcException extends Exception {
 		super.printStackTrace(pStream);
 		if (linkedException != null) {
 			pStream.println("Caused by:");
+			linkedException.printStackTrace(pStream);
 		}
-		linkedException.printStackTrace(pStream);
 	}
 
 	public void printStackTrace(PrintWriter pWriter) {

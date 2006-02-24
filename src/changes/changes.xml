@@ -17,6 +17,11 @@
           issue="XMLRPC76">
 		  Added the DynamicHandlerMapping.
       </action>
+      <action dev="jochen" type="fix" due-to="Walter Mundt"
+          due-to-email="Walter.Mundt@coleengineering.com">
+          XmlRpcException.printStackTrace() was throwing
+          an NPE, if no linked exception was present.
+      </action>
       <action dev="jochen" type="enhancement">
         The project is now splitted into three jar files:
         common, client, and server.
