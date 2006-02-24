@@ -12,6 +12,11 @@
           due-to-email="Walter.Mundt@coleengineering.com">
           The "string" tag could not be parsed.
       </action>
+      <action dev="jochen" type="enhancement" due-to="Walter Mundt"
+          due-to-email="Walter.Mundt@coleengineering.com"
+          issue="XMLRPC76">
+		  Added the DynamicHandlerMapping.
+      </action>
       <action dev="jochen" type="enhancement">
         The project is now splitted into three jar files:
         common, client, and server.
