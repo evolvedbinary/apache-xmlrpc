@@ -34,7 +34,7 @@ public interface XmlRpcMetaDataHandler extends XmlRpcHandler {
 	 * {@link XmlRpcListableHandlerMapping#getMethodHelp(String)}.
 	 * Typically, the handler mapping will pick up the
 	 * matching handler, invoke its method
-	 * {@link #getSignatures()}, and return the result.</p>
+	 * {@link #getMethodHelp()}, and return the result.</p>
      */
     String getMethodHelp() throws XmlRpcException;
 }
