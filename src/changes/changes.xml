@@ -4,6 +4,12 @@
   </properties>
   <body>
     <release version="3.0-SNAPSHOT" date="Not yet released">
+      <action dev="jochen" type="fix" due-to="Marek Ludha"
+          due-to-email="mludha@gmail.com">
+        The value created by HttpUtil.encodeBasicAuthentication(...)
+        was terminated with a line feed, which is invalid for
+        use in HTTP headers.
+      </action>
       <action dev="jochen" type="fix" due-to="Walter Mundt"
           due-to-email="Walter.Mundt@coleengineering.com">
           Nested object arrays could not be parsed.

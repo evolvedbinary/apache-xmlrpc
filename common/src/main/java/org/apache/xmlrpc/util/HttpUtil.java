@@ -44,7 +44,7 @@ public class HttpUtil {
 		if (pEncoding == null) {
 			pEncoding = XmlRpcStreamConfig.UTF8_ENCODING;
 		}
-		return new String(Base64.encode(s.getBytes(pEncoding)));
+		return new String(Base64.encode(s.getBytes(pEncoding))).trim();
     }
 
 	/** Returns, whether the HTTP header value <code>pHeaderValue</code>
