@@ -1,22 +1,43 @@
+/*
+ * Copyright 1999,2006 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.xmlrpc.server;
 
-import org.apache.xmlrpc.XmlRpcRequest;
-import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.XmlRpcHandler;
-import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
-
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.XmlRpcHandler;
+import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.metadata.ReflectiveXmlRpcMetaDataHandler;
+import org.apache.xmlrpc.metadata.Util;
+import org.apache.xmlrpc.metadata.XmlRpcListableHandlerMapping;
+import org.apache.xmlrpc.metadata.XmlRpcMetaDataHandler;
 
 
 /** Abstract base class of handler mappings, which are
  * using reflection.
  */
-public abstract class AbstractReflectiveHandlerMapping implements XmlRpcHandlerMapping {
-    /** An object implementing this interface may be used
+public abstract class AbstractReflectiveHandlerMapping
+		implements XmlRpcListableHandlerMapping {
+	/** An object implementing this interface may be used
      * to validate user names and passwords.
      */
     public interface AuthenticationHandler {
@@ -106,35 +127,26 @@ public abstract class AbstractReflectiveHandlerMapping implements XmlRpcHandlerM
     	if (pInstance == null) {
     		throw new NullPointerException("The object instance must not be null.");
     	}
-    	return new XmlRpcHandler(){
-            public Object execute(XmlRpcRequest pRequest) throws XmlRpcException {
-                AuthenticationHandler authHandler = getAuthenticationHandler();
-                if (authHandler != null  &&  !authHandler.isAuthorized(pRequest)) {
-                    throw new XmlRpcNotAuthorizedException("Not authorized");
-                }
-                Object[] args = new Object[pRequest.getParameterCount()];
-                for (int j = 0;  j < args.length;  j++) {
-                    args[j] = pRequest.getParameter(j);
-                }
-                try {
-                    return pMethod.invoke(pInstance, args);
-                } catch (IllegalAccessException e) {
-                    throw new XmlRpcException("Illegal access to method "
-                                              + pMethod.getName() + " in class "
-                                              + pClass.getName(), e);
-                } catch (IllegalArgumentException e) {
-                    throw new XmlRpcException("Illegal argument for method "
-                                              + pMethod.getName() + " in class "
-                                              + pClass.getName(), e);
-                } catch (InvocationTargetException e) {
-                    Throwable t = e.getTargetException();
-                    throw new XmlRpcException("Failed to invoke method "
-                                              + pMethod.getName() + " in class "
-                                              + pClass.getName() + ": "
-                                              + t.getMessage(), t);
-                }
-            }
-        };
+    	String[] sig = getSignature(pMethod);
+    	String help = getMethodHelp(pClass, pMethod);
+    	if (sig == null  ||  help == null) {
+    		return new ReflectiveXmlRpcHandler(this, pClass, pInstance, pMethod);
+    	}
+    	return new ReflectiveXmlRpcMetaDataHandler(this, pClass, pInstance,
+    			pMethod, new String[][]{sig}, help);
+    }
+
+    /** Creates a signature for the given method.
+     */
+    protected String[] getSignature(Method pMethod) {
+    	return Util.getSignature(pMethod);
+    }
+
+    /** Creates a help string for the given method, when applied
+     * to the given class.
+     */
+    protected String getMethodHelp(Class pClass, Method pMethod) {
+    	return Util.getMethodHelp(pClass, pMethod);
     }
 
     /** Returns the {@link XmlRpcHandler} with the given name.
@@ -150,4 +162,33 @@ public abstract class AbstractReflectiveHandlerMapping implements XmlRpcHandlerM
         }
         return result;
     }
+
+	public String[] getListMethods() throws XmlRpcException {
+		List list = new ArrayList();
+		for (Iterator iter = handlerMap.entrySet().iterator();
+		     iter.hasNext();  ) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			if (entry.getValue() instanceof XmlRpcMetaDataHandler) {
+				list.add(entry.getKey());
+			}
+		}
+		
+		return (String[]) list.toArray(new String[list.size()]);
+	}
+
+	public String getMethodHelp(String pHandlerName) throws XmlRpcException {
+		XmlRpcHandler h = getHandler(pHandlerName);
+		if (h instanceof XmlRpcMetaDataHandler)
+			return ((XmlRpcMetaDataHandler)h).getMethodHelp();
+		throw new XmlRpcNoSuchHandlerException("No help available for method: "
+				+ pHandlerName);
+	}
+
+	public String[][] getMethodSignature(String pHandlerName) throws XmlRpcException {
+		XmlRpcHandler h = getHandler(pHandlerName);
+		if (h instanceof XmlRpcMetaDataHandler)
+			return ((XmlRpcMetaDataHandler)h).getSignatures();
+		throw new XmlRpcNoSuchHandlerException("No metadata available for method: "
+				+ pHandlerName);
+	}
 }
