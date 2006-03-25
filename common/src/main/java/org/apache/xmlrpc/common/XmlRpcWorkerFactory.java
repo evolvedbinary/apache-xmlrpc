@@ -35,7 +35,7 @@ public abstract class XmlRpcWorkerFactory {
 	}
 
 	/** Creates a new worker instance.
-	 * @return New instance of {@link XmlRpcClientWorker}.
+	 * @return New instance of {@link XmlRpcWorker}.
 	 */
 	protected abstract XmlRpcWorker newWorker();
 
@@ -49,7 +49,7 @@ public abstract class XmlRpcWorkerFactory {
 	}
 
 	/** Returns a worker for synchronous processing.
-	 * @return An instance of {@link XmlRpcClientWorker}, which is ready
+	 * @return An instance of {@link XmlRpcWorker}, which is ready
 	 * for use.
 	 * @throws XmlRpcLoadException The clients maximum number of concurrent
 	 * threads is exceeded.

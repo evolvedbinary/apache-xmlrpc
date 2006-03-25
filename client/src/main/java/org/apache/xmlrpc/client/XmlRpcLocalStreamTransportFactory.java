@@ -29,7 +29,7 @@ public class XmlRpcLocalStreamTransportFactory extends XmlRpcStreamTransportFact
 
 	/** Creates a new instance.
 	 * @param pClient The client controlling the factory.
-	 * @param pServer An instance of {@link XmlRpcLocalStreamServer}.
+	 * @param pServer An instance of {@link XmlRpcStreamRequestProcessor}.
 	 */
 	public XmlRpcLocalStreamTransportFactory(XmlRpcClient pClient,
 			XmlRpcStreamRequestProcessor pServer) {

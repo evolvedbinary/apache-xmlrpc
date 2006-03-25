@@ -35,9 +35,7 @@ public interface XmlRpcWorker {
 	/** Performs a synchronous request. The client worker extends
 	 * this interface with the ability to perform asynchronous
 	 * requests.
-	 * @param pController The workers controller.
 	 * @param pRequest The request being performed.
-	 * @param pConfig The request configuration.
 	 * @return The requests result.
 	 * @throws XmlRpcException Performing the request failed.
 	 */

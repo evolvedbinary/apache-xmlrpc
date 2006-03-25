@@ -40,10 +40,10 @@ public class WebServer implements Runnable {
 	private class AddressMatcher {
 		private final int pattern[];
 		
-		AddressMatcher(String address) {
+		AddressMatcher(String pAddress) {
 			try {
 				pattern = new int[4];
-				StringTokenizer st = new StringTokenizer(address, ".");
+				StringTokenizer st = new StringTokenizer(pAddress, ".");
 				if (st.countTokens() != 4) {
 					throw new IllegalArgumentException();
 				}
@@ -56,7 +56,7 @@ public class WebServer implements Runnable {
 					}
 				}
 			} catch (Exception e) {
-				throw new IllegalArgumentException("\"" + address
+				throw new IllegalArgumentException("\"" + pAddress
 						+ "\" does not represent a valid IP address");
 			}
 		}

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.common.ClientStreamConnection;
+import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 import org.apache.xmlrpc.util.LimitedInputStream;
@@ -41,49 +41,48 @@ import org.apache.xmlrpc.util.LimitedInputStream;
 /** A "light" HTTP transport implementation.
  */
 public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
-	private class Connection implements ClientStreamConnection {
-		private final String hostname;
-	    private final String host;
-		private int port;
-		private final String uri;
-	    private Socket socket;
-		private OutputStream output;
-	    private InputStream input;
-		private final Map headers = new HashMap();
-		Connection(URL pURL) {
-	        hostname = pURL.getHost();
-	        int p = pURL.getPort();
-			port = p < 1 ? 80 : p;
-			String u = pURL.getFile();
-			uri = (u == null  ||  "".equals(u)) ? "/" : u;
-			host = port == 80 ? hostname : hostname + ":" + port;
-			headers.put("Host", host);
-		}
-	}
-
-	private final String userAgent = super.getUserAgent() + " (Lite HTTP Transport)";
+	private static final String userAgent = USER_AGENT + " (Lite HTTP Transport)";
+	private String hostname;
+	private String host;
+	private int port;
+	private String uri;
+	private Socket socket;
+	private OutputStream output;
+	private InputStream input;
+	private final Map headers = new HashMap();
+	private boolean responseGzipCompressed = false;
+	private XmlRpcHttpClientConfig config;
 
 	/** Creates a new instance.
 	 * @param pClient The client controlling this instance.
 	 */
 	public XmlRpcLiteHttpTransport(XmlRpcClient pClient) {
-		super(pClient);
+		super(pClient, userAgent);
 	}
 
-	protected String getUserAgent() { return userAgent; }
+	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
+		config = (XmlRpcHttpClientConfig) pRequest.getConfig();
+		URL url = config.getServerURL();
+		hostname = url.getHost();
+        int p = url.getPort();
+		port = p < 1 ? 80 : p;
+		String u = url.getFile();
+		uri = (u == null  ||  "".equals(u)) ? "/" : u;
+		host = port == 80 ? hostname : hostname + ":" + port;
+		headers.put("Host", host);
+		return super.sendRequest(pRequest);
+	}
 
-	protected void setRequestHeader(ClientStreamConnection pConnection, String pHeader,
-									String pValue) {
-		Connection conn = (Connection) pConnection;
-		Object value = conn.headers.get(pHeader);
+	protected void setRequestHeader(String pHeader, String pValue) {
+		Object value = headers.get(pHeader);
 		if (value == null) {
-			conn.headers.put(pHeader, pValue);
+			headers.put(pHeader, pValue);
 		} else {
 			List list;
 			if (value instanceof String) {
 				list = new ArrayList();
 				list.add(value);
-				conn.headers.put(pHeader, list);
+				headers.put(pHeader, list);
 			} else {
 				list = (List) value;
 			}
@@ -91,40 +90,27 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-	protected boolean isResponseGzipCompressed(
-			XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	protected ClientStreamConnection newConnection(XmlRpcStreamRequestConfig pConfig)
-			throws XmlRpcClientException {
-		return new Connection(((XmlRpcHttpClientConfig) pConfig).getServerURL());
-	}
-
-	protected void closeConnection(ClientStreamConnection pConnection)
-			throws XmlRpcClientException {
-		Connection conn = (Connection) pConnection;
+	protected void close() throws XmlRpcClientException {
 		IOException e = null;
-		if (conn.input != null) {
+		if (input != null) {
 			try {
-				conn.input.close();
+				input.close();
 			} catch (IOException ex) {
 				e = ex;
 			}
 		}
-		if (conn.output != null) {
+		if (output != null) {
 			try {
-				conn.output.close();
+				output.close();
 			} catch (IOException ex) {
 				if (e != null) {
 					e = ex;
 				}
 			}
 		}
-		if (conn.socket != null) {
+		if (socket != null) {
 			try {
-				conn.socket.close();
+				socket.close();
 			} catch (IOException ex) {
 				if (e != null) {
 					e = ex;
@@ -136,40 +122,43 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-	protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig,
-										   ClientStreamConnection pConnection) throws XmlRpcClientException {
-		final Connection conn = (Connection) pConnection;
-		final int retries = 3;
-        final int delayMillis = 100;
-        
-		for (int tries = 0;  ;  tries++) {
-			try {
-				conn.socket = new Socket(conn.hostname, conn.port);
-				conn.output = new BufferedOutputStream(conn.socket.getOutputStream()){
-					/** Closing the output stream would close the whole socket, which we don't want,
-					 * because the don't want until the request is processed completely.
-					 * A close will later occur within
-					 * {@link XmlRpcLiteHttpTransport#closeConnection(Object)}.
-					 */
-					public void close() throws IOException {
-						flush();
-						conn.socket.shutdownOutput();
+	private OutputStream getOutputStream() throws XmlRpcException {
+		try {
+			final int retries = 3;
+	        final int delayMillis = 100;
+	
+			for (int tries = 0;  ;  tries++) {
+				try {
+					socket = new Socket(hostname, port);
+					output = new BufferedOutputStream(socket.getOutputStream()){
+						/** Closing the output stream would close the whole socket, which we don't want,
+						 * because the don't want until the request is processed completely.
+						 * A close will later occur within
+						 * {@link XmlRpcLiteHttpTransport#close()}.
+						 */
+						public void close() throws IOException {
+							flush();
+							socket.shutdownOutput();
+						}
+					};
+					break;
+				} catch (ConnectException e) {
+					if (tries >= retries) {
+						throw new XmlRpcException("Failed to connect to "
+								+ hostname + ":" + port + ": " + e.getMessage(), e);
+					} else {
+	                    try {
+	                        Thread.sleep(delayMillis);
+	                    } catch (InterruptedException ignore) {
+	                    }
 					}
-				};
-				sendRequestHeaders(conn, conn.output);
-				return conn.output;
-			} catch (ConnectException e) {
-				if (tries >= retries) {
-					throw new XmlRpcClientException("Failed to connect to " + conn.host + ": " + e.getMessage(), e);
-				} else {
-                    try {
-                        Thread.sleep(delayMillis);
-                    } catch (InterruptedException ignore) {
-                    }
 				}
-			} catch (IOException e) {
-				throw new XmlRpcClientException("Failed to connect to " + conn.host + ": " + e.getMessage(), e);
 			}
+			sendRequestHeaders(output);
+			return output;
+		} catch (IOException e) {
+			throw new XmlRpcException("Failed to open connection to "
+					+ hostname + ":" + port + ": " + e.getMessage(), e);
 		}
 	}
 
@@ -181,10 +170,9 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		pOut.write(toHTTPBytes(pKey + ": " + pValue + "\r\n"));
 	}
 
-	private void sendRequestHeaders(Connection pConnection,
-									OutputStream pOut) throws IOException {
-		pOut.write(("POST " + pConnection.uri + " HTTP/1.0\r\n").getBytes("US-ASCII"));
-		for (Iterator iter = pConnection.headers.entrySet().iterator();  iter.hasNext();  ) {
+	private void sendRequestHeaders(OutputStream pOut) throws IOException {
+		pOut.write(("POST " + uri + " HTTP/1.0\r\n").getBytes("US-ASCII"));
+		for (Iterator iter = headers.entrySet().iterator();  iter.hasNext();  ) {
 			Map.Entry entry = (Map.Entry) iter.next();
 			String key = (String) entry.getKey();
 			Object value = entry.getValue();
@@ -200,58 +188,51 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		pOut.write(toHTTPBytes("\r\n"));
 	}
 
-	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig,
-										 ClientStreamConnection pConnection,
-										 byte[] pContent) throws XmlRpcException {
-		try {
-			Connection conn = (Connection) pConnection;
-			conn.socket = new Socket(conn.hostname, conn.port);
-			conn.output = new BufferedOutputStream(conn.socket.getOutputStream());
-			sendRequestHeaders(conn, conn.output);
-			conn.output.write(pContent);
-			conn.output.flush();
-		} catch (IOException e) {
-			throw new XmlRpcClientException("Failed to send request to sender: " + e.getMessage(), e);
-		}
-		return newInputStream(pConfig, pConnection);
+	protected boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig) {
+		return responseGzipCompressed;
 	}
 
-	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig,
-										 ClientStreamConnection pConnection) throws XmlRpcException {
-		Connection conn = (Connection) pConnection;
+	protected InputStream getInputStream() throws XmlRpcException {
 		final byte[] buffer = new byte[2048];
 		try {
-			conn.input = new BufferedInputStream(conn.socket.getInputStream());
+			input = new BufferedInputStream(socket.getInputStream());
 			// start reading  server response headers
-			String line = HttpUtil.readLine(conn.input, buffer);
+			String line = HttpUtil.readLine(input, buffer);
 			StringTokenizer tokens = new StringTokenizer(line);
 			tokens.nextToken(); // Skip HTTP version
 			String statusCode = tokens.nextToken();
 			String statusMsg = tokens.nextToken("\n\r");
-			if (! "200".equals(statusCode)) {
+			if (!"200".equals(statusCode)) {
 				throw new IOException("Unexpected Response from Server: "
 									  + statusMsg);
 			}
 			int contentLength = -1;
 			for (;;) {
-				line = HttpUtil.readLine(conn.input, buffer);
+				line = HttpUtil.readLine(input, buffer);
 				if (line == null  ||  "".equals(line)) {
 					break;
 				}
 				line = line.toLowerCase();
 				if (line.startsWith("content-length:")) {
 					contentLength = Integer.parseInt(line.substring("content-length:".length()).trim());
+				} else if (line.startsWith("content-encoding:")) {
+					responseGzipCompressed = HttpUtil.isUsingGzipEncoding(line.substring("content-encoding:".length()));
 				}
 			}
 			InputStream result;
 			if (contentLength == -1) {
-				result = conn.input;
+				result = input;
 			} else {
-				result = new LimitedInputStream(conn.input, contentLength);
+				result = new LimitedInputStream(input, contentLength);
 			}
 			return result;
 		} catch (IOException e) {
 			throw new XmlRpcClientException("Failed to read server response: " + e.getMessage(), e);
 		}
+	}
+
+	protected void writeRequest(RequestWriter pWriter) throws XmlRpcException {
+		OutputStream ostream = getOutputStream();
+		pWriter.write(ostream);
 	}
 }

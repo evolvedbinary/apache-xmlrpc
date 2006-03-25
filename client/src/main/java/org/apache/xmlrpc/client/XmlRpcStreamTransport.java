@@ -15,19 +15,15 @@
  */
 package org.apache.xmlrpc.client;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
-import org.apache.xmlrpc.common.ClientStreamConnection;
+import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
@@ -43,181 +39,122 @@ import org.xml.sax.XMLReader;
  * the response,
  */
 public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
+	protected class RequestWriter {
+		private final XmlRpcRequest request;
+
+		protected RequestWriter(XmlRpcRequest pRequest) {
+			request = pRequest;
+		}
+
+		protected XmlRpcRequest getRequest() {
+			return request;
+		}
+
+		/** Writes the requests XML data to the given output stream,
+		 * possibly compressing it. Ensures, that the output stream
+		 * is being closed.
+		 */
+		protected void write(OutputStream pStream) throws XmlRpcException {
+			XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) request.getConfig();
+			if (isCompressingRequest(config)) {
+				try {
+					GZIPOutputStream gStream = new GZIPOutputStream(pStream);
+					writeUncompressed(gStream);
+					pStream.close();
+					pStream = null;
+				} catch (IOException e) {
+					throw new XmlRpcException("Failed to write request: " + e.getMessage(), e);
+				} finally {
+					if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
+				}
+			} else {
+				writeUncompressed(pStream);
+			}
+		}
+
+		/** Writes the requests uncompressed XML data to the given
+		 * output stream. Ensures, that the output stream is being
+		 * closed.
+		 */
+		protected void writeUncompressed(OutputStream pStream)
+				throws XmlRpcException {
+			final XmlRpcStreamConfig config = (XmlRpcStreamConfig) request.getConfig();
+			try {
+				ContentHandler h = getClient().getXmlWriterFactory().getXmlWriter(config, pStream);
+				XmlRpcWriter xw = new XmlRpcWriter(config, h, getClient().getTypeFactory());
+				xw.write(request);
+				pStream.close();
+				pStream = null;
+			} catch (SAXException e) {
+				Exception ex = e.getException();
+				if (ex != null  &&  ex instanceof XmlRpcException) {
+					throw (XmlRpcException) ex;
+				} else {
+					throw new XmlRpcClientException("Failed to send request: " + e.getMessage(), e);
+				}
+			} catch (IOException e) {
+				throw new XmlRpcException("Failed to write request: " + e.getMessage(), e);
+			} finally {
+				if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
+			}
+		}
+	}
+
+	protected RequestWriter newRequestWriter(XmlRpcRequest pRequest)
+			throws XmlRpcException {
+		return new RequestWriter(pRequest);
+	}
+	
 	/** Creates a new instance on behalf of the given client.
 	 */
 	protected XmlRpcStreamTransport(XmlRpcClient pClient) {
 		super(pClient);
 	}
 
-	/** Creates the connection object. The connection object is a
-	 * factory for output and input stream.
+	/** Closes the connection and ensures, that all resources are being
+	 * released.
 	 */
-	protected abstract ClientStreamConnection newConnection(XmlRpcStreamRequestConfig pConfig) throws XmlRpcClientException;
-
-	/** Closes the connection object.
-	 */
-	protected abstract void closeConnection(ClientStreamConnection pConnection) throws XmlRpcClientException;
-
-	/** Initializes the newly created connection. For example, the HTTP transport
-	 * will use this to set headers.
-	 * @param pConfig The clients configuration.
-	 * @param pConnection The connection being initialized.
-	 * @throws XmlRpcClientException A local error on the client occurred.
-	 */
-	protected void initConnection(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection) throws XmlRpcClientException {
-	}
-
-	/** Creates a new output stream, to which the request may be written.
-	 * @param pConfig Client configuration.
-	 * @param pConnection Connection being used to send request data.
-	 * @return Opened output stream.
-	 * @throws XmlRpcClientException An error occurred on the client.
-	 */
-	protected abstract OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection)
-			throws XmlRpcClientException;
-
-	/** Closes the opened output stream, indicating that no more data is being
-	 * sent.
-	 * @param pStream The stream being closed.
-	 * @throws XmlRpcClientException An error occurred on the client.
-	 */
-	protected void closeOutputStream(OutputStream pStream) throws XmlRpcClientException {
-		try {
-			pStream.close();
-		} catch (IOException e) {
-			throw new XmlRpcClientException("Failed to close output stream.", e);
-		}
-	}
-
-	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection)
-			throws XmlRpcClientException {
-		OutputStream result = newOutputStream(pConfig, pConnection);
-		if (pConfig.isGzipCompressing()) {
-			try {
-				result = new GZIPOutputStream(result);
-			} catch (IOException e) {
-				throw new XmlRpcClientException("Failed to attach gzip encoding to output stream", e);
-			}
-		}
-		return result;
-	}
-
-	/** Creates a new input stream for reading the response.
-	 * @param pConfig The clients configuration.
-	 * @param pConnection The connection object.
-	 * @return Opened input stream for reading data.
-	 * @throws XmlRpcException Creating the input stream failed.
-	 */
-	protected abstract InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection)
-			throws XmlRpcException;
-
-	/** Creates a new input stream for reading the response.
-	 * @param pConfig The clients configuration.
-	 * @param pConnection The connection object.
-	 * @param pContent A byte array with the response.
-	 * @return Opened input stream for reading data.
-	 * @throws XmlRpcException Creating the input stream failed.
-	 */
-	protected abstract InputStream newInputStream(XmlRpcStreamRequestConfig pConfig,
-												  ClientStreamConnection pConnection,
-												  byte[] pContent)
-			throws XmlRpcException;
-
-	/** Closes the opened input stream, indicating that no more data is being
-	 * read.
-	 * @param pStream The stream being closed.
-	 * @throws XmlRpcClientException An error occurred on the client.
-	 */
-	protected void closeInputStream(InputStream pStream) throws XmlRpcClientException {
-		try {
-			pStream.close();
-		} catch (IOException e) {
-			throw new XmlRpcClientException("Failed to close output stream.", e);
-		}
-	}
+	protected abstract void close() throws XmlRpcClientException;
 
 	/** Returns, whether the response is gzip compressed.
 	 * @param pConfig The clients configuration.
-	 * @param pConnection The connection object.
 	 * @return Whether the response stream is gzip compressed.
 	 */
-	protected abstract boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection);
+	protected abstract boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig);
 
-	protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection,
-										 byte[] pContent)
-			throws XmlRpcException {
-		InputStream istream;
-		if (pContent == null) {
-			istream = newInputStream(pConfig, pConnection);
-		} else {
-			istream = newInputStream(pConfig, pConnection, pContent);
-		}
-		if (isResponseGzipCompressed(pConfig, pConnection)) {
-			try {
-				istream = new GZIPInputStream(istream);
-			} catch (IOException e) {
-				throw new XmlRpcClientException("Failed to attach gzip decompression to the response stream", e);
-			}
-		}
-		return istream;
-	}
-
-	/** If this method returns true, then the method
-	 * {@link #newInputStream(XmlRpcStreamRequestConfig, Object, byte[])}
-	 * will be invoked to create the response. Otherwise, the methods
-	 * {@link #getOutputStream(XmlRpcStreamRequestConfig, Object)}, and
-	 * {@link #newInputStream(XmlRpcStreamRequestConfig, Object)} will
-	 * be used.
-	 * @return Whether conversion into a byte array is required to create
-	 * the response.
+	/** Invokes the request writer.
 	 */
-	protected boolean isUsingByteArrayOutput(XmlRpcStreamRequestConfig pConfig) {
-		return false;
+	protected abstract void writeRequest(RequestWriter pWriter) throws XmlRpcException;
+
+	/** Returns the input stream, from which the response is
+	 * being read.
+	 */
+	protected abstract InputStream getInputStream() throws XmlRpcException;
+
+	protected boolean isCompressingRequest(XmlRpcStreamRequestConfig pConfig) {
+		return pConfig.isEnabledForExtensions()
+			&& pConfig.isGzipCompressing();
 	}
 
 	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
 		XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) pRequest.getConfig();
-		ClientStreamConnection connection = newConnection(config);
+		boolean closed = false;
 		try {
-			initConnection(config, connection);
-			OutputStream ostream;
-			ByteArrayOutputStream baos;
-			if (isUsingByteArrayOutput(config)) {
-				baos = new ByteArrayOutputStream();
-				if (config.isGzipCompressing()) {
-					try {
-						ostream = new GZIPOutputStream(baos);
-					} catch (IOException e) {
-						throw new XmlRpcClientException("Failed to create GZIPOutputStream: " + e.getMessage(), e);
-					}
-				} else {
-					ostream = baos;
-				}
-			} else {
-				baos = null;
-				ostream = getOutputStream(config, connection);
+			RequestWriter writer = newRequestWriter(pRequest);
+			writeRequest(writer);
+			InputStream istream = getInputStream();
+			if (isResponseGzipCompressed(config)) {
+				istream = new GZIPInputStream(istream);
 			}
-			try {
-				writeRequest(config, ostream, pRequest);
-				closeOutputStream(ostream);
-				ostream = null;
-			} finally {
-				if (ostream != null) { try { closeOutputStream(ostream); } catch (Throwable ignore) {} }
-			}
-			InputStream istream = getInputStream(config, connection, baos == null ? null : baos.toByteArray());
-			Object result;
-			try {
-				result = readResponse(config, istream);
-				closeInputStream(istream);
-				istream = null;
-			} finally {
-				if (istream != null) { try { closeInputStream(istream); } catch (Throwable ignore) {} }
-			}
-			closeConnection(connection);
-			connection = null;
+			Object result = readResponse(config, istream);
+			closed = true;
+			close();
 			return result;
+		} catch (IOException e) {
+			throw new XmlRpcException("Failed to read servers response: "
+					+ e.getMessage(), e);
 		} finally {
-			if (connection != null) { try { closeConnection(connection); } catch (Throwable ignore) {} }
+			if (!closed) { try { close(); } catch (Throwable ignore) {} }
 		}
 	}
 
@@ -242,22 +179,6 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 			return xp.getResult();
 		} else {
 			throw new XmlRpcException(xp.getErrorCode(), xp.getErrorMessage());
-		}
-	}
-
-	protected void writeRequest(XmlRpcStreamRequestConfig pConfig, OutputStream pStream, XmlRpcRequest pRequest)
-			throws XmlRpcException {
-		ContentHandler h = getClient().getXmlWriterFactory().getXmlWriter(pConfig, pStream);
-		XmlRpcWriter xw = new XmlRpcWriter(pConfig, h, getClient().getTypeFactory());
-		try {
-			xw.write(pRequest);
-		} catch (SAXException e) {
-			Exception ex = e.getException();
-			if (ex != null  &&  ex instanceof XmlRpcException) {
-				throw (XmlRpcException) ex;
-			} else {
-				throw new XmlRpcClientException("Failed to send request: " + e.getMessage(), e);
-			}
 		}
 	}
 }

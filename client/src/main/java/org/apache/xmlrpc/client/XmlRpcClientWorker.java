@@ -65,11 +65,9 @@ public class XmlRpcClientWorker implements XmlRpcWorker {
 	/** Performs an synchronous request.
 	 * @param pRequest The request being performed.
 	 * @param pCallback The callback being invoked, when the request is finished.
-	 * @throws XmlRpcException Performing the request failed.
 	 */
 	public void execute(final XmlRpcRequest pRequest,
-						final AsyncCallback pCallback)
-			throws XmlRpcException {
+						final AsyncCallback pCallback) {
 		Runnable runnable = new Runnable(){
 			public void run(){
 				Object result = null;

@@ -181,11 +181,10 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	 * @param pConfig The request configuration.
 	 * @param pConnection The "connection" being processed.
 	 * @throws XmlRpcException Processing the request failed.
-	 * @throws IOException An I/O error occurred.
 	 */
 	public void execute(XmlRpcStreamRequestConfig pConfig,
 						ServerStreamConnection pConnection)
-			throws IOException, XmlRpcException {
+			throws XmlRpcException {
 		log.debug("execute: ->");
 		try {
 			Object result;
@@ -240,6 +239,9 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 			}
 			closeConnection(pConnection);
 			pConnection = null;
+		} catch (IOException e) {
+			throw new XmlRpcException("I/O error while processing request: "
+					+ e.getMessage(), e);
 		} finally {
 			if (pConnection != null) { try { closeConnection(pConnection); } catch (Throwable ignore) {} }
 		}

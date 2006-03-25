@@ -85,7 +85,8 @@ public class TypeFactoryImpl implements TypeFactory {
 	}
 
 	/** Returns the controller, which operates the type factory.
-	 * @return The controller, an instance of {@link XmlRpcClient},
+	 * @return The controller, an instance of
+	 * {@link org.apache.xmlrpc.client.XmlRpcClient},
 	 * or {@link org.apache.xmlrpc.server.XmlRpcServer}.
 	 */
 	public XmlRpcController getController() {

@@ -17,12 +17,9 @@ package org.apache.xmlrpc.client;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.common.ClientStreamConnection;
 import org.apache.xmlrpc.common.LocalStreamConnection;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestProcessor;
@@ -36,10 +33,11 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestProcessor;
  */
 public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 	private final XmlRpcStreamRequestProcessor localServer;
+	private LocalStreamConnection conn;
 	
 	/** Creates a new instance.
 	 * @param pClient The client, which is controlling the transport.
-	 * @param pServer An instance of {@link XmlRpcLocalStreamServer}.
+	 * @param pServer An instance of {@link XmlRpcStreamRequestProcessor}.
 	 */
 	public XmlRpcLocalStreamTransport(XmlRpcClient pClient,
 			XmlRpcStreamRequestProcessor pServer) {
@@ -47,41 +45,22 @@ public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 		localServer = pServer;
 	}
 
-	protected ClientStreamConnection newConnection(XmlRpcStreamRequestConfig pConfig) throws XmlRpcClientException {
-		return new LocalStreamConnection();
-	}
-
-	protected void closeConnection(ClientStreamConnection pConnection) throws XmlRpcClientException {
-		LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
-		final ByteArrayOutputStream ostream = lsc.getOstream();
-		if (ostream != null) {
-			try { ostream.close(); } catch (Throwable ignore) {}
-		}
-	}
-
-	protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection) throws XmlRpcClientException {
-		LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
-		ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-		lsc.setOstream(ostream);
-		return ostream;
-	}
-
-	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection)
-			throws XmlRpcException {
-		LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
-		try {
-			localServer.execute(pConfig, lsc);
-		} catch (IOException e) {
-			throw new XmlRpcException(e.getMessage(), e);
-		}
-		return new ByteArrayInputStream(lsc.getIstream().toByteArray());
-	}
-
-	protected boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection) {
+	protected boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig) {
 		return pConfig.isGzipRequesting();
 	}
 
-	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection, byte[] pContent) throws XmlRpcException {
-		throw new IllegalStateException("Not implemented");
+	protected void close() throws XmlRpcClientException {
+	}
+
+	protected InputStream getInputStream() throws XmlRpcException {
+		localServer.execute(conn.getConfig(), conn);
+		return new ByteArrayInputStream(conn.getResponse().toByteArray());
+	}
+
+	protected void writeRequest(RequestWriter pWriter) throws XmlRpcException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();		
+		pWriter.write(baos);
+		XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) pWriter.getRequest().getConfig();
+		conn = new LocalStreamConnection(config, new ByteArrayInputStream(baos.toByteArray()));
 	}
 }

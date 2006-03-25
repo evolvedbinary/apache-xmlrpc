@@ -50,44 +50,44 @@ public class Util {
 	 * queried.
 	 * @return Signature, if known, or null.
 	 */
-	public static String getSignatureType(Class type) {
-		if (type == Integer.TYPE || type == Integer.class)
+	public static String getSignatureType(Class pType) {
+		if (pType == Integer.TYPE || pType == Integer.class)
 			return "int";
-		if (type == Double.TYPE || type == Double.class)
+		if (pType == Double.TYPE || pType == Double.class)
 			return "double";
-		if (type == Boolean.TYPE || type == Boolean.class)
+		if (pType == Boolean.TYPE || pType == Boolean.class)
 			return "boolean";
-		if (type == String.class)
+		if (pType == String.class)
 			return "string";
-		if (Object[].class.isAssignableFrom(type)
-			||  List.class.isAssignableFrom(type))
+		if (Object[].class.isAssignableFrom(pType)
+			||  List.class.isAssignableFrom(pType))
 			return "array";
-		if (Map.class.isAssignableFrom(type))
+		if (Map.class.isAssignableFrom(pType))
 			return "struct";
-		if (Date.class.isAssignableFrom(type)
-			||  Calendar.class.isAssignableFrom(type))
+		if (Date.class.isAssignableFrom(pType)
+			||  Calendar.class.isAssignableFrom(pType))
 			return "dateTime.iso8601";
-		if (type == byte[].class)
+		if (pType == byte[].class)
 			return "base64";
 
 		// extension types
-		if (type == void.class)
+		if (pType == void.class)
 			return "ex:nil";
-		if (type == Byte.TYPE || type == Byte.class)
+		if (pType == Byte.TYPE || pType == Byte.class)
 			return "ex:i1";
-		if (type == Short.TYPE || type == Short.class)
+		if (pType == Short.TYPE || pType == Short.class)
 			return "ex:i2";
-		if (type == Long.TYPE || type == Long.class)
+		if (pType == Long.TYPE || pType == Long.class)
 			return "ex:i8";
-		if (type == Float.TYPE || type == Float.class)
+		if (pType == Float.TYPE || pType == Float.class)
 			return "ex:float";
-		if (Node.class.isAssignableFrom(type))
+		if (Node.class.isAssignableFrom(pType))
 			return "ex:node";
 		if (jaxbElementClass != null
-			&&  jaxbElementClass.isAssignableFrom(type)) {
+			&&  jaxbElementClass.isAssignableFrom(pType)) {
 			return "ex:jaxbElement";
 		}
-		if (Serializable.class.isAssignableFrom(type))
+		if (Serializable.class.isAssignableFrom(pType))
 			return "base64";
 
 		// give up

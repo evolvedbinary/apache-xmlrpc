@@ -1,7 +1,5 @@
 package org.apache.xmlrpc.common;
 
-import java.io.IOException;
-
 import org.apache.xmlrpc.XmlRpcException;
 
 
@@ -13,8 +11,6 @@ public interface XmlRpcStreamRequestProcessor extends XmlRpcRequestProcessor {
 	 * object and processes the request, writing the
 	 * result to the same connection object.
 	 * @throws XmlRpcException Processing the request failed.
-	 * @throws IOException An I/O error occurred while reading
-	 * the response, or writing the result.
 	 */
-	void execute(XmlRpcStreamRequestConfig pConfig, ServerStreamConnection pConnection) throws IOException, XmlRpcException;
+	void execute(XmlRpcStreamRequestConfig pConfig, ServerStreamConnection pConnection) throws XmlRpcException;
 }

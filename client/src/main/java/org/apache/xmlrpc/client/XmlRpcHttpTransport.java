@@ -1,11 +1,12 @@
 package org.apache.xmlrpc.client;
 
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.common.ClientStreamConnection;
-import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
+import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.util.HttpUtil;
 
 
@@ -14,17 +15,46 @@ import org.apache.xmlrpc.util.HttpUtil;
  * or {@link org.apache.xmlrpc.client.XmlRpcCommonsTransport}.
  */
 public abstract class XmlRpcHttpTransport extends XmlRpcStreamTransport {
+	protected class ByteArrayRequestWriter extends RequestWriter {
+		private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		protected ByteArrayRequestWriter(XmlRpcRequest pRequest)
+				throws XmlRpcException {
+			super(pRequest);
+			super.writeUncompressed(baos);
+		}
+
+		protected void writeUncompressed(OutputStream pStream) throws XmlRpcException {
+			try {
+				baos.writeTo(pStream);
+				pStream.close();
+				pStream = null;
+			} catch (IOException e) {
+				throw new XmlRpcException("Failed to write request: " + e.getMessage(), e);
+			} finally {
+				if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
+			}
+		}
+
+		protected int getContentLength() { return baos.size(); }
+	}
+
+	private String userAgent;
+
 	/** The user agent string.
 	 */
 	public static final String USER_AGENT = "Apache XML RPC 3.0";
 
-	protected XmlRpcHttpTransport(XmlRpcClient pClient) {
+	protected XmlRpcHttpTransport(XmlRpcClient pClient, String pUserAgent) {
 		super(pClient);
+		userAgent = pUserAgent;
 	}
 
-	protected abstract void setRequestHeader(ClientStreamConnection pConnection, String pHeader, String pValue);
+	protected String getUserAgent() { return userAgent; }
 
-	protected void setCredentials(XmlRpcHttpClientConfig pConfig, ClientStreamConnection pConnection)
+	protected abstract void setRequestHeader(String pHeader, String pValue);
+
+	protected void setCredentials(XmlRpcHttpClientConfig pConfig)
 			throws XmlRpcClientException {
 		String auth;
 		try {
@@ -35,45 +65,50 @@ public abstract class XmlRpcHttpTransport extends XmlRpcStreamTransport {
 			throw new XmlRpcClientException("Unsupported encoding: " + pConfig.getBasicEncoding(), e);
 		}
 		if (auth != null) {
-			setRequestHeader(pConnection, "Authorization", "Basic " + auth);
+			setRequestHeader("Authorization", "Basic " + auth);
 		}
 	}
 
-	protected void setContentLength(ClientStreamConnection pConnection, int pLength) {
-		setRequestHeader(pConnection, "Content-Length", Integer.toString(pLength));
+	protected void setContentLength(int pLength) {
+		setRequestHeader("Content-Length", Integer.toString(pLength));
 	}
 
-	protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection, byte[] pContent) throws XmlRpcException {
-		if (pContent != null) {
-			setContentLength(pConnection, pContent.length);
-		}
-		return super.getInputStream(pConfig, pConnection, pContent);
-	}
-
-	protected void setCompressionHeaders(XmlRpcHttpClientConfig pConfig, ClientStreamConnection pConnection) {
+	protected void setCompressionHeaders(XmlRpcHttpClientConfig pConfig) {
 		if (pConfig.isGzipCompressing()) {
-			setRequestHeader(pConnection, "Content-Encoding", "gzip");
+			setRequestHeader("Content-Encoding", "gzip");
 		}
 		if (pConfig.isGzipRequesting()) {
-			setRequestHeader(pConnection, "Accept-Encoding", "gzip");
+			setRequestHeader("Accept-Encoding", "gzip");
 		}
 	}
 
-	protected String getUserAgent() { return USER_AGENT; }
-
-	protected void initConnection(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection) throws XmlRpcClientException {
-		super.initConnection(pConfig, pConnection);
-		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pConfig;
-		setRequestHeader(pConnection, "Content-Type", "text/xml");
-		setRequestHeader(pConnection, "User-Agent", getUserAgent());
-		setCredentials(config, pConnection);
-		setCompressionHeaders(config, pConnection);
+	protected void initHttpHeaders(XmlRpcRequest pRequest) throws XmlRpcClientException {
+		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();
+		setRequestHeader("Content-Type", "text/xml");
+		setRequestHeader("User-Agent", getUserAgent());
+		setCredentials(config);
+		setCompressionHeaders(config);
 	}
 
-	protected abstract boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig, ClientStreamConnection pConnection);
-
-	protected boolean isUsingByteArrayOutput(XmlRpcStreamRequestConfig pConfig) {
+	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
+		initHttpHeaders(pRequest);
+		return super.sendRequest(pRequest);
+	}
+	
+	protected boolean isUsingByteArrayOutput(XmlRpcHttpClientConfig pConfig) {
 		return !pConfig.isEnabledForExtensions()
-			|| !((XmlRpcHttpClientConfig) pConfig).isContentLengthOptional();
+			|| !pConfig.isContentLengthOptional();
+	}
+
+	protected RequestWriter newRequestWriter(XmlRpcRequest pRequest)
+			throws XmlRpcException {
+		final XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();
+		if (isUsingByteArrayOutput(config)) {
+			ByteArrayRequestWriter result = new ByteArrayRequestWriter(pRequest);
+			setContentLength(result.getContentLength());
+			return result;
+		} else {
+			return super.newRequestWriter(pRequest);
+		}
 	}
 }

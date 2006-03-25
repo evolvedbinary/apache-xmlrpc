@@ -1,41 +1,43 @@
 package org.apache.xmlrpc.common;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 
-/** Implementation of {@link StreamConnection} for
+/** Implementation of {@link ServerStreamConnection} for
  * use by the
  * {@link org.apache.xmlrpc.client.XmlRpcLocalStreamTransport}.
  */
 public class LocalStreamConnection
-		implements ClientStreamConnection, ServerStreamConnection {
-	private ByteArrayOutputStream ostream, istream;
+		implements ServerStreamConnection {
+	private final InputStream request;
+	private final XmlRpcStreamRequestConfig config;
+	private final ByteArrayOutputStream response = new ByteArrayOutputStream();
 
-	/** Returns the output stream, to which the response
-	 * is being written.
+	/** Creates a new instance with the given request stream.
 	 */
-	public ByteArrayOutputStream getOstream() {
-		return ostream;
+	public LocalStreamConnection(XmlRpcStreamRequestConfig pConfig, 
+			InputStream pRequest) {
+		config = pConfig;
+		request = pRequest;
 	}
 
-	/** Sets the output stream, to which the response
-	 * is being written.
+	/** Returns the request stream.
 	 */
-	public void setOstream(ByteArrayOutputStream pOstream) {
-		ostream = pOstream;
+	public InputStream getRequest() {
+		return request;
 	}
 
-	/** Returns the input stream, to which the request
-	 * is being written.
+	/** Returns the request configuration.
 	 */
-	public ByteArrayOutputStream getIstream() {
-		return istream;
+	public XmlRpcStreamRequestConfig getConfig() {
+		return config;
 	}
 
-	/** Sets the input stream, to which the request
-	 * is being written.
+	/** Returns an output stream, to which the response
+	 * may be written.
 	 */
-	public void setIstream(ByteArrayOutputStream pIstream) {
-		istream = pIstream;
+	public ByteArrayOutputStream getResponse() {
+		return response;
 	}
 }

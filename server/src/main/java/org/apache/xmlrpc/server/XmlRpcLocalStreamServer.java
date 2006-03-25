@@ -1,6 +1,5 @@
 package org.apache.xmlrpc.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,17 +23,15 @@ public class XmlRpcLocalStreamServer extends XmlRpcStreamServer {
 	}
 	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, ServerStreamConnection pConnection) throws IOException {
 		LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
-		return new ByteArrayInputStream(lsc.getOstream().toByteArray());
+		return lsc.getRequest();
 	}
 	protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig, ServerStreamConnection pConnection) throws IOException {
 		LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
-		ByteArrayOutputStream istream = new ByteArrayOutputStream();
-		lsc.setIstream(istream);
-		return istream;
+		return lsc.getResponse();
 	}
 	protected void closeConnection(ServerStreamConnection pConnection) throws IOException {
 		LocalStreamConnection lsc = (LocalStreamConnection) pConnection;
-		final ByteArrayOutputStream istream = lsc.getIstream();
+		final ByteArrayOutputStream istream = lsc.getResponse();
 		if (istream != null) {
 			try { istream.close(); } catch (Throwable ignore) {}
 		}
