@@ -11,8 +11,22 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target</directory>
-      <outputDirectory>/</outputDirectory>
+      <directory>common/target</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>client/target</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>server/target</directory>
+      <outputDirectory>/lib</outputDirectory>
       <includes>
         <include>*.jar</include>
       </includes>

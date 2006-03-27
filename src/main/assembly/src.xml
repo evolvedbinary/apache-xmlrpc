@@ -9,6 +9,14 @@
 		<include>LICENSE.txt</include>
 		<include>pom.xml</include>
 		<include>.cvsignore</include>
+		<include>common/**/*</include>
+		<exclude>common/target/**/*</exclude>
+		<include>client/**/*</include>
+		<exclude>client/target/**/*</exclude>
+		<include>server/**/*</include>
+		<exclude>server/target/**/*</exclude>
+		<include>tests/**/*</include>
+		<exclude>tests/target/**/*</exclude>
       </includes>
     </fileSet>
     <fileSet>
