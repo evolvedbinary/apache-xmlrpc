@@ -15,6 +15,7 @@
 		<exclude>client/target/**/*</exclude>
 		<include>server/**/*</include>
 		<exclude>server/target/**/*</exclude>
+		<include>src/**/*</include>
 		<include>tests/**/*</include>
 		<exclude>tests/target/**/*</exclude>
       </includes>
