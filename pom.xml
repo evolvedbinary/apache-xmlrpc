@@ -229,10 +229,13 @@
     </dependencies>
     <reporting>
         <plugins>
+<!-- Temporarily disabling the Changes plugin, because
+     it doesn't work
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>changes-maven-plugin</artifactId>
             </plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
