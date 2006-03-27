@@ -125,6 +125,7 @@ Basic Authentication
 
   Here's an example servlet, which overrides the default
   {{{apidocs/org/apache/xmlrpc/server/PropertyHandlerMapping.html}PropertyHandlerMapping}}.
+
 -----------------------------------------------------------------------------------
   public class MyServlet extends PropertyHandlerMapping {
   	  private boolean isAuthenticated(String pUserName, String pPassword) {
