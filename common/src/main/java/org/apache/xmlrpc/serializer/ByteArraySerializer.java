@@ -35,15 +35,17 @@ public class ByteArraySerializer extends TypeSerializerImpl {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", BASE_64_TAG, BASE_64_TAG, ZERO_ATTRIBUTES);
 		byte[] buffer = (byte[]) pObject;
-		char[] charBuffer = new char[buffer.length >= 1024 ? 1024 : ((buffer.length+3)/4)*4];
-		Encoder encoder = new Base64.SAXEncoder(charBuffer, 0, null, pHandler);
-		try {
-			encoder.write(buffer, 0, buffer.length);
-			encoder.flush();
-		} catch (Base64.SAXIOException e) {
-			throw e.getSAXException();
-		} catch (IOException e) {
-			throw new SAXException(e);
+		if (buffer.length > 0) {
+			char[] charBuffer = new char[buffer.length >= 1024 ? 1024 : ((buffer.length+3)/4)*4];
+			Encoder encoder = new Base64.SAXEncoder(charBuffer, 0, null, pHandler);
+			try {
+				encoder.write(buffer, 0, buffer.length);
+				encoder.flush();
+			} catch (Base64.SAXIOException e) {
+				throw e.getSAXException();
+			} catch (IOException e) {
+				throw new SAXException(e);
+			}
 		}
 		pHandler.endElement("", BASE_64_TAG, BASE_64_TAG);
 		pHandler.endElement("", VALUE_TAG, VALUE_TAG);

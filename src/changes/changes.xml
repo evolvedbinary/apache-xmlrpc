@@ -32,6 +32,11 @@
         The project is now splitted into three jar files:
         common, client, and server.
       </action>
+      <action dev="jochen" type="fix" due-to="Brad Karp"
+          due-to-email="bkarp@cs.ucl.ac.uk">
+        The Base64 encoder doesn't accept buffers of length 0. Such a buffer
+        was passed, if the byte array to encode has itself length 0.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="enhancement">
