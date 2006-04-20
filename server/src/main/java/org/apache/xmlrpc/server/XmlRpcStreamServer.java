@@ -147,8 +147,8 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	/** Called to prepare the output stream. Typically used for enabling
 	 * compression, or similar filters.
 	 */
-	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
-										   OutputStream pStream) throws IOException {
+	protected OutputStream getOutputStream(ServerStreamConnection pConnection,
+										   XmlRpcStreamRequestConfig pConfig, OutputStream pStream) throws IOException {
 		if (pConfig.isEnabledForExtensions()  &&  pConfig.isGzipRequesting()) {
 			return new GZIPOutputStream(pStream);
 		} else {
@@ -215,7 +215,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 				baos = null;
 				ostream = newOutputStream(pConfig, pConnection);
 			}
-			ostream = getOutputStream(pConfig, ostream);
+			ostream = getOutputStream(pConnection, pConfig, ostream);
 			try {
 				if (error == null) {
 					writeResponse(pConfig, ostream, result);

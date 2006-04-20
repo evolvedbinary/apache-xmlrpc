@@ -25,18 +25,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.ServerStreamConnection;
-import org.apache.xmlrpc.common.XmlRpcHttpRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
+import org.apache.xmlrpc.server.XmlRpcHttpServer;
 import org.apache.xmlrpc.server.XmlRpcHttpServerConfig;
-import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.HttpUtil;
 
 
 /** An extension of {@link org.apache.xmlrpc.server.XmlRpcServer},
  * which is suitable for processing servlet requests.
  */
-public class XmlRpcServletServer extends XmlRpcStreamServer {
+public class XmlRpcServletServer extends XmlRpcHttpServer {
 	protected static class ServletStreamConnection implements ServerStreamConnection {
 		private final HttpServletRequest request;
 		private final HttpServletResponse response;
@@ -127,5 +126,9 @@ public class XmlRpcServletServer extends XmlRpcStreamServer {
 
 	protected void closeConnection(ServerStreamConnection pConnection) throws IOException {
 		((ServletStreamConnection) pConnection).getResponse().getOutputStream().close();
+	}
+
+	protected void setResponseHeader(ServerStreamConnection pConnection, String pHeader, String pValue) {
+		((ServletStreamConnection) pConnection).getResponse().setHeader(pHeader, pValue);
 	}
 }

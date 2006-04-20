@@ -22,10 +22,10 @@ import java.io.OutputStream;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.ServerStreamConnection;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
-import org.apache.xmlrpc.server.XmlRpcStreamServer;
+import org.apache.xmlrpc.server.XmlRpcHttpServer;
 
 
-class ConnectionServer extends XmlRpcStreamServer {
+class ConnectionServer extends XmlRpcHttpServer {
 	protected void writeError(XmlRpcStreamRequestConfig pConfig, OutputStream pStream,
 							  Throwable pError) throws XmlRpcException {
 		RequestData data = (RequestData) pConfig;
@@ -68,5 +68,9 @@ class ConnectionServer extends XmlRpcStreamServer {
 	}
 
 	protected void closeConnection(ServerStreamConnection pConnection) throws IOException {
+	}
+
+	protected void setResponseHeader(ServerStreamConnection pConnection, String pHeader, String pValue) {
+		((Connection) pConnection).setResponseHeader(pHeader, pValue);
 	}
 }
