@@ -94,8 +94,8 @@ public abstract class XmlRpcHttpTransport extends XmlRpcStreamTransport {
 		initHttpHeaders(pRequest);
 		return super.sendRequest(pRequest);
 	}
-	
-	protected boolean isUsingByteArrayOutput(XmlRpcHttpClientConfig pConfig) {
+
+	protected boolean isUsingByteArrayOutput(XmlRpcHttpClientConfig pConfig) throws XmlRpcException {
 		return !pConfig.isEnabledForExtensions()
 			|| !pConfig.isContentLengthOptional();
 	}

@@ -231,7 +231,15 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-	protected void writeRequest(RequestWriter pWriter) throws XmlRpcException {
+	protected boolean isUsingByteArrayOutput(XmlRpcHttpClientConfig pConfig) throws XmlRpcException {
+	    boolean result = super.isUsingByteArrayOutput(pConfig);
+        if (!result) {
+            throw new XmlRpcException("The Content-Length header is required with HTTP/1.0, and HTTP/1.1 is unsupported by the Lite HTTP Transport.");
+        }
+        return result;
+    }
+
+    protected void writeRequest(RequestWriter pWriter) throws XmlRpcException {
 		OutputStream ostream = getOutputStream();
 		pWriter.write(ostream);
 	}

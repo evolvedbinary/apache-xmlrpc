@@ -37,6 +37,11 @@
         The Base64 encoder doesn't accept buffers of length 0. Such a buffer
         was passed, if the byte array to encode has itself length 0.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-79">
+        HTTP/1.0 requires a content-length header. The Lite HTTP transport
+        doesn't support HTTP/1.1, so it refuses the "contentLengthOptional"
+        setting from now on.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="enhancement">
