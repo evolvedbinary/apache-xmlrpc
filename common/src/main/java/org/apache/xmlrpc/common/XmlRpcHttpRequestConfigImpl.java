@@ -26,6 +26,9 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
 	private boolean gzipRequesting;
 	private String basicUserName;
 	private String basicPassword;
+    private int    connectionTimeout = 0;
+    private int    replyTimeout = 0;
+    
 	/** Sets, whether gzip compression is being used for
 	 * transmitting the request.
 	 * @param pCompressing True for enabling gzip compression,
@@ -71,4 +74,27 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
 	}
 
 	public String getBasicPassword() { return basicPassword; }
+
+    /** Set the connection timeout in milliseconds.
+     * @param pTimeout connection timeout, 0 to disable it
+     */
+    public void setConnectionTimeout(int pTimeout) {
+        connectionTimeout = pTimeout;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    /** Set the reply timeout in milliseconds.
+     * @param pTimeout reply timeout, 0 to disable it
+     */
+    public void setReplyTimeout(int pTimeout) {
+        replyTimeout = pTimeout;
+    }
+
+    public int getReplyTimeout() {
+        return replyTimeout;
+    }
+
 }

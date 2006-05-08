@@ -195,7 +195,10 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 	protected InputStream getInputStream() throws XmlRpcException {
 		final byte[] buffer = new byte[2048];
 		try {
-			input = new BufferedInputStream(socket.getInputStream());
+            // If reply timeout specified, set the socket timeout accordingly
+            if (config.getReplyTimeout() != 0)
+                socket.setSoTimeout(config.getReplyTimeout());
+            input = new BufferedInputStream(socket.getInputStream());
 			// start reading  server response headers
 			String line = HttpUtil.readLine(input, buffer);
 			StringTokenizer tokens = new StringTokenizer(line);

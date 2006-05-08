@@ -33,4 +33,15 @@ public interface XmlRpcHttpRequestConfig extends XmlRpcStreamRequestConfig, XmlR
 	 * @throws IllegalStateException A user name is configured, but no password.
 	 */ 
 	String getBasicPassword();
+    
+    /** Return the connection timeout in milliseconds
+     * @ return connection timeout in milliseconds or 0 if no set
+     */
+    int getConnectionTimeout();
+    
+    /** Return the reply timeout in milliseconds
+     * @ return reply timeout in milliseconds or 0 if no set
+     */
+    int getReplyTimeout();
+    
 }

@@ -57,8 +57,15 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	}
 
 	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
-		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();
+		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();      
 		method = new PostMethod(config.getServerURL().toString());
+        
+        if (config.getConnectionTimeout() != 0)
+            client.getHttpConnectionManager().getParams().setConnectionTimeout(config.getConnectionTimeout());
+        
+        if (config.getReplyTimeout() != 0)
+            client.getHttpConnectionManager().getParams().setSoTimeout(config.getConnectionTimeout());
+        
 		method.getParams().setVersion(HttpVersion.HTTP_1_1);
 		return super.sendRequest(pRequest);
 	}
