@@ -67,6 +67,10 @@ Data Types
 |                      |                    | transmitted as a base 64 encoded    |
 |                      |                    | byte array.                         |
 *----------------------+--------------------+-------------------------------------+
+| BigDecimal           | <ex:bigdecimal>    | A BigDecimal                        |
+*----------------------+--------------------+-------------------------------------+
+| BigInteger           | <ex:biginteger>    | A BigInteger                        |
+*----------------------+--------------------+-------------------------------------+
 
   In the above table, the prefix <<<ex>>> refers to the namespace URI
   <<<http://ws.apache.org/xmlrpc/namespaces/extensions>>>.

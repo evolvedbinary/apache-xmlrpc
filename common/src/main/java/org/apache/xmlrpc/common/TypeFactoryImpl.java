@@ -16,11 +16,15 @@
 package org.apache.xmlrpc.common;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ws.commons.util.NamespaceContextImpl;
+import org.apache.xmlrpc.parser.BigDecimalParser;
+import org.apache.xmlrpc.parser.BigIntegerParser;
 import org.apache.xmlrpc.parser.BooleanParser;
 import org.apache.xmlrpc.parser.ByteArrayParser;
 import org.apache.xmlrpc.parser.DateParser;
@@ -37,6 +41,8 @@ import org.apache.xmlrpc.parser.ObjectArrayParser;
 import org.apache.xmlrpc.parser.SerializableParser;
 import org.apache.xmlrpc.parser.StringParser;
 import org.apache.xmlrpc.parser.TypeParser;
+import org.apache.xmlrpc.serializer.BigDecimalSerializer;
+import org.apache.xmlrpc.serializer.BigIntegerSerializer;
 import org.apache.xmlrpc.serializer.BooleanSerializer;
 import org.apache.xmlrpc.serializer.ByteArraySerializer;
 import org.apache.xmlrpc.serializer.DateSerializer;
@@ -73,7 +79,9 @@ public class TypeFactoryImpl implements TypeFactory {
 	private static final TypeSerializer LONG_SERIALIZER = new I8Serializer();
 	private static final TypeSerializer FLOAT_SERIALIZER = new FloatSerializer();
 	private static final TypeSerializer NODE_SERIALIZER = new NodeSerializer();
-	private static final TypeSerializer SERIALIZABLE_SERIALIZER = new SerializableSerializer();
+    private static final TypeSerializer SERIALIZABLE_SERIALIZER = new SerializableSerializer();
+    private static final TypeSerializer BIGDECIMAL_SERIALIZER = new BigDecimalSerializer();
+    private static final TypeSerializer BIGINTEGER_SERIALIZER = new BigIntegerSerializer();
 
 	private final XmlRpcController controller;
 
@@ -148,6 +156,18 @@ public class TypeFactoryImpl implements TypeFactory {
 			} else {
 				throw new SAXException(new XmlRpcExtensionException("DOM nodes aren't supported, if isEnabledForExtensions() == false"));
 			}
+        } else if (pObject instanceof BigInteger) {
+            if (pConfig.isEnabledForExtensions()) {
+                return BIGINTEGER_SERIALIZER;
+            } else {
+                throw new SAXException(new XmlRpcExtensionException("BigInteger values aren't supported, if isEnabledForExtensions() == false"));
+            }
+        } else if (pObject instanceof BigDecimal) {
+            if (pConfig.isEnabledForExtensions()) {
+                return BIGDECIMAL_SERIALIZER;
+            } else {
+                throw new SAXException(new XmlRpcExtensionException("BigDecimal values aren't supported, if isEnabledForExtensions() == false"));
+            }
 		} else if (pObject instanceof Serializable) {
 			if (pConfig.isEnabledForExtensions()) {
 				return SERIALIZABLE_SERIALIZER;
@@ -174,8 +194,12 @@ public class TypeFactoryImpl implements TypeFactory {
 				return new I8Parser();
 			} else if (FloatSerializer.FLOAT_TAG.equals(pLocalName)) {
 				return new FloatParser();
-			} else if (NodeSerializer.DOM_TAG.equals(pLocalName)) {
-				return new NodeParser();
+            } else if (NodeSerializer.DOM_TAG.equals(pLocalName)) {
+                return new NodeParser();
+            } else if (BigDecimalSerializer.BIGDECIMAL_TAG.equals(pLocalName)) {
+                return new BigDecimalParser();
+            } else if (BigIntegerSerializer.BIGINTEGER_TAG.equals(pLocalName)) {
+                return new BigIntegerParser();
 			} else if (SerializableSerializer.SERIALIZABLE_TAG.equals(pLocalName)) {
 				return new SerializableParser();
 			}
