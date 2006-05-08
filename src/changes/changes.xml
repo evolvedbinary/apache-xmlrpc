@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="3.0-SNAPSHOT" date="Not yet released">
+      <action dev="hgomez" type="enhancement">
+        add connectionTimeout and replyTimeout in RPC clients.
+        CommonsTransport support connection and reply timeout, liteHttpTransport only support reply timeout
+      </action>
       <action dev="jochen" type="fix" due-to="Marek Ludha"
           due-to-email="mludha@gmail.com">
         The value created by HttpUtil.encodeBasicAuthentication(...)
