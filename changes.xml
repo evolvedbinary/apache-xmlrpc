@@ -10,6 +10,9 @@
         prevented, that the method could finally fail, resulting
         in a never ending loop.
       </action>
+      <action dev="jochen" type="enhancement" issue="XMLRPC-40">
+        Made the maximum number of async workers configurable.
+      </action> 
     </release>
     <release version="2.0.1" date="28-Dec-2005">
       <action dev="jochen" type="fix" issue="XMLRPC-68"

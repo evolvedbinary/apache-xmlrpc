@@ -59,6 +59,10 @@ public class XmlRpcClient implements XmlRpcHandler
      */
     private int maxThreads = -1;
 
+    /**
+     * The maximum number of async workers.
+     */
+    private int maxAsyncWorkers = 4;
     
     /**
      * Construct a XML-RPC client with this URL and a specified transport
@@ -234,7 +238,7 @@ public class XmlRpcClient implements XmlRpcHandler
 
         // if at least 4 threads are running, don't create any new ones,
         // just enqueue the request.
-        if (asyncWorkers >= 4)
+        if (asyncWorkers >= getMaxAsyncWorkers())
         {
             enqueue(call);
             return;
@@ -497,5 +501,21 @@ public class XmlRpcClient implements XmlRpcHandler
                     + "<url> <method> <arg> ....");
             System.err.println("Arguments are sent as integers or strings.");
         }
+    }
+
+    /**
+     * Returns the maximum number of async workers.
+     */
+    public int getMaxAsyncWorkers()
+    {
+        return maxAsyncWorkers;
+    }
+
+    /**
+     * Sets the maximum number of async workers.
+     */
+    public void setMaxAsyncWorkers( int maxAsyncWorkers )
+    {
+        this.maxAsyncWorkers = maxAsyncWorkers;
     }
 }
