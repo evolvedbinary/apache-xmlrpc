@@ -1,0 +1,107 @@
+<faqs title="XML-RPC Version 2 FAQ">
+  <part id="Customizing the request">
+    <faq>
+      <question>How do I do basic authentication? The method XmlRpcClient.setBasicAuthentication
+        is deprecated?</question>
+      <answer>
+        <p>The main reason for deprecating the method is that it's implementation is
+          bound to using the sun transport. If you like that, it's fine, but sometimes
+          you don't.
+        </p>
+        <p>The recommended way to specify user and password while still choosing
+          a transport factory goes like this:</p>
+        <source><![CDATA[
+public class MyXmlRpcClient extends XmlRpcClient {
+    private final String myUser, myPassword;
+
+    // Just one constructor here, to be short. Add more, if you like.
+    public MyXmlRpcClient( URL url, String user, String password )
+    {
+        super(url);
+        transportFactory = new DefaultXmlRpcTransportFactory(url);
+        ((DefaultXmlRpcTransportFactory) transportFactory).setBasicAuthentication( user, password );
+        
+    }
+}
+        ]]></source>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="Customizing Output">
+    <faq>
+      <question>How do I get a client, which uses "string" tags?</question>
+      <answer>
+        <p>
+          The XML-RPC specification typically states, that atomic values must be surrounded
+          by a tag describing their type, for example "int", or "i4", for integer, or
+          "string" for string. There is one exception: The "string" tag
+          is optional and not mandatory. Apache XML-RPC chooses to omit "string" tags,
+          because that is faster.
+        </p>
+        <p>
+          Unfortunately, there seem to be XML-RPC servers in the wild, which insist
+          to receive this "string" tags. In such cases, one needs to use a
+          custom instance of {@link org.apache.xmlrpc.XmlWriter}. This custom instance
+          might look as follows:
+        </p>
+        <source><![CDATA[
+public class MyXmlWriter extends org.apache.xmlrpc.XmlWriter
+{
+    public MyXmlWriter( OutputStream out, String enc )
+        throws UnsupportedEncodingException
+    {
+        super(out, enc);
+    }
+    
+    public void writeObject(Object obj)
+        throws XmlRpcException, IOException
+    {
+    	if ( obj == null  ||  !(obj instanceof String))
+    	{
+    	    super.writeObject(obj);
+    	} else {
+    	    startElement("value");
+    	    startElement("string");
+            chardata(obj.toString());
+    	    endElement("string");
+    	    endElement("value");
+    	}
+    	
+    }
+    
+}
+        ]]></source>
+        <p>
+          The question remains: How do I tell the XmlRpcClient to use my XmlWriter?
+          Unfortunately, that requires yet another subclass:
+        </p>
+        <source><![CDATA[
+public class MyXmlRpcClient extends org.apache.xmlrpc.XmlRpcClient
+{
+    // Just one constructor here, to be short. Add more, if you like.
+    public MyXmlRpcClient(URL url)
+    {
+        super(url);
+    }
+    
+    protected XmlRpcClientWorker newXmlRpcClientWorker()
+    {
+		final TimeZone tz = getTimeZone();
+		final XmlRpcClientRequestProcessor req = new XmlRpcClientRequestProcessor(tz)
+		{
+            protected XmlWriter newXMLWriter(String encoding, OutputStream out)
+                throws UnsupportedEncodingException
+            {
+                return new XmlWriter(out, encoding);
+            }
+		};
+		final XmlRpcClientResponseProcessor res = new XmlRpcClientResponseProcessor(tz);
+		return new XmlRpcClientWorker(req, res);
+	}   
+}
+        ]]></source>
+      </answer>
+    </faq>
+  </part>
+</faqs> 
