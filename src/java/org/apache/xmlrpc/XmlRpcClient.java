@@ -352,10 +352,17 @@ public class XmlRpcClient implements XmlRpcHandler
                 {
                     workers += 1;
                 }
-                return new XmlRpcClientWorker(getTimeZone());
+                return newXmlRpcClientWorker();
             }
             throw new IOException("XML-RPC System overload");
         }
+    }
+
+    /** Creates and returns a new instance of {@link XmlRpcClientWorker}.
+     * You should overwrite this method, if you want a custom worker.
+     */
+    protected XmlRpcClientWorker newXmlRpcClientWorker() {
+        return new XmlRpcClientWorker(getTimeZone());
     }
 
     TimeZone tz;

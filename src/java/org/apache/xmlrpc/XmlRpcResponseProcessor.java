@@ -62,7 +62,7 @@ public class XmlRpcResponseProcessor
         try
         {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            XmlWriter writer = new XmlWriter(buffer, encoding);
+            XmlWriter writer = newXMLWriter(encoding, buffer);
             writeResponse(responseParam, writer);
             writer.flush();
             return buffer.toByteArray();
@@ -102,7 +102,7 @@ public class XmlRpcResponseProcessor
         XmlWriter writer = null;
         try
         {
-            writer = new XmlWriter(buffer, encoding);
+            writer = newXMLWriter(encoding, buffer);
         }
         catch (UnsupportedEncodingException encx)
         {
@@ -133,6 +133,13 @@ public class XmlRpcResponseProcessor
         }
 
         return (writer != null ? buffer.toByteArray() : EMPTY_BYTE_ARRAY);
+    }
+
+    /** Creates and returns a new instance of {@link XMLWriter}. You should
+     * overwrite this method, if you need a custom writer.
+     */
+    protected XmlWriter newXMLWriter(String encoding, ByteArrayOutputStream buffer) throws UnsupportedEncodingException {
+        return new XmlWriter(buffer, encoding);
     }
 
      /**

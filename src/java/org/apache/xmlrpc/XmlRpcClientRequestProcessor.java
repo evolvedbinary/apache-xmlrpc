@@ -20,6 +20,7 @@ package org.apache.xmlrpc;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.TimeZone;
 
 /**
@@ -55,7 +56,7 @@ public class XmlRpcClientRequestProcessor
     {
         XmlWriter writer;
 
-        writer = new XmlWriter(out, encoding);
+        writer = newXMLWriter(encoding, out);
         writer.dateTool.setTimeZone(tz);
         writer.startElement("methodCall");
         writer.startElement("methodName");
@@ -80,6 +81,13 @@ public class XmlRpcClientRequestProcessor
         writer.endElement("params");
         writer.endElement("methodCall");
         writer.flush();
+    }
+
+    /** Creates and returns a new instance of {@link XmlWriter}. You should
+     * overwrite this method, if you need a custom writer.
+     */
+    protected XmlWriter newXMLWriter(String encoding, OutputStream out) throws UnsupportedEncodingException {
+        return new XmlWriter(out, encoding);
     }
 
     /**

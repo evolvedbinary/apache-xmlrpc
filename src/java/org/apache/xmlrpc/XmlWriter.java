@@ -43,7 +43,7 @@ import org.apache.commons.codec.EncoderException;
  * @see <a href="http://www.xml.com/axml/testaxml.htm">Tim Bray's
  * Annotated XML Spec</a>
  */
-class XmlWriter extends OutputStreamWriter
+public class XmlWriter extends OutputStreamWriter
 {
     // Various XML pieces.
     protected static final String PROLOG_START = "<?xml version=\"1.0";

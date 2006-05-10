@@ -12,6 +12,10 @@
       </action>
       <action dev="jochen" type="enhancement" issue="XMLRPC-40">
         Made the maximum number of async workers configurable.
+      </action>
+      <action dev="jochen" type="enhancement" issue="XMLRPC-42">
+        Made XMLWriter public and added methods for supplying a custom
+        XMLWriter.
       </action> 
     </release>
     <release version="2.0.1" date="28-Dec-2005">
