@@ -1,0 +1,15 @@
+           --------------------------------
+           External Links
+           --------------------------------
+
+  Below you'll find some links to external sources, that deal with
+  Apache XML-RPC.
+
+Specifications
+
+  * The {{{http://www.xmlrpc.com/spec}XML-RPC specification}}
+
+Examples and Tutorials
+
+  * A simple, yet complete example of using the XmlRpcServlet by 
+    {{{http://www.petrovic.org/blog/?p=127}Mark Petrovic}}

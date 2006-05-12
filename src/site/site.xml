@@ -21,6 +21,7 @@
       <item name="FAQ"                 href="/faq.html"/>
       <item name="Contributing"        href="/contributing.html"/>
       <item name="XML-RPC 2"           href="http://ws.apache.org/xmlrpc/xmlrpc2"/>
+      <item name="Links"               href="/links.html"/>
     </menu>
 
     ${reports}
