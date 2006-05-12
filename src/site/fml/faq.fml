@@ -1,6 +1,6 @@
 <faqs title="XML-RPC Version 2 FAQ">
   <part id="Customizing the request">
-    <faq>
+    <faq id="basic_authentication">
       <question>How do I do basic authentication? The method XmlRpcClient.setBasicAuthentication
         is deprecated?</question>
       <answer>
@@ -26,10 +26,31 @@ public class MyXmlRpcClient extends XmlRpcClient {
         ]]></source>
       </answer>
     </faq>
+
+    <faq id="timeout_callback">
+      <question>Is it possible to specify a timeout, after which the
+        client stops waiting for the servers response?</question>
+      <answer>
+        <p>Yes, use the class TimingOutCallback.</p>
+        <source><![CDATA[
+    // Wait for 10 seconds.
+    TimingOutCallback callback = new TimingOutCallback(10 * 1000);
+    XmlRpcClient client = new XmlRpcClient(url);
+    client.executeAsync(methodName, aVector, callback);
+    try {
+        return callback.waitForResponse();
+    } catch (TimeoutException e) {
+        System.out.println("No response from server.");
+    } catch (Exception e) {
+        System.out.println("Server returned an error message.");
+    }
+        ]]></source>
+      </answer>
+    </faq>
   </part>
 
   <part id="Customizing Output">
-    <faq>
+    <faq id="string_tags">
       <question>How do I get a client, which uses "string" tags?</question>
       <answer>
         <p>

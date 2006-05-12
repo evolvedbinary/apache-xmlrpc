@@ -17,6 +17,11 @@
         Made XMLWriter public and added methods for supplying a custom
         XMLWriter.
       </action> 
+      <action dev="jochen" type="enhancement" due-to="Ken Weiner"
+          due-to-email="kweiner@gmail.com" issue="XMLRPC-56">
+        Added the TimingOutCallback, which allows to abort a request,
+        if the server doesn't reply within a given time.
+      </action>
     </release>
     <release version="2.0.1" date="28-Dec-2005">
       <action dev="jochen" type="fix" issue="XMLRPC-68"
