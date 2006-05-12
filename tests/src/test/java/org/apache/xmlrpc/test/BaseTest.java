@@ -55,7 +55,7 @@ public class BaseTest extends TestCase {
 				new LocalTransportProvider(mapping),
 				new LocalStreamTransportProvider(mapping),
 				new LiteTransportProvider(mapping, true),
-				new LiteTransportProvider(mapping, false),
+				// new LiteTransportProvider(mapping, false), Doesn't support HTTP/1.1
 				new SunHttpTransportProvider(mapping, true),
 				new SunHttpTransportProvider(mapping, false),
 				new CommonsProvider(mapping),
