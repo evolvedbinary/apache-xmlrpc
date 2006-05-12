@@ -13,6 +13,30 @@
   <version>3.0b1-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+<!-- See http://jira.codehaus.org/browse/MJAR-38
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addExtensions>false</addExtensions>
+            </manifest>
+            <manifestEntries>
+              <Extension-Name>org.apache.xmlrpc</Extension-Name>
+              <Specification-Vendor>UserLand Software, Inc.</Specification-Vendor>
+              <Specification-Version>2003-06-30</Specification-Version>
+              <Specification-Title>XML-RPC</Specification-Title>
+              <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
+              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+-->
+    </plugins>
   </build>
   <dependencies>
     <dependency>
