@@ -35,13 +35,12 @@ public interface XmlRpcHttpRequestConfig extends XmlRpcStreamRequestConfig, XmlR
 	String getBasicPassword();
     
     /** Return the connection timeout in milliseconds
-     * @ return connection timeout in milliseconds or 0 if no set
+     * @return connection timeout in milliseconds or 0 if no set
      */
     int getConnectionTimeout();
     
     /** Return the reply timeout in milliseconds
-     * @ return reply timeout in milliseconds or 0 if no set
+     * @return reply timeout in milliseconds or 0 if no set
      */
     int getReplyTimeout();
-    
 }
