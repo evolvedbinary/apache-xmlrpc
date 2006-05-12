@@ -19,6 +19,7 @@ package org.apache.xmlrpc;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
@@ -31,6 +32,7 @@ import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -719,8 +721,12 @@ public class WebServer implements Runnable
 
                     // tokenize first line of HTTP request
                     StringTokenizer tokens = new StringTokenizer(line);
+                    if (!tokens.hasMoreElements())
+                    {
+                        continue;
+                    }
                     String method = tokens.nextToken();
-                    String uri = tokens.nextToken();
+                    tokens.nextToken(); // Discard the URI
                     String httpVersion = tokens.nextToken();
                     keepAlive = XmlRpc.getKeepAlive()
                             && HTTP_11.equals(httpVersion);
@@ -776,6 +782,10 @@ public class WebServer implements Runnable
                 }
                 while (keepAlive);
             }
+            catch (EOFException ignore)
+            {
+                // Ignore me
+            }
             catch (Exception exception)
             {
                 if (XmlRpc.debug)
@@ -818,6 +828,10 @@ public class WebServer implements Runnable
             for (;;)
             {
                 next = input.read();
+                if (count == 0 && next < 0)
+                {
+                    throw new EOFException("Connection closed");
+                }
                 if (next < 0 || next == '\n')
                 {
                     break;

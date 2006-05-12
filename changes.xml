@@ -22,6 +22,12 @@
         Added the TimingOutCallback, which allows to abort a request,
         if the server doesn't reply within a given time.
       </action>
+      <action dev="jochen" type="fix" due-to="Elizabeth Fong"
+          due-to-email="elizabeth@threerings.net">
+        Eliminated a possible endless loop in the WebServer. Avoiding
+        a NoSuchElementException in the WebServer when the request
+        was closed.
+      </action>
     </release>
     <release version="2.0.1" date="28-Dec-2005">
       <action dev="jochen" type="fix" issue="XMLRPC-68"
