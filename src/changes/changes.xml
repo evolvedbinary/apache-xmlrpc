@@ -49,7 +49,7 @@
         doesn't support HTTP/1.1, so it refuses the "contentLengthOptional"
         setting from now on.
       </action>
-      <action dev="jochen" type="enhancement" due-to="Marc Petrovic"
+      <action dev="jochen" type="enhancement" due-to="Mark Petrovic"
           due-to-email="mspetrovic@gmail.com">
         Added support for initializable handlers.
       </action>
