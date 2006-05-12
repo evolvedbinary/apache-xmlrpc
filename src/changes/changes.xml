@@ -53,6 +53,11 @@
           due-to-email="mspetrovic@gmail.com">
         Added support for initializable handlers.
       </action>
+      <action dev="jochen" type="enhancement" due-to="Ken Weiner"
+          due-to-email="kweiner@gmail.com" issue="XMLRPC-56">
+        Added the TimingOutCallback, which allows to abort a request,
+        if the server doesn't reply within a given time.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="enhancement">

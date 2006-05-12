@@ -32,6 +32,9 @@
           <li>Compressing the request doesn't mean that the response
             will also be compressed. You need to request response
             compression to achieve that.</li>
+          <li>Additionally, be aware of the following: Compression
+            depends on HTTP/1.1 features. In particular, you must
+            not use the LiteHttpTransport.</li>
         </ul>
       </answer>
     </faq>
@@ -49,7 +52,31 @@
             </li>
           <li>However, requesting compression doesn't necessarily mean,
             that the response *is* compressed. It depends on the server.</li>
+          <li>Additionally, be aware of the following: Compression
+            depends on HTTP/1.1 features. In particular, you must
+            not use the LiteHttpTransport.</li>
         </ul>
+      </answer>
+    </faq>
+
+    <faq id="timeout_callback">
+      <question>Is it possible to specify a timeout, after which the
+        client stops waiting for the servers response?</question>
+      <answer>
+        <p>Yes, use the class TimingOutCallback.</p>
+        <source><![CDATA[
+    // Wait for 10 seconds.
+    TimingOutCallback callback = new TimingOutCallback(10 * 1000);
+    XmlRpcClient client = new XmlRpcClient(url);
+    client.executeAsync(methodName, params, callback);
+    try {
+        return callback.waitForResponse();
+    } catch (TimeoutException e) {
+        System.out.println("No response from server.");
+    } catch (Exception e) {
+        System.out.println("Server returned an error message.");
+    }
+        ]]></source>
       </answer>
     </faq>
   </part>
