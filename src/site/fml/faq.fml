@@ -98,5 +98,38 @@
         </ul>
       </answer>
     </faq>
+
+    <faq id="handler_initialization">
+      <question>How do I initalize the handler objects?</question>
+      <answer>
+        <p>The PropertyHandlerMapping assumes, that handlers are POJO's
+          (plain old java objects). However, this is not always desirable.
+          For example, sometimes it is assumes that handlers need to
+          be initialized by the servlet, which is configured through
+          parameters.</p>
+        <p>The recommended solution is to create a subclass of the
+          XmlRpcServlet, which in turn uses a subclass of the
+          PropertyHandlerMapping:</p>
+        <source><![CDATA[
+public interface InitializableHandler {
+    void init(HttpServlet pServlet) throws XmlRpcException;
+}
+
+public class MyXmlRpcServlet extends XmlRpcServlet {
+    protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
+		return new PropertyHandlerMapping(getClass().getClassLoader(), url){
+		    protected Object newHandlerObject(ClassLoader pClassLoader, String pClassName)
+		            throws XmlRpcException {
+		        Object o = super.newHandlerObject(pClassLoader, pClassName);
+		        ((InitializableHandler) o).init(MyXmlRpcServlet.this);
+		        return o;
+		    }
+		};
+	}
+    
+}
+        ]]></source>
+      </answer>
+    </faq>
   </part>
 </faqs>

@@ -49,6 +49,10 @@
         doesn't support HTTP/1.1, so it refuses the "contentLengthOptional"
         setting from now on.
       </action>
+      <action dev="jochen" type="enhancement" due-to="Marc Petrovic"
+          due-to-email="mspetrovic@gmail.com">
+        Added support for initializable handlers.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="enhancement">

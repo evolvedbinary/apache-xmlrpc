@@ -78,25 +78,29 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
             Map.Entry entry = (Map.Entry) iter.next();
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
-            final Class c;
-            try {
-                c = pClassLoader.loadClass(value);
-            } catch (ClassNotFoundException e) {
-                throw new XmlRpcException("Unable to load class: " + value, e);
-            }
-            if (c == null) {
-                throw new XmlRpcException(0, "Loading class " + value + " returned null.");
-            }
-            final Object o;
-            try {
-                o = c.newInstance();
-            } catch (InstantiationException e) {
-                throw new XmlRpcException("Failed to instantiate class " + c.getName(), e);
-            } catch (IllegalAccessException e) {
-                throw new XmlRpcException("Illegal access when instantiating class " + c.getName(), e);
-            }
-            registerPublicMethods(map, key, c, o);
+            Object o = newHandlerObject(pClassLoader, value);
+            registerPublicMethods(map, key, o.getClass(), o);
         }
         return map;
+    }
+
+    protected Object newHandlerObject(ClassLoader pClassLoader, String pClassName)
+            throws XmlRpcException {
+        final Class c;
+        try {
+            c = pClassLoader.loadClass(pClassName);
+        } catch (ClassNotFoundException e) {
+            throw new XmlRpcException("Unable to load class: " + pClassName, e);
+        }
+        if (c == null) {
+            throw new XmlRpcException(0, "Loading class " + pClassName + " returned null.");
+        }
+        try {
+            return c.newInstance();
+        } catch (InstantiationException e) {
+            throw new XmlRpcException("Failed to instantiate class " + c.getName(), e);
+        } catch (IllegalAccessException e) {
+            throw new XmlRpcException("Illegal access when instantiating class " + c.getName(), e);
+        }
     }
 }
