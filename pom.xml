@@ -103,6 +103,44 @@
       <organization>Zenplex</organization>
     </developer>
   </developers>
+    <contributors>
+        <contributor>
+            <name>Mike Bailey</name>
+            <email>mike@blueoak.com</email>
+        </contributor>
+        <contributor>
+            <name>Elizabeth Fong</name>
+            <email>elizabeth@threerings.net</email>
+        </contributor>
+        <contributor>
+            <name>Jimisola Laursen</name>
+            <email>lists@jimisola.com</email>
+        </contributor>
+        <contributor>
+            <name>Jimisola Laursen</name>
+            <email>lists@jimisola.com</email>
+        </contributor>
+        <contributor>
+            <name>Thomas Mohaupt</name>
+            <email>Thomas.Mohaupt@gmail.com</email>
+        </contributor>
+        <contributor>
+            <name>Mark Petrovic</name>
+            <email>mspetrovic@gmail.com</email>
+        </contributor>
+        <contributor>
+            <name>Henry Story</name>
+            <email>henry.story@bblfish.net</email>
+        </contributor>
+        <contributor>
+            <name>Ken Weiner</name>
+            <email>kweiner@gmail.com</email>
+        </contributor>
+        <contributor>
+            <name>Claude Zervas</name>
+            <email>claude@utlco.com</email>
+        </contributor>
+    </contributors>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
