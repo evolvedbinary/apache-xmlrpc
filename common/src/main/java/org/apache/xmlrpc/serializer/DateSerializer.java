@@ -15,7 +15,7 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.apache.ws.commons.util.XsDateTimeFormat;
+import org.apache.ws.commons.util.XmlRpcDateTimeFormat;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -26,7 +26,7 @@ public class DateSerializer extends TypeSerializerImpl {
 	/** Tag name of a date value.
 	 */
 	public static final String DATE_TAG = "dateTime.iso8601";
-	private static final XsDateTimeFormat format = new XsDateTimeFormat();
+	private static final XmlRpcDateTimeFormat format = new XmlRpcDateTimeFormat();
 	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
 		write(pHandler, DATE_TAG, format.format(pObject));
 	}
