@@ -17,7 +17,7 @@ package org.apache.xmlrpc.parser;
 
 import java.text.ParseException;
 
-import org.apache.ws.commons.util.XsDateTimeFormat;
+import org.apache.ws.commons.util.XmlRpcDateTimeFormat;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -25,7 +25,7 @@ import org.xml.sax.SAXParseException;
 /** Parser for integer values.
  */
 public class DateParser extends AtomicParser {
-	private static final XsDateTimeFormat f = new XsDateTimeFormat();
+	private static final XmlRpcDateTimeFormat f = new XmlRpcDateTimeFormat();
 
 	protected void setResult(String pResult) throws SAXException {
 		try {

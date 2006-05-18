@@ -15,6 +15,9 @@
  */
 package org.apache.xmlrpc.serializer;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apache.ws.commons.util.XmlRpcDateTimeFormat;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -28,6 +31,16 @@ public class DateSerializer extends TypeSerializerImpl {
 	public static final String DATE_TAG = "dateTime.iso8601";
 	private static final XmlRpcDateTimeFormat format = new XmlRpcDateTimeFormat();
 	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
-		write(pHandler, DATE_TAG, format.format(pObject));
+	    final Calendar cal;
+        if (pObject instanceof Calendar) {
+            cal = (Calendar) pObject;
+        } else if (pObject instanceof Date) {
+            cal = Calendar.getInstance();
+            cal.setTime((Date) pObject);
+        } else {
+            throw new IllegalStateException("Expected Calendar|Date, got "
+                    + pObject.getClass().getName());
+        }
+        write(pHandler, DATE_TAG, format.format(cal));
 	}
 }
