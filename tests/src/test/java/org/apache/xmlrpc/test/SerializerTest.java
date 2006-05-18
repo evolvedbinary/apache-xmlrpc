@@ -16,14 +16,15 @@
 package org.apache.xmlrpc.test;
 
 import java.io.StringWriter;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
 import org.apache.ws.commons.serialize.XMLWriter;
 import org.apache.ws.commons.serialize.XMLWriterImpl;
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -58,7 +59,7 @@ public class SerializerTest extends TestCase {
 	}
 
 	protected String writeRequest(XmlRpcStreamRequestConfig pConfig, XmlRpcRequest pRequest)
-			throws XmlRpcException, SAXException {
+			throws SAXException {
 		StringWriter sw = new StringWriter();
 		XMLWriter xw = new XMLWriterImpl();
 		xw.setEncoding("US-ASCII");
@@ -133,4 +134,27 @@ public class SerializerTest extends TestCase {
 			+ "</struct></value></param></params></methodCall>";
 		assertEquals(expect, got);
 	}
+
+	/** Tests serialization of a calendar instance.
+	 */
+    public void testDateParam() throws Exception {
+        TimeZone tz = TimeZone.getTimeZone("GMT");
+        Calendar cal1 = Calendar.getInstance(tz);
+        cal1.set(1933, 5, 12, 11, 7, 21);
+        cal1.set(Calendar.MILLISECOND, 311);
+        Calendar cal2 = Calendar.getInstance(TimeZone.getDefault());
+        cal2.set(1933, 5, 12, 11, 7, 21);
+        cal2.set(Calendar.MILLISECOND, 311);
+        XmlRpcStreamRequestConfig config = getConfig();
+        XmlRpcRequest request = new XmlRpcClientRequestImpl(config, "dateParam", new Object[]{cal1, cal2.getTime()});
+        String got = writeRequest(config, request);
+        String expect =
+            "<?xml version=\"1.0\" encoding=\"US-ASCII\"?>"
+            + "<methodCall>"
+            + "<methodName>dateParam</methodName><params>"
+            + "<param><value><dateTime.iso8601>1933-06-12T11:07:21.311</dateTime.iso8601></value></param>"
+            + "<param><value><dateTime.iso8601>1933-06-12T11:07:21.311</dateTime.iso8601></value></param>"
+            + "</params></methodCall>";
+        assertEquals(expect, got);
+    }
 }
