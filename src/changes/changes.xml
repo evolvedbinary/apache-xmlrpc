@@ -58,6 +58,9 @@
         Added the TimingOutCallback, which allows to abort a request,
         if the server doesn't reply within a given time.
       </action>
+      <action dev="hgomez" type="fix">
+        Fixed that dateTime values must not include timezone values.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="enhancement">
