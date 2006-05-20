@@ -16,6 +16,9 @@ About Apache XML-RPC
   * All primitive Java types are supported, including long,
     byte, short, and double.
 
+  * Calendar objects are supported. In particular, timezone
+    settings, and milliseconds may be sent.
+
   * DOM nodes, or JAXB objects, can be transmitted. So are
     objects implementing the java.io.Serializable interface.
 

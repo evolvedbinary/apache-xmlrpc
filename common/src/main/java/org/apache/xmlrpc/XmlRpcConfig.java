@@ -15,6 +15,8 @@
  */
 package org.apache.xmlrpc;
 
+import java.util.TimeZone;
+
 
 /** A common base interface for
  * {@link org.apache.xmlrpc.client.XmlRpcClientConfig}, and
@@ -30,4 +32,9 @@ public interface XmlRpcConfig {
 	 * @return Whether extensions are enabled or not.
 	 */
 	boolean isEnabledForExtensions();
+
+	/** Returns the timezone, which is used to interpret date/time
+     * values. Defaults to {@link TimeZone#getDefault()}.
+	 */
+    TimeZone getTimeZone();
 }

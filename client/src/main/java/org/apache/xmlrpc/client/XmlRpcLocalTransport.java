@@ -15,6 +15,7 @@
  */
 package org.apache.xmlrpc.client;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -55,6 +56,7 @@ public class XmlRpcLocalTransport extends XmlRpcTransportImpl {
 			return false;
 		} else {
 			return !(pObject instanceof Integer
+                     ||  pObject instanceof Date
 					 ||  pObject instanceof String
 					 ||  pObject instanceof byte[]
 					 ||  pObject instanceof Double);

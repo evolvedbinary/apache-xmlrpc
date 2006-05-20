@@ -15,6 +15,8 @@
  */
 package org.apache.xmlrpc;
 
+import java.util.TimeZone;
+
 import org.apache.xmlrpc.common.XmlRpcHttpConfig;
 
 
@@ -25,6 +27,7 @@ public abstract class XmlRpcConfigImpl implements XmlRpcConfig, XmlRpcHttpConfig
 	private boolean contentLengthOptional;
 	private String basicEncoding;
 	private String encoding;
+    private TimeZone timeZone = TimeZone.getDefault();
 
 	public boolean isEnabledForExtensions() { return enabledForExtensions; }
 
@@ -69,4 +72,15 @@ public abstract class XmlRpcConfigImpl implements XmlRpcConfig, XmlRpcHttpConfig
 	public void setContentLengthOptional(boolean pContentLengthOptional) {
 		contentLengthOptional = pContentLengthOptional;
 	}
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    /** Returns the timezone, which is used to interpret date/time
+     * values. Defaults to {@link TimeZone#getDefault()}.
+     */
+    public void setTimeZone(TimeZone pTimeZone) {
+        timeZone = pTimeZone;
+    }
 }

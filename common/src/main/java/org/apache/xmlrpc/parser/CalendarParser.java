@@ -17,25 +17,19 @@ package org.apache.xmlrpc.parser;
 
 import java.text.ParseException;
 
-import org.apache.xmlrpc.util.XmlRpcDateTimeDateFormat;
+import org.apache.ws.commons.util.XsDateTimeFormat;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 
 /** Parser for integer values.
  */
-public class DateParser extends AtomicParser {
-	private final XmlRpcDateTimeDateFormat f;
-
-    /** Creates a new instance with the given format.
-     */
-    public DateParser(XmlRpcDateTimeDateFormat pFormat) {
-        f = pFormat;
-    }
+public class CalendarParser extends AtomicParser {
+	private static final XsDateTimeFormat format = new XsDateTimeFormat();
 
     protected void setResult(String pResult) throws SAXException {
 		try {
-			super.setResult(f.parseObject(pResult.trim()));
+			super.setResult(format.parseObject(pResult.trim()));
 		} catch (ParseException e) {
 			throw new SAXParseException("Failed to parse integer value: " + pResult,
 										getDocumentLocator());

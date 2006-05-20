@@ -18,15 +18,18 @@ package org.apache.xmlrpc.common;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.ws.commons.util.NamespaceContextImpl;
 import org.apache.xmlrpc.parser.BigDecimalParser;
 import org.apache.xmlrpc.parser.BigIntegerParser;
 import org.apache.xmlrpc.parser.BooleanParser;
 import org.apache.xmlrpc.parser.ByteArrayParser;
+import org.apache.xmlrpc.parser.CalendarParser;
 import org.apache.xmlrpc.parser.DateParser;
 import org.apache.xmlrpc.parser.DoubleParser;
 import org.apache.xmlrpc.parser.FloatParser;
@@ -45,6 +48,7 @@ import org.apache.xmlrpc.serializer.BigDecimalSerializer;
 import org.apache.xmlrpc.serializer.BigIntegerSerializer;
 import org.apache.xmlrpc.serializer.BooleanSerializer;
 import org.apache.xmlrpc.serializer.ByteArraySerializer;
+import org.apache.xmlrpc.serializer.CalendarSerializer;
 import org.apache.xmlrpc.serializer.DateSerializer;
 import org.apache.xmlrpc.serializer.DoubleSerializer;
 import org.apache.xmlrpc.serializer.FloatSerializer;
@@ -61,6 +65,7 @@ import org.apache.xmlrpc.serializer.SerializableSerializer;
 import org.apache.xmlrpc.serializer.StringSerializer;
 import org.apache.xmlrpc.serializer.TypeSerializer;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
+import org.apache.xmlrpc.util.XmlRpcDateTimeDateFormat;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -73,7 +78,6 @@ public class TypeFactoryImpl implements TypeFactory {
 	private static final TypeSerializer I4_SERIALIZER = new I4Serializer();
 	private static final TypeSerializer BOOLEAN_SERIALIZER = new BooleanSerializer();
 	private static final TypeSerializer DOUBLE_SERIALIZER = new DoubleSerializer();
-	private static final TypeSerializer DATE_SERIALIZER = new DateSerializer();
 	private static final TypeSerializer BYTE_SERIALIZER = new I1Serializer();
 	private static final TypeSerializer SHORT_SERIALIZER = new I2Serializer();
 	private static final TypeSerializer LONG_SERIALIZER = new I8Serializer();
@@ -82,8 +86,10 @@ public class TypeFactoryImpl implements TypeFactory {
     private static final TypeSerializer SERIALIZABLE_SERIALIZER = new SerializableSerializer();
     private static final TypeSerializer BIGDECIMAL_SERIALIZER = new BigDecimalSerializer();
     private static final TypeSerializer BIGINTEGER_SERIALIZER = new BigIntegerSerializer();
+    private static final TypeSerializer CALENDAR_SERIALIZER = new CalendarSerializer();
 
 	private final XmlRpcController controller;
+    private DateSerializer dateSerializer;
 
 	/** Creates a new instance.
 	 * @param pController The controller, which operates the type factory.
@@ -140,9 +146,23 @@ public class TypeFactoryImpl implements TypeFactory {
 			}
 		} else if (pObject instanceof Double) {
 			return DOUBLE_SERIALIZER;
-		} else if (pObject instanceof Date) {
-			return DATE_SERIALIZER;
-		} else if (pObject instanceof byte[]) {
+		} else if (pObject instanceof Calendar) {
+            if (pConfig.isEnabledForExtensions()) {
+                return CALENDAR_SERIALIZER;
+            } else {
+                throw new SAXException(new XmlRpcExtensionException("Calendar values aren't supported, if isEnabledForExtensions() == false"));
+            }
+        } else if (pObject instanceof Date) {
+            if (dateSerializer == null) {
+                dateSerializer = new DateSerializer(new XmlRpcDateTimeDateFormat(){
+                    private static final long serialVersionUID = 24345909123324234L;
+                    protected TimeZone getTimeZone() {
+                        return controller.getConfig().getTimeZone();
+                    }
+                });
+            }
+            return dateSerializer;
+    	} else if (pObject instanceof byte[]) {
 			return new ByteArraySerializer();
 		} else if (pObject instanceof Object[]) {
 			return new ObjectArraySerializer(this, pConfig);
@@ -202,7 +222,9 @@ public class TypeFactoryImpl implements TypeFactory {
                 return new BigIntegerParser();
 			} else if (SerializableSerializer.SERIALIZABLE_TAG.equals(pLocalName)) {
 				return new SerializableParser();
-			}
+			} else if (CalendarSerializer.CALENDAR_TAG.equals(pLocalName)) {
+			    return new CalendarParser();
+            }
 		} else if ("".equals(pURI)) {
 			if (I4Serializer.INT_TAG.equals(pLocalName)  ||  I4Serializer.I4_TAG.equals(pLocalName)) {
 				return new I4Parser();
@@ -211,7 +233,12 @@ public class TypeFactoryImpl implements TypeFactory {
 			} else if (DoubleSerializer.DOUBLE_TAG.equals(pLocalName)) {
 				return new DoubleParser();
 			} else if (DateSerializer.DATE_TAG.equals(pLocalName)) {
-				return new DateParser();
+				return new DateParser(new XmlRpcDateTimeDateFormat(){
+                    private static final long serialVersionUID = 7585237706442299067L;
+                    protected TimeZone getTimeZone() {
+                        return controller.getConfig().getTimeZone();
+                    }
+                });
 			} else if (ObjectArraySerializer.ARRAY_TAG.equals(pLocalName)) {
 				return new ObjectArrayParser(pConfig, pContext, this);
 			} else if (MapSerializer.STRUCT_TAG.equals(pLocalName)) {

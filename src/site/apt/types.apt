@@ -22,8 +22,8 @@ Data Types
 |                    |                    | precision, floating point number.   |
 |                    |                    | (64 bit)                            |
 *--------------------+--------------------+-------------------------------------+
-| java.util.Calendar | <dateTime.iso8601> | A pseudo ISO8601 timestamp, like    |
-| java.util.Date     |                    | 19980717T14:08:55. However,         |
+| java.util.Date     | <dateTime.iso8601> | A pseudo ISO8601 timestamp, like    |
+|                    |                    | 19980717T14:08:55. However,         |
 |                    |                    | compared to a true ISO8601 value,   |
 |                    |                    | milliseconds, and time zone         |
 |                    |                    | informations are missing.           |
@@ -70,6 +70,11 @@ Data Types
 | BigDecimal           | <ex:bigdecimal>    | A BigDecimal                        |
 *----------------------+--------------------+-------------------------------------+
 | BigInteger           | <ex:biginteger>    | A BigInteger                        |
+*----------------------+--------------------+-------------------------------------+
+| java.util.Calendar   | <ex:dateTime>      | Unlike the dateTime.iso8601 type,   |
+|                      |                    | this is a full blown xs:dateTime    |
+|                      |                    | value. In particular, it includes   |
+|                      |                    | milliseconds, and timezone settings.|
 *----------------------+--------------------+-------------------------------------+
 
   In the above table, the prefix <<<ex>>> refers to the namespace URI

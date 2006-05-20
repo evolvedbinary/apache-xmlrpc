@@ -15,27 +15,27 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.apache.xmlrpc.util.XmlRpcDateTimeDateFormat;
+import org.apache.ws.commons.util.XsDateTimeFormat;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
 /** A {@link TypeSerializer} for date values.
  */
-public class DateSerializer extends TypeSerializerImpl {
+public class CalendarSerializer extends TypeSerializerImpl {
+    private static final XsDateTimeFormat format = new XsDateTimeFormat();
+
+    /** Tag name of a BigDecimal value.
+     */
+    public static final String CALENDAR_TAG = "dateTime";
+
+    private static final String EX_CALENDAR_TAG = "ex:" + CALENDAR_TAG;
+
     /** Tag name of a date value.
      */
     public static final String DATE_TAG = "dateTime.iso8601";
 
-    private final XmlRpcDateTimeDateFormat format;
-
-    /** Creates a new instance with the given formatter.
-     */
-    public DateSerializer(XmlRpcDateTimeDateFormat pFormat) {
-        format = pFormat;
-    }
-
 	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
-        write(pHandler, DATE_TAG, format.format(pObject));
+        write(pHandler, CALENDAR_TAG, EX_CALENDAR_TAG, format.format(pObject));
 	}
 }

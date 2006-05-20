@@ -16,9 +16,11 @@
 package org.apache.xmlrpc.test;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -260,14 +262,44 @@ public class BaseTest extends TestCase {
 			}
 		}
 
-		/** Returns the calendar value in milliseconds.
+		/** Example of a Serializable instance.
+		 */
+        public static class CalendarWrapper implements Serializable {
+            private static final long serialVersionUID = 8153663910532549627L;
+            final Calendar cal;
+            CalendarWrapper(Calendar pCalendar) {
+                cal = pCalendar;
+            }
+        }
+
+        /** Returns the calendar value in milliseconds.
 		 * @param pCal Calendar object
 		 * @return <code>pCal.getTime().getTime()</code>.
 		 */
-		public long serializableParam(Calendar pCal) {
-			return pCal.getTime().getTime();
+		public long serializableParam(CalendarWrapper pCal) {
+			return pCal.cal.getTime().getTime();
 		}
-	}
+
+		/** Returns midnight of the following day.
+		 */
+        public Calendar calendarParam(Calendar pCal) {
+            Calendar cal = (Calendar) pCal.clone();
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal;
+        }
+
+        /** Returns midnight of the following day.
+         */
+        public Date dateParam(Date pDate) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(pDate);
+            return calendarParam(cal).getTime();
+        }
+    }
 
 	protected XmlRpcHandlerMapping getHandlerMapping() throws IOException, XmlRpcException {
 		return new PropertyHandlerMapping(getClass().getClassLoader(),
@@ -798,7 +830,7 @@ public class BaseTest extends TestCase {
 	}
 
 	/** Test, whether we can invoke a method, passing an instance of
-	 * {@link java.io.Serializable} as an instance.
+	 * {@link java.io.Serializable} as a parameter.
 	 * @throws Exception The test failed.
 	 */
 	public void testSerializableParam() throws Exception {
@@ -810,14 +842,9 @@ public class BaseTest extends TestCase {
 	private void testSerializableParam(ClientProvider pProvider) throws Exception {
 		final String methodName = "Remote.serializableParam";
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-		cal.set(Calendar.YEAR, 2005);
-		cal.set(Calendar.MONTH, 5);
-		cal.set(Calendar.DAY_OF_MONTH, 23);
-		cal.set(Calendar.HOUR_OF_DAY, 8);
-		cal.set(Calendar.MINUTE, 4);
-		cal.set(Calendar.SECOND, 0);
+		cal.set(2005, 5, 23, 8, 4, 0);
 		cal.set(Calendar.MILLISECOND, 5);
-		final Object[] params = new Object[]{cal};
+		final Object[] params = new Object[]{new Remote.CalendarWrapper(cal)};
 		final XmlRpcClient client = pProvider.getClient();
 		Object result = client.execute(getExConfig(pProvider), methodName, params);
 		assertEquals(new Long(cal.getTime().getTime()), result);
@@ -829,4 +856,67 @@ public class BaseTest extends TestCase {
 		}
 		assertTrue(ok);
 	}
+
+	/** Tests, whether we can invoke a method, passing an instance of
+     * {@link Calendar} as a parameter.
+     * @throws Exception The test failed.
+	 */
+	public void testCalendarParam() throws Exception {
+	    for (int i = 0;  i < providers.length;  i++) {
+	        testCalendarParam(providers[i]);
+        }
+    }
+
+	private void testCalendarParam(ClientProvider pProvider) throws Exception {
+	    final String methodName = "Remote.calendarParam";
+        Calendar cal1 = newCalendarParam();
+        Calendar cal2 = newCalendarResult();
+        final Object[] params = new Object[]{cal1};
+        final XmlRpcClient client = pProvider.getClient();
+        Object result = client.execute(getExConfig(pProvider), methodName, params);
+        assertEquals(cal2.getTime(), ((Calendar) result).getTime());
+        boolean ok = false;
+        try {
+            client.execute(getConfig(pProvider), methodName, params);
+        } catch (XmlRpcExtensionException e) {
+            ok = true;
+        }
+        assertTrue(ok);
+    }
+
+    private Calendar newCalendarResult() {
+        Calendar cal2 = Calendar.getInstance(TimeZone.getDefault());
+        cal2.set(2005, 5, 24, 0, 0, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
+        return cal2;
+    }
+
+    private Calendar newCalendarParam() {
+        Calendar cal1 = Calendar.getInstance(TimeZone.getDefault());
+        cal1.set(2005, 5, 23, 8, 4, 0);
+        cal1.set(Calendar.MILLISECOND, 5);
+        return cal1;
+    }
+
+    /** Tests, whether we can invoke a method, passing an instance of
+     * {@link Date} as a parameter.
+     * @throws Exception The test failed.
+     */
+    public void testDateParam() throws Exception {
+        for (int i = 0;  i < providers.length;  i++) {
+            testDateParam(providers[i]);
+        }
+    }
+
+    private void testDateParam(ClientProvider pProvider) throws Exception {
+        final String methodName = "Remote.dateParam";
+        Date date1 = newCalendarParam().getTime();
+        Calendar cal2 = newCalendarResult();
+        final Object[] params = new Object[]{date1};
+        final XmlRpcClient client = pProvider.getClient();
+        Object result = client.execute(getExConfig(pProvider), methodName, params);
+        assertEquals(cal2.getTime(), result);
+        result = client.execute(getConfig(pProvider), methodName, params);
+        assertEquals(cal2.getTime(), result);
+    }
 }

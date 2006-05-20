@@ -137,7 +137,7 @@ public class SerializerTest extends TestCase {
 
 	/** Tests serialization of a calendar instance.
 	 */
-    public void testDateParam() throws Exception {
+    public void testCalendarParam() throws Exception {
         TimeZone tz = TimeZone.getTimeZone("GMT");
         Calendar cal1 = Calendar.getInstance(tz);
         cal1.set(1933, 5, 12, 11, 7, 21);
@@ -145,15 +145,15 @@ public class SerializerTest extends TestCase {
         Calendar cal2 = Calendar.getInstance(TimeZone.getDefault());
         cal2.set(1933, 5, 12, 11, 7, 21);
         cal2.set(Calendar.MILLISECOND, 311);
-        XmlRpcStreamRequestConfig config = getConfig();
+        XmlRpcStreamRequestConfig config = getExConfig();
         XmlRpcRequest request = new XmlRpcClientRequestImpl(config, "dateParam", new Object[]{cal1, cal2.getTime()});
         String got = writeRequest(config, request);
         String expect =
             "<?xml version=\"1.0\" encoding=\"US-ASCII\"?>"
-            + "<methodCall>"
+            + "<methodCall xmlns:ex=\"http://ws.apache.org/xmlrpc/namespaces/extensions\">"
             + "<methodName>dateParam</methodName><params>"
-            + "<param><value><dateTime.iso8601>1933-06-12T11:07:21.311</dateTime.iso8601></value></param>"
-            + "<param><value><dateTime.iso8601>1933-06-12T11:07:21.311</dateTime.iso8601></value></param>"
+            + "<param><value><ex:dateTime>1933-06-12T11:07:21.311Z</ex:dateTime></value></param>"
+            + "<param><value><dateTime.iso8601>19330612T11:07:21</dateTime.iso8601></value></param>"
             + "</params></methodCall>";
         assertEquals(expect, got);
     }
