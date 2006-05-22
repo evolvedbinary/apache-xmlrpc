@@ -22,6 +22,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcHandler;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
+import org.apache.xmlrpc.metadata.Util;
 import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.AuthenticationHandler;
 
 
@@ -31,7 +32,7 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	private final AbstractReflectiveHandlerMapping mapping;
 	private final Class clazz;
 	private final Object instance;
-	private final Method method;
+	private final Method[] methods;
 
 	/** Creates a new instance.
 	 * @param pMapping The mapping, which creates this handler.
@@ -41,15 +42,15 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	 * messages only.
 	 * @param pInstance The instance, which will be invoked for
 	 * executing the handler.
-	 * @param pMethod The method, which will be invoked for
+	 * @param pMethods The method, which will be invoked for
 	 * executing the handler. 
 	 */
 	public ReflectiveXmlRpcHandler(AbstractReflectiveHandlerMapping pMapping,
-				Class pClass, Object pInstance, Method pMethod) {
+				Class pClass, Object pInstance, Method[] pMethods) {
 		mapping = pMapping;
 		clazz = pClass;
 		instance = pInstance;
-		method = pMethod;
+		methods = pMethods;
 	}
 
 	public Object execute(XmlRpcRequest pRequest) throws XmlRpcException {
@@ -61,20 +62,33 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	    for (int j = 0;  j < args.length;  j++) {
 	        args[j] = pRequest.getParameter(j);
 	    }
-	    try {
-	        return method.invoke(instance, args);
+	    if (methods.length == 1) {
+            return invoke(methods[0], args);
+        } else {
+            for (int i = 0;  i < methods.length;  i++) {
+                if (Util.isMatching(methods[i], args)) {
+                    return invoke(methods[i], args);
+                }
+            }
+            throw new XmlRpcException("No method matching arguments: " + Util.getSignature(args));
+        }
+    }
+
+    private Object invoke(Method pMethod, Object[] pArgs) throws XmlRpcException {
+        try {
+	        return pMethod.invoke(instance, pArgs);
 	    } catch (IllegalAccessException e) {
 	        throw new XmlRpcException("Illegal access to method "
-	                                  + method.getName() + " in class "
+	                                  + pMethod.getName() + " in class "
 	                                  + clazz.getName(), e);
 	    } catch (IllegalArgumentException e) {
 	        throw new XmlRpcException("Illegal argument for method "
-	                                  + method.getName() + " in class "
+	                                  + pMethod.getName() + " in class "
 	                                  + clazz.getName(), e);
 	    } catch (InvocationTargetException e) {
 	        Throwable t = e.getTargetException();
 	        throw new XmlRpcException("Failed to invoke method "
-	                                  + method.getName() + " in class "
+	                                  + pMethod.getName() + " in class "
 	                                  + clazz.getName() + ": "
 	                                  + t.getMessage(), t);
 	    }

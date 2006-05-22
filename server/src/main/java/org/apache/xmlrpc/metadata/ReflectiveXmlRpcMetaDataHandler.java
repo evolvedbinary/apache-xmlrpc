@@ -37,7 +37,7 @@ public class ReflectiveXmlRpcMetaDataHandler extends ReflectiveXmlRpcHandler
 	 * messages only.
 	 * @param pInstance The instance, which will be invoked for
 	 * executing the handler.
-	 * @param pMethod The method, which will be invoked for
+	 * @param pMethods The method, which will be invoked for
 	 * executing the handler. 
 	 * @param pSignatures The signature, which will be returned by
 	 * {@link #getSignatures()}.
@@ -45,9 +45,9 @@ public class ReflectiveXmlRpcMetaDataHandler extends ReflectiveXmlRpcHandler
 	 * by {@link #getMethodHelp()}.
 	 */
 	public ReflectiveXmlRpcMetaDataHandler(AbstractReflectiveHandlerMapping pMapping,
-			Class pClass, Object pInstance, Method pMethod,
+			Class pClass, Object pInstance, Method[] pMethods,
 			String[][] pSignatures, String pMethodHelp) {
-		super(pMapping, pClass, pInstance, pMethod);
+		super(pMapping, pClass, pInstance, pMethods);
 		signatures = pSignatures;
 		methodHelp = pMethodHelp;
 	}

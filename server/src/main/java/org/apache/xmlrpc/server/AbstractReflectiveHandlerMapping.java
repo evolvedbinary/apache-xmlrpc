@@ -91,6 +91,7 @@ public abstract class AbstractReflectiveHandlerMapping
     	if (pInstance == null) {
     		throw new NullPointerException("The object instance must not be null.");
     	}
+    	Map map = new HashMap();
         Method[] methods = pType.getMethods();
         for (int i = 0;  i < methods.length;  i++) {
             final Method method = methods[i];
@@ -107,9 +108,23 @@ public abstract class AbstractReflectiveHandlerMapping
                 continue;  // Ignore methods from Object.class
             }
             String name = pKey + "." + method.getName();
-            if (!pMap.containsKey(name)) {
-                pMap.put(name, newXmlRpcHandler(pType, pInstance, method));
+            Method[] mArray;
+            Method[] oldMArray = (Method[]) map.get(name);
+            if (oldMArray == null) {
+                mArray = new Method[]{method};
+            } else {
+                mArray = new Method[oldMArray.length+1];
+                System.arraycopy(oldMArray, 0, mArray, 0, oldMArray.length);
+                mArray[oldMArray.length] = method;
             }
+            map.put(name, mArray);
+        }
+
+        for (Iterator iter = map.entrySet().iterator();  iter.hasNext();  ) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String name = (String) entry.getKey();
+            Method[] mArray = (Method[]) entry.getValue();
+            pMap.put(name, newXmlRpcHandler(pType, pInstance, mArray));
         }
     }
 
@@ -120,33 +135,33 @@ public abstract class AbstractReflectiveHandlerMapping
      * @param pInstance The object, which is being invoked by
      * the created handler. Typically an instance of
      * <code>pClass</code>.
-     * @param pMethod The method being invoked.
+     * @param pMethods The method being invoked.
      */
     protected XmlRpcHandler newXmlRpcHandler(final Class pClass,
-    		final Object pInstance, final Method pMethod) {
+    		final Object pInstance, final Method[] pMethods) {
     	if (pInstance == null) {
     		throw new NullPointerException("The object instance must not be null.");
     	}
-    	String[] sig = getSignature(pMethod);
-    	String help = getMethodHelp(pClass, pMethod);
+    	String[][] sig = getSignature(pMethods);
+    	String help = getMethodHelp(pClass, pMethods);
     	if (sig == null  ||  help == null) {
-    		return new ReflectiveXmlRpcHandler(this, pClass, pInstance, pMethod);
+    		return new ReflectiveXmlRpcHandler(this, pClass, pInstance, pMethods);
     	}
     	return new ReflectiveXmlRpcMetaDataHandler(this, pClass, pInstance,
-    			pMethod, new String[][]{sig}, help);
+    			pMethods, sig, help);
     }
 
     /** Creates a signature for the given method.
      */
-    protected String[] getSignature(Method pMethod) {
-    	return Util.getSignature(pMethod);
+    protected String[][] getSignature(Method[] pMethods) {
+    	return Util.getSignature(pMethods);
     }
 
     /** Creates a help string for the given method, when applied
      * to the given class.
      */
-    protected String getMethodHelp(Class pClass, Method pMethod) {
-    	return Util.getMethodHelp(pClass, pMethod);
+    protected String getMethodHelp(Class pClass, Method[] pMethods) {
+    	return Util.getMethodHelp(pClass, pMethods);
     }
 
     /** Returns the {@link XmlRpcHandler} with the given name.

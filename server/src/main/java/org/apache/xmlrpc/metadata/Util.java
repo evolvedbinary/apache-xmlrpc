@@ -17,6 +17,7 @@ package org.apache.xmlrpc.metadata;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -94,13 +95,30 @@ public class Util {
 		return null;
 	}
 
-	/** Returns a signature for the given method.
-	 * @param pMethod Method, for which a signature is
+	/** Returns a signature for the given methods.
+	 * @param pMethods Methods, for which a signature is
 	 * being queried.
 	 * @return Signature string, or null, if no signature
 	 * is available.
 	 */
-	public static String[] getSignature(Method pMethod) {
+	public static String[][] getSignature(Method[] pMethods) {
+        final List result = new ArrayList();
+        for (int i = 0;  i < pMethods.length;  i++) {
+            String[] sig = getSignature(pMethods[i]);
+            if (sig != null) {
+                result.add(sig);
+            }
+        }
+        return (String[][]) result.toArray(new String[result.size()][]);
+    }
+
+    /** Returns a signature for the given methods.
+     * @param pMethod Method, for which a signature is
+     * being queried.
+     * @return Signature string, or null, if no signature
+     * is available.
+     */
+    public static String[] getSignature(Method pMethod) {    
 		Class[] paramClasses = pMethod.getParameterTypes();
 		String[] sig = new String[paramClasses.length + 1];
 		String s = getSignatureType(pMethod.getReturnType());
@@ -118,7 +136,35 @@ public class Util {
 		return sig;
 	}
 
-	/** Returns a help string for the given method, which
+    /** Returns a help string for the given method, which
+     * is applied to the given class.
+     */
+    public static String getMethodHelp(Class pClass, Method[] pMethods) {
+        final List result = new ArrayList();
+        for (int i = 0;  i < pMethods.length;  i++) {
+            String help = getMethodHelp(pClass, pMethods[i]);
+            if (help != null) {
+                result.add(help);
+            }
+        }
+        switch (result.size()) {
+            case 0:
+                return null;
+            case 1:
+                return (String) result.get(0);
+            default:
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0;  i < result.size();  i++) {
+                    sb.append(i+1);
+                    sb.append(": ");
+                    sb.append(result.get(i));
+                    sb.append("\n");
+                }
+                return sb.toString();
+        }
+    }
+
+    /** Returns a help string for the given method, which
 	 * is applied to the given class.
 	 */
 	public static String getMethodHelp(Class pClass, Method pMethod) {
@@ -138,4 +184,78 @@ public class Util {
 		sb.append(").");
 		return sb.toString();
 	}
+
+	/** Returns, whether the given methods signature is matched by
+     * the given parameter set.
+	 */
+    public static boolean isMatching(Method method, Object[] args) {
+        Class[] parameterClasses = method.getParameterTypes();
+        if (parameterClasses.length != args.length) {
+            return false;
+        }
+        for (int i = 0;  i < args.length;  i++) {
+            if (!isMatching(parameterClasses[i], args[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Returns, whether the given parameter matches the given
+     * type.
+     */
+    public static boolean isMatching(Class pParameterType, Object pArg) {
+        if (pArg == null) {
+            return !pParameterType.isPrimitive();
+        }
+        final Class c;
+        if (pParameterType.isPrimitive()) {
+            c = getObjectClass(pParameterType);
+        } else {
+            c = pParameterType;
+        }
+        return c.isAssignableFrom(pArg.getClass());
+    }
+
+    /** Given a primitive class, returns the corresponding object class.
+     */
+    public static Class getObjectClass(Class pPrimitiveClass) {
+        if (byte.class.equals(pPrimitiveClass)) {
+            return Byte.class;
+        } else if (short.class.equals(pPrimitiveClass)) {
+            return Short.class;
+        } else if (int.class.equals(pPrimitiveClass)) {
+            return Integer.class;
+        } else if (long.class.equals(pPrimitiveClass)) {
+            return Long.class;
+        } else if (float.class.equals(pPrimitiveClass)) {
+            return Float.class;
+        } else if (double.class.equals(pPrimitiveClass)) {
+            return Double.class;
+        } else if (char.class.equals(pPrimitiveClass)) {
+            return Character.class;
+        } else if (boolean.class.equals(pPrimitiveClass)) {
+            return Boolean.class;
+        } else {
+            throw new IllegalStateException("Invalid primitive class: " + pPrimitiveClass.getName());
+        }
+    }
+
+    /** Returns a signature for the given parameter set. This is used
+     * in error messages.
+     */
+    public static String getSignature(Object[] args) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0;  i < args.length;  i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            if (args[i] == null) {
+                sb.append("null");
+            } else {
+                sb.append(args[i].getClass().getName());
+            }
+        }
+        return sb.toString();
+    }
 }
