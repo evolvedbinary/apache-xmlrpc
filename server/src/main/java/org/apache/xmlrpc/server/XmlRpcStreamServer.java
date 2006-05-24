@@ -125,24 +125,14 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 		return writerFactory;
 	}
 
-	/** Returns the connections input stream.
-	 */
-	protected abstract InputStream newInputStream(XmlRpcStreamRequestConfig pConfig,
-												  ServerStreamConnection pConnection) throws IOException;
-
 	protected InputStream getInputStream(XmlRpcStreamRequestConfig pConfig,
 										 ServerStreamConnection pConnection) throws IOException {
-		InputStream istream = newInputStream(pConfig, pConnection);
+		InputStream istream = pConnection.newInputStream();
 		if (pConfig.isEnabledForExtensions()  &&  pConfig.isGzipCompressing()) {
 			istream = new GZIPInputStream(istream);
 		}
 		return istream;
 	}
-
-	/** Creates the connections output stream.
-	 */
-	protected abstract OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig,
-												    ServerStreamConnection pConnection) throws IOException;
 
 	/** Called to prepare the output stream. Typically used for enabling
 	 * compression, or similar filters.
@@ -162,7 +152,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
 										   ServerStreamConnection pConnection,
 										   int pSize) throws IOException {
-		return newOutputStream(pConfig, pConnection);
+	    return pConnection.newOutputStream();
 	}
 
 	/** Returns, whether the requests content length is required.
@@ -170,10 +160,6 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	protected boolean isContentLengthRequired(XmlRpcStreamRequestConfig pConfig) {
 		return false;
 	}
-
-	/** Closes the connection, releasing all resources.
-	 */
-	protected abstract void closeConnection(ServerStreamConnection pConnection) throws IOException;
 
 	/** Returns, whether the 
 	/** Processes a "connection". The "connection" is an opaque object, which is
@@ -213,7 +199,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 				ostream = baos;
 			} else {
 				baos = null;
-				ostream = newOutputStream(pConfig, pConnection);
+				ostream = pConnection.newOutputStream();
 			}
 			ostream = getOutputStream(pConnection, pConfig, ostream);
 			try {
@@ -237,13 +223,13 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 					if (dest != null) { try { dest.close(); } catch (Throwable ignore) {} }
 				}
 			}
-			closeConnection(pConnection);
+            pConnection.close();
 			pConnection = null;
 		} catch (IOException e) {
 			throw new XmlRpcException("I/O error while processing request: "
 					+ e.getMessage(), e);
 		} finally {
-			if (pConnection != null) { try { closeConnection(pConnection); } catch (Throwable ignore) {} }
+			if (pConnection != null) { try { pConnection.close(); } catch (Throwable ignore) {} }
 		}
 		log.debug("execute: <-");
 	}

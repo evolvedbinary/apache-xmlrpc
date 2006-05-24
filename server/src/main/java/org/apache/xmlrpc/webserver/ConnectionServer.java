@@ -59,17 +59,6 @@ class ConnectionServer extends XmlRpcHttpServer {
 		}
 	}
 
-	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig, ServerStreamConnection pConnection) throws IOException {
-		return ((Connection) pConnection).getInputStream((RequestData) pConfig);
-	}
-
-	protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig, ServerStreamConnection pConnection) throws IOException {
-		return ((Connection) pConnection).getOutputStream(pConfig);
-	}
-
-	protected void closeConnection(ServerStreamConnection pConnection) throws IOException {
-	}
-
 	protected void setResponseHeader(ServerStreamConnection pConnection, String pHeader, String pValue) {
 		((Connection) pConnection).setResponseHeader(pHeader, pValue);
 	}

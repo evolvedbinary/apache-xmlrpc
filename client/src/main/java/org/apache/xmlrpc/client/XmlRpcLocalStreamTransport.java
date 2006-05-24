@@ -53,7 +53,7 @@ public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 	}
 
 	protected InputStream getInputStream() throws XmlRpcException {
-		localServer.execute(conn.getConfig(), conn);
+		localServer.execute(conn.getConfig(), conn.getServerStreamConnection());
 		return new ByteArrayInputStream(conn.getResponse().toByteArray());
 	}
 

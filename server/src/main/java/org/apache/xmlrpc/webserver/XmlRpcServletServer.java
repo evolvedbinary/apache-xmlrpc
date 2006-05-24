@@ -52,7 +52,20 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
 		/** Returns the servlet response.
 		 */
 		public HttpServletResponse getResponse() { return response; }
-	}
+
+		public InputStream newInputStream() throws IOException {
+            return request.getInputStream();
+        }
+
+		public OutputStream newOutputStream() throws IOException {
+            response.setContentType("text/xml");
+            return response.getOutputStream();
+        }
+
+        public void close() throws IOException {
+            response.getOutputStream().close();
+        }
+    }
 
 	protected XmlRpcHttpRequestConfigImpl newConfig() {
 		return new XmlRpcHttpRequestConfigImpl();
@@ -103,18 +116,6 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
 		return !((XmlRpcHttpServerConfig) getConfig()).isContentLengthOptional();
 	}
 
-	protected InputStream newInputStream(XmlRpcStreamRequestConfig pConfig,
-			ServerStreamConnection pConnection) throws IOException {
-		return ((ServletStreamConnection) pConnection).getRequest().getInputStream();
-	}
-
-	protected OutputStream newOutputStream(XmlRpcStreamRequestConfig pConfig,
-			ServerStreamConnection pConnection) throws IOException {
-		HttpServletResponse response = ((ServletStreamConnection) pConnection).getResponse();
-		response.setContentType("text/xml");
-		return response.getOutputStream();
-	}
-
 	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
 										   ServerStreamConnection pConnection,
 										   int pSize) throws IOException {
@@ -122,10 +123,6 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
 			((ServletStreamConnection) pConnection).getResponse().setContentLength(pSize);
 		}
 		return super.getOutputStream(pConfig, pConnection, pSize);
-	}
-
-	protected void closeConnection(ServerStreamConnection pConnection) throws IOException {
-		((ServletStreamConnection) pConnection).getResponse().getOutputStream().close();
 	}
 
 	protected void setResponseHeader(ServerStreamConnection pConnection, String pHeader, String pValue) {

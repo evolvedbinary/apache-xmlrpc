@@ -30,7 +30,6 @@ import java.util.StringTokenizer;
 import org.apache.xmlrpc.common.ServerStreamConnection;
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
-import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.server.XmlRpcHttpServerConfig;
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.HttpUtil;
@@ -81,6 +80,7 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
     private final XmlRpcStreamServer server;
     private byte[] buffer;
     private Map headers;
+    private RequestData requestData;
 
     /** Creates a new webserver connection on the given socket.
      * @param pWebServer The webserver maintaining this connection.
@@ -113,14 +113,14 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
      * @throws IOException Reading the request headers failed.
      */
     private RequestData getRequestConfig() throws IOException {
-        RequestData result = new RequestData(this);
+        requestData = new RequestData(this);
         if (headers != null) {
             headers.clear();
         }
         XmlRpcHttpServerConfig serverConfig = (XmlRpcHttpServerConfig) server.getConfig();
-        result.setBasicEncoding(serverConfig.getBasicEncoding());
-        result.setContentLengthOptional(serverConfig.isContentLengthOptional());
-        result.setEnabledForExtensions(serverConfig.isEnabledForExtensions());
+        requestData.setBasicEncoding(serverConfig.getBasicEncoding());
+        requestData.setContentLengthOptional(serverConfig.isContentLengthOptional());
+        requestData.setEnabledForExtensions(serverConfig.isEnabledForExtensions());
 
         // reset user authentication
         String line = readLine();
@@ -138,11 +138,11 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
         if (!"POST".equalsIgnoreCase(method)) {
             throw new BadRequestException(method);
         }
-        result.setMethod(method);
+        requestData.setMethod(method);
         tokens.nextToken(); // Skip URI
         String httpVersion = tokens.nextToken();
-        result.setHttpVersion(httpVersion);
-        result.setKeepAlive(serverConfig.isKeepAliveEnabled()
+        requestData.setHttpVersion(httpVersion);
+        requestData.setKeepAlive(serverConfig.isKeepAliveEnabled()
                 && WebServer.HTTP_11.equals(httpVersion));
         do {
             line = readLine();
@@ -150,19 +150,19 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
                 String lineLower = line.toLowerCase();
                 if (lineLower.startsWith("content-length:")) {
                     String cLength = line.substring("content-length:".length());
-                    result.setContentLength(Integer.parseInt(cLength.trim()));
+                    requestData.setContentLength(Integer.parseInt(cLength.trim()));
                 } else if (lineLower.startsWith("connection:")) {
-                    result.setKeepAlive(serverConfig.isKeepAliveEnabled()
+                    requestData.setKeepAlive(serverConfig.isKeepAliveEnabled()
                             &&  lineLower.indexOf("keep-alive") > -1);
                 } else if (lineLower.startsWith("authorization:")) {
                     String credentials = line.substring("authorization:".length());
-                    HttpUtil.parseAuthorization(result, credentials);
+                    HttpUtil.parseAuthorization(requestData, credentials);
                 }
             }
         }
         while (line != null && line.length() != 0);
 
-        return result;
+        return requestData;
     }
 
     public void run() {
@@ -204,38 +204,6 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
             }
         }
         return new String(buffer, 0, count, US_ASCII);
-    }
-
-    /** Returns the contents input stream.
-     * @param pData The request data
-     * @return The contents input stream.
-     */
-    public InputStream getInputStream(RequestData pData) {
-        int contentLength = pData.getContentLength();
-        if (contentLength == -1) {
-            return input;
-        } else {
-            return new LimitedInputStream(input, contentLength);
-        }
-    }
-
-    /** Returns the output stream for writing the response.
-     * @param pConfig The request configuration.
-     * @return The response output stream.
-     */
-    public OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig) {
-        boolean useContentLength;
-        if (pConfig instanceof XmlRpcHttpRequestConfig) {
-            useContentLength = !pConfig.isEnabledForExtensions()
-            ||  !((XmlRpcHttpRequestConfig) pConfig).isContentLengthOptional();
-        } else {
-            useContentLength = true;
-        }
-        if (useContentLength) {
-            return new ByteArrayOutputStream();
-        } else {
-            return output;
-        }
     }
 
     /** Writes the response header and the response to the
@@ -337,5 +305,29 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
      */
     public void setResponseHeader(String pHeader, String pValue) {
         headers.put(pHeader, pValue);
+    }
+
+
+    public OutputStream newOutputStream() throws IOException {
+        boolean useContentLength;
+        useContentLength = !requestData.isEnabledForExtensions()
+            ||  !((XmlRpcHttpRequestConfig) requestData).isContentLengthOptional();
+        if (useContentLength) {
+            return new ByteArrayOutputStream();
+        } else {
+            return output;
+        }
+    }
+
+    public InputStream newInputStream() throws IOException {
+        int contentLength = requestData.getContentLength();
+        if (contentLength == -1) {
+            return input;
+        } else {
+            return new LimitedInputStream(input, contentLength);
+        }
+    }
+
+    public void close() throws IOException {
     }
 }
