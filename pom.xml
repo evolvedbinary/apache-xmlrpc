@@ -116,6 +116,10 @@
     </developers>
     <contributors>
         <contributor>
+            <name>Denis Carniel</name>
+            <email>2nis@aktiv-design.com</email>
+        </contributor>
+        <contributor>
             <name>Brad Karp</name>
             <email>bkarp@cs.ucl.ac.uk</email>
         </contributor>

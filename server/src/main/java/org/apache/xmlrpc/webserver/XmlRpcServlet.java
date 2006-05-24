@@ -24,15 +24,25 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.xmlrpc.XmlRpcConfig;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 
 
-/** A default servlet implementation The typical use would
+/** <p>A default servlet implementation The typical use would
  * be to derive a subclass, which is overwriting at least the
- * method {@link #newXmlRpcHandlerMapping()}.
+ * method {@link #newXmlRpcHandlerMapping()}.</p>
+ * <p>The servlet accepts the following init parameters:
+ *   <table border="1">
+ *     <tr><th>Name</th><th>Description</th></tr>
+ *     <tr><td>enabledForExtensions</td><td>Sets the value
+ *       {@link XmlRpcConfig#isEnabledForExtensions()}
+ *       to true.</td></tr>
+ *   </table>
+ * </p>
  */
 public class XmlRpcServlet extends HttpServlet {
 	private static final long serialVersionUID = 2348768267234L;
@@ -50,7 +60,12 @@ public class XmlRpcServlet extends HttpServlet {
 		try {
 			server = newXmlRpcServer(pConfig);
 			server.setHandlerMapping(newXmlRpcHandlerMapping());
-		} catch (XmlRpcException e) {
+            String enabledForExtensionsParam = pConfig.getInitParameter("enabledForExtensions");
+            if (enabledForExtensionsParam != null) {
+                boolean b = Boolean.valueOf(enabledForExtensionsParam).booleanValue();
+                ((XmlRpcServerConfigImpl) server.getConfig()).setEnabledForExtensions(b);
+            }
+        } catch (XmlRpcException e) {
 			try {
 				log("Failed to create XmlRpcServer: " + e.getMessage(), e);
 			} catch (Throwable ignore) {

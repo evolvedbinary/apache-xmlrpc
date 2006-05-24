@@ -61,6 +61,11 @@
       <action dev="hgomez" type="fix">
         Fixed that dateTime values must not include timezone values.
       </action>
+      <action dev="jochen" type="enhancement" due-to="Denis Carniel"
+          due-to-email="2nis@aktiv-design.com" issue="XMLRPC-84">
+        The XmlRpcServlet allows to configure its "enabledForExtensions"
+        value as an init parameter.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="enhancement">
