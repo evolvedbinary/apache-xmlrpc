@@ -1,4 +1,4 @@
-<project name="Maven">
+<project name="ws-xmlrpc">
   <bannerLeft>
     <name>Apache XML-RPC</name>
     <src>http://ws.apache.org/xmlrpc/images/xmlrpc-logo.gif</src>
