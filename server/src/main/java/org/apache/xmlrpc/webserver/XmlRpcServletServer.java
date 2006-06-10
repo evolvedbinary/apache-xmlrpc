@@ -67,12 +67,12 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
         }
     }
 
-	protected XmlRpcHttpRequestConfigImpl newConfig() {
+	protected XmlRpcHttpRequestConfigImpl newConfig(HttpServletRequest pRequest) {
 		return new XmlRpcHttpRequestConfigImpl();
 	}
 
 	protected XmlRpcHttpRequestConfigImpl getConfig(HttpServletRequest pRequest) {
-		XmlRpcHttpRequestConfigImpl result = newConfig();
+		XmlRpcHttpRequestConfigImpl result = newConfig(pRequest);
 		XmlRpcHttpServerConfig serverConfig = (XmlRpcHttpServerConfig) getConfig();
 		result.setBasicEncoding(serverConfig.getBasicEncoding());
 		result.setContentLengthOptional(serverConfig.isContentLengthOptional());

@@ -131,7 +131,7 @@
       <answer>
         <p>The PropertyHandlerMapping assumes, that handlers are POJO's
           (plain old java objects). However, this is not always desirable.
-          For example, sometimes it is assumes that handlers need to
+          For example, sometimes it is assumed that handlers need to
           be initialized by the servlet, which is configured through
           parameters.</p>
         <p>The recommended solution is to create a subclass of the
@@ -154,6 +154,57 @@ public class MyXmlRpcServlet extends XmlRpcServlet {
 		};
 	}
     
+}
+        ]]></source>
+      </answer>
+    </faq>
+
+    <faq id="client_ip">
+      <question>How to I get the clients IP address in a handler?</question>
+      <answer>
+        <p>That's a similar question than the question on initializing handlers.
+          The main difference is, that in this case you want to initialize the
+          handler with any request. So, here's how to do it: First of all,
+          we assume that all handlers will implement an interface
+          RequestInitializableHandler. This interface has an init method,
+          which is being called to receive an object with the clients
+          IP address:</p>
+        <source><![CDATA[
+public class MyConfig extends XmlRpcHttpRequestConfigImpl {
+	private String clientIpAddress;
+	public String getClientIpAddress() {
+	    return clientIpAddress;
+	}
+	public void setClientIpAddress(String pClientIpAddress) {
+	    clientIpAddress = pClientIpAddress;
+	}
+}
+
+public interface RequestInitializableHandler {
+    public void init(MyConfig pConfig);
+}
+
+public class MyXmlRpcServlet extends XmlRpcServlet {
+	protected XmlRpcServletServer newXmlRpcServer(ServletConfig pConfig)
+			throws XmlRpcException {
+		return new XmlRpcServletServer(){
+	        protected XmlRpcHttpRequestConfigImpl newConfig(HttpServletRequest pRequest) {
+	            MyConfig config = new MyConfig();
+	            config.setClientIpAddress(pRequest.getRemoteAddr());
+	            return config;
+	        }
+		};
+	}
+	protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
+		PropertyHandlerMapping result = super.newPropertyHandlerMapping(url);
+		result.setInitializableHandler(new InitializableHandler(){
+            public void init(XmlRpcRequest pRequest, Object pObject)
+                    throws XmlRpcException {
+                ((RequestInitializableHandler) pObject).init((MyConfig) pRequest.getConfig());
+            }
+		});
+		return result;
+	}
 }
         ]]></source>
       </answer>

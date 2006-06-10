@@ -48,9 +48,43 @@ public abstract class AbstractReflectiveHandlerMapping
             throws XmlRpcException;
     }
 
+    /** An object, which is called for initializing the
+     * actual handler object.
+     */
+    public interface InitializationHandler {
+        /** Called for initializing the object, which
+         * is was returned by {@link ReflectiveXmlRpcHandler#newInstance()}.
+         */
+        public void init(XmlRpcRequest pRequest, Object pObject)
+            throws XmlRpcException;
+    }
+
     protected Map handlerMap = new HashMap();
     private AuthenticationHandler authenticationHandler;
+    private InitializationHandler initializationHandler;
+    private final boolean instanceIsStateless;
 
+    /** Creates a new instance.
+     * @param pInstanceIsStateless The handler
+     * can operate in either of two operation modes:
+     * <ol>
+     *   <li>The object, which is actually performing the requests,
+     *     is initialized at startup. In other words, there is only
+     *     one object, which is performing all the requests.
+     *     Obviously, this is the faster operation mode. On the
+     *     other hand, it has the disadvantage, that the object
+     *     must be stateless.</li>
+     *   <li>A new object is created for any request. This is slower,
+     *     because the object needs to be initialized. On the other
+     *     hand, it allows for stateful objects, which may take
+     *     request specific configuration like the clients IP address,
+     *     and the like.</li>
+     * </ol>
+     */
+    protected AbstractReflectiveHandlerMapping(boolean pInstanceIsStateless) {
+        instanceIsStateless = pInstanceIsStateless;
+    }
+    
     /** Returns the authentication handler, if any, or null.
      */
     public AuthenticationHandler getAuthenticationHandler() {
@@ -59,9 +93,20 @@ public abstract class AbstractReflectiveHandlerMapping
 
     /** Sets the authentication handler, if any, or null.
      */
-    public void setAuthenticationHandler(
-            AuthenticationHandler pAuthenticationHandler) {
+    public void setAuthenticationHandler(AuthenticationHandler pAuthenticationHandler) {
         authenticationHandler = pAuthenticationHandler;
+    }
+
+    /** Returns the initialization handler, if any, or null.
+     */
+    public InitializationHandler getInitializationHandler() {
+        return initializationHandler;
+    }
+
+    /** Sets the initialization handler, if any, or null.
+     */
+    public void setInitializationHandler(InitializationHandler pInitializationHandler) {
+        initializationHandler = pInitializationHandler;
     }
 
     /** Searches for methods in the given class. For any valid
@@ -82,15 +127,9 @@ public abstract class AbstractReflectiveHandlerMapping
      * @param pKey Suffix for building handler names. A dot and
      * the method name are being added.
      * @param pType The class being inspected.
-     * @param pInstance The object being invoked. Note, that this
-     * object must be stateless: Multiple threads can run on it
-     * at the same time.
      */
     protected void registerPublicMethods(Map pMap, String pKey,
-    		Class pType, Object pInstance) {
-    	if (pInstance == null) {
-    		throw new NullPointerException("The object instance must not be null.");
-    	}
+    		Class pType) throws XmlRpcException {
     	Map map = new HashMap();
         Method[] methods = pType.getMethods();
         for (int i = 0;  i < methods.length;  i++) {
@@ -124,7 +163,7 @@ public abstract class AbstractReflectiveHandlerMapping
             Map.Entry entry = (Map.Entry) iter.next();
             String name = (String) entry.getKey();
             Method[] mArray = (Method[]) entry.getValue();
-            pMap.put(name, newXmlRpcHandler(pType, pInstance, mArray));
+            pMap.put(name, newXmlRpcHandler(pType, mArray));
         }
     }
 
@@ -132,22 +171,16 @@ public abstract class AbstractReflectiveHandlerMapping
      * @param pClass The class, which was inspected for handler
      * methods. This is used for error messages only. Typically,
      * it is the same than <pre>pInstance.getClass()</pre>.
-     * @param pInstance The object, which is being invoked by
-     * the created handler. Typically an instance of
-     * <code>pClass</code>.
      * @param pMethods The method being invoked.
      */
     protected XmlRpcHandler newXmlRpcHandler(final Class pClass,
-    		final Object pInstance, final Method[] pMethods) {
-    	if (pInstance == null) {
-    		throw new NullPointerException("The object instance must not be null.");
-    	}
+            final Method[] pMethods) throws XmlRpcException {
     	String[][] sig = getSignature(pMethods);
     	String help = getMethodHelp(pClass, pMethods);
     	if (sig == null  ||  help == null) {
-    		return new ReflectiveXmlRpcHandler(this, pClass, pInstance, pMethods);
+    		return new ReflectiveXmlRpcHandler(this, pClass, instanceIsStateless, pMethods);
     	}
-    	return new ReflectiveXmlRpcMetaDataHandler(this, pClass, pInstance,
+    	return new ReflectiveXmlRpcMetaDataHandler(this, pClass, instanceIsStateless,
     			pMethods, sig, help);
     }
 

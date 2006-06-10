@@ -66,6 +66,10 @@
         The XmlRpcServlet allows to configure its "enabledForExtensions"
         value as an init parameter.
       </action>
+      <action dev="jochen" type="enhancement">
+        It is now possible to create and initialize handler objects per
+        request.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="enhancement">

@@ -24,6 +24,7 @@ import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 import org.apache.xmlrpc.metadata.Util;
 import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.AuthenticationHandler;
+import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.InitializationHandler;
 
 
 /** Default implementation of {@link XmlRpcHandler}.
@@ -31,8 +32,8 @@ import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.AuthenticationH
 public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	private final AbstractReflectiveHandlerMapping mapping;
 	private final Class clazz;
-	private final Object instance;
 	private final Method[] methods;
+    private final Object theInstance;
 
 	/** Creates a new instance.
 	 * @param pMapping The mapping, which creates this handler.
@@ -40,18 +41,43 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	 * this handler. Typically, this will be the same as
 	 * <pre>pInstance.getClass()</pre>. It is used for diagnostic
 	 * messages only.
-	 * @param pInstance The instance, which will be invoked for
-	 * executing the handler.
+	 * @param pInstanceIsStateless The handler
+	 * can operate in either of two operation modes:
+	 * <ol>
+	 *   <li>The object, which is actually performing the requests,
+	 *     is initialized at startup. In other words, there is only
+	 *     one object, which is performing all the requests.
+	 *     Obviously, this is the faster operation mode. On the
+	 *     other hand, it has the disadvantage, that the object
+	 *     must be stateless.</li>
+	 *   <li>A new object is created for any request. This is slower,
+	 *     because the object needs to be initialized. On the other
+	 *     hand, it allows for stateful objects, which may take
+	 *     request specific configuration like the clients IP address,
+	 *     and the like.</li>
+	 * </ol>
 	 * @param pMethods The method, which will be invoked for
 	 * executing the handler. 
 	 */
 	public ReflectiveXmlRpcHandler(AbstractReflectiveHandlerMapping pMapping,
-				Class pClass, Object pInstance, Method[] pMethods) {
+				Class pClass, boolean pInstanceIsStateless, Method[] pMethods)
+            throws XmlRpcException {
 		mapping = pMapping;
 		clazz = pClass;
-		instance = pInstance;
 		methods = pMethods;
+        theInstance = pInstanceIsStateless ? newInstance() : null;
 	}
+
+    private Object getInstance(XmlRpcRequest pRequest) throws XmlRpcException {
+        final InitializationHandler ih = mapping.getInitializationHandler();
+        if (ih == null) {
+            return theInstance == null ? newInstance() : theInstance;
+        } else {
+            final Object instance = newInstance();
+            ih.init(pRequest, instance);
+            return instance;
+        }
+    }
 
 	public Object execute(XmlRpcRequest pRequest) throws XmlRpcException {
 	    AuthenticationHandler authHandler = mapping.getAuthenticationHandler();
@@ -62,21 +88,22 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	    for (int j = 0;  j < args.length;  j++) {
 	        args[j] = pRequest.getParameter(j);
 	    }
-	    if (methods.length == 1) {
-            return invoke(methods[0], args);
+	    Object instance = getInstance(pRequest);
+        if (methods.length == 1) {
+            return invoke(instance, methods[0], args);
         } else {
             for (int i = 0;  i < methods.length;  i++) {
                 if (Util.isMatching(methods[i], args)) {
-                    return invoke(methods[i], args);
+                    return invoke(instance, methods[i], args);
                 }
             }
             throw new XmlRpcException("No method matching arguments: " + Util.getSignature(args));
         }
     }
 
-    private Object invoke(Method pMethod, Object[] pArgs) throws XmlRpcException {
+    private Object invoke(Object pInstance, Method pMethod, Object[] pArgs) throws XmlRpcException {
         try {
-	        return pMethod.invoke(instance, pArgs);
+	        return pMethod.invoke(pInstance, pArgs);
 	    } catch (IllegalAccessException e) {
 	        throw new XmlRpcException("Illegal access to method "
 	                                  + pMethod.getName() + " in class "
@@ -93,4 +120,14 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	                                  + t.getMessage(), t);
 	    }
 	}
+
+    protected Object newInstance() throws XmlRpcException {
+        try {
+            return clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new XmlRpcException("Failed to instantiate class " + clazz.getName(), e);
+        } catch (IllegalAccessException e) {
+            throw new XmlRpcException("Illegal access when instantiating class " + clazz.getName(), e);
+        }
+    }
 }

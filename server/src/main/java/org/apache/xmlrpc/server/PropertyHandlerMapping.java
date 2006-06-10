@@ -45,11 +45,28 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
      * @param pClassLoader Classloader being used to load the classes.
      * @param pURL The URL, from which the property file is being
      * loaded.
+     * @param pInstanceIsStateless The handler
+     * can operate in either of two operation modes:
+     * <ol>
+     *   <li>The object, which is actually performing the requests,
+     *     is initialized at startup. In other words, there is only
+     *     one object, which is performing all the requests.
+     *     Obviously, this is the faster operation mode. On the
+     *     other hand, it has the disadvantage, that the object
+     *     must be stateless.</li>
+     *   <li>A new object is created for any request. This is slower,
+     *     because the object needs to be initialized. On the other
+     *     hand, it allows for stateful objects, which may take
+     *     request specific configuration like the clients IP address,
+     *     and the like.</li>
+     * </ol>
      * @throws IOException Loading the property file failed.
      * @throws XmlRpcException Initializing the handlers failed.
      */
-    public PropertyHandlerMapping(ClassLoader pClassLoader, URL pURL)
+    public PropertyHandlerMapping(ClassLoader pClassLoader, URL pURL,
+                boolean pInstanceIsStateless)
             throws IOException, XmlRpcException {
+        super(pInstanceIsStateless);
         handlerMap = load(pClassLoader, pURL);
     }
 
@@ -58,18 +75,38 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
      * @param pClassLoader Classloader being used to locate
      * the resource.
      * @param pResource Resource being loaded.
+     * @param pInstanceIsStateless The handler
+     * can operate in either of two operation modes:
+     * <ol>
+     *   <li>The object, which is actually performing the requests,
+     *     is initialized at startup. In other words, there is only
+     *     one object, which is performing all the requests.
+     *     Obviously, this is the faster operation mode. On the
+     *     other hand, it has the disadvantage, that the object
+     *     must be stateless.</li>
+     *   <li>A new object is created for any request. This is slower,
+     *     because the object needs to be initialized. On the other
+     *     hand, it allows for stateful objects, which may take
+     *     request specific configuration like the clients IP address,
+     *     and the like.</li>
+     * </ol>
      * @throws IOException Loading the property file failed.
      * @throws XmlRpcException Initializing the handlers failed.
      */
-    public PropertyHandlerMapping(ClassLoader pClassLoader, String pResource)
+    public PropertyHandlerMapping(ClassLoader pClassLoader, String pResource,
+                boolean pInstanceIsStateless)
             throws IOException, XmlRpcException {
+        this(pClassLoader, asURL(pClassLoader, pResource), pInstanceIsStateless);
+    }
+
+    private static URL asURL(ClassLoader pClassLoader, String pResource) throws IOException {
         URL url = pClassLoader.getResource(pResource);
         if (url == null) {
             throw new IOException("Unable to locate resource " + pResource);
         }
-        handlerMap = load(pClassLoader, url);
+        return url;
     }
-
+    
     private Map load(ClassLoader pClassLoader, URL pURL) throws IOException, XmlRpcException {
         Map map = new HashMap();
         Properties props = new Properties();
@@ -78,13 +115,13 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
             Map.Entry entry = (Map.Entry) iter.next();
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
-            Object o = newHandlerObject(pClassLoader, value);
-            registerPublicMethods(map, key, o.getClass(), o);
+            Class c = newHandlerClass(pClassLoader, value);
+            registerPublicMethods(map, key, c);
         }
         return map;
     }
 
-    protected Object newHandlerObject(ClassLoader pClassLoader, String pClassName)
+    protected Class newHandlerClass(ClassLoader pClassLoader, String pClassName)
             throws XmlRpcException {
         final Class c;
         try {
@@ -95,12 +132,6 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
         if (c == null) {
             throw new XmlRpcException(0, "Loading class " + pClassName + " returned null.");
         }
-        try {
-            return c.newInstance();
-        } catch (InstantiationException e) {
-            throw new XmlRpcException("Failed to instantiate class " + c.getName(), e);
-        } catch (IllegalAccessException e) {
-            throw new XmlRpcException("Illegal access when instantiating class " + c.getName(), e);
-        }
+        return c;
     }
 }

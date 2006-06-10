@@ -35,8 +35,21 @@ public class ReflectiveXmlRpcMetaDataHandler extends ReflectiveXmlRpcHandler
 	 * this handler. Typically, this will be the same as
 	 * <pre>pInstance.getClass()</pre>. It is used for diagnostic
 	 * messages only.
-	 * @param pInstance The instance, which will be invoked for
-	 * executing the handler.
+     * @param pInstanceIsStateless The handler
+     * can operate in either of two operation modes:
+     * <ol>
+     *   <li>The object, which is actually performing the requests,
+     *     is initialized at startup. In other words, there is only
+     *     one object, which is performing all the requests.
+     *     Obviously, this is the faster operation mode. On the
+     *     other hand, it has the disadvantage, that the object
+     *     must be stateless.</li>
+     *   <li>A new object is created for any request. This is slower,
+     *     because the object needs to be initialized. On the other
+     *     hand, it allows for stateful objects, which may take
+     *     request specific configuration like the clients IP address,
+     *     and the like.</li>
+     * </ol>
 	 * @param pMethods The method, which will be invoked for
 	 * executing the handler. 
 	 * @param pSignatures The signature, which will be returned by
@@ -45,9 +58,10 @@ public class ReflectiveXmlRpcMetaDataHandler extends ReflectiveXmlRpcHandler
 	 * by {@link #getMethodHelp()}.
 	 */
 	public ReflectiveXmlRpcMetaDataHandler(AbstractReflectiveHandlerMapping pMapping,
-			Class pClass, Object pInstance, Method[] pMethods,
-			String[][] pSignatures, String pMethodHelp) {
-		super(pMapping, pClass, pInstance, pMethods);
+			    Class pClass, boolean pInstanceIsStateless, Method[] pMethods,
+			    String[][] pSignatures, String pMethodHelp)
+            throws XmlRpcException {
+		super(pMapping, pClass, pInstanceIsStateless, pMethods);
 		signatures = pSignatures;
 		methodHelp = pMethodHelp;
 	}

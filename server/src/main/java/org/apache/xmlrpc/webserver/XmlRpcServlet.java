@@ -104,7 +104,7 @@ public class XmlRpcServlet extends HttpServlet {
 	 * {@link #newXmlRpcHandlerMapping()}.
 	 */
 	protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
-		return new PropertyHandlerMapping(getClass().getClassLoader(), url);
+		return new PropertyHandlerMapping(getClass().getClassLoader(), url, false);
 	}
 
 	/** Creates a new instance of {@link org.apache.xmlrpc.webserver.RequestData}

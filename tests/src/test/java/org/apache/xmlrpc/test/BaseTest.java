@@ -303,7 +303,8 @@ public class BaseTest extends TestCase {
 
 	protected XmlRpcHandlerMapping getHandlerMapping() throws IOException, XmlRpcException {
 		return new PropertyHandlerMapping(getClass().getClassLoader(),
-										  getClass().getResource("BaseTest.properties"));
+										  getClass().getResource("BaseTest.properties"),
+                                          true);
 	}
 
 	protected XmlRpcClientConfigImpl getConfig(ClientProvider pProvider) throws Exception {
