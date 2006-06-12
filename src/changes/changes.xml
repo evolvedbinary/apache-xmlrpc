@@ -4,7 +4,7 @@
   </properties>
   <body>
     <release version="3.0-SNAPSHOT" date="Not yet released">
-      <action dev="hgomez" type="enhancement">
+      <action dev="hgomez" type="add">
         add connectionTimeout and replyTimeout in RPC clients.
         CommonsTransport support connection and reply timeout, liteHttpTransport only support reply timeout
       </action>
@@ -14,7 +14,7 @@
         was terminated with a line feed, which is invalid for
         use in HTTP headers.
       </action>
-      <action dev="hgomez" type="enhancement">
+      <action dev="hgomez" type="add">
         add support for BigDecimal and BigInteger in extensions.
       </action>
       <action dev="jochen" type="fix" due-to="Walter Mundt"
@@ -25,7 +25,7 @@
           due-to-email="Walter.Mundt@coleengineering.com">
           The "string" tag could not be parsed.
       </action>
-      <action dev="jochen" type="enhancement" due-to="Walter Mundt"
+      <action dev="jochen" type="add" due-to="Walter Mundt"
           due-to-email="Walter.Mundt@coleengineering.com"
           issue="XMLRPC76">
 		  Added the DynamicHandlerMapping.
@@ -35,7 +35,7 @@
           XmlRpcException.printStackTrace() was throwing
           an NPE, if no linked exception was present.
       </action>
-      <action dev="jochen" type="enhancement">
+      <action dev="jochen" type="add">
         The project is now splitted into three jar files:
         common, client, and server.
       </action>
@@ -49,11 +49,11 @@
         doesn't support HTTP/1.1, so it refuses the "contentLengthOptional"
         setting from now on.
       </action>
-      <action dev="jochen" type="enhancement" due-to="Mark Petrovic"
+      <action dev="jochen" type="add" due-to="Mark Petrovic"
           due-to-email="mspetrovic@gmail.com">
         Added support for initializable handlers.
       </action>
-      <action dev="jochen" type="enhancement" due-to="Ken Weiner"
+      <action dev="jochen" type="add" due-to="Ken Weiner"
           due-to-email="kweiner@gmail.com" issue="XMLRPC-56">
         Added the TimingOutCallback, which allows to abort a request,
         if the server doesn't reply within a given time.
@@ -61,18 +61,18 @@
       <action dev="hgomez" type="fix">
         Fixed that dateTime values must not include timezone values.
       </action>
-      <action dev="jochen" type="enhancement" due-to="Denis Carniel"
+      <action dev="jochen" type="add" due-to="Denis Carniel"
           due-to-email="2nis@aktiv-design.com" issue="XMLRPC-84">
         The XmlRpcServlet allows to configure its "enabledForExtensions"
         value as an init parameter.
       </action>
-      <action dev="jochen" type="enhancement">
+      <action dev="jochen" type="add">
         It is now possible to create and initialize handler objects per
         request.
       </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
-      <action dev="jochen" type="enhancement">
+      <action dev="jochen" type="add">
         Complete rewrite, adding vendor extensions:
         Streaming mode, support for all primitive Java types,
         nulls, DOM elements, and JAXB objects.
@@ -101,16 +101,16 @@
       		due-to="Thomas Mohaupt" due-to-email="Thomas.Mohaupt at gmail.com">
       	  The wrong version of commons-codec was downloaded by build.xml.
       </action>
-      <action dev="jochen" type="enhancement"
+      <action dev="jochen" type="add"
       		due-to="Jimisola Laursen" due-to-email="lists@jimisola.com">
       	  Added the CommonsXmlRpcTransportFactory.
       </action>
-      <action dev="jochen" type="enhancement"
+      <action dev="jochen" type="add"
             due-to="Henry Story" due-to-email="henry.story@bblfish.net">
           Added the possibility to specify a timezone for interpreting
           incoming date values.
       </action>
-      <action dev="jochen" type="enhancement">
+      <action dev="jochen" type="add">
           Upgrade to commons-httpclient 3.0.
       </action>
     </release>
