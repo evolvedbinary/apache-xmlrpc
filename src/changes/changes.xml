@@ -27,7 +27,7 @@
       </action>
       <action dev="jochen" type="add" due-to="Walter Mundt"
           due-to-email="Walter.Mundt@coleengineering.com"
-          issue="XMLRPC76">
+          issue="XMLRPC-76">
 		  Added the DynamicHandlerMapping.
       </action>
       <action dev="jochen" type="fix" due-to="Walter Mundt"
