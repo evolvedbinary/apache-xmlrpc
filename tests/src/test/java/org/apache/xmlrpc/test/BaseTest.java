@@ -41,31 +41,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-import junit.framework.TestCase;
-
 
 /** An abstract test case, to be implemented for the various
  * transport classes.
  */
-public class BaseTest extends TestCase {
-	private ClientProvider[] providers;
-
-	public void setUp() throws Exception {
-		if (providers == null) {
-			XmlRpcHandlerMapping mapping = getHandlerMapping();
-			providers = new ClientProvider[]{
-				new LocalTransportProvider(mapping),
-				new LocalStreamTransportProvider(mapping),
-				new LiteTransportProvider(mapping, true),
-				// new LiteTransportProvider(mapping, false), Doesn't support HTTP/1.1
-				new SunHttpTransportProvider(mapping, true),
-				new SunHttpTransportProvider(mapping, false),
-				new CommonsProvider(mapping),
-				new ServletWebServerProvider(mapping, true),
-				new ServletWebServerProvider(mapping, false)
-			};
-		}
-	}
+public class BaseTest extends XmlRpcTestCase {
 
 	/** The remote class being invoked by the test case.
 	 */
@@ -305,16 +285,6 @@ public class BaseTest extends TestCase {
 		return new PropertyHandlerMapping(getClass().getClassLoader(),
 										  getClass().getResource("BaseTest.properties"),
                                           true);
-	}
-
-	protected XmlRpcClientConfigImpl getConfig(ClientProvider pProvider) throws Exception {
-		return pProvider.getConfig();
-	}
-
-	protected XmlRpcClientConfig getExConfig(ClientProvider pProvider) throws Exception {
-		XmlRpcClientConfigImpl config = getConfig(pProvider);
-		config.setEnabledForExtensions(true);
-		return config;
 	}
 
 	/** Test, whether we can invoke a method, passing a byte value.
