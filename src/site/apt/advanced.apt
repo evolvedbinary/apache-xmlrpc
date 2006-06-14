@@ -1,0 +1,83 @@
+           --------------------
+           Advanced Programming
+           --------------------
+
+  The Apache XML-RPC library offers some advanced techniques, which
+  are being described on this page.
+
+Dynamic proxies
+
+  Dynamic proxies are an extremely comfortable way of Client programming.
+  Basically, the idea is as follows: All handlers on the server side are
+  splitted into interface and implementation. The client library contains
+  the same interfaces. Now, rather than using the
+  {{{apidocs/org/apache/xmlrpc/client/XmlRpcClient.html}XmlRpcClient}}
+  directly,
+  the programmer creates an instance of
+  {{{apidocs/org/apache/xmlrpc/client/util/ClientFactory.html}ClientFactory}},
+  which is configured with an
+  {{{apidocs/org/apache/xmlrpc/client/XmlRpcClient.html}XmlRpcClient}}.
+
+  The {{{apidocs/org/apache/xmlrpc/client/util/ClientFactory.html}factory}}
+  can take an interface as input and returns an implementation,
+  which internally calls the server by using the
+  {{{apidocs/org/apache/xmlrpc/client/XmlRpcClient.html}XmlRpcClient}}.
+
+  Perhaps some code shows more than words. First of all, let's create
+  an interface.
+
+-----------------------------------------------------------------------------------
+    package com.foo;
+
+    public interface Adder {
+      public int add(int pNum1, int pNum2);
+    }
+-----------------------------------------------------------------------------------
+
+  The server contains an implementation:
+
+-----------------------------------------------------------------------------------
+    package com.foo;
+
+    public class AdderImpl implements Adder {
+      public int add(int pNum1, int pNum2) {
+        return pNum1 + pNum2;
+      }
+    }
+-----------------------------------------------------------------------------------
+
+  And here is how the client would use this:
+
+-----------------------------------------------------------------------------------
+    import com.foo.Adder;
+    import org.apache.xmlrpc.client.XmlRpcClient;
+    import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+    import org.apache.xmlrpc.client.util.ClientFactory;
+
+    XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+    config.setServerUrl("http://127.0.0.1:8080/xmlrpc");
+    XmlRpcClient client = new XmlRpcClient();
+    client.setConfig(config);
+    ClientFactory factory = new ClientFactory(client);
+    Adder adder = (Adder) factory.newInstance(Adder.class);
+    int sum = adder.add(2, 4);
+-----------------------------------------------------------------------------------
+
+* Exception handling
+
+  Currently, exceptions are a problem: If the server throws an exception
+  (for example an IOException), then the client receives an XmlRpcException.
+  Consequently, the generated implementation will attempt to throw the
+  XmlRpcException.
+
+  Unfortunately, the method signature will of course contain an IOException,
+  but rarely an XmlRpcException. As the XmlRpcException cannot be thrown,
+  it is converted into an UndeclaredThrowableException.
+
+  This is no problem, if you are prepared for runtime exceptions by enclosing
+  your code with proper exception handlers. (Of course, the exception handlers
+  may be in a calling method.) Only if you want to catch the exception (for
+  example, because you expect an error at a certain point), then you need
+  to consider, which exception is being trapped: If the method exposes
+  XmlRpcException, then you'll need to catch the XmlRpcException.
+  Otherwise, it's UndeclaredThrowableException.
