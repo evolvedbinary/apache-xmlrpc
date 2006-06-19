@@ -222,7 +222,7 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.4</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -237,7 +237,7 @@
         <dependency>
             <groupId>org.apache.ws.commons</groupId>
             <artifactId>ws-commons-util</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>jaxme</groupId>
@@ -314,4 +314,18 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+    <profiles>
+        <profile>
+            <activation>
+            	<jdk>1.4</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                	<groupId>org.apache.ws.commons</groupId>
+                	<artifactId>ws-commons-java5</artifactId>
+                	<version>1.0.1</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
