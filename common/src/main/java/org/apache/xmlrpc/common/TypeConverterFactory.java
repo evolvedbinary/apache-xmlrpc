@@ -15,24 +15,13 @@
  */
 package org.apache.xmlrpc.common;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
-
-/** Interface of an object, which is able to provide
- * an XML stream, containing an XML-RPC request.
- * Additionally, the object may also be used to
- * write the response as an XML stream.
+/** A {@link TypeConverterFactory} is called for creating instances
+ * of {@link TypeConverter}.
  */
-public interface ServerStreamConnection {
-    /** Returns the connections input stream.
+public interface TypeConverterFactory {
+    /** Creates an instance of {@link TypeFactory}, which may be
+     * used to create instances of the given class.
      */
-    InputStream newInputStream() throws IOException;
-    /** Returns the connections output stream.
-     */
-    OutputStream newOutputStream() throws IOException;
-    /** Closes the connection, and frees resources.
-     */
-    void close() throws IOException;
+    TypeConverter getTypeConverter(Class pClass);
 }

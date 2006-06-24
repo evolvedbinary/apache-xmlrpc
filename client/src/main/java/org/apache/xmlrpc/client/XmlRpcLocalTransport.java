@@ -15,6 +15,7 @@
  */
 package org.apache.xmlrpc.client;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,7 +23,10 @@ import java.util.Map;
 import org.apache.xmlrpc.XmlRpcConfig;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.common.TypeConverter;
+import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.common.XmlRpcExtensionException;
+import org.apache.xmlrpc.common.XmlRpcRequestProcessor;
 
 /** The default implementation of a local transport.
  */
@@ -45,6 +49,13 @@ public class XmlRpcLocalTransport extends XmlRpcTransportImpl {
 				}
 			}
 			return false;
+        } else if (pObject instanceof Collection) {
+            for (Iterator iter = ((Collection) pObject).iterator();  iter.hasNext();  ) {
+                if (isExtensionType(iter.next())) {
+                    return true;
+                }
+            }
+            return false;
 		} else if (pObject instanceof Map) {
 			Map map = (Map) pObject;
 			for (Iterator iter = map.entrySet().iterator();  iter.hasNext();  ) {
@@ -72,9 +83,10 @@ public class XmlRpcLocalTransport extends XmlRpcTransportImpl {
 				}
 			}
 		}
-		Object result;
+		final XmlRpcRequestProcessor server = ((XmlRpcLocalClientConfig) config).getXmlRpcServer();
+        Object result;
 		try {
-			result = ((XmlRpcLocalClientConfig) config).getXmlRpcServer().execute(pRequest);
+			result = server.execute(pRequest);
 		} catch (Throwable t) {
 			if (t instanceof XmlRpcClientException) {
 				throw (XmlRpcClientException) t;
@@ -88,6 +100,12 @@ public class XmlRpcLocalTransport extends XmlRpcTransportImpl {
 				throw new XmlRpcExtensionException("Result has invalid type, if isEnabledForExtensions() == false");
 			}
 		}
-		return result;
+
+		if (result == null) {
+		    return null;
+        }
+        final TypeConverterFactory typeConverterFactory = server.getTypeConverterFactory();
+        final TypeConverter typeConverter = typeConverterFactory.getTypeConverter(result.getClass());
+        return typeConverter.backConvert(result);
 	}
 }

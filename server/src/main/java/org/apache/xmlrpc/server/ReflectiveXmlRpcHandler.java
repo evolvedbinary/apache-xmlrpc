@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcHandler;
 import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.common.TypeConverter;
+import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 import org.apache.xmlrpc.metadata.Util;
 import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.AuthenticationHandler;
@@ -30,9 +32,21 @@ import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.InitializationH
 /** Default implementation of {@link XmlRpcHandler}.
  */
 public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
-	private final AbstractReflectiveHandlerMapping mapping;
+    private static class MethodData {
+        final Method method;
+        final TypeConverter[] typeConverters;
+        MethodData(Method pMethod, TypeConverterFactory pTypeConverterFactory) {
+            method = pMethod;
+            Class[] paramClasses = method.getParameterTypes();
+            typeConverters = new TypeConverter[paramClasses.length];
+            for (int i = 0;  i < paramClasses.length;  i++) {
+                typeConverters[i] = pTypeConverterFactory.getTypeConverter(paramClasses[i]);
+            }
+        }
+    }
+    private final AbstractReflectiveHandlerMapping mapping;
 	private final Class clazz;
-	private final Method[] methods;
+	private final MethodData[] methods;
     private final Object theInstance;
 
 	/** Creates a new instance.
@@ -60,11 +74,15 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	 * executing the handler. 
 	 */
 	public ReflectiveXmlRpcHandler(AbstractReflectiveHandlerMapping pMapping,
+                TypeConverterFactory pTypeConverterFactory,
 				Class pClass, boolean pInstanceIsStateless, Method[] pMethods)
             throws XmlRpcException {
 		mapping = pMapping;
 		clazz = pClass;
-		methods = pMethods;
+		methods = new MethodData[pMethods.length];
+        for (int i = 0;  i < methods.length;  i++) {
+            methods[i] = new MethodData(pMethods[i], pTypeConverterFactory); 
+        }
         theInstance = pInstanceIsStateless ? newInstance() : null;
 	}
 
@@ -89,16 +107,26 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	        args[j] = pRequest.getParameter(j);
 	    }
 	    Object instance = getInstance(pRequest);
-        if (methods.length == 1) {
-            return invoke(instance, methods[0], args);
-        } else {
-            for (int i = 0;  i < methods.length;  i++) {
-                if (Util.isMatching(methods[i], args)) {
-                    return invoke(instance, methods[i], args);
+	    for (int i = 0;  i < methods.length;  i++) {
+            MethodData methodData = methods[i];
+            TypeConverter[] converters = methodData.typeConverters;
+            if (args.length == converters.length) {
+                boolean matching = true;
+                for (int j = 0;  j < args.length;  j++) {
+                    if (!converters[j].isConvertable(args[i])) {
+                        matching = false;
+                        break;
+                    }
+                }
+                if (matching) {
+                    for (int j = 0;  j < args.length;  j++) {
+                        args[i] = converters[i].convert(args[i]);
+                    }
+                    return invoke(instance, methodData.method, args);
                 }
             }
-            throw new XmlRpcException("No method matching arguments: " + Util.getSignature(args));
-        }
+	    }
+	    throw new XmlRpcException("No method matching arguments: " + Util.getSignature(args));
     }
 
     private Object invoke(Object pInstance, Method pMethod, Object[] pArgs) throws XmlRpcException {

@@ -29,6 +29,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.server.XmlRpcServerConfig;
 import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 
 
@@ -104,7 +105,9 @@ public class XmlRpcServlet extends HttpServlet {
 	 * {@link #newXmlRpcHandlerMapping()}.
 	 */
 	protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
-		return new PropertyHandlerMapping(getClass().getClassLoader(), url, false);
+		return new PropertyHandlerMapping(getClass().getClassLoader(), url,
+                server.getTypeConverterFactory(),
+                false);
 	}
 
 	/** Creates a new instance of {@link org.apache.xmlrpc.webserver.RequestData}

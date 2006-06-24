@@ -20,6 +20,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.common.TypeConverter;
+import org.apache.xmlrpc.common.TypeConverterFactory;
+import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
 
 
 /**
@@ -31,14 +34,30 @@ import org.apache.xmlrpc.client.XmlRpcClient;
  */
 public class ClientFactory {
     private final XmlRpcClient client;
+    private final TypeConverterFactory typeConverterFactory;
     private boolean objectMethodLocal;
 
     /** Creates a new instance.
      * @param pClient A fully configured XML-RPC client, which is
      *   used internally to perform XML-RPC calls.
+     * @param pTypeConverterFactory Creates instances of {@link TypeConverterFactory},
+     *   which are used to transform the result object in its target representation.
+     */
+    public ClientFactory(XmlRpcClient pClient, TypeConverterFactory pTypeConverterFactory) {
+        typeConverterFactory = pTypeConverterFactory;
+        client = pClient;
+    }
+
+    /** Creates a new instance. Shortcut for
+     * <pre>
+     *   new ClientFactory(pClient, new TypeConverterFactoryImpl());
+     * </pre>
+     * @param pClient A fully configured XML-RPC client, which is
+     *   used internally to perform XML-RPC calls.
+     * @see TypeConverterFactoryImpl
      */
     public ClientFactory(XmlRpcClient pClient) {
-        client = pClient;
+        this(pClient, new TypeConverterFactoryImpl());
     }
 
     /** Returns the factories client.
@@ -82,7 +101,9 @@ public class ClientFactory {
                     return pMethod.invoke(pProxy, pArgs);
                 }
                 String methodName = pClass.getName() + "." + pMethod.getName();
-                return client.execute(methodName, pArgs);
+                Object result = client.execute(methodName, pArgs);
+                TypeConverter typeConverter = typeConverterFactory.getTypeConverter(pMethod.getReturnType());
+                return typeConverter.convert(result);
             }
         });
     }

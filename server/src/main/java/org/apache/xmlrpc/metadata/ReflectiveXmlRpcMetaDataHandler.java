@@ -18,6 +18,7 @@ package org.apache.xmlrpc.metadata;
 import java.lang.reflect.Method;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping;
 import org.apache.xmlrpc.server.ReflectiveXmlRpcHandler;
 
@@ -58,10 +59,11 @@ public class ReflectiveXmlRpcMetaDataHandler extends ReflectiveXmlRpcHandler
 	 * by {@link #getMethodHelp()}.
 	 */
 	public ReflectiveXmlRpcMetaDataHandler(AbstractReflectiveHandlerMapping pMapping,
+                TypeConverterFactory pTypeConverterFactory,
 			    Class pClass, boolean pInstanceIsStateless, Method[] pMethods,
 			    String[][] pSignatures, String pMethodHelp)
             throws XmlRpcException {
-		super(pMapping, pClass, pInstanceIsStateless, pMethods);
+		super(pMapping, pTypeConverterFactory, pClass, pInstanceIsStateless, pMethods);
 		signatures = pSignatures;
 		methodHelp = pMethodHelp;
 	}

@@ -3,6 +3,7 @@ package org.apache.xmlrpc.server;
 import java.util.Iterator;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.common.TypeConverterFactory;
 
 
 /** A handler mapping, which requires explicit registration
@@ -26,8 +27,9 @@ public class DynamicHandlerMapping extends AbstractReflectiveHandlerMapping {
      *     and the like.</li>
      * </ol>
      */
-    public DynamicHandlerMapping(boolean pInstanceIsStateless) {
-        super(pInstanceIsStateless);
+    public DynamicHandlerMapping(TypeConverterFactory pTypeConverterFactory,
+                boolean pInstanceIsStateless) {
+        super(pTypeConverterFactory, pInstanceIsStateless);
     }
 
 	/** Adds handlers for the given object to the mapping.

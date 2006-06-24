@@ -20,6 +20,8 @@ import java.io.IOException;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClientConfig;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.common.TypeConverterFactory;
+import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 
 import junit.framework.TestCase;
@@ -57,5 +59,9 @@ public abstract class XmlRpcTestCase extends TestCase {
                 new ServletWebServerProvider(mapping, false)
             };
         }
+    }
+
+    protected TypeConverterFactory getTypeConverterFactory() {
+        return new TypeConverterFactoryImpl();
     }
 }

@@ -185,62 +185,6 @@ public class Util {
 		return sb.toString();
 	}
 
-	/** Returns, whether the given methods signature is matched by
-     * the given parameter set.
-	 */
-    public static boolean isMatching(Method method, Object[] args) {
-        Class[] parameterClasses = method.getParameterTypes();
-        if (parameterClasses.length != args.length) {
-            return false;
-        }
-        for (int i = 0;  i < args.length;  i++) {
-            if (!isMatching(parameterClasses[i], args[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /** Returns, whether the given parameter matches the given
-     * type.
-     */
-    public static boolean isMatching(Class pParameterType, Object pArg) {
-        if (pArg == null) {
-            return !pParameterType.isPrimitive();
-        }
-        final Class c;
-        if (pParameterType.isPrimitive()) {
-            c = getObjectClass(pParameterType);
-        } else {
-            c = pParameterType;
-        }
-        return c.isAssignableFrom(pArg.getClass());
-    }
-
-    /** Given a primitive class, returns the corresponding object class.
-     */
-    public static Class getObjectClass(Class pPrimitiveClass) {
-        if (byte.class.equals(pPrimitiveClass)) {
-            return Byte.class;
-        } else if (short.class.equals(pPrimitiveClass)) {
-            return Short.class;
-        } else if (int.class.equals(pPrimitiveClass)) {
-            return Integer.class;
-        } else if (long.class.equals(pPrimitiveClass)) {
-            return Long.class;
-        } else if (float.class.equals(pPrimitiveClass)) {
-            return Float.class;
-        } else if (double.class.equals(pPrimitiveClass)) {
-            return Double.class;
-        } else if (char.class.equals(pPrimitiveClass)) {
-            return Character.class;
-        } else if (boolean.class.equals(pPrimitiveClass)) {
-            return Boolean.class;
-        } else {
-            throw new IllegalStateException("Invalid primitive class: " + pPrimitiveClass.getName());
-        }
-    }
-
     /** Returns a signature for the given parameter set. This is used
      * in error messages.
      */

@@ -70,6 +70,10 @@
         It is now possible to create and initialize handler objects per
         request.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-89">
+        Added partial support for automatic conversion of object arrays
+        to lists, or vectors. Same for maps to hash tables, or properties.
+      </action>
     </release>
     <release version="3.0a1" date="17-Feb-2005">
       <action dev="jochen" type="add">

@@ -13,4 +13,8 @@ public interface XmlRpcRequestProcessor {
 	 * @throws XmlRpcException Processing the request failed.
 	 */
 	Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
+
+	/** Returns the request processors {@link TypeConverterFactory}.
+	 */
+    TypeConverterFactory getTypeConverterFactory();
 }

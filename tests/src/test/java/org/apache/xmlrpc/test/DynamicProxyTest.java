@@ -48,6 +48,7 @@ public class DynamicProxyTest extends XmlRpcTestCase {
     protected XmlRpcHandlerMapping getHandlerMapping() throws IOException, XmlRpcException {
         return new PropertyHandlerMapping(getClass().getClassLoader(),
                                           getClass().getResource("DynamicProxyTest.properties"),
+                                          getTypeConverterFactory(),
                                           true);
     }
 

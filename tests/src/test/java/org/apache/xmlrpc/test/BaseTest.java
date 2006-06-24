@@ -31,8 +31,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
-import org.apache.xmlrpc.client.XmlRpcClientConfig;
-import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcExtensionException;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
@@ -281,9 +279,10 @@ public class BaseTest extends XmlRpcTestCase {
         }
     }
 
-	protected XmlRpcHandlerMapping getHandlerMapping() throws IOException, XmlRpcException {
+    protected XmlRpcHandlerMapping getHandlerMapping() throws IOException, XmlRpcException {
 		return new PropertyHandlerMapping(getClass().getClassLoader(),
 										  getClass().getResource("BaseTest.properties"),
+                                          getTypeConverterFactory(),
                                           true);
 	}
 

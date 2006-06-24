@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcHandler;
 import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.metadata.ReflectiveXmlRpcMetaDataHandler;
 import org.apache.xmlrpc.metadata.Util;
 import org.apache.xmlrpc.metadata.XmlRpcListableHandlerMapping;
@@ -59,10 +60,11 @@ public abstract class AbstractReflectiveHandlerMapping
             throws XmlRpcException;
     }
 
+    private final TypeConverterFactory typeConverterFactory;
+    private final boolean instanceIsStateless;
     protected Map handlerMap = new HashMap();
     private AuthenticationHandler authenticationHandler;
     private InitializationHandler initializationHandler;
-    private final boolean instanceIsStateless;
 
     /** Creates a new instance.
      * @param pInstanceIsStateless The handler
@@ -81,7 +83,9 @@ public abstract class AbstractReflectiveHandlerMapping
      *     and the like.</li>
      * </ol>
      */
-    protected AbstractReflectiveHandlerMapping(boolean pInstanceIsStateless) {
+    protected AbstractReflectiveHandlerMapping(TypeConverterFactory pTypeConverterFactory,
+                boolean pInstanceIsStateless) {
+        typeConverterFactory = pTypeConverterFactory;
         instanceIsStateless = pInstanceIsStateless;
     }
     
@@ -178,10 +182,11 @@ public abstract class AbstractReflectiveHandlerMapping
     	String[][] sig = getSignature(pMethods);
     	String help = getMethodHelp(pClass, pMethods);
     	if (sig == null  ||  help == null) {
-    		return new ReflectiveXmlRpcHandler(this, pClass, instanceIsStateless, pMethods);
+    		return new ReflectiveXmlRpcHandler(this, typeConverterFactory,
+                    pClass, instanceIsStateless, pMethods);
     	}
-    	return new ReflectiveXmlRpcMetaDataHandler(this, pClass, instanceIsStateless,
-    			pMethods, sig, help);
+    	return new ReflectiveXmlRpcMetaDataHandler(this, typeConverterFactory,
+                pClass, instanceIsStateless, pMethods, sig, help);
     }
 
     /** Creates a signature for the given method.

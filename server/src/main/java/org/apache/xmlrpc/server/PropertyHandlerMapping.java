@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.common.TypeConverterFactory;
 
 
 /** A handler mapping based on a property file. The property file
@@ -64,9 +65,10 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
      * @throws XmlRpcException Initializing the handlers failed.
      */
     public PropertyHandlerMapping(ClassLoader pClassLoader, URL pURL,
+                TypeConverterFactory pTypeConverterFactory,
                 boolean pInstanceIsStateless)
             throws IOException, XmlRpcException {
-        super(pInstanceIsStateless);
+        super(pTypeConverterFactory, pInstanceIsStateless);
         handlerMap = load(pClassLoader, pURL);
     }
 
@@ -94,9 +96,11 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
      * @throws XmlRpcException Initializing the handlers failed.
      */
     public PropertyHandlerMapping(ClassLoader pClassLoader, String pResource,
+                TypeConverterFactory pTypeConverterFactory,
                 boolean pInstanceIsStateless)
             throws IOException, XmlRpcException {
-        this(pClassLoader, asURL(pClassLoader, pResource), pInstanceIsStateless);
+        this(pClassLoader, asURL(pClassLoader, pResource), pTypeConverterFactory,
+                pInstanceIsStateless);
     }
 
     private static URL asURL(ClassLoader pClassLoader, String pResource) throws IOException {

@@ -18,6 +18,8 @@ package org.apache.xmlrpc.server;
 import org.apache.xmlrpc.XmlRpcConfig;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.common.TypeConverterFactory;
+import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
 import org.apache.xmlrpc.common.XmlRpcController;
 import org.apache.xmlrpc.common.XmlRpcRequestProcessor;
 import org.apache.xmlrpc.common.XmlRpcWorkerFactory;
@@ -32,11 +34,21 @@ import org.apache.xmlrpc.common.XmlRpcWorkerFactory;
 public class XmlRpcServer extends XmlRpcController
 		implements XmlRpcRequestProcessor {
 	private XmlRpcHandlerMapping handlerMapping;
+    private TypeConverterFactory typeConverterFactory = new TypeConverterFactoryImpl();
 	private XmlRpcServerConfig config = new XmlRpcServerConfigImpl();
 
 	protected XmlRpcWorkerFactory getDefaultXmlRpcWorkerFactory() {
 		return new XmlRpcServerWorkerFactory(this);
 	}
+
+    /** Sets the servers {@link TypeConverterFactory}.
+     */
+    public void setTypeConverterFactory(TypeConverterFactory pFactory) {
+        typeConverterFactory = pFactory;
+    }
+    public TypeConverterFactory getTypeConverterFactory() {
+        return typeConverterFactory;
+    }
 
 	/** Sets the servers configuration.
 	 * @param pConfig The new server configuration.
