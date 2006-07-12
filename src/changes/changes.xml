@@ -3,6 +3,12 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
+    <release version="3.0rc1" date="Not yet released">
+      <action dev="jochen" type="fix" due-to="Alan Burlison"
+          due-to-email="Alan.Burlison@sun.com">
+        Added a missing "synchronized" to the TimingOutCallback.
+      </action>
+    </release>
     <release version="3.0b1" date="24-Jun-2006">
       <action dev="hgomez" type="add">
         add connectionTimeout and replyTimeout in RPC clients.

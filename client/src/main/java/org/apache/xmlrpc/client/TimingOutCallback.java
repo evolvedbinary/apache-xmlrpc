@@ -69,7 +69,7 @@ public class TimingOutCallback implements AsyncCallback {
         notify();
     }
 
-    public void handleResult(XmlRpcRequest pRequest, Object pResult) {
+    public synchronized void handleResult(XmlRpcRequest pRequest, Object pResult) {
         responseSeen = true;
         result = pResult;
         notify();
