@@ -113,14 +113,14 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
             if (args.length == converters.length) {
                 boolean matching = true;
                 for (int j = 0;  j < args.length;  j++) {
-                    if (!converters[j].isConvertable(args[i])) {
+                    if (!converters[j].isConvertable(args[j])) {
                         matching = false;
                         break;
                     }
                 }
                 if (matching) {
                     for (int j = 0;  j < args.length;  j++) {
-                        args[i] = converters[i].convert(args[i]);
+                        args[j] = converters[j].convert(args[j]);
                     }
                     return invoke(instance, methodData.method, args);
                 }

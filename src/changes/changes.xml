@@ -8,10 +8,15 @@
           due-to-email="Alan.Burlison@sun.com">
         Added a missing "synchronized" to the TimingOutCallback.
       </action>
+      <action dev="jochen" type="fix" due-to="Chris Conrad"
+          due-to-email="rhavyn@gmail.com">
+        Fixed an invalid index, that caused the ReflectiveXmlRpcHandler to fail
+        detecting a method.
+      </action>
     </release>
     <release version="3.0b1" date="24-Jun-2006">
       <action dev="hgomez" type="add">
-        add connectionTimeout and replyTimeout in RPC clients.
+        Add connectionTimeout and replyTimeout in RPC clients.
         CommonsTransport support connection and reply timeout, liteHttpTransport only support reply timeout
       </action>
       <action dev="jochen" type="fix" due-to="Marek Ludha"
