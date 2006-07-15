@@ -1,9 +1,8 @@
-           --------------------
-           Advanced Programming
-           --------------------
+           ---------------------------
+           Advanced Programming Topics
+           ---------------------------
 
-  The Apache XML-RPC library offers some advanced techniques, which
-  are being described on this page.
+  This page describes some advanced topics.
 
 Dynamic proxies
 

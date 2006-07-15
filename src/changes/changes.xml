@@ -13,6 +13,9 @@
         Fixed an invalid index, that caused the ReflectiveXmlRpcHandler to fail
         detecting a method.
       </action>
+      <action dev="jochen" type="enhancement">
+        Added documentation for accessing an SSL server.
+      </action>
     </release>
     <release version="3.0b1" date="24-Jun-2006">
       <action dev="hgomez" type="add">
