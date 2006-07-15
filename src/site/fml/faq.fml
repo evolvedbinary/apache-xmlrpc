@@ -209,5 +209,12 @@ public class MyXmlRpcServlet extends XmlRpcServlet {
         ]]></source>
       </answer>
     </faq>
+
+    <faq id="client_ip_webserver">
+      <question>How to I get the clients IP address in a handler when using the WebServer class?</question>
+      <answer>
+        Use the ServletWebServer class and see the answer to the previous question.
+      </answer>
+    </faq>
   </part>
 </faqs>
