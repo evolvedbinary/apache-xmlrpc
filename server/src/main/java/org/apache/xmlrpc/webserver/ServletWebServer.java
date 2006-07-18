@@ -26,12 +26,35 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.ThreadPool;
 
 
-/** A subclass of {@link WebServer}, which emulates a servlet
- * container. Mainly useful for debugging.
+/**
+ * <p>This is a subclass of the {@link WebServer}, which offers a minimal
+ * servlet API. It is recommended to use this class, rather than the
+ * {@link WebServer}, because it offers you a smooth migration path to
+ * a full blown servlet engine.</p>
+ * <p>Use of the {@link ServletWebServer} goes like this: First of all,
+ * create a servlet. It may be an instance of {@link XmlRpcServlet} or
+ * a subclass thereof. Note, that servlets are stateless: One servlet
+ * may be used by multiple threads (aka requests) concurrently. In
+ * other words, the servlet must not have any instance variables,
+ * other than those which are read only after the servlets
+ * initialization.</p>
+ * <p>The XmlRpcServlet is by default using a property file named
+ * <code>org/apache/xmlrpc/server/webserver/XmlRpcServlet.properties</code>.
+ * See the {@link PropertyHandlerMapping} for details on the property
+ * file.</p>
+ * <pre>
+ *   final int portNumber = 8088;
+ *
+ *   ClassLoader cl = Thread.currentThread().getContextClassLoader();
+ *   XmlRpcServlet servlet = new XmlRpcServlet();
+ *   ServletWebServer webServer = new ServletWebServer(servlet, port);
+ *   webServer.start();
+ * </pre>
  */
 public class ServletWebServer extends WebServer {
 	/** This exception is thrown by the request handling classes,

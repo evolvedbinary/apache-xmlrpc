@@ -32,7 +32,45 @@ import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.ThreadPool;
 
 
-/** A minimal web server that exclusively handles XML-RPC requests.
+/**
+ * <p>The {@link WebServer} is a minimal HTTP server, that might be used
+ * as an embedded web server.</p>
+ * <p>Use of the {@link WebServer} has grown very popular amongst users
+ * of Apache XML-RPC. Why this is the case, can hardly be explained,
+ * because the {@link WebServer} is at best a workaround, compared to
+ * full blown servlet engines like Tomcat or Jetty. For example, under
+ * heavy load it will almost definitely be slower than a real servlet
+ * engine, because it does neither support proper keepalive (multiple
+ * requests per physical connection) nor chunked mode (in other words,
+ * it cannot stream requests).</p>
+ * <p>If you still insist in using the {@link WebServer}, it is
+ * recommended to use its subclass, the {@link ServletWebServer} instead,
+ * which offers a minimal subset of the servlet API. In other words,
+ * you keep yourself the option to migrate to a real servlet engine
+ * later.</p>
+ * <p>Use of the {@link WebServer} goes roughly like this: First of all,
+ * create a property file (for example "MyHandlers.properties") and
+ * add it to your jar file. The property keys are handler names and
+ * the property values are the handler classes. Once that is done,
+ * create an instance of WebServer:
+ * <pre>
+ *   final int portNumber = 8088;
+ *   final String propertyFile = "MyHandler.properties";
+ *
+ *   ClassLoader cl = Thread.currentThread().getContextClassLoader();
+ *   URL url = cl.getResource(property);
+ *   if (url == null) {
+ *     throw new NullPointerException("No such resource: " + property);
+ *   }
+ *   PropertyHandlerMapping mapping = new PropertyHandlerMapping(cl,
+ *       url, new TypeConverterFactoryImpl(), false);
+ *   WebServer webServer = new WebServer(port);
+ *   XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
+ *   XmlRpcServer server = server.getXmlRpcServer();
+ *   server.setConfig(config);
+ *   server.setHandlerMapping(mapping);
+ *   server.start();
+ * </pre>
  */
 public class WebServer implements Runnable {
 	private static final Log log = LogFactory.getLog(WebServer.class);
