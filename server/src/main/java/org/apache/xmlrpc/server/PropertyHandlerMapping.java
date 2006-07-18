@@ -26,19 +26,14 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.TypeConverterFactory;
 
 
-/** A handler mapping based on a property file. The property file
+/**
+ * A handler mapping based on a property file. The property file
  * contains a set of properties. The property key is taken as the
  * handler name. The property value is taken as the name of a
  * class being instantiated. For any non-void, non-static, and
  * public method in the class, an entry in the handler map is
- * generated.<br>
- * The following constrains apply to the classes:
- * <ol>
- *   <li>The classes must be stateless. In other words, any
- *     instance of the class must be completely thread safe.</li>
- * </ol>
- * A typical use would be, to specify interface names as the
- * property keys and implementations as the values.
+ * generated. A typical use would be, to specify interface names
+ * as the property keys and implementations as the values.
  */
 public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
     /** Creates a new instance, loading the property file
