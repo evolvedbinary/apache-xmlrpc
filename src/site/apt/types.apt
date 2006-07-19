@@ -55,6 +55,9 @@ Data Types
 |                      |                    | precision, floating point number.   |
 |                      |                    | (32 bit)                            |
 *----------------------+--------------------+-------------------------------------+
+| Long                 | <ex:i8>            | A 64-bit, signed, and non-null,     |
+|                      |                    | integer value.                      |
+*----------------------+--------------------+-------------------------------------+
 | org.w3c.dom.Node     | <ex:dom>           | A DOM node, which is being          |
 |                      |                    | transmitted as an embedded XML      |
 |                      |                    | fragment.                           |
