@@ -25,7 +25,8 @@ import org.apache.xmlrpc.XmlRpcRequestConfig;
  * {@link org.apache.xmlrpc.XmlRpcRequest}.
  */
 public class XmlRpcClientRequestImpl implements XmlRpcRequest {
-	private final XmlRpcRequestConfig config;
+    private static final Object[] ZERO_PARAMS = new Object[0];
+    private final XmlRpcRequestConfig config;
 	private final String methodName;
 	private final Object[] params;
 
@@ -45,10 +46,7 @@ public class XmlRpcClientRequestImpl implements XmlRpcRequest {
 		if (methodName == null) {
 			throw new NullPointerException("The method name must not be null.");
 		}
-		params = pParams;
-		if (params == null) {
-			throw new NullPointerException("The parameter list must not be null.");
-		}
+		params = pParams == null ? ZERO_PARAMS : pParams;
 	}
 
 	/** Creates a new instance.

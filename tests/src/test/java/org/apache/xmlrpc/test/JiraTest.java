@@ -52,6 +52,7 @@ public class JiraTest extends XmlRpcTestCase {
          */
         Properties doubledPropertyValues(Properties pMap);
     }
+
     /**
      * Handler for {@link JiraTest#testXMLRPC89()}
      */ 
@@ -188,5 +189,34 @@ public class JiraTest extends XmlRpcTestCase {
         XMLRPC89Handler handler = (XMLRPC89Handler) factory.newInstance(XMLRPC89Handler.class);
         Properties result = handler.doubledPropertyValues(values);
         verifyXMLRPC89Properties(result);
+    }
+
+    /** Handler for XMLRPC-96
+     */
+    public static class XMLRPC96Handler {
+        /** Returns the "Hello, world!" string.
+         */
+        public String getHelloWorld() {
+            return "Hello, world!";
+        }
+    }
+
+    /**
+     * Test case for <a href="http://issues.apache.org/jira/browse/XMLRPC-96">
+     * XMLRPC-96</a>
+     */
+    public void testXMLRPC96() throws Exception {
+        for (int i = 0;  i < providers.length;  i++) {
+            testXMLRPC96(providers[i]);
+        }
+    }
+
+    private void testXMLRPC96(ClientProvider pProvider) throws Exception {
+        XmlRpcClient client = pProvider.getClient();
+        client.setConfig(getConfig(pProvider));
+        String s = (String) client.execute(XMLRPC96Handler.class.getName() + ".getHelloWorld", new Object[0]);
+        assertEquals("Hello, world!", s);
+        s = (String) client.execute(XMLRPC96Handler.class.getName() + ".getHelloWorld", (Object[]) null);
+        assertEquals("Hello, world!", s);
     }
 }
