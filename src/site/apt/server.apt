@@ -22,8 +22,9 @@ Server-side XML-RPC
 
 The XML-RPC Servlet
 
-  The easiest of creating an XML-RPC Server is the XmlRpcServlet. This
-  servlet allows you to create a server within 10 minutes or so:
+  The easiest way to create an XML-RPC Server is the XmlRpcServlet, which
+  has an automatically embedded instance of XmlRpcServer. This servlet allows
+  you to create a server within 10 minutes or so:
 
     [[1]] Create a class, or a set of classes, which are implementing
           the remote procedure calls. Here's an example of such a class:
@@ -41,10 +42,7 @@ The XML-RPC Servlet
 -----------------------------------------------------------------------------------
 
           This class has two public, non-static methods, which should
-          be available to the clients. The only important thing to
-          consider is: The class must be stateless. In other words,
-          it must not contain any non-final fields. (The same restriction
-          applies, for example, to servlet classes.)
+          be available to the clients.
 
     [[2]] Create a property file, which contains at least one property.
           The property name is arbitrary, and the property value is the

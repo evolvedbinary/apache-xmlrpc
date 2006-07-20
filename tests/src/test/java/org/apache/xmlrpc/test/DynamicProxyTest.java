@@ -20,7 +20,6 @@ import java.io.IOException;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.util.ClientFactory;
-import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 
 
@@ -46,10 +45,7 @@ public class DynamicProxyTest extends XmlRpcTestCase {
     }
 
     protected XmlRpcHandlerMapping getHandlerMapping() throws IOException, XmlRpcException {
-        return new PropertyHandlerMapping(getClass().getClassLoader(),
-                                          getClass().getResource("DynamicProxyTest.properties"),
-                                          getTypeConverterFactory(),
-                                          true);
+        return getHandlerMapping("DynamicProxyTest.properties");
     }
 
     private ClientFactory getClientFactory(ClientProvider pProvider) throws Exception {

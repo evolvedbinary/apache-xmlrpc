@@ -17,13 +17,11 @@ package org.apache.xmlrpc.server;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.common.TypeConverterFactory;
 
 
 /**
@@ -36,78 +34,33 @@ import org.apache.xmlrpc.common.TypeConverterFactory;
  * as the property keys and implementations as the values.
  */
 public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
-    /** Creates a new instance, loading the property file
-     * from the given URL.
-     * @param pClassLoader Classloader being used to load the classes.
-     * @param pURL The URL, from which the property file is being
-     * loaded.
-     * @param pInstanceIsStateless The handler
-     * can operate in either of two operation modes:
-     * <ol>
-     *   <li>The object, which is actually performing the requests,
-     *     is initialized at startup. In other words, there is only
-     *     one object, which is performing all the requests.
-     *     Obviously, this is the faster operation mode. On the
-     *     other hand, it has the disadvantage, that the object
-     *     must be stateless.</li>
-     *   <li>A new object is created for any request. This is slower,
-     *     because the object needs to be initialized. On the other
-     *     hand, it allows for stateful objects, which may take
-     *     request specific configuration like the clients IP address,
-     *     and the like.</li>
-     * </ol>
+    /**
+     * Reads handler definitions from a resource file.
+     * @paramm pClassLoader The class loader being used to load
+     *   handler classes.
+     * @param pResource The resource being used, for example
+     *   "org/apache/xmlrpc/webserver/XmlRpcServlet.properties"
      * @throws IOException Loading the property file failed.
      * @throws XmlRpcException Initializing the handlers failed.
      */
-    public PropertyHandlerMapping(ClassLoader pClassLoader, URL pURL,
-                TypeConverterFactory pTypeConverterFactory,
-                boolean pInstanceIsStateless)
+    public void load(ClassLoader pClassLoader, String pResource)
             throws IOException, XmlRpcException {
-        super(pTypeConverterFactory, pInstanceIsStateless);
-        handlerMap = load(pClassLoader, pURL);
-    }
-
-    /** Creates a new instance, loading the properties from
-     * the given resource.
-     * @param pClassLoader Classloader being used to locate
-     * the resource.
-     * @param pResource Resource being loaded.
-     * @param pInstanceIsStateless The handler
-     * can operate in either of two operation modes:
-     * <ol>
-     *   <li>The object, which is actually performing the requests,
-     *     is initialized at startup. In other words, there is only
-     *     one object, which is performing all the requests.
-     *     Obviously, this is the faster operation mode. On the
-     *     other hand, it has the disadvantage, that the object
-     *     must be stateless.</li>
-     *   <li>A new object is created for any request. This is slower,
-     *     because the object needs to be initialized. On the other
-     *     hand, it allows for stateful objects, which may take
-     *     request specific configuration like the clients IP address,
-     *     and the like.</li>
-     * </ol>
-     * @throws IOException Loading the property file failed.
-     * @throws XmlRpcException Initializing the handlers failed.
-     */
-    public PropertyHandlerMapping(ClassLoader pClassLoader, String pResource,
-                TypeConverterFactory pTypeConverterFactory,
-                boolean pInstanceIsStateless)
-            throws IOException, XmlRpcException {
-        this(pClassLoader, asURL(pClassLoader, pResource), pTypeConverterFactory,
-                pInstanceIsStateless);
-    }
-
-    private static URL asURL(ClassLoader pClassLoader, String pResource) throws IOException {
         URL url = pClassLoader.getResource(pResource);
         if (url == null) {
             throw new IOException("Unable to locate resource " + pResource);
         }
-        return url;
+        load(pClassLoader, url);
     }
     
-    private Map load(ClassLoader pClassLoader, URL pURL) throws IOException, XmlRpcException {
-        Map map = new HashMap();
+    /**
+     * Reads handler definitions from a property file.
+     * @paramm pClassLoader The class loader being used to load
+     *   handler classes.
+     * @param pURL The URL from which to load the property file
+     * @throws IOException Loading the property file failed.
+     * @throws XmlRpcException Initializing the handlers failed.
+     */
+    public void load(ClassLoader pClassLoader, URL pURL) throws IOException, XmlRpcException {
         Properties props = new Properties();
         props.load(pURL.openStream());
         for (Iterator iter = props.entrySet().iterator();  iter.hasNext();  ) {
@@ -115,9 +68,8 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             Class c = newHandlerClass(pClassLoader, value);
-            registerPublicMethods(map, key, c);
+            registerPublicMethods(key, c);
         }
-        return map;
     }
 
     protected Class newHandlerClass(ClassLoader pClassLoader, String pClassName)
@@ -132,5 +84,25 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
             throw new XmlRpcException(0, "Loading class " + pClassName + " returned null.");
         }
         return c;
+    }
+
+    /** Adds handlers for the given object to the mapping.
+     * The handlers are build by invoking
+     * {@link #registerPublicMethods(String, Class)}.
+     * @param pKey The class key, which is passed
+     * to {@link #registerPublicMethods(String, Class)}.
+     * @param pClass Class, which is responsible for handling the request.
+     */
+    public void addHandler(String pKey, Class pClass) throws XmlRpcException {
+        registerPublicMethods(pKey, pClass);
+    }
+
+    /** Removes all handlers with the given class key.
+     */
+    public void removeHandler(String pKey) {
+        for (Iterator i = handlerMap.keySet().iterator(); i.hasNext();) {
+            String k = (String)i.next();
+            if (k.startsWith(pKey)) i.remove();
+        }
     }
 }

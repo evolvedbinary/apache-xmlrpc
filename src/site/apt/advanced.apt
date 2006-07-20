@@ -7,9 +7,10 @@
 Dynamic proxies
 
   Dynamic proxies are an extremely comfortable way of Client programming.
-  Basically, the idea is as follows: All handlers on the server side are
-  splitted into interface and implementation. The client library contains
-  the same interfaces. Now, rather than using the
+  Basically, the idea is as follows: All request processors on the server
+  side are splitted into interface and implementation. The interfaces are
+  shared between client and server, typically within some common jar file.
+  Now, rather than using the
   {{{apidocs/org/apache/xmlrpc/client/XmlRpcClient.html}XmlRpcClient}}
   directly,
   the programmer creates an instance of
@@ -23,7 +24,7 @@ Dynamic proxies
   {{{apidocs/org/apache/xmlrpc/client/XmlRpcClient.html}XmlRpcClient}}.
 
   Perhaps some code shows more than words. First of all, let's create
-  an interface.
+  a request processor interface.
 
 -----------------------------------------------------------------------------------
     package com.foo;
@@ -33,7 +34,7 @@ Dynamic proxies
     }
 -----------------------------------------------------------------------------------
 
-  The server contains an implementation:
+  The server contains the request processors implementation:
 
 -----------------------------------------------------------------------------------
     package com.foo;

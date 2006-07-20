@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlrpc.XmlRpcException;
 import org.w3c.dom.Node;
 
 
@@ -201,5 +202,18 @@ public class Util {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Creates a new instance of <code>pClass</code>.
+     */
+    public static Object newInstance(Class pClass) throws XmlRpcException {
+        try {
+            return pClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new XmlRpcException("Failed to instantiate class " + pClass.getName(), e);
+        } catch (IllegalAccessException e) {
+            throw new XmlRpcException("Illegal access when instantiating class " + pClass.getName(), e);
+        }
     }
 }

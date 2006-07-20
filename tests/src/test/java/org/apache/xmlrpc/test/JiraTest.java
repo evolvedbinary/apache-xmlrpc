@@ -26,7 +26,6 @@ import java.util.Vector;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.util.ClientFactory;
-import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 
 
@@ -96,10 +95,7 @@ public class JiraTest extends XmlRpcTestCase {
 
     protected XmlRpcHandlerMapping getHandlerMapping() throws IOException,
             XmlRpcException {
-        return new PropertyHandlerMapping(getClass().getClassLoader(),
-                getClass().getResource("JiraTest.properties"),
-                getTypeConverterFactory(),
-                true);
+        return getHandlerMapping("JiraTest.properties");
     }
 
     /**

@@ -22,6 +22,7 @@ import org.apache.xmlrpc.client.XmlRpcClientConfig;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
+import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 
 import junit.framework.TestCase;
@@ -42,6 +43,13 @@ public abstract class XmlRpcTestCase extends TestCase {
         XmlRpcClientConfigImpl config = getConfig(pProvider);
         config.setEnabledForExtensions(true);
         return config;
+    }
+
+    protected XmlRpcHandlerMapping getHandlerMapping(String pResource) throws IOException, XmlRpcException {
+        PropertyHandlerMapping mapping = new PropertyHandlerMapping();
+        mapping.load(getClass().getClassLoader(), getClass().getResource(pResource));
+        mapping.setTypeConverterFactory(getTypeConverterFactory());
+        return mapping;
     }
 
     public void setUp() throws Exception {

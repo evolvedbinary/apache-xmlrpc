@@ -27,10 +27,12 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcHandler;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.TypeConverterFactory;
+import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
 import org.apache.xmlrpc.metadata.ReflectiveXmlRpcMetaDataHandler;
 import org.apache.xmlrpc.metadata.Util;
 import org.apache.xmlrpc.metadata.XmlRpcListableHandlerMapping;
 import org.apache.xmlrpc.metadata.XmlRpcMetaDataHandler;
+import org.apache.xmlrpc.server.RequestProcessorFactoryFactory.RequestProcessorFactory;
 
 
 /** Abstract base class of handler mappings, which are
@@ -49,46 +51,37 @@ public abstract class AbstractReflectiveHandlerMapping
             throws XmlRpcException;
     }
 
-    /** An object, which is called for initializing the
-     * actual handler object.
-     */
-    public interface InitializationHandler {
-        /** Called for initializing the object, which
-         * is was returned by {@link ReflectiveXmlRpcHandler#newInstance()}.
-         */
-        public void init(XmlRpcRequest pRequest, Object pObject)
-            throws XmlRpcException;
-    }
-
-    private final TypeConverterFactory typeConverterFactory;
-    private final boolean instanceIsStateless;
+    private TypeConverterFactory typeConverterFactory = new TypeConverterFactoryImpl();
     protected Map handlerMap = new HashMap();
     private AuthenticationHandler authenticationHandler;
-    private InitializationHandler initializationHandler;
+    private RequestProcessorFactoryFactory requestProcessorFactoryFactory = new RequestProcessorFactoryFactory.RequestSpecificProcessorFactoryFactory();
 
-    /** Creates a new instance.
-     * @param pInstanceIsStateless The handler
-     * can operate in either of two operation modes:
-     * <ol>
-     *   <li>The object, which is actually performing the requests,
-     *     is initialized at startup. In other words, there is only
-     *     one object, which is performing all the requests.
-     *     Obviously, this is the faster operation mode. On the
-     *     other hand, it has the disadvantage, that the object
-     *     must be stateless.</li>
-     *   <li>A new object is created for any request. This is slower,
-     *     because the object needs to be initialized. On the other
-     *     hand, it allows for stateful objects, which may take
-     *     request specific configuration like the clients IP address,
-     *     and the like.</li>
-     * </ol>
+    /**
+     * Sets the mappings {@link TypeConverterFactory}.
      */
-    protected AbstractReflectiveHandlerMapping(TypeConverterFactory pTypeConverterFactory,
-                boolean pInstanceIsStateless) {
-        typeConverterFactory = pTypeConverterFactory;
-        instanceIsStateless = pInstanceIsStateless;
+    public void setTypeConverterFactory(TypeConverterFactory pFactory) {
+        typeConverterFactory = pFactory;
     }
-    
+
+    /**
+     * Returns the mappings {@link TypeConverterFactory}.
+     */
+    public TypeConverterFactory getTypeConverterFactory() {
+        return typeConverterFactory;
+    }
+
+    /** Sets the mappings {@link RequestProcessorFactoryFactory}.
+     */
+    public void setRequestProcessorFactoryFactory(RequestProcessorFactoryFactory pFactory) {
+        requestProcessorFactoryFactory = pFactory;
+    }
+
+    /** Returns the mappings {@link RequestProcessorFactoryFactory}.
+     */
+    public RequestProcessorFactoryFactory getRequestProcessorFactoryFactory() {
+        return requestProcessorFactoryFactory;
+    }
+
     /** Returns the authentication handler, if any, or null.
      */
     public AuthenticationHandler getAuthenticationHandler() {
@@ -99,18 +92,6 @@ public abstract class AbstractReflectiveHandlerMapping
      */
     public void setAuthenticationHandler(AuthenticationHandler pAuthenticationHandler) {
         authenticationHandler = pAuthenticationHandler;
-    }
-
-    /** Returns the initialization handler, if any, or null.
-     */
-    public InitializationHandler getInitializationHandler() {
-        return initializationHandler;
-    }
-
-    /** Sets the initialization handler, if any, or null.
-     */
-    public void setInitializationHandler(InitializationHandler pInitializationHandler) {
-        initializationHandler = pInitializationHandler;
     }
 
     /** Searches for methods in the given class. For any valid
@@ -126,13 +107,11 @@ public abstract class AbstractReflectiveHandlerMapping
      *     which meet the above conditins, then only the
      *     first method is valid.</li>
      * </ul>
-     * @param pMap Handler map, in which created handlers are
-     * being registered.
      * @param pKey Suffix for building handler names. A dot and
      * the method name are being added.
      * @param pType The class being inspected.
      */
-    protected void registerPublicMethods(Map pMap, String pKey,
+    protected void registerPublicMethods(String pKey,
     		Class pType) throws XmlRpcException {
     	Map map = new HashMap();
         Method[] methods = pType.getMethods();
@@ -167,7 +146,7 @@ public abstract class AbstractReflectiveHandlerMapping
             Map.Entry entry = (Map.Entry) iter.next();
             String name = (String) entry.getKey();
             Method[] mArray = (Method[]) entry.getValue();
-            pMap.put(name, newXmlRpcHandler(pType, mArray));
+            handlerMap.put(name, newXmlRpcHandler(pType, mArray));
         }
     }
 
@@ -181,12 +160,13 @@ public abstract class AbstractReflectiveHandlerMapping
             final Method[] pMethods) throws XmlRpcException {
     	String[][] sig = getSignature(pMethods);
     	String help = getMethodHelp(pClass, pMethods);
-    	if (sig == null  ||  help == null) {
+    	RequestProcessorFactory factory = requestProcessorFactoryFactory.getRequestProcessorFactory(pClass);
+        if (sig == null  ||  help == null) {
     		return new ReflectiveXmlRpcHandler(this, typeConverterFactory,
-                    pClass, instanceIsStateless, pMethods);
+                    pClass, factory, pMethods);
     	}
     	return new ReflectiveXmlRpcMetaDataHandler(this, typeConverterFactory,
-                pClass, instanceIsStateless, pMethods, sig, help);
+                pClass, factory, pMethods, sig, help);
     }
 
     /** Creates a signature for the given method.

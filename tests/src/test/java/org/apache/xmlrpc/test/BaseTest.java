@@ -32,7 +32,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.common.XmlRpcExtensionException;
-import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -280,10 +279,7 @@ public class BaseTest extends XmlRpcTestCase {
     }
 
     protected XmlRpcHandlerMapping getHandlerMapping() throws IOException, XmlRpcException {
-		return new PropertyHandlerMapping(getClass().getClassLoader(),
-										  getClass().getResource("BaseTest.properties"),
-                                          getTypeConverterFactory(),
-                                          true);
+        return getHandlerMapping("BaseTest.properties");
 	}
 
 	/** Test, whether we can invoke a method, passing a byte value.
