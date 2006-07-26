@@ -57,13 +57,9 @@ import org.apache.xmlrpc.util.ThreadPool;
  *   final int portNumber = 8088;
  *   final String propertyFile = "MyHandler.properties";
  *
+ *   PropertyHandlerMapping mapping = new PropertyHandlerMapping();
  *   ClassLoader cl = Thread.currentThread().getContextClassLoader();
- *   URL url = cl.getResource(property);
- *   if (url == null) {
- *     throw new NullPointerException("No such resource: " + property);
- *   }
- *   PropertyHandlerMapping mapping = new PropertyHandlerMapping(cl,
- *       url, new TypeConverterFactoryImpl(), false);
+ *   mapping.load(cl, propertyFile);
  *   WebServer webServer = new WebServer(port);
  *   XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
  *   XmlRpcServer server = server.getXmlRpcServer();

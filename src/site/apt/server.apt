@@ -153,3 +153,172 @@ Basic Authentication
 	  }
   }
 -----------------------------------------------------------------------------------
+
+The WebServer class
+
+  The {{{apidocs/org/apache/xmlrpc/webserver/WebServer.html}WebServer}} is a
+  minimal HTTP server, that might be used as an embedded web server.
+
+  Use of the WebServer has grown very popular amongst users of Apache XML-RPC.
+  Why this is the case, can hardly be explained, because the WebServer is at
+  best a workaround, compared to full blown servlet engines like Tomcat or
+  Jetty. For example, under heavy load it will almost definitely be slower
+  than a real servlet engine, because it does neither support proper keepalive
+  (multiple requests per physical connection) nor chunked mode (in other words,
+  it cannot stream requests).
+
+  If you still insist in using the WebServer, it is recommended to use its
+  subclass, the
+  {{{apidocs/org/apache/xmlrpc/webserver/ServletWebServer.html}ServletWebServer}}
+  instead, which offers a minimal subset of the servlet API. In other words,
+  you keep yourself the option to migrate to a real servlet engine later.
+
+  Use of the WebServer goes roughly like this: First of all, create a property
+  file (for example "MyHandlers.properties") and add it to your jar file. The
+  property keys are handler names and the property values are the handler classes.
+  Once that is done, create an instance of WebServer.
+  
+-----------------------------------------------------------------------------------
+  package org.apache.xmlrpc.demo.webserver;
+
+  import java.net.InetAddress;
+
+  import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
+  import org.apache.xmlrpc.demo.webserver.proxy.impls.AdderImpl;
+  import org.apache.xmlrpc.server.PropertyHandlerMapping;
+  import org.apache.xmlrpc.server.XmlRpcServer;
+  import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
+  import org.apache.xmlrpc.webserver.WebServer;
+
+  public class Server {
+      private static final int port = 8080;
+
+      public static void main(String[] args) throws Exception {
+          WebServer webServer = new WebServer(port);
+        
+          XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
+        
+          PropertyHandlerMapping phm = new PropertyHandlerMapping();
+          /* Load handler definitions from a property file.
+           * The property file might look like:
+           *   Calculator=org.apache.xmlrpc.demo.Calculator
+           *   org.apache.xmlrpc.demo.proxy.Adder=org.apache.xmlrpc.demo.proxy.AdderImpl
+           */
+          phm.load(Thread.currentThread().getContextClassLoader(),
+                   "MyHandlers.properties");
+
+          /* You may also provide the handler classes directly,
+           * like this:
+           * phm.addHandler("Calculator",
+           *     org.apache.xmlrpc.demo.Calculator.class);
+           * phm.addHandler(org.apache.xmlrpc.demo.proxy.Adder.class.getName(),
+           *     org.apache.xmlrpc.demo.proxy.AdderImpl.class);
+           */
+          xmlRpcServer.setHandlerMapping(dhm);
+        
+          XmlRpcServerConfigImpl serverConfig =
+              (XmlRpcServerConfigImpl) xmlRpcServer.getConfig();
+          serverConfig.setEnabledForExtensions(true);
+          serverConfig.setContentLengthOptional(false);
+
+          webServer.start();
+      }
+  }
+-----------------------------------------------------------------------------------
+
+  The Calculator class can be found above. The Adder and AdderImpl classes can
+  be found in the {{{advanced.html}proxy example}}.
+ 
+  Jimisola Laursen, who provided the above example, has also supplied an example
+  for the client:
+
+-----------------------------------------------------------------------------------
+  package org.apache.xmlrpc.demo.client;
+
+  import java.net.MalformedURLException;
+  import java.net.URL;
+
+  import org.apache.xmlrpc.XmlRpcException;
+  import org.apache.xmlrpc.client.XmlRpcClient;
+  import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+  import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
+  import org.apache.xmlrpc.client.util.ClientFactory;
+  import org.apache.xmlrpc.demo.proxy.Adder;
+
+  public class Client {
+      public static void main(String[] args) throws Exception {
+          // create configuration
+          XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+          config.setServerURL(new URL("http://127.0.0.1:8080/xmlrpc"));
+          config.setEnabledForExtensions(true);  
+          config.setConnectionTimeout(60 * 1000);
+          config.setReplyTimeout(60 * 1000);
+
+          XmlRpcClient client = new XmlRpcClient();
+        
+          // use Commons HttpClient as transport
+          client.setTransportFactory(
+              new XmlRpcCommonsTransportFactory(client));
+          // set configuration
+          client.setConfig(config);
+
+          // make the a regular call
+          Object[] params = new Object[]
+              { new Integer(2), new Integer(3) };
+          Integer result = (Integer) client.execute("Calculator.add", params);
+          System.out.println("2 + 3 = " + result);
+        
+          // make a call using dynamic proxy
+          ClientFactory factory = new ClientFactory(client);
+          Adder adder = (Adder) factory.newInstance(Adder.class);
+          int sum = adder.add(2, 4);
+          System.out.println("2 + 4 = " + sum);
+      }
+  }
+-----------------------------------------------------------------------------------
+
+
+The ServletWebServer class
+
+  This is a subclass of the standalone WebServer, which offers a minimal
+  servlet API. It is recommended to use this class, rather than the
+  WebServer, because it offers you a smooth migration path to a full
+  blown servlet engine.
+
+  Use of the
+  {{{apidocs/org/apache/xmlrpc/webserver/ServletWebServer.html}ServletWebServer}}
+  goes like this: First of all, create a servlet. It may be an instance of
+  {@link XmlRpcServlet} or a subclass thereof. Note, that servlets are stateless:
+  One servlet may be used by multiple threads (aka requests) concurrently. In
+  other words, the servlet must not have any instance variables, other than those
+  which are read only after the servlets initialization.
+
+  The XmlRpcServlet is by default using a property file named
+  <<<org/apache/xmlrpc/server/webserver/XmlRpcServlet.properties>>>.
+  See the
+  {{{apidocs/org/apache/xmlrpc/server/PropertyHandlerMapping.html}PropertyHandlerMapping}}
+  for details on the property file.
+
+-----------------------------------------------------------------------------------
+  package org.apache.xmlrpc.demo.webserver;
+
+  import java.net.InetAddress;
+
+  import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
+  import org.apache.xmlrpc.demo.webserver.proxy.impls.AdderImpl;
+  import org.apache.xmlrpc.server.PropertyHandlerMapping;
+  import org.apache.xmlrpc.server.XmlRpcServer;
+  import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
+  import org.apache.xmlrpc.webserver.ServletWebServer;
+
+  public class ServletServer {
+      private static final int port = 8080;
+
+      public static void main(String[] args) throws Exception {
+          ClassLoader cl = Thread.currentThread().getContextClassLoader();
+          XmlRpcServlet servlet = new XmlRpcServlet();
+          ServletWebServer webServer = new ServletWebServer(servlet, port);
+          webServer.start();
+      }
+  }
+-----------------------------------------------------------------------------------
