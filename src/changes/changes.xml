@@ -3,7 +3,7 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
-    <release version="3.0rc1" date="Not yet released">
+    <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"
           due-to-email="Alan.Burlison@sun.com">
         Added a missing "synchronized" to the TimingOutCallback.
@@ -13,10 +13,10 @@
         Fixed an invalid index, that caused the ReflectiveXmlRpcHandler to fail
         detecting a method.
       </action>
-      <action dev="jochen" type="enhancement" issue="XMLRPC-93">
+      <action dev="jochen" type="add" issue="XMLRPC-93">
         Added documentation for accessing an SSL server.
       </action>
-      <action dev="jochen" type="enhancement" due-to="Jimisola Laursen"
+      <action dev="jochen" type="add" due-to="Jimisola Laursen"
           due-to-email="lists@jimisola.com" issue="XMLRPC-96">
 	    A null parameter list is now treated as an empty object array.
       </action>

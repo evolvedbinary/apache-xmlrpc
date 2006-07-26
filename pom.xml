@@ -4,7 +4,7 @@
     <groupId>org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
     <name>Apache XML-RPC</name>
-    <version>3.0b1</version>
+    <version>3.0rc1</version>
     <description>
         Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol
         that uses XML over HTTP to implement remote procedure calls.
@@ -160,9 +160,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0b1</connection>
-        <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0b1</developerConnection>
-        <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0b1</url>
+        <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</connection>
+        <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</developerConnection>
+        <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</url>
     </scm>
     <organization>
         <name>Apache Software Foundation</name>
@@ -274,7 +274,7 @@
         <repository>
             <id>people.apache.org</id>
             <name>Apache Maven Distributions</name>
-            <url>scp://people.apache.org/www/www.apache.org/dist/maven-repository</url>
+            <url>scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
         </repository>
         <site>
             <id>people.apache.org</id>
