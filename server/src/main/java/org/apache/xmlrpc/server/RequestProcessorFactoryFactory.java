@@ -89,7 +89,7 @@ public interface RequestProcessorFactoryFactory {
     public static class RequestSpecificProcessorFactoryFactory
             implements RequestProcessorFactoryFactory {
         /**
-         * Subclasses may override this method for request specific conficuration.
+         * Subclasses may override this method for request specific configuration.
          * A typical subclass will look like this:
          * <pre>
          *   public class MyRequestProcessorFactoryFactory
