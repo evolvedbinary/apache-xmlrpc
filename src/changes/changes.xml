@@ -3,13 +3,20 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
+    <release version="3.0" date="Not yet released">
+      <action dev="jochen" type="fix" due-to="Matt Preston"
+          due-to-email="matt@knowledgeview.co.uk" issue="XMLRPC-100">
+        Fixed the spelling of CharSetXmlWriterFactory, which made
+        the class basically useless.
+      </action>
+    </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"
           due-to-email="Alan.Burlison@sun.com">
         Added a missing "synchronized" to the TimingOutCallback.
       </action>
       <action dev="jochen" type="fix" due-to="Chris Conrad"
-          due-to-email="rhavyn@gmail.com" issue="XMLRPC-93">
+          due-to-email="rhavyn@gmail.com" issue="XMLRPC-94">
         Fixed an invalid index, that caused the ReflectiveXmlRpcHandler to fail
         detecting a method.
       </action>

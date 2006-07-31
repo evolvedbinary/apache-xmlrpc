@@ -24,7 +24,7 @@ import org.apache.ws.commons.serialize.XMLWriter;
  * {@link org.apache.ws.commons.serialize.CharSetXMLWriter}.
  */
 public class CharSetXmlWriterFactory extends BaseXmlWriterFactory {
-	protected XMLWriter newXMLWriter() {
+    protected XMLWriter newXmlWriter() {
 		return new CharSetXMLWriter();
 	}
 }
