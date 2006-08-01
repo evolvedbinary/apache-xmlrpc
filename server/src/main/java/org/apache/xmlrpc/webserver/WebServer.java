@@ -188,7 +188,7 @@ public class WebServer implements Runnable {
 				if (i == 10) {
 					throw e;
 				} else {
-					long waitUntil = System.currentTimeMillis();
+					long waitUntil = System.currentTimeMillis() + 1000;
 					for (;;) {
 						long l = waitUntil - System.currentTimeMillis();
 						if (l > 0) {

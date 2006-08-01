@@ -9,6 +9,11 @@
         Fixed the spelling of CharSetXmlWriterFactory, which made
         the class basically useless.
       </action>
+      <action dev="jochen" type="fix" due-to="Stanislav Miklik"
+          due-to-email="stanislav.miklik@gmail.com">
+        Fixed that the WebServer didn't wait before retrying to
+        bind to the server socket.
+      </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"
