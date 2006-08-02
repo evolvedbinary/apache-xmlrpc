@@ -196,7 +196,9 @@ public class WebServer implements Runnable {
 								Thread.sleep(l);
 							} catch (InterruptedException ex) {
 							}
-						}
+						} else {
+						    break;
+                        }
 					}
 				}
 			}
