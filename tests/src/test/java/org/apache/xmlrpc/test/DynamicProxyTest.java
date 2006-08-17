@@ -35,7 +35,7 @@ public class DynamicProxyTest extends XmlRpcTestCase {
         public int add(int pNum1, int pNum2);
     }
 
-    /** Implementation of {@link Adder}, which is used by
+    /** Implementation of {@link DynamicProxyTest.Adder}, which is used by
      * the server.
      */
     public static class AdderImpl implements Adder {

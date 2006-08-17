@@ -23,7 +23,7 @@ import java.util.List;
  * the pool
  */
 public class ThreadPool {
-	/** The thread pool contains instances of {@link Task}.
+	/** The thread pool contains instances of {@link ThreadPool.Task}.
 	 */
 	public interface Task {
 		/** Performs the task.
