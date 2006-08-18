@@ -39,72 +39,60 @@ import org.xml.sax.XMLReader;
  * the response,
  */
 public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
-	protected class RequestWriter {
-		private final XmlRpcRequest request;
+    protected interface ReqWriter {
+        /**
+         * Writes the requests data to the given output stream.
+         * The method ensures, that the target is being closed.
+         */
+        void write(OutputStream pStream) throws XmlRpcException, IOException, SAXException;
+    }
 
-		protected RequestWriter(XmlRpcRequest pRequest) {
-			request = pRequest;
-		}
+    protected class ReqWriterImpl implements ReqWriter {
+        private final XmlRpcRequest request;
 
-		protected XmlRpcRequest getRequest() {
-			return request;
-		}
+        protected ReqWriterImpl(XmlRpcRequest pRequest) {
+            request = pRequest;
+        }
 
-		/** Writes the requests XML data to the given output stream,
-		 * possibly compressing it. Ensures, that the output stream
-		 * is being closed.
-		 */
-		protected void write(OutputStream pStream) throws XmlRpcException {
-			XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) request.getConfig();
-			if (isCompressingRequest(config)) {
-				try {
-					GZIPOutputStream gStream = new GZIPOutputStream(pStream);
-					writeUncompressed(gStream);
-					pStream.close();
-					pStream = null;
-				} catch (IOException e) {
-					throw new XmlRpcException("Failed to write request: " + e.getMessage(), e);
-				} finally {
-					if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
-				}
-			} else {
-				writeUncompressed(pStream);
-			}
-		}
+        /** Writes the requests uncompressed XML data to the given
+         * output stream. Ensures, that the output stream is being
+         * closed.
+         */
+        public void write(OutputStream pStream)
+                throws XmlRpcException, IOException, SAXException {
+            final XmlRpcStreamConfig config = (XmlRpcStreamConfig) request.getConfig();
+            try {
+                ContentHandler h = getClient().getXmlWriterFactory().getXmlWriter(config, pStream);
+                XmlRpcWriter xw = new XmlRpcWriter(config, h, getClient().getTypeFactory());
+                xw.write(request);
+                pStream.close();
+                pStream = null;
+            } finally {
+                if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
+            }
+        }
+    }
 
-		/** Writes the requests uncompressed XML data to the given
-		 * output stream. Ensures, that the output stream is being
-		 * closed.
-		 */
-		protected void writeUncompressed(OutputStream pStream)
-				throws XmlRpcException {
-			final XmlRpcStreamConfig config = (XmlRpcStreamConfig) request.getConfig();
-			try {
-				ContentHandler h = getClient().getXmlWriterFactory().getXmlWriter(config, pStream);
-				XmlRpcWriter xw = new XmlRpcWriter(config, h, getClient().getTypeFactory());
-				xw.write(request);
-				pStream.close();
-				pStream = null;
-			} catch (SAXException e) {
-				Exception ex = e.getException();
-				if (ex != null  &&  ex instanceof XmlRpcException) {
-					throw (XmlRpcException) ex;
-				} else {
-					throw new XmlRpcClientException("Failed to send request: " + e.getMessage(), e);
-				}
-			} catch (IOException e) {
-				throw new XmlRpcException("Failed to write request: " + e.getMessage(), e);
-			} finally {
-				if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
-			}
-		}
-	}
+    protected class GzipReqWriter implements ReqWriter {
+        private final ReqWriter reqWriter;
+        protected GzipReqWriter(ReqWriter pReqWriter) {
+            reqWriter = pReqWriter;
+        }
 
-	protected RequestWriter newRequestWriter(XmlRpcRequest pRequest)
-			throws XmlRpcException {
-		return new RequestWriter(pRequest);
-	}
-	
+        public void write(OutputStream pStream) throws XmlRpcException, IOException, SAXException {
+            try {
+                GZIPOutputStream gStream = new GZIPOutputStream(pStream);
+                reqWriter.write(gStream);
+                pStream.close();
+                pStream = null;
+            } catch (IOException e) {
+                throw new XmlRpcException("Failed to write request: " + e.getMessage(), e);
+            } finally {
+                if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
+            }
+        }
+    }
+
 	/** Creates a new instance on behalf of the given client.
 	 */
 	protected XmlRpcStreamTransport(XmlRpcClient pClient) {
@@ -122,10 +110,6 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 	 */
 	protected abstract boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig);
 
-	/** Invokes the request writer.
-	 */
-	protected abstract void writeRequest(RequestWriter pWriter) throws XmlRpcException;
-
 	/** Returns the input stream, from which the response is
 	 * being read.
 	 */
@@ -136,12 +120,24 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 			&& pConfig.isGzipCompressing();
 	}
 
+    protected ReqWriter newReqWriter(XmlRpcRequest pRequest)
+            throws XmlRpcException, IOException, SAXException {
+        ReqWriter reqWriter = new ReqWriterImpl(pRequest);
+        if (isCompressingRequest((XmlRpcStreamRequestConfig) pRequest.getConfig())) {
+            reqWriter = new GzipReqWriter(reqWriter);
+        }
+        return reqWriter;
+    }
+
+    protected abstract void writeRequest(ReqWriter pWriter)
+        throws XmlRpcException, IOException, SAXException;
+    
 	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
 		XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) pRequest.getConfig();
 		boolean closed = false;
 		try {
-			RequestWriter writer = newRequestWriter(pRequest);
-			writeRequest(writer);
+            ReqWriter reqWriter = newReqWriter(pRequest);
+			writeRequest(reqWriter);
 			InputStream istream = getInputStream();
 			if (isResponseGzipCompressed(config)) {
 				istream = new GZIPInputStream(istream);
@@ -153,6 +149,13 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		} catch (IOException e) {
 			throw new XmlRpcException("Failed to read servers response: "
 					+ e.getMessage(), e);
+        } catch (SAXException e) {
+            Exception ex = e.getException();
+            if (ex != null  &&  ex instanceof XmlRpcException) {
+                throw (XmlRpcException) ex;
+            }
+            throw new XmlRpcException("Failed to generate request: "
+                    + e.getMessage(), e);
 		} finally {
 			if (!closed) { try { close(); } catch (Throwable ignore) {} }
 		}

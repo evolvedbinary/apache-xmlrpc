@@ -2,7 +2,6 @@ package org.apache.xmlrpc.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
@@ -10,6 +9,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
+import org.xml.sax.SAXException;
 
 
 /** Default implementation of an HTTP transport, based on the
@@ -61,13 +61,7 @@ public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-	protected void writeRequest(RequestWriter pWriter) throws XmlRpcException {
-		OutputStream ostream;
-		try {
-			 ostream = conn.getOutputStream();
-		} catch (IOException e) {
-			throw new XmlRpcException("Failed to create output stream: " + e.getMessage(), e);
-		}
-		pWriter.write(ostream);
+	protected void writeRequest(ReqWriter pWriter) throws IOException, XmlRpcException, SAXException {
+        pWriter.write(conn.getOutputStream());
 	}
 }

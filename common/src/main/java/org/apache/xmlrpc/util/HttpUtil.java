@@ -40,11 +40,12 @@ public class HttpUtil {
         if (pUser == null) {
 			return null;
         }
-		String s = pUser + ':' + pPassword;
+        final String s = pUser + ':' + pPassword;
 		if (pEncoding == null) {
 			pEncoding = XmlRpcStreamConfig.UTF8_ENCODING;
 		}
-		return new String(Base64.encode(s.getBytes(pEncoding))).trim();
+        final byte[] bytes = s.getBytes(pEncoding);
+		return Base64.encode(s.getBytes(pEncoding), 0, bytes.length, 0, null);
     }
 
 	/** Returns, whether the HTTP header value <code>pHeaderValue</code>
@@ -140,7 +141,11 @@ public class HttpUtil {
 		String auth = st.nextToken();
 	    try {
 	        byte[] c = Base64.decode(auth.toCharArray(), 0, auth.length());
-	        String str = new String(c, pConfig.getBasicEncoding());
+	        String enc = pConfig.getBasicEncoding();
+            if (enc == null) {
+                enc = XmlRpcStreamConfig.UTF8_ENCODING;
+            }
+            String str = new String(c, enc);
 	        int col = str.indexOf(':');
 			if (col >= 0) {
 				pConfig.setBasicUserName(str.substring(0, col));

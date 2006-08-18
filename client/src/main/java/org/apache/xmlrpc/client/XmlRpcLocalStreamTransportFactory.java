@@ -25,17 +25,19 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestProcessor;
  * and parsing.
  */
 public class XmlRpcLocalStreamTransportFactory extends XmlRpcStreamTransportFactory {
-	private final XmlRpcLocalStreamTransport LOCAL_STREAM_TRANSPORT;
+    private final XmlRpcStreamRequestProcessor server;
 
-	/** Creates a new instance.
+    /** Creates a new instance.
 	 * @param pClient The client controlling the factory.
 	 * @param pServer An instance of {@link XmlRpcStreamRequestProcessor}.
 	 */
 	public XmlRpcLocalStreamTransportFactory(XmlRpcClient pClient,
 			XmlRpcStreamRequestProcessor pServer) {
 		super(pClient);
-		LOCAL_STREAM_TRANSPORT = new XmlRpcLocalStreamTransport(pClient, pServer);
-	}
+		server = pServer;
+    }
 
-	public XmlRpcTransport getTransport() { return LOCAL_STREAM_TRANSPORT; }
+	public XmlRpcTransport getTransport() {
+        return new XmlRpcLocalStreamTransport(getClient(), server);
+	}
 }

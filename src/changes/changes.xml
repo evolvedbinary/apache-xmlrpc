@@ -18,6 +18,21 @@
           due-to-email="stanislav.miklik@gmail.com">
         Fixed an endless loop, if the WebServer threw a BindException.
       </action>
+      <action dev="jochen" type="fix" due-to="Landon Fuller"
+          due-to-email="landonf@threerings.net" issue="XMLRPC-104">
+        A NullPointerException was triggered, if the BasicEncoding was set to null.
+      </action>
+      <action dev="jochen" type="fix" due-to="Landon Fuller"
+          due-to-email="landonf@threerings.net" issue="XMLRPC-104">
+		Basic authentication didn't work, if the base64 encoded string with
+		user name and password contained more than 72 characters.
+      </action>
+      <action dev="jochen" type="fix" due-to="Landon Fuller"
+          due-to-email="landonf@threerings.net">
+        Basic authentication didn't work with the commons http transport,
+        because the commons httpclient wasn't configured to send credentials
+        by default. (It was waiting for a challenge.)
+      </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"

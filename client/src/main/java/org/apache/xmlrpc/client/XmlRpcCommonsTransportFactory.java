@@ -20,17 +20,14 @@ package org.apache.xmlrpc.client;
  * HTTP Client.
  */
 public class XmlRpcCommonsTransportFactory extends XmlRpcTransportFactoryImpl {
-	private final XmlRpcCommonsTransport COMMONS_TRANSPORT;
-
 	/** Creates a new instance.
 	 * @param pClient The client, which is controlling the factory.
 	 */
 	public XmlRpcCommonsTransportFactory(XmlRpcClient pClient) {
 		super(pClient);
-		COMMONS_TRANSPORT = new XmlRpcCommonsTransport(pClient);
 	}
 
 	public XmlRpcTransport getTransport() {
-		return COMMONS_TRANSPORT;
+		return new XmlRpcCommonsTransport(getClient());
 	}
 }

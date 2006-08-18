@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.util.HttpUtil;
+import org.xml.sax.SAXException;
 
 
 /** Abstract base implementation of an HTTP transport. Base class for the
@@ -15,29 +16,27 @@ import org.apache.xmlrpc.util.HttpUtil;
  * or {@link org.apache.xmlrpc.client.XmlRpcCommonsTransport}.
  */
 public abstract class XmlRpcHttpTransport extends XmlRpcStreamTransport {
-	protected class ByteArrayRequestWriter extends RequestWriter {
-		private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    protected class ByteArrayReqWriter implements ReqWriter {
+        private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayReqWriter(XmlRpcRequest pRequest)
+                throws XmlRpcException, IOException, SAXException {
+            new ReqWriterImpl(pRequest).write(baos);
+        }
 
-		protected ByteArrayRequestWriter(XmlRpcRequest pRequest)
-				throws XmlRpcException {
-			super(pRequest);
-			super.writeUncompressed(baos);
-		}
+        protected int getContentLength() {
+            return baos.size();
+        }
 
-		protected void writeUncompressed(OutputStream pStream) throws XmlRpcException {
-			try {
-				baos.writeTo(pStream);
-				pStream.close();
-				pStream = null;
-			} catch (IOException e) {
-				throw new XmlRpcException("Failed to write request: " + e.getMessage(), e);
-			} finally {
-				if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
-			}
-		}
-
-		protected int getContentLength() { return baos.size(); }
-	}
+        public void write(OutputStream pStream) throws IOException {
+            try {
+                baos.writeTo(pStream);
+                pStream.close();
+                pStream = null;
+            } finally {
+                if (pStream != null) { try { pStream.close(); } catch (Throwable ignore) {} }
+            }
+        }
+    }
 
 	private String userAgent;
 
@@ -95,20 +94,23 @@ public abstract class XmlRpcHttpTransport extends XmlRpcStreamTransport {
 		return super.sendRequest(pRequest);
 	}
 
-	protected boolean isUsingByteArrayOutput(XmlRpcHttpClientConfig pConfig) throws XmlRpcException {
+	protected boolean isUsingByteArrayOutput(XmlRpcHttpClientConfig pConfig) {
 		return !pConfig.isEnabledForExtensions()
 			|| !pConfig.isContentLengthOptional();
 	}
 
-	protected RequestWriter newRequestWriter(XmlRpcRequest pRequest)
-			throws XmlRpcException {
+	protected ReqWriter newReqWriter(XmlRpcRequest pRequest)
+			throws XmlRpcException, IOException, SAXException {
 		final XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();
-		if (isUsingByteArrayOutput(config)) {
-			ByteArrayRequestWriter result = new ByteArrayRequestWriter(pRequest);
-			setContentLength(result.getContentLength());
-			return result;
+        if (isUsingByteArrayOutput(config)) {
+            ByteArrayReqWriter reqWriter = new ByteArrayReqWriter(pRequest);
+            setContentLength(reqWriter.getContentLength());
+            if (isCompressingRequest(config)) {
+                return new GzipReqWriter(reqWriter);
+            }
+            return reqWriter;
 		} else {
-			return super.newRequestWriter(pRequest);
+			return super.newReqWriter(pRequest);
 		}
 	}
 }

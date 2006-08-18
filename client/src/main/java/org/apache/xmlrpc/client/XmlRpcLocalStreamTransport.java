@@ -17,12 +17,15 @@ package org.apache.xmlrpc.client;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.LocalStreamConnection;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestProcessor;
+import org.xml.sax.SAXException;
 
 
 /** Another local transport for debugging and testing. This one is
@@ -34,6 +37,7 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestProcessor;
 public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 	private final XmlRpcStreamRequestProcessor localServer;
 	private LocalStreamConnection conn;
+    private XmlRpcRequest request;
 	
 	/** Creates a new instance.
 	 * @param pClient The client, which is controlling the transport.
@@ -57,10 +61,17 @@ public class XmlRpcLocalStreamTransport extends XmlRpcStreamTransport {
 		return new ByteArrayInputStream(conn.getResponse().toByteArray());
 	}
 
-	protected void writeRequest(RequestWriter pWriter) throws XmlRpcException {
+	protected ReqWriter newReqWriter(XmlRpcRequest pRequest)
+            throws XmlRpcException, IOException, SAXException {
+	    request = pRequest;
+        return super.newReqWriter(pRequest);
+    }
+
+    protected void writeRequest(ReqWriter pWriter)
+            throws XmlRpcException, IOException, SAXException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();		
 		pWriter.write(baos);
-		XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) pWriter.getRequest().getConfig();
+		XmlRpcStreamRequestConfig config = (XmlRpcStreamRequestConfig) request.getConfig();
 		conn = new LocalStreamConnection(config, new ByteArrayInputStream(baos.toByteArray()));
 	}
 }

@@ -17,6 +17,8 @@ package org.apache.xmlrpc.test;
 
 import java.io.IOException;
 
+import javax.servlet.ServletException;
+
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClientConfig;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -52,20 +54,23 @@ public abstract class XmlRpcTestCase extends TestCase {
         return mapping;
     }
 
+    protected ClientProvider[] initProviders(XmlRpcHandlerMapping pMapping) throws ServletException, IOException {
+        return new ClientProvider[]{
+                new LocalTransportProvider(pMapping),
+                new LocalStreamTransportProvider(pMapping),
+                new LiteTransportProvider(pMapping, true),
+                // new LiteTransportProvider(mapping, false), Doesn't support HTTP/1.1
+                new SunHttpTransportProvider(pMapping, true),
+                new SunHttpTransportProvider(pMapping, false),
+                new CommonsProvider(pMapping),
+                new ServletWebServerProvider(pMapping, true),
+                new ServletWebServerProvider(pMapping, false)
+            };
+    }
+
     public void setUp() throws Exception {
         if (providers == null) {
-            XmlRpcHandlerMapping mapping = getHandlerMapping();
-            providers = new ClientProvider[]{
-                new LocalTransportProvider(mapping),
-                new LocalStreamTransportProvider(mapping),
-                new LiteTransportProvider(mapping, true),
-                // new LiteTransportProvider(mapping, false), Doesn't support HTTP/1.1
-                new SunHttpTransportProvider(mapping, true),
-                new SunHttpTransportProvider(mapping, false),
-                new CommonsProvider(mapping),
-                new ServletWebServerProvider(mapping, true),
-                new ServletWebServerProvider(mapping, false)
-            };
+            providers = initProviders(getHandlerMapping());
         }
     }
 

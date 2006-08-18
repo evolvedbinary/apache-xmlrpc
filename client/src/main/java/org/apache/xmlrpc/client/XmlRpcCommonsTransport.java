@@ -16,6 +16,7 @@
 package org.apache.xmlrpc.client;
 
 import java.io.BufferedOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,6 +35,7 @@ import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 import org.apache.xmlrpc.util.XmlRpcIOException;
+import org.xml.sax.SAXException;
 
 
 /** An HTTP transport factory, which is based on the Jakarta Commons
@@ -44,6 +46,7 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	private static final String userAgent = USER_AGENT + " (Jakarta Commons httpclient Transport)";
 	private PostMethod method;
 	private int contentLength = -1;
+	private XmlRpcHttpClientConfig config;      
 
 	/** Creates a new instance.
 	 * @param pClient The client, which will be invoking the transport.
@@ -56,9 +59,10 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 		contentLength = pLength;
 	}
 
-	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
-		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();      
-		method = new PostMethod(config.getServerURL().toString());
+    protected void initHttpHeaders(XmlRpcRequest pRequest) throws XmlRpcClientException {
+        config = (XmlRpcHttpClientConfig) pRequest.getConfig();
+        method = new PostMethod(config.getServerURL().toString());
+        super.initHttpHeaders(pRequest);
         
         if (config.getConnectionTimeout() != 0)
             client.getHttpConnectionManager().getParams().setConnectionTimeout(config.getConnectionTimeout());
@@ -66,9 +70,8 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
         if (config.getReplyTimeout() != 0)
             client.getHttpConnectionManager().getParams().setSoTimeout(config.getConnectionTimeout());
         
-		method.getParams().setVersion(HttpVersion.HTTP_1_1);
-		return super.sendRequest(pRequest);
-	}
+        method.getParams().setVersion(HttpVersion.HTTP_1_1);
+    }
 
 	protected void setRequestHeader(String pHeader, String pValue) {
 		method.setRequestHeader(new Header(pHeader, pValue));
@@ -99,7 +102,8 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 			Credentials creds = new UsernamePasswordCredentials(userName, pConfig.getBasicPassword());
 			AuthScope scope = new AuthScope(null, AuthScope.ANY_PORT, null, AuthScope.ANY_SCHEME);
 			client.getState().setCredentials(scope, creds);
-		}
+            client.getParams().setAuthenticationPreemptive(true);
+        }
 	}
 
 	protected void close() throws XmlRpcClientException {
@@ -115,23 +119,35 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-	protected void writeRequest(final RequestWriter pWriter) throws XmlRpcException {
+	protected void writeRequest(final ReqWriter pWriter) throws XmlRpcException {
 		method.setRequestEntity(new RequestEntity(){
-			public boolean isRepeatable() { return false; }
+			public boolean isRepeatable() { return contentLength != -1; }
 			public void writeRequest(OutputStream pOut) throws IOException {
-				/* Make sure, that the socket is not closed by replacing it with our
-				 * own BufferedOutputStream.
-				 */
-				BufferedOutputStream bos = new BufferedOutputStream(pOut){
-					public void close() throws IOException {
-						flush();
-					}
-				};
 				try {
-					pWriter.write(bos);
+                    /* Make sure, that the socket is not closed by replacing it with our
+                     * own BufferedOutputStream.
+                     */
+                    OutputStream ostream;
+                    if (isUsingByteArrayOutput(config)) {
+                        // No need to buffer the output.
+                        ostream = new FilterOutputStream(pOut){
+                            public void close() throws IOException {
+                                flush();
+                            }
+                        };
+                    } else {
+                        ostream = new BufferedOutputStream(pOut){
+                            public void close() throws IOException {
+                                flush();
+                            }
+                        };
+                    }
+					pWriter.write(ostream);
 				} catch (XmlRpcException e) {
 					throw new XmlRpcIOException(e);
-				}
+				} catch (SAXException e) {
+                    throw new XmlRpcIOException(e);
+                }
 			}
 			public long getContentLength() { return contentLength; }
 			public String getContentType() { return "text/xml"; }
