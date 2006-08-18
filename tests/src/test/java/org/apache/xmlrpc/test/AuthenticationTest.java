@@ -34,8 +34,8 @@ import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.AuthenticationH
  */
 public class AuthenticationTest extends XmlRpcTestCase {
     private static final String PASSWORD = "98765432109876543210987654321098765432109876543210";
-    private static final String USER_NAME = "01234567890123456789012345678901234567890123456789";
-//        + "\u00C4\u00D6\u00DC\u00F6\u00FC\u00E4\u00DF";
+    private static final String USER_NAME = "01234567890123456789012345678901234567890123456789"
+        + "\u00C4\u00D6\u00DC\u00F6\u00FC\u00E4\u00DF";
 
     /** An interface, which is being implemented by the
      * server.

@@ -27,11 +27,14 @@
 		Basic authentication didn't work, if the base64 encoded string with
 		user name and password contained more than 72 characters.
       </action>
-      <action dev="jochen" type="fix" due-to="Landon Fuller"
-          due-to-email="landonf@threerings.net">
+      <action dev="jochen" type="fix">
         Basic authentication didn't work with the commons http transport,
         because the commons httpclient wasn't configured to send credentials
         by default. (It was waiting for a challenge.)
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-105">
+        Basic authentication didn't work with the commons http transport,
+        if user name or password contained non-ASCII characters.
       </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">

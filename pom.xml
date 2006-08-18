@@ -223,7 +223,7 @@
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.0</version>
+            <version>3.0.1</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>

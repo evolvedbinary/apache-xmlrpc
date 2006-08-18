@@ -30,8 +30,10 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 import org.apache.xmlrpc.util.XmlRpcIOException;
@@ -99,6 +101,11 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	protected void setCredentials(XmlRpcHttpClientConfig pConfig) throws XmlRpcClientException {
 		String userName = pConfig.getBasicUserName();
 		if (userName != null) {
+            String enc = pConfig.getBasicEncoding();
+            if (enc == null) {
+                enc = XmlRpcStreamConfig.UTF8_ENCODING;
+            }
+            client.getParams().setParameter(HttpMethodParams.CREDENTIAL_CHARSET, enc);
 			Credentials creds = new UsernamePasswordCredentials(userName, pConfig.getBasicPassword());
 			AuthScope scope = new AuthScope(null, AuthScope.ANY_PORT, null, AuthScope.ANY_SCHEME);
 			client.getState().setCredentials(scope, creds);
