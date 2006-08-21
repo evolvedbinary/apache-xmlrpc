@@ -36,6 +36,14 @@
         Basic authentication didn't work with the commons http transport,
         if user name or password contained non-ASCII characters.
       </action>
+      <action dev="jochen" type="fix" due-to="Randall Bryant"
+          due-to-email="randall@magpieti.com">
+        The releaseWorker() method wasn't called for the server.
+      </action>
+      <action dev="jochen" type="fix">
+        Fixed a bug in the web servers thread pool, which caused that
+        threads haven't been reused.
+      </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"

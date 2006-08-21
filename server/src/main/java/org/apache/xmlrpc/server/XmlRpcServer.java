@@ -22,6 +22,7 @@ import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
 import org.apache.xmlrpc.common.XmlRpcController;
 import org.apache.xmlrpc.common.XmlRpcRequestProcessor;
+import org.apache.xmlrpc.common.XmlRpcWorker;
 import org.apache.xmlrpc.common.XmlRpcWorkerFactory;
 
 
@@ -76,6 +77,12 @@ public class XmlRpcServer extends XmlRpcController
 	 * @throws XmlRpcException The request failed.
 	 */
 	public Object execute(XmlRpcRequest pRequest) throws XmlRpcException {
-		return getWorkerFactory().getWorker().execute(pRequest);
+	    final XmlRpcWorkerFactory factory = getWorkerFactory();
+	    final XmlRpcWorker worker = factory.getWorker();
+        try {
+            return worker.execute(pRequest);
+        } finally {
+            factory.releaseWorker(worker);
+        }
 	}
 }

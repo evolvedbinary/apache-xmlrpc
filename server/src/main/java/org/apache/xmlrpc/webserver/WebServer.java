@@ -307,7 +307,7 @@ public class WebServer implements Runnable {
 	 * @see #shutdown()
 	 */
 	public void run() {
-		pool = new ThreadPool(server.getMaxThreads(), "XML-RPC");
+		pool = newThreadPool();
 		try {
 			while (listener != null) {
 				try {
@@ -351,6 +351,10 @@ public class WebServer implements Runnable {
 			pool.shutdown();
 		}
 	}
+
+    protected ThreadPool newThreadPool() {
+        return new ThreadPool(server.getMaxThreads(), "XML-RPC");
+    }
 	
 	/**
 	 * Stop listening on the server port.  Shutting down our {@link

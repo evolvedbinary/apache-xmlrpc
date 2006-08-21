@@ -115,7 +115,7 @@ public class ThreadPool {
 	}
 
 	synchronized void repool(MyThread pThread) {
-		if (maxSize != 0  &&  (runningThreads.size() + waitingThreads.size()) <= maxSize) {
+		if (maxSize != 0  &&  (runningThreads.size() + waitingThreads.size()) > maxSize) {
 			discard(pThread);
 		} else if (waitingTasks.size() > 0) {
 			pThread.setTask((Task) waitingTasks.remove(0));
@@ -135,7 +135,7 @@ public class ThreadPool {
 	 * might consider to use the {@link #addTask(Task)} method instead.
 	 */
 	public synchronized boolean startTask(Task pTask) {
-		if (maxSize != 0  &&  (runningThreads.size() + waitingThreads.size()) >= maxSize) {
+		if (maxSize != 0  &&  runningThreads.size() > maxSize) {
 			return false;
 		}
 		MyThread t;
@@ -180,4 +180,9 @@ public class ThreadPool {
 	 * @return Maximum number of threads.
 	 */
 	public int getMaxThreads() { return maxSize; }
+
+	/** Returns the number of threads, which have actually been created,
+     * as opposed to the number of currently running threads.
+	 */
+    public int getNumThreads() { return num; }
 }
