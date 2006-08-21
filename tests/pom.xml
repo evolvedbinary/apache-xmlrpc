@@ -7,10 +7,8 @@
     <version>3.0rc1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>org.apache.xmlrpc</groupId>
   <artifactId>xmlrpc-tests</artifactId>
   <name>Apache XML-RPC Test Library</name>
-  <version>3.0rc1</version>
   <build>
     <testSourceDirectory>src/test/java</testSourceDirectory>
     <testResources>
@@ -18,17 +16,28 @@
         <directory>src/test/resources</directory>
       </testResource>
     </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/apache/xmlrpc/test/ScalabilityTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-client</artifactId>
-      <version>3.0rc1</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-server</artifactId>
-      <version>3.0rc1</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

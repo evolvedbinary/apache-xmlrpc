@@ -7,10 +7,8 @@
     <version>3.0rc1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>org.apache.xmlrpc</groupId>
   <artifactId>xmlrpc-common</artifactId>
   <name>Apache XML-RPC Common Library</name>
-  <version>3.0rc1</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>

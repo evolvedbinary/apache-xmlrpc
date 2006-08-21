@@ -7,10 +7,8 @@
     <version>3.0rc1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <groupId>org.apache.xmlrpc</groupId>
   <artifactId>xmlrpc-client</artifactId>
   <name>Apache XML-RPC Client Library</name>
-  <version>3.0rc1</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
   </build>
@@ -18,7 +16,7 @@
     <dependency>
       <groupId>org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-common</artifactId>
-      <version>3.0rc1</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
