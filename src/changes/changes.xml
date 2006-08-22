@@ -44,6 +44,10 @@
         Fixed a bug in the web servers thread pool, which caused that
         threads haven't been reused.
       </action>
+      <action dev="jochen" type="fix" due-to="Jason McLaurin"
+          due-to-email="jmclaurin@petronworld.com">
+        Documentation improvements
+      </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"

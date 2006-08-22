@@ -42,7 +42,7 @@ The XmlRpcClient
     import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
     XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-    config.setServerUrl("http://127.0.0.1:8080/xmlrpc");
+    config.setServerURL(new URL("http://127.0.0.1:8080/xmlrpc"));
     XmlRpcClient client = new XmlRpcClient();
     client.setConfig(config);
     Object[] params = new Object[]{new Integer(33), new Integer(9)};
@@ -64,7 +64,7 @@ The Transport Factory
     import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 
     XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-    config.setServerUrl("http://127.0.0.1:8080/XmlRpcServlet");
+    config.setServerURL(new URL("http://127.0.0.1:8080/XmlRpcServlet"));
     XmlRpcClient client = new XmlRpcClient();
     client.setTransportFactory(new XmlRpcCommonsTransportFactory());
     client.setConfig(config);

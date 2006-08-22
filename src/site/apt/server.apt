@@ -214,7 +214,7 @@ The WebServer class
            * phm.addHandler(org.apache.xmlrpc.demo.proxy.Adder.class.getName(),
            *     org.apache.xmlrpc.demo.proxy.AdderImpl.class);
            */
-          xmlRpcServer.setHandlerMapping(dhm);
+          xmlRpcServer.setHandlerMapping(phm);
         
           XmlRpcServerConfigImpl serverConfig =
               (XmlRpcServerConfigImpl) xmlRpcServer.getConfig();
