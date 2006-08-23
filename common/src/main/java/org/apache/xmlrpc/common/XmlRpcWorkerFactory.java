@@ -59,10 +59,10 @@ public abstract class XmlRpcWorkerFactory {
 		if (max > 0  &&  numThreads == max) {
 			throw new XmlRpcLoadException("Maximum number of concurrent requests exceeded: " + max);
 		}
-		++numThreads;
 		if (max == 0) {
 			return singleton;
 		}
+        ++numThreads;
 		if (pool.size() == 0) {
 			return newWorker();
 		} else {

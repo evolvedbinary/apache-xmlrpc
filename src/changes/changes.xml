@@ -48,6 +48,9 @@
           due-to-email="jmclaurin@petronworld.com">
         Documentation improvements
       </action>
+      <action dev="jochen" type="add">
+        Added documentation on custom data types.
+      </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"

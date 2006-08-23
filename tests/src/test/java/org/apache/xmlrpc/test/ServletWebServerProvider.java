@@ -35,6 +35,7 @@ import org.apache.xmlrpc.webserver.XmlRpcServlet;
  */
 public class ServletWebServerProvider extends ClientProviderImpl {
 	protected final ServletWebServer webServer;
+    protected final XmlRpcServlet servlet;
 	private final boolean contentLength;
 	private final int port;
 
@@ -46,7 +47,7 @@ public class ServletWebServerProvider extends ClientProviderImpl {
 	protected ServletWebServerProvider(XmlRpcHandlerMapping pMapping, boolean pContentLength) throws ServletException, IOException {
 		super(pMapping);
 		contentLength = pContentLength;
-		XmlRpcServlet servlet = new XmlRpcServlet();
+		servlet = new XmlRpcServlet();
 		webServer = new ServletWebServer(servlet, 0);
 		XmlRpcServer server = servlet.getXmlRpcServletServer();
 		server.setHandlerMapping(mapping);
@@ -71,4 +72,8 @@ public class ServletWebServerProvider extends ClientProviderImpl {
 	protected XmlRpcTransportFactory getTransportFactory(XmlRpcClient pClient) {
 		return new XmlRpcSunHttpTransportFactory(pClient);
 	}
+
+    public XmlRpcServer getServer() {
+        return servlet.getXmlRpcServletServer();
+    }
 }

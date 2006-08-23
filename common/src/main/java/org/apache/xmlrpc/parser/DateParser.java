@@ -15,9 +15,9 @@
  */
 package org.apache.xmlrpc.parser;
 
+import java.text.Format;
 import java.text.ParseException;
 
-import org.apache.xmlrpc.util.XmlRpcDateTimeDateFormat;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -25,11 +25,11 @@ import org.xml.sax.SAXParseException;
 /** Parser for integer values.
  */
 public class DateParser extends AtomicParser {
-	private final XmlRpcDateTimeDateFormat f;
+	private final Format f;
 
     /** Creates a new instance with the given format.
      */
-    public DateParser(XmlRpcDateTimeDateFormat pFormat) {
+    public DateParser(Format pFormat) {
         f = pFormat;
     }
 

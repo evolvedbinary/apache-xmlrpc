@@ -81,3 +81,111 @@ Dynamic proxies
   to consider, which exception is being trapped: If the method exposes
   XmlRpcException, then you'll need to catch the XmlRpcException.
   Otherwise, it's UndeclaredThrowableException.
+
+* Custom data types
+
+  Apache XML-RPC was built with extensibility in mind. In particular, it was
+  written to support custom data types.
+
+  The data type handling is completely left to the
+  {{{apidocs/org/apache/xmlrpc/common/TypeFactory.html}TypeFactory}}. In
+  other words, adding support for custom data types is as simple as
+  providing your own type factory. This is typically done by subclassing
+  {{{apidocs/org/apache/xmlrpc/common/TypeFactoryImpl.html}TypeFactoryImpl}}.
+
+  We'll illustrate the concept by creating a type factory, which uses a
+  non-standard date format for transmitting date values. First of all,
+  we've got to implement the subclass:
+
+-----------------------------------------------------------------------------------
+    import java.text.DateFormat;
+    import java.text.SimpleDateFormat;
+    import org.apache.xmlrpc.common.TypeFactoryImpl;
+    import org.apache.xmlrpc.common.XmlRpcController;
+    import org.apache.xmlrpc.parser.DateParser;
+    import org.apache.xmlrpc.parser.TypeParser;
+    import org.apache.xmlrpc.serializer.DateSerializer;
+    import org.apache.xmlrpc.serializer.TypeSerializer;
+    import org.apache.ws.commons.util.NamespaceContextImpl;
+
+    public class MyTypeFactory extends TypeFactoryImpl {
+        public MyTypeFactory(XmlRpcController pController) {
+            super(pController);
+        }
+
+        private DateFormat newFormat() {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        }
+
+        public TypeParser getParser(XmlRpcStreamConfig pConfig, NamespaceContextImpl pContext, String pURI, String pLocalName) {
+            if (DateSerializer.DATE_TAG.equals(pLocalName)) {
+                return new DateParser(pFormat);
+            } else {
+                return super.getParser(pConfig, pContext, pURI, pLocalName);
+            }
+        }
+
+        public TypeSerializer getSerializer(XmlRpcStreamConfig pConfig, Object pObject) throws SAXException {
+            if (pObject instanceof Date) {
+                return new DateSerializer(newFormat());
+            } else {
+                return super.getSerializer(pConfig, pObject);
+            }
+        }
+    }
+-----------------------------------------------------------------------------------
+
+  On the client side, we've got to tell the 
+  {{{apidocs/org/apache/xmlrpc/client/XmlRpcClient.html}XmlRpcClient}} to use the
+  new factory. That's as simple as typing
+
+-----------------------------------------------------------------------------------
+    XmlRpcClient client = new XmlRpcClient();
+    client.setTypeFactory(new MyTypeFactory());
+-----------------------------------------------------------------------------------
+
+  Things are a little bit more difficult on the server side. Basically all we need
+  to do is setting the type factory on the
+  {{{apidocs/org/apache/xmlrpc/server/XmlRpcServer.html}XmlRpcServer}}. The question
+  is, how to obtain the server object. That depends on the environment. If you
+  are using the XmlRpcServlet, then you've got to derive a subclass:
+
+-----------------------------------------------------------------------------------
+    import org.apache.xmlrpc.webserver.XmlRpcServletServer;
+    import org.apache.xmlrpc.webserver.XmlRpcServlet;
+
+    public class MyXmlRpcServlet extends XmlRpcServlet {
+        protected XmlRpcServletServer newXmlRpcServer(ServletConfig pConfig) {
+            XmlRpcServletServer server = super.newXmlRpcServer(pConfig);
+            server.setTypeFactory(new MyTypeFactory(server));
+            return server;
+        }
+    }
+-----------------------------------------------------------------------------------
+
+  And, if you are using the
+  {{{apidocs/org/apache/xmlrpc/webserver/WebServer.html}WebServer}}, you've got
+  to override a similar method:
+
+-----------------------------------------------------------------------------------
+    import java.net.InetAddress;
+    import org.apache.xmlrpc.server.XmlRpcStreamServer;
+    import org.apache.xmlrpc.webserver.WebServer;
+    
+    public class MyWebServer extends WebServer {
+        public MyWebServer(int pPort) {
+            super(pPort);
+        }
+
+        public MyWebServer(int pPort, InetAddress pAddr) {
+            super(pPort, pAddr);
+        }
+
+  	    protected XmlRpcStreamServer newXmlRpcStreamServer() {
+  	        XmlRpcStreamServer server = new ConnectionServer();
+  	        server.setTypeFactory(new MyTypeFactory());
+  	        return server;
+	    }
+	}
+-----------------------------------------------------------------------------------
+  

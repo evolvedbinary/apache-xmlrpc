@@ -15,7 +15,8 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.apache.xmlrpc.util.XmlRpcDateTimeDateFormat;
+import java.text.Format;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -27,11 +28,11 @@ public class DateSerializer extends TypeSerializerImpl {
      */
     public static final String DATE_TAG = "dateTime.iso8601";
 
-    private final XmlRpcDateTimeDateFormat format;
+    private final Format format;
 
     /** Creates a new instance with the given formatter.
      */
-    public DateSerializer(XmlRpcDateTimeDateFormat pFormat) {
+    public DateSerializer(Format pFormat) {
         format = pFormat;
     }
 

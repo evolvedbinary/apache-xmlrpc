@@ -62,4 +62,8 @@ public abstract class WebServerProvider extends ClientProviderImpl {
 			isActive = true;
 		}
 	}
+
+	public XmlRpcServer getServer() {
+	    return webServer.getXmlRpcServer();
+    }
 }

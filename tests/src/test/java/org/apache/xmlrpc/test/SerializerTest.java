@@ -15,7 +15,6 @@
  */
 package org.apache.xmlrpc.test;
 
-import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,15 +22,13 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
-import org.apache.ws.commons.serialize.XMLWriter;
-import org.apache.ws.commons.serialize.XMLWriterImpl;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfig;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcClientRequestImpl;
 import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
-import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.xml.sax.SAXException;
 
 
@@ -60,15 +57,8 @@ public class SerializerTest extends TestCase {
 
 	protected String writeRequest(XmlRpcStreamRequestConfig pConfig, XmlRpcRequest pRequest)
 			throws SAXException {
-		StringWriter sw = new StringWriter();
-		XMLWriter xw = new XMLWriterImpl();
-		xw.setEncoding("US-ASCII");
-		xw.setDeclarating(true);
-		xw.setIndenting(false);
-		xw.setWriter(sw);
-		XmlRpcWriter xrw = new XmlRpcWriter(pConfig, xw, client.getTypeFactory());
-		xrw.write(pRequest);
-		return sw.toString();
+        client.setConfig((XmlRpcClientConfig) pConfig);
+        return XmlRpcTestCase.writeRequest(client, pRequest);
 	}
 
 	/** Test serialization of a byte parameter.

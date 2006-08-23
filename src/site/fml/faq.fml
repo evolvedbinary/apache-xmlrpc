@@ -66,6 +66,17 @@
         ]]></source>
       </answer>
     </faq>
+
+    <faq id="nonstandard_date_format">
+      <question>I've got a server, which is expecting a non-standard
+        date format. How can I ensure, that my date values have the
+        right format?</question>
+      <answer>
+        <p>You've got to use a special type factory. An example is
+          contained in the documentation on
+          {{{advanced.html}advanced topics}}.</p>
+      </answer>
+    </faq>
   </part>
 
   <part id="server">

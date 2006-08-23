@@ -17,6 +17,7 @@ package org.apache.xmlrpc.test;
 
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.server.XmlRpcServer;
 
 /** This interface allows to perform a unit test with various
  * transports. Basically, the implementation creates the client,
@@ -33,4 +34,9 @@ public interface ClientProvider {
 	 * @return A client being used for performing the test.
 	 */
 	XmlRpcClient getClient();
+
+	/** Returns the providers server instance.
+     * @return A server instance, which is being used for performing the test.
+	 */
+    XmlRpcServer getServer();
 }
