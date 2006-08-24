@@ -51,6 +51,12 @@
       <action dev="jochen" type="add">
         Added documentation on custom data types.
       </action>
+      <action dev="jochen" type="add" due-to="Catalin Hritcu"
+          due-to-email="Catalin.Hritcu@gmail.com" issue="XMLRPC-107">
+        The XmlRpcLiteHttpTransport is now creating a socket
+        in a protected methods. This allows to switch to
+        alternative socket implementations.
+      </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"

@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -130,7 +131,7 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 	
 			for (int tries = 0;  ;  tries++) {
 				try {
-					socket = new Socket(hostname, port);
+					socket = newSocket();
 					output = new BufferedOutputStream(socket.getOutputStream()){
 						/** Closing the output stream would close the whole socket, which we don't want,
 						 * because the don't want until the request is processed completely.
@@ -162,6 +163,10 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 					+ hostname + ":" + port + ": " + e.getMessage(), e);
 		}
 	}
+
+    protected Socket newSocket() throws UnknownHostException, IOException {
+        return new Socket(hostname, port);
+    }
 
 	private byte[] toHTTPBytes(String pValue) throws UnsupportedEncodingException {
 		return pValue.getBytes("US-ASCII");
