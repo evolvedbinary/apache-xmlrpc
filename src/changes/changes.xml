@@ -57,6 +57,10 @@
         in a protected methods. This allows to switch to
         alternative socket implementations.
       </action>
+      <action dev="jochen" type="fix" due-to="Catalin Hritcu"
+          due-to-email="Catalin.Hritcu@gmail.com" issue="XMLRPC-108">
+        More documentation fixes.
+      </action>
     </release>
     <release version="3.0rc1" date="27-Jul-2006">
       <action dev="jochen" type="fix" due-to="Alan Burlison"

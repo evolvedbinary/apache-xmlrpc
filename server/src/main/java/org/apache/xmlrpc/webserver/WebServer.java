@@ -54,7 +54,7 @@ import org.apache.xmlrpc.util.ThreadPool;
  * the property values are the handler classes. Once that is done,
  * create an instance of WebServer:
  * <pre>
- *   final int portNumber = 8088;
+ *   final int port = 8088;
  *   final String propertyFile = "MyHandler.properties";
  *
  *   PropertyHandlerMapping mapping = new PropertyHandlerMapping();
@@ -62,10 +62,10 @@ import org.apache.xmlrpc.util.ThreadPool;
  *   mapping.load(cl, propertyFile);
  *   WebServer webServer = new WebServer(port);
  *   XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
- *   XmlRpcServer server = server.getXmlRpcServer();
+ *   XmlRpcServer server = webServer.getXmlRpcServer();
  *   server.setConfig(config);
  *   server.setHandlerMapping(mapping);
- *   server.start();
+ *   webServer.start();
  * </pre>
  */
 public class WebServer implements Runnable {

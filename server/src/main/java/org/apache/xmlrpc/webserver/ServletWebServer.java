@@ -48,9 +48,8 @@ import org.apache.xmlrpc.util.ThreadPool;
  * See the {@link PropertyHandlerMapping} for details on the property
  * file.</p>
  * <pre>
- *   final int portNumber = 8088;
+ *   final int port = 8088;
  *
- *   ClassLoader cl = Thread.currentThread().getContextClassLoader();
  *   XmlRpcServlet servlet = new XmlRpcServlet();
  *   ServletWebServer webServer = new ServletWebServer(servlet, port);
  *   webServer.start();
