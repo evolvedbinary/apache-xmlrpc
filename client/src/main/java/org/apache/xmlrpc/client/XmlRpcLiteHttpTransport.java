@@ -131,7 +131,7 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 	
 			for (int tries = 0;  ;  tries++) {
 				try {
-					socket = newSocket();
+					socket = newSocket(hostname, port);
 					output = new BufferedOutputStream(socket.getOutputStream()){
 						/** Closing the output stream would close the whole socket, which we don't want,
 						 * because the don't want until the request is processed completely.
@@ -164,8 +164,8 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-    protected Socket newSocket() throws UnknownHostException, IOException {
-        return new Socket(hostname, port);
+    protected Socket newSocket(String pHostName, int pPort) throws UnknownHostException, IOException {
+        return new Socket(pHostName, pPort);
     }
 
 	private byte[] toHTTPBytes(String pValue) throws UnsupportedEncodingException {
