@@ -70,7 +70,8 @@ public abstract class AbstractReflectiveHandlerMapping
         return typeConverterFactory;
     }
 
-    /** Sets the mappings {@link RequestProcessorFactoryFactory}.
+    /** Sets the mappings {@link RequestProcessorFactoryFactory}. Note, that this doesn't
+     * affect already registered handlers.
      */
     public void setRequestProcessorFactoryFactory(RequestProcessorFactoryFactory pFactory) {
         requestProcessorFactoryFactory = pFactory;

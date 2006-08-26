@@ -127,7 +127,7 @@ public interface InitializableRequestProcessor {
 
 public class MyXmlRpcServlet extends XmlRpcServlet {
     protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
-        PropertyHandlerMapping mapping = super.newPropertyHandlerMapping(url);
+        PropertyHandlerMapping mapping = new PropertyHandlerMapping();
 	    RequestProcessorFactoryFactory factory = new RequestSpecificProcessorFactoryFactory(){
 	        protected Object newRequestProcessor(Class pClass, XmlRpcRequest pRequest) {
 	            InitializableRequestProcessor proc = super.newRequestProcessor(pClass, pRequest);
@@ -136,6 +136,7 @@ public class MyXmlRpcServlet extends XmlRpcServlet {
 	        }
 	    };
 	    mapping.setRequestProcessorFactoryFactory(mapping);
+	    mapping.load(Thread.currentThread().getContextClassLoader(), url);
 	    return mapping;
 	}
     
