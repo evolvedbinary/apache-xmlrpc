@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcConfig;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
@@ -46,7 +48,8 @@ import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
  */
 public class XmlRpcServlet extends HttpServlet {
 	private static final long serialVersionUID = 2348768267234L;
-	private XmlRpcServletServer server;
+	private static final Log log = LogFactory.getLog(XmlRpcServlet.class);
+    private XmlRpcServletServer server;
 
 	/** Returns the servlets instance of {@link XmlRpcServletServer}. 
 	 * @return The configurable instance of {@link XmlRpcServletServer}.
@@ -116,4 +119,12 @@ public class XmlRpcServlet extends HttpServlet {
 	public void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException, ServletException {
 		server.execute(pRequest, pResponse);
 	}
+
+    public void log(String pMessage, Throwable pThrowable) {
+        log.error(pMessage, pThrowable);
+    }
+
+    public void log(String pMessage) {
+        log.info(pMessage);
+    }
 }

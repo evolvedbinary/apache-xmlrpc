@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+      <groupId>org.apache</groupId>
+      <artifactId>apache</artifactId>
+      <version>3</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
     <name>Apache XML-RPC</name>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
     <description>
         Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol
         that uses XML over HTTP to implement remote procedure calls.
@@ -169,22 +174,11 @@
             <email>kweiner@gmail.com</email>
         </contributor>
     </contributors>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
     <scm>
         <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</connection>
         <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</developerConnection>
         <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</url>
     </scm>
-    <organization>
-        <name>Apache Software Foundation</name>
-        <url>http://www.apache.org/</url>
-    </organization>
     <build>
         <plugins>
             <plugin>
@@ -290,46 +284,12 @@
         </plugins>
     </reporting>
     <distributionManagement>
-        <repository>
-            <id>people.apache.org</id>
-            <name>Apache Maven Distributions</name>
-            <url>scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-        </repository>
         <site>
             <id>people.apache.org</id>
             <name>XML-RPC directory on ws.apache.org</name>
             <url>scp://people.apache.org/www/ws.apache.org/xmlrpc</url>
         </site>
     </distributionManagement>
-    <repositories>
-        <repository>
-            <id>apache-maven-snapshots</id>
-            <name>Apache Maven Snapshot Repository</name>
-            <url>http://cvs.apache.org/maven-snapshot-repository</url>
-        </repository>
-        <repository>
-            <id>Maven Snapshots</id>
-            <url>http://snapshots.maven.codehaus.org/maven2/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>Maven Snapshots</id>
-            <url>http://snapshots.maven.codehaus.org/maven2/</url>
-            <snapshots>
-                 <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                 <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
     <profiles>
         <profile>
             <activation>
