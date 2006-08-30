@@ -9,7 +9,7 @@
     <groupId>org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
     <name>Apache XML-RPC</name>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
     <description>
         Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol
         that uses XML over HTTP to implement remote procedure calls.
@@ -175,9 +175,9 @@
         </contributor>
     </contributors>
     <scm>
-        <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0</connection>
-        <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0</developerConnection>
-        <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0</url>
+        <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</connection>
+        <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</developerConnection>
+        <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</url>
     </scm>
     <build>
         <plugins>
