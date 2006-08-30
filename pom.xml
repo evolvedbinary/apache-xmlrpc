@@ -175,9 +175,9 @@
         </contributor>
     </contributors>
     <scm>
-        <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</connection>
-        <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</developerConnection>
-        <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0rc1</url>
+        <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0</connection>
+        <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0</developerConnection>
+        <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/XMLRPC_3_0</url>
     </scm>
     <build>
         <plugins>
