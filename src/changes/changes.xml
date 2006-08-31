@@ -3,7 +3,7 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
-    <release version="3.0" date="Not yet released">
+    <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"
           due-to-email="matt@knowledgeview.co.uk" issue="XMLRPC-100">
         Fixed the spelling of CharSetXmlWriterFactory, which made
