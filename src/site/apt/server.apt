@@ -315,7 +315,6 @@ The ServletWebServer class
       private static final int port = 8080;
 
       public static void main(String[] args) throws Exception {
-          ClassLoader cl = Thread.currentThread().getContextClassLoader();
           XmlRpcServlet servlet = new XmlRpcServlet();
           ServletWebServer webServer = new ServletWebServer(servlet, port);
           webServer.start();
