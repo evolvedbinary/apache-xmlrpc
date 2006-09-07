@@ -93,6 +93,7 @@ Dynamic proxies
     recommended, of course.) In either way, you've got to use a custom
     transport and overwrite the methods newURLConnection(URL),
     initHttpHeaders(XmlRpcRequest), and close():
+
 -----------------------------------------------------------------------------------
     import java.net.URLConnection;
     import org.apache.xmlrpc.client.XmlRpcClient;
@@ -125,9 +126,11 @@ Dynamic proxies
     };
     client.setTransportFactory(factory);
 -----------------------------------------------------------------------------------    
+
   * The XmlRpcCommonsHttpTransport requires that the HttpClient is being
     reused. (By default, a new HttpClient is created for any connection.)
     To reuse the HttpClient, use a transport factory like the following:
+
 -----------------------------------------------------------------------------------
     import org.apache.commons.httpclient.HttpClient;
     import org.apache.xmlrpc.client.XmlRpcClient;
@@ -148,6 +151,7 @@ Dynamic proxies
     };
     client.setTransportFactory(factory);
 -----------------------------------------------------------------------------------
+
     Note, that this means losing the XmlRpcClients multithreading abilities!
     The factory above is obviously bound to the HttpClient, which must be
     bound to a thread. If you need to set cookies initially, overwrite the
