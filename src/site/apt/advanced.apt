@@ -82,6 +82,77 @@ Dynamic proxies
   XmlRpcException, then you'll need to catch the XmlRpcException.
   Otherwise, it's UndeclaredThrowableException.
 
+* Cookie handling
+
+  Cookie has not yet been generalized. In other words, it depends on the
+  transport.
+
+  * The XmlRpcLiteHttpTransport doesn't have support for cookies.
+  * The XmlRpcSunHttpTransport requires hand written code for setting
+    and getting the cookies or using a cookie library. (The latter is
+    recommended, of course.) In either way, you've got to use a custom
+    transport and overwrite the methods newURLConnection(URL),
+    initHttpHeaders(XmlRpcRequest), and close():
+-----------------------------------------------------------------------------------
+    import java.net.URLConnection;
+    import org.apache.xmlrpc.client.XmlRpcClient;
+    import org.apache.xmlrpc.client.XmlRpcSunHttpTransport;
+    import org.apache.xmlrpc.client.XmlRpcTransport;
+    import org.apache.xmlrpc.client.XmlRpcTransportFactory;
+
+    final XmlRpcClient client = new XmlRpcClient();
+    XmlRpcTransportFactory factory = new XmlRpcTransportFactory(){
+        public XmlRpcTransport getTransport(){
+            private URLConnection conn;
+            protected URLConnection newURLConnection(URL pURL) throws IOException {
+                conn = super.newURLConnection(pURL);
+                return conn;
+            }
+            protected void initHttpHeaders(XmlRpcRequest pRequest) {
+                super.initHttpHeaders(pRequest);
+                setCookies(conn);
+            }
+            protected void close() throws XmlRpcClientException {
+                getCookies(conn);
+            }
+            private void setCookies(URLConnection pConn) {
+                // Implement me ...
+            }
+            private void getCookies(URLConnection pConn) {
+                // Implement me ...
+            }
+        }
+    };
+    client.setTransportFactory(factory);
+-----------------------------------------------------------------------------------    
+  * The XmlRpcCommonsHttpTransport requires that the HttpClient is being
+    reused. (By default, a new HttpClient is created for any connection.)
+    To reuse the HttpClient, use a transport factory like the following:
+-----------------------------------------------------------------------------------
+    import org.apache.commons.httpclient.HttpClient;
+    import org.apache.xmlrpc.client.XmlRpcClient;
+    import org.apache.xmlrpc.client.XmlRpcCommonsHttpTransport;
+    import org.apache.xmlrpc.client.XmlRpcTransport;
+    import org.apache.xmlrpc.client.XmlRpcTransportFactory;
+
+    final XmlRpcClient client = new XmlRpcClient();
+    final HttpClient httpClient = new HttpClient();
+    XmlRpcTransportFactory factory = new XmlRpcTransportFactory(){
+        public XmlRpcTransport getTransport(){
+            return new XmlRpcCommonsHttpTransport(client){
+               protected HttpClient newHttpClient() {
+                   return httpClient;
+               }      
+            };
+        }
+    };
+    client.setTransportFactory(factory);
+-----------------------------------------------------------------------------------
+    Note, that this means losing the XmlRpcClients multithreading abilities!
+    The factory above is obviously bound to the HttpClient, which must be
+    bound to a thread. If you need to set cookies initially, overwrite the
+    transport method initHttpHeaders(XmlRpcRequest) as well.
+
 * Custom data types
 
   Apache XML-RPC was built with extensibility in mind. In particular, it was
