@@ -3,6 +3,7 @@ package org.apache.xmlrpc.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.xmlrpc.XmlRpcException;
@@ -26,10 +27,14 @@ public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
 		super(pClient, userAgent);
 	}
 
+    protected URLConnection newURLConnection(URL pURL) throws IOException {
+        return pURL.openConnection();
+    }
+
 	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
 		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();
 		try {
-			conn = config.getServerURL().openConnection();
+			conn = newURLConnection(config.getServerURL());
 			conn.setUseCaches(false);
 			conn.setDoInput(true);
 			conn.setDoOutput(true);

@@ -3,6 +3,13 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
+    <release version="3.0.1-SNAPSHOT" date="Not yet released">
+      <action dev="jochen" type="fix">
+        Make the HttpClient creation in XmlRpcCommonsTransport and the
+        URLConnection creation in XmlRpcSunHttpTransport protected.
+        This is required for cookie support.
+      </action>
+    </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"
           due-to-email="matt@knowledgeview.co.uk" issue="XMLRPC-100">
