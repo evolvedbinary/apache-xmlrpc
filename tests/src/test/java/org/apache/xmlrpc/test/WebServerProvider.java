@@ -58,6 +58,7 @@ public abstract class WebServerProvider extends ClientProviderImpl {
 			XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) server.getConfig();
 			serverConfig.setEnabledForExtensions(true);
 			serverConfig.setContentLengthOptional(!contentLength);
+            serverConfig.setEnabledForExceptions(true);
 			webServer.start();
 			isActive = true;
 		}

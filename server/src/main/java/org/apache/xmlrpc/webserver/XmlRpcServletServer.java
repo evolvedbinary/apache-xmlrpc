@@ -80,6 +80,7 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
 		result.setGzipCompressing(HttpUtil.isUsingGzipEncoding(pRequest.getHeader("Content-Encoding")));
 		result.setGzipRequesting(HttpUtil.isUsingGzipEncoding(pRequest.getHeaders("Accept-Encoding")));
 		result.setEncoding(pRequest.getCharacterEncoding());
+        result.setEnabledForExceptions(serverConfig.isEnabledForExceptions());
 		HttpUtil.parseAuthorization(result, pRequest.getHeader("Authorization"));
 		return result;
 	}

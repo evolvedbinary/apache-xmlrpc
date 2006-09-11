@@ -3,6 +3,11 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
+    <release version="3.1-SNAPSHOT" date="Not yet released">
+      <action dev="jochen" type="add">
+        Introduced the "enabledForExceptions" property.
+      </action>
+    </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
         Make the HttpClient creation in XmlRpcCommonsTransport and the

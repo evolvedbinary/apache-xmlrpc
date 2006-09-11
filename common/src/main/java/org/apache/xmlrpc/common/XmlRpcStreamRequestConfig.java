@@ -36,4 +36,10 @@ public interface XmlRpcStreamRequestConfig extends XmlRpcStreamConfig, XmlRpcReq
 	 * @see #isGzipCompressing()
 	 */
 	boolean isGzipRequesting();
+	/** Returns, whether the response should contain a "faultCause" element
+     * in case of errors. The "faultCause" is an exception, which the
+     * server has trapped and written into a byte stream as a serializable
+     * object.
+	 */
+	boolean isEnabledForExceptions();
 }

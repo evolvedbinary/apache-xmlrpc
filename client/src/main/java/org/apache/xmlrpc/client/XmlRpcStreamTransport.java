@@ -172,7 +172,7 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		try {
 			xp = new XmlRpcResponseParser(pConfig, getClient().getTypeFactory());
 			xr.setContentHandler(xp);
-			xr.parse(isource);
+            xr.parse(isource);
 		} catch (SAXException e) {
 			throw new XmlRpcClientException("Failed to parse servers response: " + e.getMessage(), e);
 		} catch (IOException e) {
@@ -180,8 +180,17 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		}
 		if (xp.isSuccess()) {
 			return xp.getResult();
-		} else {
-			throw new XmlRpcException(xp.getErrorCode(), xp.getErrorMessage());
 		}
+		Throwable t = xp.getErrorCause();
+        if (t == null) {
+            throw new XmlRpcException(xp.getErrorCode(), xp.getErrorMessage());
+        }
+        if (t instanceof XmlRpcException) {
+            throw (XmlRpcException) t;
+        }
+        if (t instanceof RuntimeException) {
+            throw (RuntimeException) t;
+        }
+        throw new XmlRpcException(xp.getErrorCode(), xp.getErrorMessage(), t);
 	}
 }

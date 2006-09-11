@@ -52,6 +52,7 @@ public abstract class XmlRpcTestCase extends TestCase {
     protected XmlRpcClientConfig getExConfig(ClientProvider pProvider) throws Exception {
         XmlRpcClientConfigImpl config = getConfig(pProvider);
         config.setEnabledForExtensions(true);
+        config.setEnabledForExceptions(true);
         return config;
     }
 

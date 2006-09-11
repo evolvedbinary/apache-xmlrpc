@@ -15,6 +15,8 @@
  */
 package org.apache.xmlrpc.parser;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -36,6 +38,7 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 	private boolean isSuccess;
 	private int errorCode;
 	private String errorMessage;
+    private Throwable errorCause;
 
 	/** Creates a new instance.
 	 * @param pConfig The response configuration.
@@ -63,6 +66,19 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 											getDocumentLocator());
 			}
 			errorMessage = (String) map.get("faultString");
+            Object exception = map.get("faultCause");
+            if (exception != null) {
+                try {
+                    byte[] bytes = (byte[]) exception;
+                    ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                    ObjectInputStream ois = new ObjectInputStream(bais);
+                    errorCause = (Throwable) ois.readObject();
+                    ois.close();
+                    bais.close();
+                } catch (Throwable t) {
+                    // Ignore me
+                }
+            }
 		}
 	}
 
@@ -206,4 +222,9 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 	 * @return The error message.
 	 */
 	public String getErrorMessage() { return errorMessage; }
+
+	/** If the response contained a fault, returns the (optional)
+     * exception.
+	 */
+    public Throwable getErrorCause() { return errorCause; }
 }

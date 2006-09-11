@@ -54,6 +54,7 @@ public class ServletWebServerProvider extends ClientProviderImpl {
 		XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) server.getConfig();
 		serverConfig.setEnabledForExtensions(true);
 		serverConfig.setContentLengthOptional(!contentLength);
+        serverConfig.setEnabledForExceptions(true);
 		webServer.start();
 		port = webServer.getPort();
 	 }

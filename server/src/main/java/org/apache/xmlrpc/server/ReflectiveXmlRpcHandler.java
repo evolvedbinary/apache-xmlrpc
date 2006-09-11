@@ -23,6 +23,7 @@ import org.apache.xmlrpc.XmlRpcHandler;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.TypeConverter;
 import org.apache.xmlrpc.common.TypeConverterFactory;
+import org.apache.xmlrpc.common.XmlRpcInvocationException;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 import org.apache.xmlrpc.metadata.Util;
 import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping.AuthenticationHandler;
@@ -119,7 +120,7 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	                                  + clazz.getName(), e);
 	    } catch (InvocationTargetException e) {
 	        Throwable t = e.getTargetException();
-	        throw new XmlRpcException("Failed to invoke method "
+	        throw new XmlRpcInvocationException("Failed to invoke method "
 	                                  + pMethod.getName() + " in class "
 	                                  + clazz.getName() + ": "
 	                                  + t.getMessage(), t);

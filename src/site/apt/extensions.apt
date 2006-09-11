@@ -128,4 +128,9 @@ Data Types
 ----------------------------------------------------------------------------
   <i8 xmlns="http://ws.apache.org/xmlrpc/namespaces/extensions">78934</i8>
 ----------------------------------------------------------------------------
-  
+
+Exception Handling
+
+  If the server property "enabledForExceptions" is turned on, then the server
+  will convert exceptions into a byte array and send them to the client within
+  a "faultCause" message.

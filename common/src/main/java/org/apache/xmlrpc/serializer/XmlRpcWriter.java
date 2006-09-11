@@ -15,6 +15,8 @@
  */
 package org.apache.xmlrpc.serializer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.XmlRpcRequestConfig;
 import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
+import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -106,13 +109,25 @@ public class XmlRpcWriter {
 		handler.endDocument();
 	}
 
-	/** Writes a servers error message to the output stream.
+    /** Writes a servers error message to the output stream.
+     * @param pConfig The request configuration.
+     * @param pCode The error code
+     * @param pMessage The error message
+     * @throws SAXException Writing the error message failed.
+     */
+    public void write(XmlRpcRequestConfig pConfig, int pCode, String pMessage) throws SAXException {
+        write(pConfig, pCode, pMessage, null);
+    }
+
+        /** Writes a servers error message to the output stream.
 	 * @param pConfig The request configuration.
 	 * @param pCode The error code
 	 * @param pMessage The error message
+     * @param pThrowable An exception, which is being sent to the client
 	 * @throws SAXException Writing the error message failed.
 	 */
-	public void write(XmlRpcRequestConfig pConfig, int pCode, String pMessage) throws SAXException {
+	public void write(XmlRpcRequestConfig pConfig, int pCode, String pMessage,
+            Throwable pThrowable) throws SAXException {
 		handler.startDocument();
 		boolean extensions = pConfig.isEnabledForExtensions();
 		if (extensions) {
@@ -123,7 +138,20 @@ public class XmlRpcWriter {
 		Map map = new HashMap();
         map.put("faultCode", new Integer(pCode));
         map.put("faultString", pMessage == null ? "" : pMessage);
-		writeValue(map);
+        if (pThrowable != null  &&  extensions  &&  (pConfig instanceof XmlRpcStreamRequestConfig)  &&
+                ((XmlRpcStreamRequestConfig) pConfig).isEnabledForExceptions()) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+                oos.writeObject(pThrowable);
+                oos.close();
+                baos.close();
+                map.put("faultCause", baos.toByteArray());
+            } catch (Throwable t) {
+                // Ignore me
+            }
+        }
+        writeValue(map);
 		handler.endElement("", "fault", "fault");
 		handler.endElement("", "methodResponse", "methodResponse");
 		if (extensions) {

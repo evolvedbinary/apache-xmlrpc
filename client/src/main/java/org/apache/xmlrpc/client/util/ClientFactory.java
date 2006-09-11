@@ -18,11 +18,13 @@ package org.apache.xmlrpc.client.util;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.common.TypeConverter;
 import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
+import org.apache.xmlrpc.common.XmlRpcInvocationException;
 
 
 /**
@@ -101,7 +103,23 @@ public class ClientFactory {
                     return pMethod.invoke(pProxy, pArgs);
                 }
                 String methodName = pClass.getName() + "." + pMethod.getName();
-                Object result = client.execute(methodName, pArgs);
+                Object result;
+                try {
+                    result = client.execute(methodName, pArgs);
+                } catch (XmlRpcInvocationException e) {
+                    Throwable t = e.linkedException;
+                    if (t instanceof RuntimeException) {
+                        throw t;
+                    }
+                    Class[] exceptionTypes = pMethod.getExceptionTypes();
+                    for (int i = 0;  i < exceptionTypes.length;  i++) {
+                        Class c = exceptionTypes[i];
+                        if (c.isAssignableFrom(t.getClass())) {
+                            throw t;
+                        }
+                    }
+                    throw new UndeclaredThrowableException(t);
+                }
                 TypeConverter typeConverter = typeConverterFactory.getTypeConverter(pMethod.getReturnType());
                 return typeConverter.convert(result);
             }

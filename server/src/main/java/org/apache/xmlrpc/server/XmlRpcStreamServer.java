@@ -92,20 +92,29 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 		}
 	}
 
-	protected void writeError(XmlRpcStreamRequestConfig pConfig, OutputStream pStream,
+	/**
+     * This method allows to convert the error into another error. For example, this
+     * may be an error, which could be deserialized by the client.
+	 */
+    protected Throwable convertThrowable(Throwable pError) {
+        return pError;
+    }
+
+    protected void writeError(XmlRpcStreamRequestConfig pConfig, OutputStream pStream,
 							  Throwable pError)
 			throws XmlRpcException {
-		final int code;
+        final Throwable error = convertThrowable(pError);
+        final int code;
 		final String message;
-		if (pError instanceof XmlRpcException) {
-			XmlRpcException ex = (XmlRpcException) pError;
+		if (error instanceof XmlRpcException) {
+			XmlRpcException ex = (XmlRpcException) error;
 			code = ex.code;
 		} else {
 			code = 0;
 		}
-		message = pError.getMessage();
+		message = error.getMessage();
 		try {
-			getXmlRpcWriter(pConfig, pStream).write(pConfig, code, message);
+			getXmlRpcWriter(pConfig, pStream).write(pConfig, code, message, error);
 		} catch (SAXException e) {
 			throw new XmlRpcException("Failed to write XML-RPC response: " + e.getMessage(), e);
 		}

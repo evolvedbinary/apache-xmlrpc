@@ -90,6 +90,15 @@ The Server configuration
 *-----------------------+---------------------------------------------------+
 | Property Name         | Description                                       |
 *-----------------------+---------------------------------------------------+
+| enabledForExceptions  | If the server catches an exception, and this      |
+|                       | property is set, then the server will convert     |
+|                       | the exception into a byte array (by using an      |
+|                       | ObjectOutputStream) and return the exception to   |
+|                       | the client. Note, that this may have privacy      |
+|                       | or even security implications, because Exceptions |
+|                       | may contain arbitrary Java objects, which you     |
+|                       | possibly do not want to be sent to the client.    |
+*-----------------------+---------------------------------------------------+
 | enabledForExtensions  | Whether the vendor extensions of Apache XML-RPC   |
 |                       | should be enabled. By default, Apache XML-RPC is  |
 |                       | strictly compliant to the XML-RPC specification.  |

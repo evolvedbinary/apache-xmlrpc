@@ -28,6 +28,7 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
 	private String basicPassword;
     private int    connectionTimeout = 0;
     private int    replyTimeout = 0;
+    private boolean enabledForExceptions;
     
 	/** Sets, whether gzip compression is being used for
 	 * transmitting the request.
@@ -97,4 +98,16 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
         return replyTimeout;
     }
 
+    /** Sets, whether the response should contain a "faultCause" element
+     * in case of errors. The "faultCause" is an exception, which the
+     * server has trapped and written into a byte stream as a serializable
+     * object.
+     */
+    public void setEnabledForExceptions(boolean pEnabledForExceptions) {
+        enabledForExceptions = pEnabledForExceptions;
+    }
+
+    public boolean isEnabledForExceptions() {
+        return enabledForExceptions;
+    }
 }

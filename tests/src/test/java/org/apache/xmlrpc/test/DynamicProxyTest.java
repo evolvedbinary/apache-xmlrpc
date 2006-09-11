@@ -21,6 +21,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.util.ClientFactory;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
+import org.xml.sax.SAXException;
 
 
 /** Test case for the {@link ClientFactory}.
@@ -33,6 +34,11 @@ public class DynamicProxyTest extends XmlRpcTestCase {
         /** Returns the sum of the given integers.
          */
         public int add(int pNum1, int pNum2);
+
+        /**
+         * Throws a SAXException.
+         */
+        public Object parse(String pMessage) throws SAXException;
     }
 
     /** Implementation of {@link DynamicProxyTest.Adder}, which is used by
@@ -41,6 +47,9 @@ public class DynamicProxyTest extends XmlRpcTestCase {
     public static class AdderImpl implements Adder {
         public int add(int pNum1, int pNum2) {
             return pNum1 + pNum2;
+        }
+        public Object parse(String pMessage) throws SAXException {
+            throw new SAXException("Failed to parse message: " + pMessage);
         }
     }
 
@@ -51,6 +60,12 @@ public class DynamicProxyTest extends XmlRpcTestCase {
     private ClientFactory getClientFactory(ClientProvider pProvider) throws Exception {
         XmlRpcClient client = pProvider.getClient();
         client.setConfig(getConfig(pProvider));
+        return new ClientFactory(client);
+    }
+
+    private ClientFactory getExClientFactory(ClientProvider pProvider) throws Exception {
+        XmlRpcClient client = pProvider.getClient();
+        client.setConfig(getExConfig(pProvider));
         return new ClientFactory(client);
     }
 
@@ -68,5 +83,24 @@ public class DynamicProxyTest extends XmlRpcTestCase {
         ClientFactory factory = getClientFactory(pProvider);
         Adder adder = (Adder) factory.newInstance(Adder.class);
         assertEquals(6, adder.add(2, 4));
+    }
+
+    /** Tests trapping a SAXException.
+     */
+    public void testParseCall() throws Exception {
+        for (int i = 0;   i < providers.length;  i++) {
+            testParseCall(providers[i]);
+        }
+    }
+
+    private void testParseCall(ClientProvider pProvider) throws Exception {
+        ClientFactory factory = getExClientFactory(pProvider);
+        Adder adder = (Adder) factory.newInstance(Adder.class);
+        try {
+            adder.parse("foo");
+            fail("Expected SAXException");
+        } catch (SAXException e) {
+            // Ok
+        }
     }
 }

@@ -87,13 +87,11 @@ public class XmlRpcLocalTransport extends XmlRpcTransportImpl {
         Object result;
 		try {
 			result = server.execute(pRequest);
+        } catch (XmlRpcException t) {
+            throw t;
 		} catch (Throwable t) {
-			if (t instanceof XmlRpcClientException) {
-				throw (XmlRpcClientException) t;
-			} else {
-				throw new XmlRpcClientException("Failed to invoke method " + pRequest.getMethodName()
-												+ ": " + t.getMessage(), t);
-			}
+		    throw new XmlRpcClientException("Failed to invoke method " + pRequest.getMethodName()
+		            + ": " + t.getMessage(), t);
 		}
 		if (!config.isEnabledForExtensions()) {
 			if (isExtensionType(result)) {

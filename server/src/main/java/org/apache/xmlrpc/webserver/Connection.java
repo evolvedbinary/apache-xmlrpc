@@ -121,6 +121,7 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
         requestData.setBasicEncoding(serverConfig.getBasicEncoding());
         requestData.setContentLengthOptional(serverConfig.isContentLengthOptional());
         requestData.setEnabledForExtensions(serverConfig.isEnabledForExtensions());
+        requestData.setEnabledForExceptions(serverConfig.isEnabledForExceptions());
 
         // reset user authentication
         String line = readLine();
@@ -293,11 +294,13 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
             output.write(serverName);
             output.write(conclose);
             output.write(ctype);
-            if (pContentLength != -1) {
+            if (pContentLength == -1) {
+                output.write(newline);
+            } else {
                 output.write(clength);
                 output.write(toHTTPBytes(Integer.toString(pContentLength)));
+                output.write(doubleNewline);
             }
-            output.write(doubleNewline);
         }
     }
 

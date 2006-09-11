@@ -93,4 +93,8 @@ public class XmlRpcException extends Exception {
 			linkedException.printStackTrace(pWriter);
 		}
 	}
+
+	public Throwable getCause() {
+	    return linkedException;
+    }
 }

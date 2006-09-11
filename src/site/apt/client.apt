@@ -146,6 +146,12 @@ The Client Configuration
 |                       | only available, if the property                   |
 |                       | enabledForExtensions is set was well.             |
 *-----------------------+---------------------------------------------------+
+| enabledForExceptions  | Whether the client should request, that the       |
+|                       | server returns exceptions as serializable objects.|
+|                       | If the server does, then the client will          |
+|                       | deserialize such exceptions and throw them, as    |
+|                       | if they had been cause within the clients code.   |
+*-----------------------+---------------------------------------------------+
 | enabledForExtensions  | Whether the vendor extensions of Apache XML-RPC   |
 |                       | should be enabled. By default, Apache XML-RPC is  |
 |                       | strictly compliant to the XML-RPC specification.  |

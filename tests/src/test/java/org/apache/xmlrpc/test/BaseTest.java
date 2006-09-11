@@ -32,6 +32,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.common.XmlRpcExtensionException;
+import org.apache.xmlrpc.common.XmlRpcInvocationException;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -107,6 +108,12 @@ public class BaseTest extends XmlRpcTestCase {
 		 * @return The argument, concatenated with itself.
 		 */
 		public String stringParam(String pArg) { return pArg+pArg; }
+        /**
+         * Throws a NullPointerException.
+         */
+        public Object throwNPE() {
+            throw new NullPointerException();
+        }
 		/** Returns the argument, concatenated with itself.
 		 * @param pArg The argument being concatenated.
 		 * @return The argument, concatenated with itself.
@@ -884,5 +891,27 @@ public class BaseTest extends XmlRpcTestCase {
         assertEquals(cal2.getTime(), result);
         result = client.execute(getConfig(pProvider), methodName, params);
         assertEquals(cal2.getTime(), result);
+    }
+
+    /**
+     * Tests, whether a NullPointerException, thrown by the server, can be
+     * trapped by the client.
+     */
+    public void testCatchNPE() throws Exception {
+        for (int i = 0;  i < providers.length;  i++) {
+            testCatchNPE(providers[i]);
+        }
+    }
+
+    private void testCatchNPE(ClientProvider pProvider) throws Exception {
+        final XmlRpcClient client = pProvider.getClient();
+        final String methodName = "Remote.throwNPE";
+        try {
+            client.execute(getExConfig(pProvider), methodName, (Object[]) null); 
+        } catch (XmlRpcInvocationException e) {
+            if (!(e.getCause() instanceof NullPointerException)) {
+                throw e;
+            }
+        }
     }
 }
