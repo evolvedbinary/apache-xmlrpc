@@ -119,6 +119,9 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 	                                  + clazz.getName(), e);
 	    } catch (InvocationTargetException e) {
 	        Throwable t = e.getTargetException();
+            if (t instanceof XmlRpcException) {
+                throw (XmlRpcException) t;
+            }
 	        throw new XmlRpcException("Failed to invoke method "
 	                                  + pMethod.getName() + " in class "
 	                                  + clazz.getName() + ": "

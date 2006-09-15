@@ -296,8 +296,9 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
             if (pContentLength != -1) {
                 output.write(clength);
                 output.write(toHTTPBytes(Integer.toString(pContentLength)));
+                output.write(newline);
             }
-            output.write(doubleNewline);
+            output.write(newline);
         }
     }
 

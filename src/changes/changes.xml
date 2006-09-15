@@ -8,6 +8,15 @@
         Make the HttpClient creation in XmlRpcCommonsTransport and the
         URLConnection creation in XmlRpcSunHttpTransport protected.
         This is required for cookie support.
+      </action
+      <action dev="jochen" type="fix">
+        The WebServer was producing invalid error responses, if contentLengthOptional
+        was set.
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-113" due-to="Juha Syrjala"
+          due-to-email="Juha.Syrjala@hiq.fi">
+        If the server was throwing an XmlRpcException, then the fault code and fault
+        string weren't given to the client.
       </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
