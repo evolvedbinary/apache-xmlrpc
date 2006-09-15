@@ -276,7 +276,7 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
             output.write(toHTTPBytes(" 400 Bad Request"));
             output.write(newline);
             output.write(serverName);
-            output.write(doubleNewline);
+            output.write(newline);
             output.write(toHTTPBytes("Method " + pData.getMethod() +
             " not implemented (try POST)"));
         } else if (pError instanceof XmlRpcNotAuthorizedException) {
@@ -285,22 +285,21 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
             output.write(newline);
             output.write(serverName);
             output.write(wwwAuthenticate);
-            output.write(doubleNewline);
-            output.write(toHTTPBytes("Method " + pData.getMethod() + " requires a " +
-            "valid user name and password"));
+            output.write(newline);
+            output.write(toHTTPBytes("Method " + pData.getMethod()
+                    + " requires a " + "valid user name and password"));
         } else {
             output.write(toHTTPBytes(pData.getHttpVersion()));
             output.write(ok);
             output.write(serverName);
             output.write(conclose);
             output.write(ctype);
-            if (pContentLength == -1) {
-                output.write(newline);
-            } else {
+            if (pContentLength != -1) {
                 output.write(clength);
                 output.write(toHTTPBytes(Integer.toString(pContentLength)));
-                output.write(doubleNewline);
+                output.write(newline);
             }
+            output.write(newline);
         }
     }
 

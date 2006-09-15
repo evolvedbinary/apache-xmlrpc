@@ -215,4 +215,52 @@ public class JiraTest extends XmlRpcTestCase {
         s = (String) client.execute(XMLRPC96Handler.class.getName() + ".getHelloWorld", (Object[]) null);
         assertEquals("Hello, world!", s);
     }
+
+    /**
+     * Test case for <a href="http://issues.apache.org/jira/browse/XMLRPC-113">
+     * XMLRPC-113</a>
+     */
+    public void testXMLRPC113() throws Exception {
+        for (int i = 0;  i < providers.length;  i++) {
+            testXMLRPC113(providers[i]);
+        }
+    }
+
+    /**
+     * Handler interface for {@link JiraTest#testXMLRPC113()}
+     */ 
+    public interface XMLRPC113Handler {
+        /**
+         * Throws an {@link XmlRpcException} with the given error code.
+         */
+        Object throwCode(int pCode) throws XmlRpcException;
+    }
+
+    /**
+     * Handler for {@link JiraTest#testXMLRPC113()}
+     */ 
+    public static class XMLRPC113HandlerImpl implements XMLRPC113Handler {
+        public Object throwCode(int pCode) throws XmlRpcException {
+            throw new XmlRpcException(pCode, "Message: " + pCode);
+        }
+    }
+
+    private void testXMLRPC113(ClientProvider pProvider) throws Exception {
+        XmlRpcClient client = pProvider.getClient();
+        client.setConfig(getConfig(pProvider));
+        XMLRPC113Handler handler = (XMLRPC113Handler) new ClientFactory(client).newInstance(XMLRPC113Handler.class);
+        for (int i = 0;  i < 5;  i++) {
+            try {
+                client.execute(XMLRPC113Handler.class.getName() + ".throwCode", new Object[]{new Integer(i)});
+                fail("Excpected exception");
+            } catch (XmlRpcException e) {
+                assertEquals(i, e.code);
+            }
+            try {
+                handler.throwCode(i);
+            } catch (XmlRpcException e) {
+                assertEquals(i, e.code);
+            }
+        }
+    }
 }
