@@ -58,12 +58,13 @@ public abstract class XmlRpcTestCase extends TestCase {
 
     protected XmlRpcHandlerMapping getHandlerMapping(String pResource) throws IOException, XmlRpcException {
         PropertyHandlerMapping mapping = new PropertyHandlerMapping();
+        mapping.setVoidMethodEnabled(true);
         mapping.load(getClass().getClassLoader(), getClass().getResource(pResource));
         mapping.setTypeConverterFactory(getTypeConverterFactory());
         return mapping;
     }
 
-    protected ClientProvider[] initProviders(XmlRpcHandlerMapping pMapping) throws ServletException, IOException {
+    protected final ClientProvider[] initProviders(XmlRpcHandlerMapping pMapping) throws ServletException, IOException {
         return new ClientProvider[]{
                 new LocalTransportProvider(pMapping),
                 new LocalStreamTransportProvider(pMapping),

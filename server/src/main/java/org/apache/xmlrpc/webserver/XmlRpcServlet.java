@@ -62,12 +62,12 @@ public class XmlRpcServlet extends HttpServlet {
 		super.init(pConfig);
 		try {
 			server = newXmlRpcServer(pConfig);
-			server.setHandlerMapping(newXmlRpcHandlerMapping());
             String enabledForExtensionsParam = pConfig.getInitParameter("enabledForExtensions");
             if (enabledForExtensionsParam != null) {
                 boolean b = Boolean.valueOf(enabledForExtensionsParam).booleanValue();
                 ((XmlRpcServerConfigImpl) server.getConfig()).setEnabledForExtensions(b);
             }
+			server.setHandlerMapping(newXmlRpcHandlerMapping());
         } catch (XmlRpcException e) {
 			try {
 				log("Failed to create XmlRpcServer: " + e.getMessage(), e);
@@ -110,6 +110,7 @@ public class XmlRpcServlet extends HttpServlet {
         PropertyHandlerMapping mapping = new PropertyHandlerMapping();
         mapping.setTypeConverterFactory(server.getTypeConverterFactory());
         mapping.load(Thread.currentThread().getContextClassLoader(), url);
+        mapping.setVoidMethodEnabled(server.getConfig().isEnabledForExtensions());
         return mapping;
 	}
 

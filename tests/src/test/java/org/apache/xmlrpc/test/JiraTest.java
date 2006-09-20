@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcHttpClientConfig;
@@ -289,6 +288,10 @@ public class JiraTest extends XmlRpcTestCase {
         }
     }
 
+    /**
+     * Test case for <a href="http://issues.apache.org/jira/browse/XMLRPC-115">
+     * XMLRPC-115</a>
+     */
     public void testXMLRPC115() throws Exception {
         for (int i = 0;  i < providers.length;  i++) {
             testXMLRPC115(providers[i]);

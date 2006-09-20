@@ -103,6 +103,7 @@ public class TypeConverterFactoryImpl implements TypeConverterFactory {
         }
     }
 
+    private static final TypeConverter voidTypeConverter = new IdentityTypeConverter(void.class);
     private static final TypeConverter mapTypeConverter = new IdentityTypeConverter(Map.class);
     private static final TypeConverter objectArrayTypeConverter = new IdentityTypeConverter(Object[].class);
     private static final TypeConverter byteArrayTypeConverter = new IdentityTypeConverter(byte[].class);
@@ -196,6 +197,9 @@ public class TypeConverterFactoryImpl implements TypeConverterFactory {
     /** Returns a type converter for the given class.
      */
     public TypeConverter getTypeConverter(Class pClass) {
+        if (void.class.equals(pClass)) {
+            return voidTypeConverter;
+        }
         if (pClass.isAssignableFrom(boolean.class)) {
             return primitiveBooleanTypeConverter;
         }

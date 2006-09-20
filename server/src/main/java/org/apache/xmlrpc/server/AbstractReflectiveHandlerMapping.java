@@ -55,6 +55,7 @@ public abstract class AbstractReflectiveHandlerMapping
     protected Map handlerMap = new HashMap();
     private AuthenticationHandler authenticationHandler;
     private RequestProcessorFactoryFactory requestProcessorFactoryFactory = new RequestProcessorFactoryFactory.RequestSpecificProcessorFactoryFactory();
+    private boolean voidMethodEnabled;
 
     /**
      * Sets the mappings {@link TypeConverterFactory}.
@@ -124,7 +125,7 @@ public abstract class AbstractReflectiveHandlerMapping
             if (Modifier.isStatic(method.getModifiers())) {
                 continue;  // Ignore methods, which are static
             }
-            if (method.getReturnType() == void.class) {
+            if (!isVoidMethodEnabled()  &&  method.getReturnType() == void.class) {
                 continue;  // Ignore void methods.
             }
             if (method.getDeclaringClass() == Object.class) {
@@ -225,4 +226,22 @@ public abstract class AbstractReflectiveHandlerMapping
 		throw new XmlRpcNoSuchHandlerException("No metadata available for method: "
 				+ pHandlerName);
 	}
+
+    /**
+     * Returns, whether void methods are enabled. By default, null values
+     * aren't supported by XML-RPC and void methods are in fact returning
+     * null (at least from the perspective of reflection).
+     */
+    public boolean isVoidMethodEnabled() {
+        return voidMethodEnabled;
+    }
+
+    /**
+     * Sets, whether void methods are enabled. By default, null values
+     * aren't supported by XML-RPC and void methods are in fact returning
+     * null (at least from the perspective of reflection).
+     */
+    public void setVoidMethodEnabled(boolean pVoidMethodEnabled) {
+        voidMethodEnabled = pVoidMethodEnabled;
+    }
 }

@@ -7,6 +7,9 @@
       <action dev="jochen" type="add">
         Introduced the "enabledForExceptions" property.
       </action>
+      <action dev="jochen" type="add">
+        Added support for void methods, if extensions are turned on.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">

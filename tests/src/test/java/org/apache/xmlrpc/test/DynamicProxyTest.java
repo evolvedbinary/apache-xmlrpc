@@ -39,6 +39,12 @@ public class DynamicProxyTest extends XmlRpcTestCase {
          * Throws a SAXException.
          */
         public Object parse(String pMessage) throws SAXException;
+
+        /**
+         * A void method; these are disabled without support for
+         * extensions, but enabled when extensions are on.
+         */
+        public void ping();
     }
 
     /** Implementation of {@link DynamicProxyTest.Adder}, which is used by
@@ -50,6 +56,8 @@ public class DynamicProxyTest extends XmlRpcTestCase {
         }
         public Object parse(String pMessage) throws SAXException {
             throw new SAXException("Failed to parse message: " + pMessage);
+        }
+        public void ping() {
         }
     }
 
@@ -102,5 +110,20 @@ public class DynamicProxyTest extends XmlRpcTestCase {
         } catch (SAXException e) {
             // Ok
         }
+    }
+
+    /**
+     * Tests invoking a "void" method.
+     */
+    public void testVoidMethod() throws Exception {
+        for (int i = 0;   i < providers.length;  i++) {
+            testVoidMethod(providers[i]);
+        }
+    }
+
+    private void testVoidMethod(ClientProvider pProvider) throws Exception {
+        ClientFactory factory = getExClientFactory(pProvider);
+        Adder adder = (Adder) factory.newInstance(Adder.class);
+        adder.ping();
     }
 }

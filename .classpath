@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="common/target/classes" path="common/src/main/java"/>
-	<classpathentry kind="src" output="client/target/classes" path="client/src/main/java"/>
-	<classpathentry kind="src" output="server/target/classes" path="server/src/main/java"/>
-	<classpathentry kind="src" path="tests/src/test/java"/>
-	<classpathentry kind="src" path="tests/src/test/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="output" path="tests/target/test-classes"/>
+	<classpathentry path="common/src/main/java" output="common/target/classes" kind="src"/>
+	<classpathentry path="client/src/main/java" output="client/target/classes" kind="src"/>
+	<classpathentry path="server/src/main/java" output="server/target/classes" kind="src"/>
+	<classpathentry path="tests/src/test/java" kind="src"/>
+	<classpathentry path="tests/src/test/resources" kind="src"/>
+	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
+	<classpathentry path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER" kind="con"/>
+	<classpathentry path="tests/target/test-classes" kind="output"/>
 </classpath>
