@@ -28,6 +28,9 @@
         "Implementation-Vendor" and "Implementation-Version" are now
 		present in the MANIFEST files.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-115">
+        An NPE was thrown, if the clients request didn't contain a "params" element.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"

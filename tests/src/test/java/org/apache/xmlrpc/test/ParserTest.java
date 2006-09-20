@@ -8,32 +8,40 @@ import junit.framework.TestCase;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
+import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
+import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.util.SAXParsers;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 
 /** Test for the various parsers.
  */
 public class ParserTest extends TestCase {
-	private Object parseResponse(final String s) throws XmlRpcException, IOException, SAXException, SAXParseException {
+	private Object parseResponse(final String s) throws XmlRpcException, IOException, SAXException {
 		XmlRpcStreamRequestConfig config = new XmlRpcClientConfigImpl();
 		XmlRpcClient client = new XmlRpcClient();
 		XmlRpcResponseParser parser = new XmlRpcResponseParser(config, client.getTypeFactory());
 		XMLReader xr = SAXParsers.newXMLReader();
 		xr.setContentHandler(parser);
-		try {
-			xr.parse(new InputSource(new StringReader(s)));
-		} catch (SAXParseException e) {
-			throw e;
-		}
+		xr.parse(new InputSource(new StringReader(s)));
 		Object o = parser.getResult();
 		return o;
 	}
+
+    private XmlRpcRequestParser parseRequest(final String s) throws XmlRpcException, IOException, SAXException {
+        XmlRpcStreamConfig config = new XmlRpcHttpRequestConfigImpl();
+        XmlRpcClient client = new XmlRpcClient();
+        XmlRpcRequestParser parser = new XmlRpcRequestParser(config, client.getTypeFactory());
+        XMLReader xr = SAXParsers.newXMLReader();
+        xr.setContentHandler(parser);
+        xr.parse(new InputSource(new StringReader(s)));
+        return parser;
+    }
 
 	/** Tests, whether strings can be parsed with,
 	 * or without, the "string" tag.
@@ -76,4 +84,28 @@ public class ParserTest extends TestCase {
 		assertEquals("array", inner[0]);
 		assertEquals("string", inner[1]);
 	}
+
+	/**
+     * Tests, whether a request may omit the <params> tag.
+	 */
+    public void testOptionalParams() throws Exception {
+        final String s1 = "<methodResponse/>";
+        Object o1 = parseResponse(s1);
+        assertNull(o1);
+
+        final String s2 = "<methodResponse><params/></methodResponse>";
+        Object o2 = parseResponse(s2);
+        assertNull(o2);
+
+        final String s3 = "<methodCall><methodName>foo</methodName></methodCall>";
+        XmlRpcRequestParser p3 = parseRequest(s3);
+        assertEquals("foo", p3.getMethodName());
+        assertNull(p3.getParams());
+
+        final String s4 = "<methodCall><methodName>bar</methodName><params/></methodCall>";
+        XmlRpcRequestParser p4 = parseRequest(s4);
+        assertEquals("bar", p4.getMethodName());
+        assertNotNull(p4.getParams());
+        assertTrue(p4.getParams().size() == 0);
+    }
 }
