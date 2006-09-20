@@ -10,7 +10,29 @@
   <artifactId>xmlrpc-client</artifactId>
   <name>Apache XML-RPC Client Library</name>
   <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addExtensions>false</addExtensions>
+            </manifest>
+            <manifestEntries>
+              <Extension-Name>org.apache.xmlrpc.client</Extension-Name>
+              <Specification-Vendor>UserLand Software, Inc.</Specification-Vendor>
+              <Specification-Version>2003-06-30</Specification-Version>
+              <Specification-Title>XML-RPC</Specification-Title>
+              <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
+              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
   <dependencies>
     <dependency>

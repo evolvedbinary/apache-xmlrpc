@@ -22,6 +22,12 @@
         The WebServer replies with an HTTP error 401 now, if the
         client uses chunked encoding.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-74">
+        The properties "Extension-Name", "Specification-Vendor", "Specification-Version",
+        "Specification-Title", "Implementation-Vendor-Id",
+        "Implementation-Vendor" and "Implementation-Version" are now
+		present in the MANIFEST files.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"

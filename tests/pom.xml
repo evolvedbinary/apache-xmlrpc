@@ -10,12 +10,6 @@
   <artifactId>xmlrpc-tests</artifactId>
   <name>Apache XML-RPC Test Library</name>
   <build>
-    <testSourceDirectory>src/test/java</testSourceDirectory>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -24,6 +18,27 @@
           <excludes>
             <exclude>org/apache/xmlrpc/test/ScalabilityTest.java</exclude>
           </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addExtensions>false</addExtensions>
+            </manifest>
+            <manifestEntries>
+              <Extension-Name>org.apache.xmlrpc.test</Extension-Name>
+              <Specification-Vendor>UserLand Software, Inc.</Specification-Vendor>
+              <Specification-Version>2003-06-30</Specification-Version>
+              <Specification-Title>XML-RPC</Specification-Title>
+              <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
+              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
