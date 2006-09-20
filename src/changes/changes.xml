@@ -18,6 +18,10 @@
         If the server was throwing an XmlRpcException, then the fault code and fault
         string weren't given to the client.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-114">
+        The WebServer replies with an HTTP error 401 now, if the
+        client uses chunked encoding.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"
