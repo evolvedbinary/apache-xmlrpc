@@ -72,6 +72,30 @@ public class HttpUtil {
         return false;
     }
 
+    /**
+     * Returns, whether the HTTP header value <code>pHeaderValue</code>
+     * indicates, that another encoding than "identity" is used.
+     * This is typically the value of "Transfer-Encoding", or "TE".
+     * @return Null, if the transfer encoding in use is "identity".
+     *   Otherwise, another transfer encoding. 
+     */
+    public static String getNonIdentityTransferEncoding(String pHeaderValue) {
+        if (pHeaderValue == null) {
+            return null;
+        }
+        for (StringTokenizer st = new StringTokenizer(pHeaderValue, ",");  st.hasMoreTokens();  ) {
+            String encoding = st.nextToken();
+            int offset = encoding.indexOf(';');
+            if (offset >= 0) {
+                encoding = encoding.substring(0, offset);
+            }
+            if (!"identity".equalsIgnoreCase(encoding.trim())) {
+                return encoding.trim();
+            }
+        }
+        return null;
+    }
+
 	/** Returns, whether the HTTP header values in <code>pValues</code>
 	 * indicate, that GZIP encoding is used or may be used.
 	 * @param pValues The HTTP header values being parsed. These are typically

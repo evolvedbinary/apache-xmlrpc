@@ -54,10 +54,26 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
     private static final byte[] serverName = toHTTPBytes("Server: Apache XML-RPC 1.0\r\n");
     private static final byte[] wwwAuthenticate = toHTTPBytes("WWW-Authenticate: Basic realm=XML-RPC\r\n");
 
-    private static class BadRequestException extends IOException {
+    private static abstract class RequestException extends IOException {
+        private final RequestData requestData;
+        RequestException(RequestData pData, String pMessage) {
+            super(pMessage);
+            requestData = pData;
+        }
+        RequestData getRequestData() { return requestData; }
+    }
+
+    private static class BadEncodingException extends RequestException {
+        private static final long serialVersionUID = -2674424938251521248L;
+        BadEncodingException(RequestData pData, String pTransferEncoding) {
+            super(pData, pTransferEncoding);
+        }
+    }
+
+    private static class BadRequestException extends RequestException {
         private static final long serialVersionUID = 3257848779234554934L;
-        BadRequestException(String pMethod) {
-            super(pMethod);
+        BadRequestException(RequestData pData, String pTransferEncoding) {
+            super(pData, pTransferEncoding);
         }
     }
 
@@ -137,7 +153,7 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
         StringTokenizer tokens = new StringTokenizer(line);
         String method = tokens.nextToken();
         if (!"POST".equalsIgnoreCase(method)) {
-            throw new BadRequestException(method);
+            throw new BadRequestException(requestData, method);
         }
         requestData.setMethod(method);
         tokens.nextToken(); // Skip URI
@@ -158,6 +174,12 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
                 } else if (lineLower.startsWith("authorization:")) {
                     String credentials = line.substring("authorization:".length());
                     HttpUtil.parseAuthorization(requestData, credentials);
+                } else if (lineLower.startsWith("transfer-encoding:")) {
+                    String transferEncoding = line.substring("transfer-encoding:".length());
+                    String nonIdentityEncoding = HttpUtil.getNonIdentityTransferEncoding(transferEncoding);
+                    if (nonIdentityEncoding != null) {
+                        throw new BadEncodingException(requestData, nonIdentityEncoding);
+                    }
                 }
             }
         }
@@ -179,9 +201,19 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
                     break;
                 }
             }
+        } catch (RequestException e) {
+            webServer.log(e.getClass().getName() + ": " + e.getMessage());
+            try {
+                writeErrorHeader(e.requestData, e, -1);
+                output.flush();
+            } catch (IOException e1) {
+                /* Ignore me */
+            }
         } catch (Throwable t) {
             webServer.log(t);
         } finally {
+            try { output.close(); } catch (Throwable ignore) {}
+            try { input.close(); } catch (Throwable ignore) {}
             try { socket.close(); } catch (Throwable ignore) {}
         }
     }
@@ -256,11 +288,11 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
      * @param pStream The {@link ByteArrayOutputStream} with the error response.
      * @throws IOException Writing the response failed.
      */
-    public void writeError(RequestData pData, Throwable pError, OutputStream pStream)
+    public void writeError(RequestData pData, Throwable pError, ByteArrayOutputStream pStream)
             throws IOException {
-        ByteArrayOutputStream errorResponse = (ByteArrayOutputStream) pStream;
-        writeErrorHeader(pData, pError, errorResponse.size());
-        errorResponse.writeTo(output);
+        writeErrorHeader(pData, pError, pStream.size());
+        pStream.writeTo(output);
+        output.flush();
     }
 
     /** Writes an error responses headers to the output stream.
@@ -272,35 +304,54 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
     public void writeErrorHeader(RequestData pData, Throwable pError, int pContentLength)
             throws IOException {
         if (pError instanceof BadRequestException) {
+            final byte[] content = toHTTPBytes("Method " + pData.getMethod()
+                    + " not implemented (try POST)\r\n");
             output.write(toHTTPBytes(pData.getHttpVersion()));
             output.write(toHTTPBytes(" 400 Bad Request"));
             output.write(newline);
             output.write(serverName);
+            writeContentLengthHeader(content.length);
             output.write(newline);
-            output.write(toHTTPBytes("Method " + pData.getMethod() +
-            " not implemented (try POST)"));
+            output.write(content);
+        } else if (pError instanceof BadEncodingException) {
+            final byte[] content = toHTTPBytes("The Transfer-Encoding " + pError.getMessage()
+                    + " is not implemented.\r\n");
+            output.write(toHTTPBytes(pData.getHttpVersion()));
+            output.write(toHTTPBytes(" 501 Not Implemented"));
+            output.write(newline);
+            output.write(serverName);
+            writeContentLengthHeader(content.length);
+            output.write(newline);
+            output.write(content);
         } else if (pError instanceof XmlRpcNotAuthorizedException) {
+            final byte[] content = toHTTPBytes("Method " + pData.getMethod()
+                    + " requires a " + "valid user name and password.\r\n");
             output.write(toHTTPBytes(pData.getHttpVersion()));
             output.write(toHTTPBytes(" 401 Unauthorized"));
             output.write(newline);
             output.write(serverName);
+            writeContentLengthHeader(content.length);
             output.write(wwwAuthenticate);
             output.write(newline);
-            output.write(toHTTPBytes("Method " + pData.getMethod()
-                    + " requires a " + "valid user name and password"));
+            output.write(content);
         } else {
             output.write(toHTTPBytes(pData.getHttpVersion()));
             output.write(ok);
             output.write(serverName);
             output.write(conclose);
             output.write(ctype);
-            if (pContentLength != -1) {
-                output.write(clength);
-                output.write(toHTTPBytes(Integer.toString(pContentLength)));
-                output.write(newline);
-            }
+            writeContentLengthHeader(pContentLength);
             output.write(newline);
         }
+    }
+
+    private void writeContentLengthHeader(int pContentLength) throws IOException {
+        if (pContentLength == -1) {
+            return;
+        }
+        output.write(clength);
+        output.write(toHTTPBytes(Integer.toString(pContentLength)));
+        output.write(newline);
     }
 
     /** Sets a response header value.

@@ -93,8 +93,8 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	}
 
 	protected InputStream getInputStream() throws XmlRpcException {
-		try {
-			return method.getResponseBodyAsStream();
+        try {
+            return method.getResponseBodyAsStream();
 		} catch (HttpException e) {
 			throw new XmlRpcClientException("Error in HTTP transport: " + e.getMessage(), e);
 		} catch (IOException e) {

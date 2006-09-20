@@ -15,6 +15,7 @@
  */
 package org.apache.xmlrpc.webserver;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -31,7 +32,7 @@ class ConnectionServer extends XmlRpcHttpServer {
 		try {
 			if (data.isByteArrayRequired()) {
 				super.writeError(pConfig, pStream, pError);
-				data.getConnection().writeError(data, pError, pStream);
+				data.getConnection().writeError(data, pError, (ByteArrayOutputStream) pStream);
 			} else {
 				data.getConnection().writeErrorHeader(data, pError, -1);
 				super.writeError(pConfig, pStream, pError);
