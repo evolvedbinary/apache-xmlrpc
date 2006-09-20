@@ -296,7 +296,6 @@ public class JiraTest extends XmlRpcTestCase {
     }
 
     private void testXMLRPC115(ClientProvider pProvider) throws Exception {
-        BasicConfigurator.configure();
         if (pProvider instanceof SunHttpTransportProvider) {
             XmlRpcClient client = pProvider.getClient();
             client.setConfig(getConfig(pProvider));
