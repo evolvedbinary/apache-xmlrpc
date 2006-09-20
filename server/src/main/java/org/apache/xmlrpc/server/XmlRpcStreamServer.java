@@ -71,7 +71,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 		return new XmlRpcRequest(){
 			public XmlRpcRequestConfig getConfig() { return pConfig; }
 			public String getMethodName() { return parser.getMethodName(); }
-			public int getParameterCount() { return params.size(); }
+			public int getParameterCount() { return params == null ? 0 : params.size(); }
 			public Object getParameter(int pIndex) { return params.get(pIndex); }
 		};
 	}

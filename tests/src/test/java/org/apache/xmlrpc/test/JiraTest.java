@@ -16,6 +16,12 @@
 package org.apache.xmlrpc.test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -23,10 +29,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcHttpClientConfig;
 import org.apache.xmlrpc.client.util.ClientFactory;
+import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
+import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
+import org.apache.xmlrpc.util.SAXParsers;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 
 /**
@@ -261,6 +274,51 @@ public class JiraTest extends XmlRpcTestCase {
             } catch (XmlRpcException e) {
                 assertEquals(i, e.code);
             }
+        }
+    }
+
+    /**
+     * Handler for {@link JiraTest#testXMLRPC115()}
+     */
+    public static class XMLRPC115Handler {
+        /**
+         * Does nothing, just for checking, whether the server is alive.
+         */
+        public Object[] ping() {
+            return new Object[0];
+        }
+    }
+
+    public void testXMLRPC115() throws Exception {
+        for (int i = 0;  i < providers.length;  i++) {
+            testXMLRPC115(providers[i]);
+        }
+    }
+
+    private void testXMLRPC115(ClientProvider pProvider) throws Exception {
+        BasicConfigurator.configure();
+        if (pProvider instanceof SunHttpTransportProvider) {
+            XmlRpcClient client = pProvider.getClient();
+            client.setConfig(getConfig(pProvider));
+            URL url = ((XmlRpcHttpClientConfig) client.getConfig()).getServerURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("content-type", "text/xml");
+            OutputStream ostream = conn.getOutputStream();
+            Writer w = new OutputStreamWriter(ostream, "UTF-8");
+            w.write("<methodCall><methodName>" + XMLRPC115Handler.class.getName() + ".ping"
+                    + "</methodName></methodCall>");
+            w.close();
+            InputStream istream = conn.getInputStream();
+            XmlRpcResponseParser parser = new XmlRpcResponseParser((XmlRpcStreamRequestConfig) client.getClientConfig(), client.getTypeFactory());
+            XMLReader xr = SAXParsers.newXMLReader();
+            xr.setContentHandler(parser);
+            xr.parse(new InputSource(istream));
+            istream.close();
+            assertTrue(parser.getResult() instanceof Object[]);
+            assertEquals(0, ((Object[]) parser.getResult()).length);
         }
     }
 }
