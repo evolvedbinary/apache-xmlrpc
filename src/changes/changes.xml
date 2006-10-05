@@ -14,6 +14,11 @@
           due-to-email="pfnguyen@hanhuy.com">
         Added PropertyHandlerMapping.load(ClassLoader, Map).
       </action>
+      <action dev="jochen" type="add" issue="XMLRPC-117" due-to="Jimisola Laursen"
+          due-to-email="lists@jimisola.com">
+        The authentication handler, type converter and requestprocessor factories
+        are now configurable as properties of the XmlRpcServlet.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">

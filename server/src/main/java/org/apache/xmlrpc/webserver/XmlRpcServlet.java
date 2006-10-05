@@ -28,10 +28,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcConfig;
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
+import org.apache.xmlrpc.server.RequestProcessorFactoryFactory;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
+import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping;
 
 
 /** <p>A default servlet implementation The typical use would
@@ -50,6 +53,9 @@ public class XmlRpcServlet extends HttpServlet {
 	private static final long serialVersionUID = 2348768267234L;
 	private static final Log log = LogFactory.getLog(XmlRpcServlet.class);
     private XmlRpcServletServer server;
+    private AbstractReflectiveHandlerMapping.AuthenticationHandler authenticationHandler;
+    private RequestProcessorFactoryFactory requestProcessorFactoryFactory;
+    private TypeConverterFactory typeConverterFactory;
 
 	/** Returns the servlets instance of {@link XmlRpcServletServer}. 
 	 * @return The configurable instance of {@link XmlRpcServletServer}.
@@ -61,7 +67,7 @@ public class XmlRpcServlet extends HttpServlet {
 	public void init(ServletConfig pConfig) throws ServletException {
 		super.init(pConfig);
 		try {
-			server = newXmlRpcServer(pConfig);
+            server = newXmlRpcServer(pConfig);
             String enabledForExtensionsParam = pConfig.getInitParameter("enabledForExtensions");
             if (enabledForExtensionsParam != null) {
                 boolean b = Boolean.valueOf(enabledForExtensionsParam).booleanValue();
@@ -77,7 +83,43 @@ public class XmlRpcServlet extends HttpServlet {
 		}
 	}
 
-	/** Creates a new instance of {@link XmlRpcServer},
+	/** Sets the servlets {@link AbstractReflectiveHandlerMapping.AuthenticationHandler}.
+	 */
+	public void setAuthenticationHandler(AbstractReflectiveHandlerMapping.AuthenticationHandler pHandler) {
+	    authenticationHandler = pHandler;
+	}
+
+	/** Returns the servlets {@link AbstractReflectiveHandlerMapping.AuthenticationHandler}.
+	 */
+	public AbstractReflectiveHandlerMapping.AuthenticationHandler getAuthenticationHandler() {
+	    return authenticationHandler;
+	}
+
+	/** Sets the servlets {@link RequestProcessorFactoryFactory}.
+	 */
+	public void setRequestProcessorFactoryFactory(RequestProcessorFactoryFactory pFactory) {
+        requestProcessorFactoryFactory = pFactory;
+	}
+
+	/** Returns the servlets {@link RequestProcessorFactoryFactory}.
+	 */
+	public RequestProcessorFactoryFactory getRequestProcessorFactoryFactory() {
+        return requestProcessorFactoryFactory;
+	}
+
+	/** Sets the servlets {@link TypeConverterFactory}.
+	 */
+	public void setTypeConverterFactory(TypeConverterFactory pFactory) {
+	    typeConverterFactory = pFactory;
+	}
+
+    /** Returns the servlets {@link TypeConverterFactory}.
+     */
+    public TypeConverterFactory getTypeConverterFactory() {
+        return typeConverterFactory;
+    }
+
+    /** Creates a new instance of {@link XmlRpcServer},
 	 * which is being used to process the requests. The default implementation
 	 * will simply invoke <code>new {@link XmlRpcServer}.
 	 */
@@ -108,7 +150,15 @@ public class XmlRpcServlet extends HttpServlet {
 	 */
 	protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
         PropertyHandlerMapping mapping = new PropertyHandlerMapping();
-        mapping.setTypeConverterFactory(server.getTypeConverterFactory());
+        mapping.setAuthenticationHandler(authenticationHandler);
+        if (requestProcessorFactoryFactory != null) {
+            mapping.setRequestProcessorFactoryFactory(requestProcessorFactoryFactory);
+        }
+        if (typeConverterFactory != null) {
+            mapping.setTypeConverterFactory(typeConverterFactory);
+        } else {
+            mapping.setTypeConverterFactory(server.getTypeConverterFactory());
+        }
         mapping.load(Thread.currentThread().getContextClassLoader(), url);
         mapping.setVoidMethodEnabled(server.getConfig().isEnabledForExtensions());
         return mapping;
