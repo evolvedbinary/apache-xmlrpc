@@ -36,7 +36,7 @@ import org.apache.xmlrpc.XmlRpcException;
 public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
     /**
      * Reads handler definitions from a resource file.
-     * @paramm pClassLoader The class loader being used to load
+     * @param pClassLoader The class loader being used to load
      *   handler classes.
      * @param pResource The resource being used, for example
      *   "org/apache/xmlrpc/webserver/XmlRpcServlet.properties"
@@ -54,7 +54,7 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
     
     /**
      * Reads handler definitions from a property file.
-     * @paramm pClassLoader The class loader being used to load
+     * @param pClassLoader The class loader being used to load
      *   handler classes.
      * @param pURL The URL from which to load the property file
      * @throws IOException Loading the property file failed.
@@ -63,7 +63,18 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
     public void load(ClassLoader pClassLoader, URL pURL) throws IOException, XmlRpcException {
         Properties props = new Properties();
         props.load(pURL.openStream());
-        for (Iterator iter = props.entrySet().iterator();  iter.hasNext();  ) {
+        load(pClassLoader, props);
+    }
+
+    /**
+     * Reads handler definitions from an existing Map.
+     * @param pClassLoader The class loader being used to load
+     *   handler classes.
+     * @param pMap The existing Map to read from
+     * @throws XmlRpcException Initializing the handlers failed.
+     */
+    public void load(ClassLoader pClassLoader, Map pMap) throws XmlRpcException {
+        for (Iterator iter = pMap.entrySet().iterator();  iter.hasNext();  ) {
             Map.Entry entry = (Map.Entry) iter.next();
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();

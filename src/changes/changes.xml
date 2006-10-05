@@ -10,6 +10,10 @@
       <action dev="jochen" type="add">
         Added support for void methods, if extensions are turned on.
       </action>
+      <action dev="jochen" type="add" issue="XMLRPC-118" due-to="Perry Nguyen"
+          due-to-email="pfnguyen@hanhuy.com">
+        Added PropertyHandlerMapping.load(ClassLoader, Map).
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
