@@ -53,6 +53,11 @@
       <action dev="jochen" type="fix" issue="XMLRPC-115">
         An NPE was thrown, if the clients request didn't contain a "params" element.
       </action>
+      <action dev="jochen" type="fix" due-to="Jonathan Oexner"
+          due-to-email="jonathan.oexner@alum.wpi.edu">
+        The method TimingOutCallback.waitForResponse is now checking, whether
+        a response has already arrived before waiting.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"

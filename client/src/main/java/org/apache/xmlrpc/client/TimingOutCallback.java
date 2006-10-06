@@ -53,9 +53,11 @@ public class TimingOutCallback implements AsyncCallback {
      * @throws Throwable An error was returned by the server.
      */
     public synchronized Object waitForResponse() throws Throwable {
-        wait(timeout);
         if (!responseSeen) {
-            throw new TimeoutException(0, "No response after waiting for " + timeout + " milliseconds.");
+            wait(timeout);
+            if (!responseSeen) {
+                throw new TimeoutException(0, "No response after waiting for " + timeout + " milliseconds.");
+            }
         }
         if (error != null) {
             throw error;
