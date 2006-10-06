@@ -16,7 +16,9 @@
 package org.apache.xmlrpc.webserver;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,12 +31,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcConfig;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.TypeConverterFactory;
+import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.RequestProcessorFactoryFactory;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcServer;
-import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
-import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping;
+import org.apache.xmlrpc.util.ReflectionUtil;
 
 
 /** <p>A default servlet implementation The typical use would
@@ -64,15 +66,31 @@ public class XmlRpcServlet extends HttpServlet {
 		return server;
 	}
 
+    private void handleInitParameters(ServletConfig pConfig) throws ServletException {
+        for (Enumeration en = pConfig.getInitParameterNames();  en.hasMoreElements();  ) {
+            String name = (String) en.nextElement();
+            String value = pConfig.getInitParameter(name);
+            try {
+                if (ReflectionUtil.setProperty(server, name, value)) {
+                    throw new ServletException("Unknown init parameter " + name);
+                }
+            } catch (IllegalAccessException e) {
+                throw new ServletException("Illegal access to instance of " + server.getClass().getName()
+                        + " while setting property " + name + ": " + e.getMessage(), e);
+            } catch (InvocationTargetException e) {
+                Throwable t = e.getTargetException();
+                throw new ServletException("Failed to invoke setter for property " + name
+                        + " on instance of " + server.getClass().getName()
+                        + ": " + t.getMessage(), t);
+            }
+        }
+    }
+
 	public void init(ServletConfig pConfig) throws ServletException {
 		super.init(pConfig);
 		try {
             server = newXmlRpcServer(pConfig);
-            String enabledForExtensionsParam = pConfig.getInitParameter("enabledForExtensions");
-            if (enabledForExtensionsParam != null) {
-                boolean b = Boolean.valueOf(enabledForExtensionsParam).booleanValue();
-                ((XmlRpcServerConfigImpl) server.getConfig()).setEnabledForExtensions(b);
-            }
+            handleInitParameters(pConfig);
 			server.setHandlerMapping(newXmlRpcHandlerMapping());
         } catch (XmlRpcException e) {
 			try {

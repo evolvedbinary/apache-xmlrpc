@@ -19,6 +19,11 @@
         The authentication handler, type converter and requestprocessor factories
         are now configurable as properties of the XmlRpcServlet.
       </action>
+      <action dev="jochen" type="add" issue="XMLRPC-116" due-to="Jimisola Laursen"
+          due-to-email="lists@jimisola.com">
+        Atomic properties of XmlRpcServer are now configurable as init parameters
+        in the XmlRpcServlet.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
