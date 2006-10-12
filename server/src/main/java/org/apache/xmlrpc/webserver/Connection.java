@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -42,7 +43,7 @@ import org.apache.xmlrpc.util.ThreadPool;
  * is able to do HTTP keepalive. In other words, it can serve
  * multiple requests via a single, physical connection.
  */
-public class Connection implements ThreadPool.Task, ServerStreamConnection {
+public class Connection implements ThreadPool.InterruptableTask, ServerStreamConnection {
     private static final String US_ASCII = "US-ASCII";
     private static final byte[] ctype = toHTTPBytes("Content-Type: text/xml\r\n");
     private static final byte[] clength = toHTTPBytes("Content-Length: ");
@@ -97,6 +98,8 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
     private byte[] buffer;
     private Map headers;
     private RequestData requestData;
+    private boolean shuttingDown;
+    private boolean firstByte;
 
     /** Creates a new webserver connection on the given socket.
      * @param pWebServer The webserver maintaining this connection.
@@ -133,6 +136,7 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
         if (headers != null) {
             headers.clear();
         }
+        firstByte = true;
         XmlRpcHttpServerConfig serverConfig = (XmlRpcHttpServerConfig) server.getConfig();
         requestData.setBasicEncoding(serverConfig.getBasicEncoding());
         requestData.setContentLengthOptional(serverConfig.isContentLengthOptional());
@@ -141,6 +145,9 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
 
         // reset user authentication
         String line = readLine();
+        if (line == null  &&  firstByte) {
+            return null;
+        }
         // Netscape sends an extra \n\r after bodypart, swallow it
         if (line != null && line.length() == 0) {
             line = readLine();
@@ -210,7 +217,9 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
                 /* Ignore me */
             }
         } catch (Throwable t) {
-            webServer.log(t);
+            if (!shuttingDown) {
+                webServer.log(t);
+            }
         } finally {
             try { output.close(); } catch (Throwable ignore) {}
             try { input.close(); } catch (Throwable ignore) {}
@@ -225,7 +234,16 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
         int next;
         int count = 0;
         for (;;) {
-            next = input.read();
+            try {
+                next = input.read();
+                firstByte = false;
+            } catch (SocketException e) {
+                if (firstByte) {
+                    return null;
+                } else {
+                    throw e;
+                }
+            }
             if (next < 0 || next == '\n') {
                 break;
             }
@@ -382,5 +400,10 @@ public class Connection implements ThreadPool.Task, ServerStreamConnection {
     }
 
     public void close() throws IOException {
+    }
+
+    public void shutdown() throws Throwable {
+        shuttingDown = true;
+        socket.close();
     }
 }

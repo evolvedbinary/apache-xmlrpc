@@ -77,4 +77,8 @@ public class ServletWebServerProvider extends ClientProviderImpl {
     public XmlRpcServer getServer() {
         return servlet.getXmlRpcServletServer();
     }
+
+    public void shutdown() {
+        webServer.shutdown();
+    }
 }

@@ -412,7 +412,7 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 		}
 	}
 
-	String getHttpHeaders(Integer pContentLength) throws IOException {
+	String getHttpHeaders(Integer pContentLength) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("HTTP/1.0 ");
 		sb.append(status);

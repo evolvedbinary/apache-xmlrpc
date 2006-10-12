@@ -67,4 +67,8 @@ public abstract class WebServerProvider extends ClientProviderImpl {
 	public XmlRpcServer getServer() {
 	    return webServer.getXmlRpcServer();
     }
+
+	public void shutdown() {
+	    webServer.shutdown();
+    }
 }

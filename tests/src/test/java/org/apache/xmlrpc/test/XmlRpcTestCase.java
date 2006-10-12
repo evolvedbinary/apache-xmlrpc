@@ -64,7 +64,7 @@ public abstract class XmlRpcTestCase extends TestCase {
         return mapping;
     }
 
-    protected final ClientProvider[] initProviders(XmlRpcHandlerMapping pMapping) throws ServletException, IOException {
+    protected ClientProvider[] initProviders(XmlRpcHandlerMapping pMapping) throws ServletException, IOException {
         return new ClientProvider[]{
                 new LocalTransportProvider(pMapping),
                 new LocalStreamTransportProvider(pMapping),
@@ -81,6 +81,14 @@ public abstract class XmlRpcTestCase extends TestCase {
     public void setUp() throws Exception {
         if (providers == null) {
             providers = initProviders(getHandlerMapping());
+        }
+    }
+
+    public void tearDown() throws Exception {
+        if (providers != null) {
+            for (int i = 0;  i < providers.length;  i++) {
+                providers[i].shutdown();
+            }
         }
     }
 

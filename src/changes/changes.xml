@@ -24,6 +24,10 @@
         Atomic properties of XmlRpcServer are now configurable as init parameters
         in the XmlRpcServlet.
       </action>
+      <action dev="jochen" type="fix">
+        Reworked the WebServer/ThreadPool framework in order to ensure a clean
+        shutdown.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">

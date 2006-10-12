@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.TimingOutCallback;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcHttpClientConfig;
 import org.apache.xmlrpc.client.util.ClientFactory;
@@ -229,6 +231,16 @@ public class JiraTest extends XmlRpcTestCase {
     }
 
     /**
+     * Test case for <a href="http://issues.apache.org/jira/browse/XMLRPC-112">
+     * XMLRPC-112</a>
+     */
+    public void testXMLRPC112() throws Exception {
+        for (int i = 0;  i < providers.length;  i++) {
+            testXMLRPC112(providers[i]);
+        }
+    }
+
+    /**
      * Test case for <a href="http://issues.apache.org/jira/browse/XMLRPC-113">
      * XMLRPC-113</a>
      */
@@ -236,6 +248,34 @@ public class JiraTest extends XmlRpcTestCase {
         for (int i = 0;  i < providers.length;  i++) {
             testXMLRPC113(providers[i]);
         }
+    }
+
+
+    private void testXMLRPC112(ClientProvider pProvider) throws Exception {
+        XmlRpcClient client = pProvider.getClient();
+        client.setConfig(getConfig(pProvider));
+        TimingOutCallback toc = new TimingOutCallback(5000);
+        final String methodName = XMLRPC89Handler.class.getName() + ".reverse";
+        client.executeAsync(methodName, new Object[]{new Object[]{"1", "2", "3"}}, toc);
+        Object o;
+        try {
+            o = toc.waitForResponse();
+        } catch (Exception e) {
+            throw e;
+        } catch (Throwable t) {
+            throw new UndeclaredThrowableException(t);
+        }
+        checkXMLRPC112Result(o);
+        checkXMLRPC112Result(client.execute(methodName, new Object[]{new Object[]{"1", "2", "3"}}));
+        checkXMLRPC112Result(client.execute(methodName, new Object[]{new Object[]{"1", "2", "3"}}));
+    }
+
+    private void checkXMLRPC112Result(Object pObject) {
+        Object[] args = (Object[]) pObject;
+        assertEquals(3, args.length);
+        assertEquals("3", args[0]);
+        assertEquals("2", args[1]);
+        assertEquals("1", args[2]);
     }
 
     /**

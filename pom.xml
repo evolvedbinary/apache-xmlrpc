@@ -236,7 +236,7 @@
                 <artifactId>commons-httpclient</artifactId>
                 <version>3.0.1</version>
                 <type>jar</type>
-                <scope>optional</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -253,7 +253,7 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>2.4</version>
-                <scope>optional</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -270,7 +270,7 @@
                 <groupId>jaxme</groupId>
                 <artifactId>jaxmeapi</artifactId>
                 <version>0.5.1</version>
-                <scope>optional</scope>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

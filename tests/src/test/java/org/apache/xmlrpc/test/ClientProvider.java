@@ -39,4 +39,8 @@ public interface ClientProvider {
      * @return A server instance, which is being used for performing the test.
 	 */
     XmlRpcServer getServer();
+
+    /** Performs a shutdown of the server.
+     */
+    void shutdown();
 }

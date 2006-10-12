@@ -32,63 +32,77 @@ public class ThreadPool {
 		void run() throws Throwable;
 	}
 
-	private class MyThread extends Thread {
-		private boolean shuttingDown;
-		private int numTasks;
-		private Task task;
-		MyThread() {
-			super(threadGroup, threadGroup.getName() + "-" + num++);
-			setDaemon(true);
-		}
-		synchronized void shutdown() {
-			shuttingDown = true;
-			notify();
-		}
-		synchronized boolean isShuttingDown() { return shuttingDown; }
-		synchronized void waitForNotification() {
-			if (getTask() != null) { return; }
-			try {
-				wait();
-			} catch (InterruptedException e) {
-			}
-		}
-		synchronized int getNumTasks() { return numTasks; }
-		synchronized Task getTask() { return task; }
-		synchronized void setTask(Task pTask) {
-			task = pTask;
-			if (task != null) {
-				notify();
-			}
-		}
-		synchronized void runTask() {
-			Task tsk = getTask();
-			if (tsk == null) {
-				return;
-			}
-			++numTasks;
-			Throwable t;
-			try {
-				tsk.run();
-				t = null;
-			} catch (Throwable th) {
-				t = th;
-			}
-			if (t == null) {
-				repool(this);
-			} else {
-				discard(this);
-			}
-		}
-		public void run() {
-			while (!isShuttingDown()) {
-				if (getTask() == null) {
-					waitForNotification();
-				} else {
-					runTask();
-				}
-			}
-		}
-	}
+    /** A task, which may be interrupted, if the pool is shutting down. 
+     */
+    public interface InterruptableTask extends Task {
+        /** Interrupts the task.
+         * @throws Throwable Shutting down the task failed.
+         */
+        void shutdown() throws Throwable;
+    }
+
+    private class Poolable {
+        private boolean shuttingDown;
+        private Task task;
+        private Thread thread;
+        Poolable(ThreadGroup pGroup, int pNum) {
+            thread = new Thread(pGroup, pGroup.getName() + "-" + pNum){
+                public void run() {
+                    while (!isShuttingDown()) {
+                        final Task t = getTask();
+                        if (t == null) {
+                            try {
+                                synchronized (this) {
+                                    wait();
+                                }
+                            } catch (InterruptedException e) {
+                                // Do nothing
+                            }
+                        } else {
+                            try {
+                                t.run();
+                                resetTask();
+                                repool(Poolable.this);
+                            } catch (Throwable e) {
+                                discard(Poolable.this);
+                                resetTask();
+                            }
+                        }
+                    }
+                }
+            };
+            thread.start();
+        }
+        synchronized void shutdown() {
+            shuttingDown = true;
+            final Task t = getTask();
+            if (t != null  &&  t instanceof InterruptableTask) {
+                try {
+                    ((InterruptableTask) t).shutdown();
+                } catch (Throwable th) {
+                    // Ignore me
+                }
+            }
+            task = null;
+            synchronized (thread) {
+                thread.notify();
+            }
+        }
+        private synchronized boolean isShuttingDown() { return shuttingDown; }
+        String getName() { return thread.getName(); }
+        private synchronized Task getTask() {
+            return task;
+        }
+        private synchronized void resetTask() {
+            task = null;
+        }
+        synchronized void start(Task pTask) {
+            task = pTask;
+            synchronized (thread) {
+                thread.notify();
+            }
+        }
+    }
 
 	private final ThreadGroup threadGroup;
 	private final int maxSize;
@@ -107,25 +121,26 @@ public class ThreadPool {
 		threadGroup = new ThreadGroup(pName);
 	}
 
-	synchronized void discard(MyThread pThread) {
-		pThread.shutdown();
-		if (!runningThreads.remove(pThread)) {
-			throw new IllegalStateException("The list of running threads didn't contain the thread " + pThread.getName());
-		}
+	synchronized void discard(Poolable pPoolable) {
+		pPoolable.shutdown();
+        runningThreads.remove(pPoolable);
+        waitingThreads.remove(pPoolable);
 	}
 
-	synchronized void repool(MyThread pThread) {
-		if (maxSize != 0  &&  (runningThreads.size() + waitingThreads.size()) > maxSize) {
-			discard(pThread);
-		} else if (waitingTasks.size() > 0) {
-			pThread.setTask((Task) waitingTasks.remove(0));
-		} else {
-			pThread.setTask(null);
-			if (!runningThreads.remove(pThread)) {
-				throw new IllegalStateException("The list of running threads didn't contain the thread " + pThread.getName());
-			}
-			waitingThreads.add(pThread);
-		}
+	synchronized void repool(Poolable pPoolable) {
+        if (runningThreads.remove(pPoolable)) {
+            if (maxSize != 0  &&  runningThreads.size() + waitingThreads.size() >= maxSize) {
+                discard(pPoolable);
+            } else {
+                waitingThreads.add(pPoolable);
+                if (waitingTasks.size() > 0) {
+                    Task task = (Task) waitingTasks.remove(waitingTasks.size() - 1);
+                    startTask(task);
+                }
+            }
+        } else {
+            discard(pPoolable);
+        }
 	}
 
 	/** Starts a task immediately.
@@ -138,15 +153,14 @@ public class ThreadPool {
 		if (maxSize != 0  &&  runningThreads.size() > maxSize) {
 			return false;
 		}
-		MyThread t;
+        Poolable poolable;
 		if (waitingThreads.size() > 0) {
-			t = (MyThread) waitingThreads.remove(waitingThreads.size()-1);
+		    poolable = (Poolable) waitingThreads.remove(waitingThreads.size()-1);
 		} else {
-			t = new MyThread();
-			t.start();
+            poolable = new Poolable(threadGroup, num++);
 		}
-		runningThreads.add(t);
-		t.setTask(pTask);
+		runningThreads.add(poolable);
+        poolable.start(pTask);
 		return true;
 	}
 
@@ -166,14 +180,14 @@ public class ThreadPool {
 	/** Closes the pool.
 	 */
 	public synchronized void shutdown() {
-		for (int i = 0;  i < waitingThreads.size();  i++) {
-			MyThread t = (MyThread) waitingThreads.get(i);
-			t.shutdown();
-		}
-		for (int i = 0;  i < runningThreads.size();  i++) {
-			MyThread t = (MyThread) runningThreads.get(i);
-			t.shutdown();
-		}
+        while (!waitingThreads.isEmpty()) {
+            Poolable poolable = (Poolable) waitingThreads.remove(waitingThreads.size()-1);
+            poolable.shutdown();
+        }
+        while (!runningThreads.isEmpty()) {
+            Poolable poolable = (Poolable) runningThreads.remove(runningThreads.size()-1);
+            poolable.shutdown();
+        }
 	}
 
 	/** Returns the maximum number of concurrent threads.
@@ -184,5 +198,5 @@ public class ThreadPool {
 	/** Returns the number of threads, which have actually been created,
      * as opposed to the number of currently running threads.
 	 */
-    public int getNumThreads() { return num; }
+    public synchronized int getNumThreads() { return num; }
 }

@@ -51,4 +51,8 @@ public class LocalTransportProvider extends ClientProviderImpl {
     public XmlRpcServer getServer() {
         return server;
     }
+
+    public void shutdown() {
+        // Does nothing
+    }
 }
