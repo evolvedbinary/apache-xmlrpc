@@ -62,6 +62,11 @@
         The method TimingOutCallback.waitForResponse is now checking, whether
         a response has already arrived before waiting.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-119">
+		Fixed a serious performance problem, if the XML parser was sending large
+		content in small pieces. This could happen, for example, if the content
+		contained a large number of character entities.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"

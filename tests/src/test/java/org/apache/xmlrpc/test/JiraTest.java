@@ -363,4 +363,37 @@ public class JiraTest extends XmlRpcTestCase {
             assertEquals(0, ((Object[]) parser.getResult()).length);
         }
     }
+
+    /**
+     * Test case for <a href="http://issues.apache.org/jira/browse/XMLRPC-119">
+     * XMLRPC-119</a>
+     */
+    public void testXMLRPC119() throws Exception {
+        for (int i = 0;  i < providers.length;  i++) {
+            testXMLRPC119(providers[i]);
+        }
+    }
+
+    /** Handler for XMLRPC-119
+     */
+    public static class XMLRPC119Handler {
+        /** Returns a string with a length of "num" Kilobytes.
+         */
+        public String getString(int pSize) {
+            StringBuffer sb = new StringBuffer(pSize*1024);
+            for (int i = 0;  i < pSize*1024;  i++) {
+                sb.append('&');
+            }
+            return sb.toString();
+        }
+    }
+
+    private void testXMLRPC119(ClientProvider pProvider) throws Exception {
+        XmlRpcClient client = pProvider.getClient();
+        client.setConfig(getConfig(pProvider));
+        for (int i = 0;  i < 100;  i+= 10) {
+            String s = (String) client.execute(XMLRPC119Handler.class.getName() + ".getString", new Object[]{new Integer(i)});
+            assertEquals(i*1024, s.length());
+        }
+    }
 }

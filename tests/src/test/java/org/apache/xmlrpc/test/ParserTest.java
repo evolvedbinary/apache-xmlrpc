@@ -1,9 +1,9 @@
 package org.apache.xmlrpc.test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Map;
+
+import javax.xml.parsers.SAXParserFactory;
 
 import junit.framework.TestCase;
 
@@ -27,10 +27,6 @@ public class ParserTest extends TestCase {
 	private Object parseResponse(final String s) throws XmlRpcException, IOException, SAXException {
 		return parseResponse(new InputSource(new StringReader(s)));
 	}
-
-    private Object parseResponse(final File f) throws XmlRpcException, IOException, SAXException {
-        return parseResponse(new InputSource(f.toURI().toURL().toExternalForm()));
-    }
 
     private Object parseResponse(InputSource isource) throws XmlRpcException,
             IOException, SAXException {

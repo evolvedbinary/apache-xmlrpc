@@ -262,7 +262,7 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.ws.commons</groupId>
+                <groupId>org.apache.ws.commons.util</groupId>
                 <artifactId>ws-commons-util</artifactId>
                 <version>1.0.2-SNAPSHOT</version>
             </dependency>

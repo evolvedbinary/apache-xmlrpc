@@ -41,7 +41,7 @@ public abstract class AtomicParser extends TypeParserImpl {
 	}
 
 	public void characters(char[] pChars, int pStart, int pLength) throws SAXException {
-		if (sb == null) {
+        if (sb == null) {
 			if (!isEmpty(pChars, pStart, pLength)) {
 				throw new SAXParseException("Unexpected non-whitespace characters",
 											getDocumentLocator());
