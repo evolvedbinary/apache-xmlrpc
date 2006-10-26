@@ -37,7 +37,7 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 	private final TypeFactory factory;
 	private boolean inValueTag;
 	private TypeParser typeParser;
-	private String text;
+    private StringBuffer text = new StringBuffer();
 
 	/** Creates a new instance.
 	 * @param pContext The namespace context.
@@ -54,7 +54,7 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 
 	protected void startValueTag() throws SAXException {
 		inValueTag = true;
-		text = null;
+		text.setLength(0);
 		typeParser = null;
 	}
 
@@ -63,8 +63,8 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 	protected void endValueTag() throws SAXException {
 		if (inValueTag) {
 			if (typeParser == null) {
-				addResult(text == null ? "" : text);
-				text = null;
+				addResult(text.toString());
+                text.setLength(0);
 			} else {
 				typeParser.endDocument();
 				try {
@@ -82,7 +82,7 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 
 	public void startDocument() throws SAXException {
 		inValueTag = false;
-		text = null;
+        text.setLength(0);
 		typeParser = null;
 	}
 
@@ -118,9 +118,9 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 				}
 				typeParser.setDocumentLocator(getDocumentLocator());
 				typeParser.startDocument();
-				if (text != null) {
-					typeParser.characters(text.toCharArray(), 0, text.length());
-					text = null;
+				if (text.length() > 0) {
+					typeParser.characters(text.toString().toCharArray(), 0, text.length());
+                    text.setLength(0);
 				}
 			}
 			typeParser.startElement(pURI, pLocalName, pQName, pAttrs);
@@ -133,8 +133,7 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 	public void characters(char[] pChars, int pOffset, int pLength) throws SAXException {
 		if (typeParser == null) {
 			if (inValueTag) {
-				String s = new String(pChars, pOffset, pLength);
-				text = text == null ? s : text + s;
+			    text.append(pChars, pOffset, pLength);
 			} else {
 				super.characters(pChars, pOffset, pLength);
 			}
@@ -146,8 +145,7 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 	public void ignorableWhitespace(char[] pChars, int pOffset, int pLength) throws SAXException {
 		if (typeParser == null) {
 			if (inValueTag) {
-				String s = new String(pChars, pOffset, pLength);
-				text = text == null ? s : text + s;
+			    text.append(pChars, pOffset, pLength);
 			} else {
 				super.ignorableWhitespace(pChars, pOffset, pLength);
 			}

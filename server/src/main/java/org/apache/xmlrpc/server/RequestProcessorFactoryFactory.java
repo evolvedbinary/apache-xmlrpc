@@ -39,7 +39,7 @@ import org.apache.xmlrpc.metadata.Util;
  * implement them.</p>
  * <p>The default {@link RequestProcessorFactoryFactory} is the
  * {@link RequestSpecificProcessorFactoryFactory}. It creates a new
- * processor instance for any request. In other words, it allows to
+ * processor instance for any request. In other words, it allows the
  * request processor to have some state. This is fine, if the request
  * processor is a lightweight object or needs request specific
  * initialization. In this case, the actual request processor is

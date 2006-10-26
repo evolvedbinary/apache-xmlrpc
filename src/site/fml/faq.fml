@@ -184,14 +184,14 @@ public class MyXmlRpcServlet extends XmlRpcServlet {
 	protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
         PropertyHandlerMapping mapping = super.newPropertyHandlerMapping(url);
 	    RequestProcessorFactoryFactory factory = new RequestSpecificProcessorFactoryFactory(){
-	        protected Object newRequestProcessor(Class pClass, XmlRpcRequest pRequest) {
+	        protected Object getRequestProcessor(Class pClass, XmlRpcRequest pRequest) throws XmlRpcException {
 	            RequestInitializableRequestProcessor proc =
-	                (RequestInitializableRequestProcessor) super.newRequestProcessor(pClass, pRequest);
-	            proc.init(pRequest.getConfig());
+	                (RequestInitializableRequestProcessor) super.getRequestProcessor(pClass, pRequest);
+	            proc.init((MyConfig) pRequest.getConfig());
 	            return proc;
 	        }
 	    };
-	    mapping.setRequestProcessorFactoryFactory(mapping);
+	    mapping.setRequestProcessorFactoryFactory(factory);
 	    return mapping;
 	}
 }
