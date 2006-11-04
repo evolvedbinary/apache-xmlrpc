@@ -67,6 +67,10 @@
 		content in small pieces. This could happen, for example, if the content
 		contained a large number of character entities.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-120"
+          due-to="Juho Yli-Krekola" due-to-email="Juho.Yli-Krekola@iki.fi">
+        The configuration of the reply timeout in the commons transport was wrong.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"
