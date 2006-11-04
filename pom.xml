@@ -177,6 +177,10 @@
             <name>Ken Weiner</name>
             <email>kweiner@gmail.com</email>
         </contributor>
+        <contributor>
+            <name>Juho Yli-Krekola</name>
+            <email>Juho.Yli-Krekola@iki.fi</email>
+        </contributor>
     </contributors>
     <scm>
         <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/branches/XMLRPC_3_0_BRANCH</connection>

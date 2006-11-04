@@ -8,7 +8,7 @@
         Make the HttpClient creation in XmlRpcCommonsTransport and the
         URLConnection creation in XmlRpcSunHttpTransport protected.
         This is required for cookie support.
-      </action
+      </action>
       <action dev="jochen" type="fix">
         The WebServer was producing invalid error responses, if contentLengthOptional
         was set.
@@ -40,6 +40,10 @@
 		Fixed a serious performance problem, if the XML parser was sending large
 		content in small pieces. This could happen, for example, if the content
 		contained a large number of character entities.
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-120"
+          due-to="Juho Yli-Krekola" due-to-email="Juho.Yli-Krekola@iki.fi">
+        The configuration of the reply timeout in the commons transport was wrong.
       </action>
     </release>
     <release version="3.0" date="30-Aug-2006">

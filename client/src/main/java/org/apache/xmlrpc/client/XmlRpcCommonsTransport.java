@@ -74,7 +74,7 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
             client.getHttpConnectionManager().getParams().setConnectionTimeout(config.getConnectionTimeout());
         
         if (config.getReplyTimeout() != 0)
-            client.getHttpConnectionManager().getParams().setSoTimeout(config.getConnectionTimeout());
+            client.getHttpConnectionManager().getParams().setSoTimeout(config.getReplyTimeout());
         
         method.getParams().setVersion(HttpVersion.HTTP_1_1);
     }
