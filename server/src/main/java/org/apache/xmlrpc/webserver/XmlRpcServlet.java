@@ -71,7 +71,9 @@ public class XmlRpcServlet extends HttpServlet {
             String name = (String) en.nextElement();
             String value = pConfig.getInitParameter(name);
             try {
-                if (ReflectionUtil.setProperty(server, name, value)) {
+                if (!ReflectionUtil.setProperty(this, name, value)
+                    &&  !ReflectionUtil.setProperty(server, name, value)
+                    &&  !ReflectionUtil.setProperty(server.getConfig(), name, value)) {
                     throw new ServletException("Unknown init parameter " + name);
                 }
             } catch (IllegalAccessException e) {
@@ -177,8 +179,8 @@ public class XmlRpcServlet extends HttpServlet {
         } else {
             mapping.setTypeConverterFactory(server.getTypeConverterFactory());
         }
-        mapping.load(Thread.currentThread().getContextClassLoader(), url);
         mapping.setVoidMethodEnabled(server.getConfig().isEnabledForExtensions());
+        mapping.load(Thread.currentThread().getContextClassLoader(), url);
         return mapping;
 	}
 

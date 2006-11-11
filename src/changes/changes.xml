@@ -28,6 +28,12 @@
         Reworked the WebServer/ThreadPool framework in order to ensure a clean
         shutdown.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-124" due-to="Jimisola Laursen"
+          due-to-email="lists@jimisola.com">
+		The configuration framework, as introduced by XMLRPC-116, was applicable
+		to the configuration only, and not to the XmlRpcServlet, or the
+		XmlRpcServletServer.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
