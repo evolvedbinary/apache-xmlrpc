@@ -96,6 +96,22 @@ public abstract class AbstractReflectiveHandlerMapping
         authenticationHandler = pAuthenticationHandler;
     }
 
+    protected boolean isHandlerMethod(Method pMethod) {
+        if (!Modifier.isPublic(pMethod.getModifiers())) {
+            return false;  // Ignore methods, which aren't public
+        }
+        if (Modifier.isStatic(pMethod.getModifiers())) {
+            return false;  // Ignore methods, which are static
+        }
+        if (!isVoidMethodEnabled()  &&  pMethod.getReturnType() == void.class) {
+            return false;  // Ignore void methods.
+        }
+        if (pMethod.getDeclaringClass() == Object.class) {
+            return false;  // Ignore methods from Object.class
+        }
+        return true;
+    }
+
     /** Searches for methods in the given class. For any valid
      * method, it creates an instance of {@link XmlRpcHandler}.
      * Valid methods are defined as follows:
@@ -119,17 +135,8 @@ public abstract class AbstractReflectiveHandlerMapping
         Method[] methods = pType.getMethods();
         for (int i = 0;  i < methods.length;  i++) {
             final Method method = methods[i];
-            if (!Modifier.isPublic(method.getModifiers())) {
-                continue;  // Ignore methods, which aren't public
-            }
-            if (Modifier.isStatic(method.getModifiers())) {
-                continue;  // Ignore methods, which are static
-            }
-            if (!isVoidMethodEnabled()  &&  method.getReturnType() == void.class) {
-                continue;  // Ignore void methods.
-            }
-            if (method.getDeclaringClass() == Object.class) {
-                continue;  // Ignore methods from Object.class
+            if (!isHandlerMethod(method)) {
+                continue;
             }
             String name = pKey + "." + method.getName();
             Method[] mArray;

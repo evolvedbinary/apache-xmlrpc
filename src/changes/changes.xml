@@ -34,6 +34,11 @@
 		to the configuration only, and not to the XmlRpcServlet, or the
 		XmlRpcServletServer.
       </action>
+      <action dev="jochen" type="add">
+        Introduced the method AbstractReflectiveHandlerMapping.isHandlerMethod().
+        This should allow users to prevent remote invocation of certain methods,
+        for example initialization stuff.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
