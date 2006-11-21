@@ -17,6 +17,7 @@
       <item name="Server Side XML-RPC" href="/server.html"/>
       <item name="Vendor Extensions"   href="/extensions.html"/>
       <item name="SSL"                 href="/ssl.html"/>
+      <item name="Introspection"       href="/introspection.html"/>
       <item name="Advanced Techniques" href="/advanced.html"/>
       <item name="XML-RPC Types"       href="/types.html"/>
       <item name="Download"            href="/download.html"/>
