@@ -16,6 +16,12 @@
 package org.apache.xmlrpc.metadata;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.XmlRpcHandler;
+import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.server.PropertyHandlerMapping;
+import org.apache.xmlrpc.server.RequestProcessorFactoryFactory;
+import org.apache.xmlrpc.server.XmlRpcNoSuchHandlerException;
+import org.apache.xmlrpc.server.RequestProcessorFactoryFactory.RequestProcessorFactory;
 
 
 /** This class implements the various "system" calls,
@@ -53,4 +59,30 @@ public class XmlRpcSystemImpl {
 	public String[] listMethods() throws XmlRpcException {
 		return mapping.getListMethods();
 	}
+
+	/**
+     * Adds an instance of this class to the given handler
+     * mapping.
+	 */
+	public static void addSystemHandler(final PropertyHandlerMapping pMapping)
+            throws XmlRpcException {
+	    final RequestProcessorFactoryFactory factory = pMapping.getRequestProcessorFactoryFactory();
+        final XmlRpcSystemImpl systemHandler = new XmlRpcSystemImpl(pMapping);
+        pMapping.setRequestProcessorFactoryFactory(new RequestProcessorFactoryFactory(){
+            public RequestProcessorFactory getRequestProcessorFactory(Class pClass)
+                    throws XmlRpcException {
+                if (XmlRpcSystemImpl.class.equals(pClass)) {
+                    return new RequestProcessorFactory(){
+                        public Object getRequestProcessor(XmlRpcRequest request)
+                                throws XmlRpcException {
+                            return systemHandler;
+                        }
+                    };
+                } else {
+                    return factory.getRequestProcessorFactory(pClass);
+                }
+            }
+        });
+        pMapping.addHandler("system", XmlRpcSystemImpl.class);
+    }
 }

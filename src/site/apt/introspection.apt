@@ -1,0 +1,60 @@
+           ---------------------------
+           Advanced Programming Topics
+           ---------------------------
+
+    Apache XML-RPC supports XML-RPC introspection, as specified by
+    {{{http://scripts.incutio.com/xmlrpc/introspection.html}
+    http://scripts.incutio.com/xmlrpc/introspection.html}}. This
+    page describes how to configure the XML-RPC server for
+    introspection.
+
+What is introspection?
+
+    Introspection is the servers ability to provide metadata
+    to the client. The client may ask "What method names does
+    the server offer?", "How do I invoke method 'foo'?", or
+    "Can you give me help on method 'foo'?".
+
+    The client does so by invoking the special methods
+    "system.listMethods", "system.methodSignature" and
+    "system.methodHelp". These are described in detail in the
+    non-official specification for XML-RPC introspection, which
+    you'll find at
+    {{{http://scripts.incutio.com/xmlrpc/introspection.html}
+    http://scripts.incutio.com/xmlrpc/introspection.html}}.
+
+How do I configure the server for introspection?
+
+    The server requires a special mapping. Basically, you simply add
+    a "system" handler, which is implemented by the class
+    <<<XmlRpcSystemImpl>>>. Here's how you would do that in the
+    <<<XmlRpcServlet>>>:
+
+---------------------------------------------------------
+    public class MyXmlRpcServlet extends XmlRpcServlet {
+		protected XmlRpcHandlerMapping newXmlRpcHandlerMapping()
+		        throws XmlRpcException {
+			PropertyHandlerMapping mapping =
+			    (PropertyHandlerMapping) newXmlRpcHandlerMapping();
+			XmlRpcSystemImpl.addSystemHandler(mapping);
+		}
+    }
+---------------------------------------------------------
+
+    Quite similar, you would override a protected method, if you
+    prefer using the <<<WebServer>>> class:
+
+---------------------------------------------------------
+    public class MyWebServer extends WebServer {
+        public MyWebServer(int pPort) {
+            super(pPort);
+        }
+
+		protected XmlRpcStreamServer newXmlRpcStreamServer(){
+			XmlRpcStreamServer xmlRpcStreamServer = new ConnectionServer();
+			PropertyHandlerMapping mapping = (PropertyHandlerMapping) xmlRpcStreamServer.getHandlerMapping();
+			XmlRpcSystemImpl.addSystemHandler(mapping);
+			return xmlRpcStreamServer;
+		}
+    }
+---------------------------------------------------------

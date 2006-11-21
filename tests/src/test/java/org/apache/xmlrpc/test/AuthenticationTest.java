@@ -17,9 +17,6 @@ package org.apache.xmlrpc.test;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
-import org.apache.log4j.BasicConfigurator;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.XmlRpcRequestConfig;

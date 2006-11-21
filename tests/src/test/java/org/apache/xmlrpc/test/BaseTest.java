@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.servlet.ServletException;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 

@@ -369,7 +369,9 @@ public class WebServer implements Runnable {
 			Thread l = listener;
 			listener = null;
 			l.interrupt();
-			pool.shutdown();
+            if (pool != null) {
+                pool.shutdown();
+            }
 		}
 	}
 	

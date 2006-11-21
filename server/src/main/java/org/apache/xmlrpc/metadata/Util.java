@@ -171,9 +171,9 @@ public class Util {
 	public static String getMethodHelp(Class pClass, Method pMethod) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Invokes the method ");
-		sb.append(pMethod.getReturnType().getClass().getName());
-		sb.append(".");
 		sb.append(pClass.getName());
+		sb.append(".");
+		sb.append(pMethod.getName());
 		sb.append("(");
 		Class[] paramClasses = pMethod.getParameterTypes();
 		for (int i = 0;  i < paramClasses.length;  i++) {
