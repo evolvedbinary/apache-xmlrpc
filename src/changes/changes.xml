@@ -39,6 +39,11 @@
         This should allow users to prevent remote invocation of certain methods,
         for example initialization stuff.
       </action>
+      <action dev="jochen" type="add" issue="XMLRPC-126"
+          due-to="Eugene Prokopiev" due-to-email="prokopiev@stc.donpac.ru">
+        The ClientFactory is now able to use a custom name for the remote
+        handler. So far, it was always using the interface name.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">

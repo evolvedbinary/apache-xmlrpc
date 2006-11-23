@@ -84,9 +84,14 @@ public class ClientFactory {
         objectMethodLocal = pObjectMethodLocal;
     }
 
-    /** Creates an object, which is implementing the given interface.
+    /**
+     * Creates an object, which is implementing the given interface.
      * The objects methods are internally calling an XML-RPC server
-     * by using the factories client.
+     * by using the factories client; shortcut for
+     * <pre>
+     *   newInstance(Thread.currentThread().getContextClassLoader(),
+     *     pClass)
+     * </pre>
      */
     public Object newInstance(Class pClass) {
         return newInstance(Thread.currentThread().getContextClassLoader(), pClass);
@@ -94,15 +99,34 @@ public class ClientFactory {
 
     /** Creates an object, which is implementing the given interface.
      * The objects methods are internally calling an XML-RPC server
-     * by using the factories client.
+     * by using the factories client; shortcut for
+     * <pre>
+     *   newInstance(pClassLoader, pClass, pClass.getName())
+     * </pre>
      */
-    public Object newInstance(ClassLoader pClassLoader, final Class pClass) {
-        return Proxy.newProxyInstance(pClassLoader, new Class[]{pClass}, new InvocationHandler(){
+    public Object newInstance(ClassLoader pClassLoader, Class pClass) {
+        return newInstance(pClassLoader, pClass, pClass.getName());
+    }
+
+    /** Creates an object, which is implementing the given interface.
+     * The objects methods are internally calling an XML-RPC server
+     * by using the factories client.
+     * @param pClassLoader The class loader, which is being used for
+     *   loading classes, if required.
+     * @param pClass Interface, which is being implemented.
+     * @param pRemoteName Handler name, which is being used when
+     *   calling the server. This is used for composing the
+     *   method name. For example, if <code>pRemoteName</code>
+     *   is "Foo" and you want to invoke the method "bar" in
+     *   the handler, then the full method name would be "Foo.bar".
+     */
+    public Object newInstance(ClassLoader pClassLoader, final Class pClass, final String pRemoteName) {
+       return Proxy.newProxyInstance(pClassLoader, new Class[]{pClass}, new InvocationHandler(){
             public Object invoke(Object pProxy, Method pMethod, Object[] pArgs) throws Throwable {
                 if (isObjectMethodLocal()  &&  pMethod.getDeclaringClass().equals(Object.class)) {
                     return pMethod.invoke(pProxy, pArgs);
                 }
-                String methodName = pClass.getName() + "." + pMethod.getName();
+                String methodName = pRemoteName + "." + pMethod.getName();
                 Object result;
                 try {
                     result = client.execute(methodName, pArgs);
