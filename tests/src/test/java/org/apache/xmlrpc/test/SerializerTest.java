@@ -15,10 +15,14 @@
  */
 package org.apache.xmlrpc.test;
 
+import java.io.StringReader;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
+import javax.xml.parsers.SAXParserFactory;
 
 import junit.framework.TestCase;
 
@@ -28,8 +32,14 @@ import org.apache.xmlrpc.client.XmlRpcClientConfig;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcClientRequestImpl;
 import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
+import org.apache.xmlrpc.common.TypeFactoryImpl;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
+import org.apache.xmlrpc.parser.XmlRpcRequestParser;
+import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 /** A test case for the various serializers.
@@ -146,5 +156,45 @@ public class SerializerTest extends TestCase {
             + "<param><value><dateTime.iso8601>19330612T11:07:21</dateTime.iso8601></value></param>"
             + "</params></methodCall>";
         assertEquals(expect, got);
+    }
+
+    /**
+     * Test for XMLRPC-127: Is it possible to transmit a
+     * map with integers as the keys?
+     */
+    public void testIntegerKeyMap() throws Exception {
+        Map map = new HashMap();
+        map.put(new Integer(1), "one");
+        XmlRpcStreamRequestConfig config = getExConfig();
+        XmlRpcRequest request = new XmlRpcClientRequestImpl(config, "integerKeyMap", new Object[]{map});
+        String got = writeRequest(config, request);
+        String expect =
+            "<?xml version=\"1.0\" encoding=\"US-ASCII\"?>"
+            + "<methodCall xmlns:ex=\"http://ws.apache.org/xmlrpc/namespaces/extensions\">"
+            + "<methodName>integerKeyMap</methodName><params>"
+            + "<param><value><struct><member>"
+            +   "<name><value><i4>1</i4></value></name>"
+            +   "<value>one</value></member>"
+            + "</struct></value></param>"
+            + "</params></methodCall>";
+        assertEquals(expect, got);
+
+        XmlRpcServer server = new XmlRpcServer();
+        XmlRpcServerConfigImpl serverConfig = new XmlRpcServerConfigImpl();
+        serverConfig.setEnabledForExtensions(true);
+        server.setConfig(serverConfig);
+        XmlRpcRequestParser parser = new XmlRpcRequestParser(serverConfig, new TypeFactoryImpl(server));
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setValidating(false);
+        spf.setNamespaceAware(true);
+        XMLReader xr = spf.newSAXParser().getXMLReader();
+        xr.setContentHandler(parser);
+        xr.parse(new InputSource(new StringReader(expect)));
+        assertEquals("integerKeyMap", parser.getMethodName());
+        List params = parser.getParams();
+        assertEquals(1, params.size());
+        Map paramMap = (Map) params.get(0);
+        assertEquals(1, paramMap.size());
+        assertEquals("one", paramMap.get(new Integer(1)));
     }
 }

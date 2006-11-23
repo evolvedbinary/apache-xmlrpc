@@ -35,7 +35,8 @@ import org.xml.sax.SAXParseException;
  */
 public class MapParser extends RecursiveTypeParserImpl {
 	private int level = 0;
-	private String name;
+	private StringBuffer nameBuffer = new StringBuffer();
+    private Object nameObject;
 	private Map map;
 	private boolean inName, inValue, doneValue;
 
@@ -51,17 +52,21 @@ public class MapParser extends RecursiveTypeParserImpl {
 	}
 
 	protected void addResult(Object pResult) throws SAXException {
-		if (name == null) {
-			throw new SAXParseException("Invalid state: Expected name",
-										getDocumentLocator());
-		} else {
-			if (map.containsKey(name)) {
-				throw new SAXParseException("Duplicate name: " + name,
-											getDocumentLocator());
-			} else {
-				map.put(name, pResult);
-			}
-		}
+	    if (inName) {
+	        nameObject = pResult;
+        } else {
+            if (nameObject == null) {
+    			throw new SAXParseException("Invalid state: Expected name",
+    										getDocumentLocator());
+    		} else {
+    			if (map.containsKey(nameObject)) {
+    				throw new SAXParseException("Duplicate name: " + nameObject,
+    											getDocumentLocator());
+    			} else {
+    				map.put(nameObject, pResult);
+    			}
+    		}
+        }
 	}
 
 	public void startDocument() throws SAXException {
@@ -72,9 +77,8 @@ public class MapParser extends RecursiveTypeParserImpl {
 	}
 
 	public void characters(char[] pChars, int pOffset, int pLength) throws SAXException {
-		if (inName) {
-			String s = new String(pChars, pOffset, pLength);
-			name = name == null ? s : name + s;
+		if (inName  &&  !inValue) {
+            nameBuffer.append(pChars, pOffset, pLength);
 		} else {
 			super.characters(pChars, pOffset, pLength);
 		}
@@ -105,7 +109,8 @@ public class MapParser extends RecursiveTypeParserImpl {
 												getDocumentLocator());
 				}
 				doneValue = inName = inValue = false;
-				name = null;
+                nameObject = null;
+                nameBuffer.setLength(0);
 				break;
 			case 2:
 				if (doneValue) {
@@ -114,7 +119,7 @@ public class MapParser extends RecursiveTypeParserImpl {
 												getDocumentLocator());
 				}
 				if ("".equals(pURI)  &&  MapSerializer.NAME_TAG.equals(pLocalName)) {
-					if (name == null) {
+					if (nameObject == null) {
 						inName = true;
 					} else {
 						throw new SAXParseException("Expected " + TypeSerializerImpl.VALUE_TAG
@@ -122,7 +127,7 @@ public class MapParser extends RecursiveTypeParserImpl {
 													getDocumentLocator());
 					}
 				} else if ("".equals(pURI)  &&  TypeSerializerImpl.VALUE_TAG.equals(pLocalName)) {
-					if (name == null) {
+					if (nameObject == null) {
 						throw new SAXParseException("Expected " + MapSerializer.NAME_TAG
 													+ ", got " + new QName(pURI, pLocalName),
 													getDocumentLocator());
@@ -133,6 +138,20 @@ public class MapParser extends RecursiveTypeParserImpl {
 					
 				}
 				break;
+            case 3:
+                if (inName  &&  "".equals(pURI)  &&  TypeSerializerImpl.VALUE_TAG.equals(pLocalName)) {
+                    if (cfg.isEnabledForExtensions()) {
+                        inValue = true;
+                        startValueTag();
+                    } else {
+                        throw new SAXParseException("Expected /" + MapSerializer.NAME_TAG
+                                + ", got " + new QName(pURI, pLocalName),
+                                getDocumentLocator());
+                    }
+                } else {
+                    super.startElement(pURI, pLocalName, pQName, pAttrs);
+                }
+                break;
 			default:
 				super.startElement(pURI, pLocalName, pQName, pAttrs);
 				break;
@@ -149,11 +168,28 @@ public class MapParser extends RecursiveTypeParserImpl {
 			case 2:
 				if (inName) {
 					inName = false;
-				} else if (inValue) {
+					if (nameObject == null) {
+					    nameObject = nameBuffer.toString();
+                    } else {
+                        for (int i = 0;  i < nameBuffer.length();  i++) {
+                            if (!Character.isWhitespace(nameBuffer.charAt(i))) {
+                                throw new SAXParseException("Unexpected non-whitespace character in member name",
+                                        getDocumentLocator());
+                            }
+                        }
+                    }
+                } else if (inValue) {
 					endValueTag();
 					doneValue = true;
 				}
 				break;
+            case 3:
+                if (inName  &&  inValue  &&  "".equals(pURI)  &&  TypeSerializerImpl.VALUE_TAG.equals(pLocalName)) {
+                    endValueTag();
+                } else {
+                    super.endElement(pURI, pLocalName, pQName);
+                }
+                break;
 			default:
 				super.endElement(pURI, pLocalName, pQName);
 		}

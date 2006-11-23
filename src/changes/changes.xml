@@ -44,6 +44,10 @@
         The ClientFactory is now able to use a custom name for the remote
         handler. So far, it was always using the interface name.
       </action>
+      <action dev="jochen" type="add" issue="XMLRPC-127">
+        It is now possible to have other objects than strings as
+        map keys.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
