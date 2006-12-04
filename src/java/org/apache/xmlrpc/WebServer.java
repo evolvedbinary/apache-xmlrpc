@@ -4,7 +4,7 @@ package org.apache.xmlrpc;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2006 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -482,9 +482,12 @@ public class WebServer implements Runnable
         {
             while (listener != null)
             {
+                Socket socket = null;
+                Runner runner = null;
+                
                 try
                 {
-                    Socket socket = serverSocket.accept();
+                    socket = serverSocket.accept();
                     try
                     {
                         socket.setTcpNoDelay(true);
@@ -496,7 +499,7 @@ public class WebServer implements Runnable
 
                     if (allowConnection(socket))
                     {
-                        Runner runner = getRunner();
+                        runner = getRunner();
                         runner.handle(socket);
                     }
                     else
@@ -524,6 +527,19 @@ public class WebServer implements Runnable
                             + err + ").");
                     err.printStackTrace();
                 }
+                finally
+                {
+                    if (runner == null && socket != null)
+                    {
+	                    try
+	                    {
+	                        socket.close();
+	                    }
+	                    catch (Throwable e)
+	                    {
+	                    }
+                    }
+               }
             }
         }
         catch (Exception exception)
