@@ -44,18 +44,23 @@ import org.xml.sax.SAXException;
  * HTTP Client.
  */
 public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
-	private final HttpClient client = newHttpClient();
+    private final HttpClient client;
 	private static final String userAgent = USER_AGENT + " (Jakarta Commons httpclient Transport)";
 	private PostMethod method;
 	private int contentLength = -1;
 	private XmlRpcHttpClientConfig config;      
 
 	/** Creates a new instance.
-	 * @param pClient The client, which will be invoking the transport.
+	 * @param pFactory The factory, which created this transport.
 	 */
-	public XmlRpcCommonsTransport(XmlRpcClient pClient) {
-		super(pClient, userAgent);
-	}
+	public XmlRpcCommonsTransport(XmlRpcCommonsTransportFactory pFactory) {
+		super(pFactory.getClient(), userAgent);
+        HttpClient httpClient = pFactory.getHttpClient();
+        if (httpClient == null) {
+            httpClient = newHttpClient();
+        }
+        client = httpClient;
+     }
 
 	protected void setContentLength(int pLength) {
 		contentLength = pLength;
