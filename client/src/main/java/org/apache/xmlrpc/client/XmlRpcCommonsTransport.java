@@ -44,9 +44,9 @@ import org.xml.sax.SAXException;
  * HTTP Client.
  */
 public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
-    private final HttpClient client;
+    protected final HttpClient client;
 	private static final String userAgent = USER_AGENT + " (Jakarta Commons httpclient Transport)";
-	private PostMethod method;
+	protected PostMethod method;
 	private int contentLength = -1;
 	private XmlRpcHttpClientConfig config;      
 
@@ -72,7 +72,7 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 
     protected void initHttpHeaders(XmlRpcRequest pRequest) throws XmlRpcClientException {
         config = (XmlRpcHttpClientConfig) pRequest.getConfig();
-        method = new PostMethod(config.getServerURL().toString());
+        method = newPostMethod(config);
         super.initHttpHeaders(pRequest);
         
         if (config.getConnectionTimeout() != 0)
@@ -82,6 +82,10 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
             client.getHttpConnectionManager().getParams().setSoTimeout(config.getReplyTimeout());
         
         method.getParams().setVersion(HttpVersion.HTTP_1_1);
+    }
+
+    protected PostMethod newPostMethod(XmlRpcHttpClientConfig pConfig) {
+        return new PostMethod(pConfig.getServerURL().toString());
     }
 
 	protected void setRequestHeader(String pHeader, String pValue) {
