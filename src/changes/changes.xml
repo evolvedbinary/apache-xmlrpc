@@ -95,6 +95,10 @@
           due-to="Juho Yli-Krekola" due-to-email="Juho.Yli-Krekola@iki.fi">
         The configuration of the reply timeout in the commons transport was wrong.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-133"
+          due-to="Carsten Wolters" due-to-email="c.wolters@gmx.de">
+        The DateParser is now treating an empty string as null.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"
