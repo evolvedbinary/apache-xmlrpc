@@ -34,8 +34,12 @@ public class DateParser extends AtomicParser {
     }
 
     protected void setResult(String pResult) throws SAXException {
+        final String s = pResult.trim();
+        if (s.length() == 0) {
+            return;
+        }
 		try {
-			super.setResult(f.parseObject(pResult.trim()));
+			super.setResult(f.parseObject(s));
 		} catch (ParseException e) {
 			throw new SAXParseException("Failed to parse integer value: " + pResult,
 										getDocumentLocator());
