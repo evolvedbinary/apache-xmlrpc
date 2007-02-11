@@ -25,7 +25,10 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -44,6 +47,11 @@ import org.xml.sax.SAXException;
  * HTTP Client.
  */
 public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
+    /**
+     * Maximum number of allowed redirects.
+     */
+    private static final int MAX_REDIRECT_ATTEMPTS = 100;
+
     protected final HttpClient client;
 	private static final String userAgent = USER_AGENT + " (Jakarta Commons httpclient Transport)";
 	protected PostMethod method;
@@ -139,7 +147,43 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-	protected void writeRequest(final ReqWriter pWriter) throws XmlRpcException {
+	protected boolean isRedirectRequired() {
+	    switch (method.getStatusCode()) {
+	        case HttpStatus.SC_MOVED_TEMPORARILY:
+	        case HttpStatus.SC_MOVED_PERMANENTLY:
+	        case HttpStatus.SC_SEE_OTHER:
+	        case HttpStatus.SC_TEMPORARY_REDIRECT:
+	            return true;
+	        default:
+	            return false;
+	    }
+	}
+
+	protected void resetClientForRedirect()
+            throws XmlRpcException {
+	    //get the location header to find out where to redirect to
+	    Header locationHeader = method.getResponseHeader("location");
+	    if (locationHeader == null) {
+            throw new XmlRpcException("Invalid redirect: Missing location header");
+	    }
+	    String location = locationHeader.getValue();
+
+	    URI redirectUri = null;
+	    URI currentUri = null;
+	    try {
+	        currentUri = method.getURI();
+	        String charset = currentUri.getURI();
+	        redirectUri = new URI(location, true, charset);
+	        method.setURI(redirectUri);
+	    } catch (URIException ex) {
+            throw new XmlRpcException(ex.getMessage(), ex);
+	    }
+
+	    //And finally invalidate the actual authentication scheme
+	    method.getHostAuthState().invalidate();
+    }
+
+    protected void writeRequest(final ReqWriter pWriter) throws XmlRpcException {
 		method.setRequestEntity(new RequestEntity(){
 			public boolean isRepeatable() { return contentLength != -1; }
 			public void writeRequest(OutputStream pOut) throws IOException {
@@ -173,7 +217,17 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 			public String getContentType() { return "text/xml"; }
 		});
 		try {
-			client.executeMethod(method);
+            int redirectAttempts = 0;
+            for (;;) {
+    			client.executeMethod(method);
+                if (!isRedirectRequired()) {
+                    break;
+                }
+                if (redirectAttempts++ > MAX_REDIRECT_ATTEMPTS) {
+                    throw new XmlRpcException("Too many redirects.");
+                }
+                resetClientForRedirect();
+            }
 		} catch (XmlRpcIOException e) {
 			Throwable t = e.getLinkedException();
 			if (t instanceof XmlRpcException) {
