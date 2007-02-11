@@ -3,8 +3,6 @@ package org.apache.xmlrpc.test;
 import java.io.IOException;
 import java.io.StringReader;
 
-import javax.xml.parsers.SAXParserFactory;
-
 import junit.framework.TestCase;
 
 import org.apache.xmlrpc.XmlRpcException;
