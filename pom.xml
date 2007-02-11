@@ -203,9 +203,9 @@
         </contributor>
     </contributors>
     <scm>
-        <connection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</connection>
-        <developerConnection>scm:svn:scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</developerConnection>
-        <url>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</url>
+        <connection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</developerConnection>
+        <url>https://svn.apache.org/viewvc/webservices/xmlrpc/trunk</url>
     </scm>
     <build>
         <plugins>
@@ -314,6 +314,10 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rat-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </reporting>
