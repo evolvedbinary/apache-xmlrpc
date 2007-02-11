@@ -1,5 +1,28 @@
 <faqs title="FAQ">
   <part id="client">
+    <faq id="arrays">
+      <question>Why do I receive a ClassCastException, if the server returns an array?</question>
+      <answer>
+        <p>The problem is typically caused by code like the following:</p>
+        <source><![CDATA[
+    Integer[] result = (Integer[])server.execute("Server.foo", param);
+        ]]></source>
+        <p>The problem is in the fact, that the XML-RPC response tells
+          the client, that the server returns an array. It doesn't tell
+          what type the array has. In other words, the client will
+          always receive an object array. The workaround is to use
+          code like the following:</p>
+        <source><![CDATA[
+    Object[] result = (Integer[])server.execute("Server.foo", param);
+    for (int i = 0;  i < result.length;  i++) {
+        Integer num = (Integer) result[i];
+        ...
+    }
+        ]]></source>
+
+      </answer> 
+    </faq>
+ 
     <faq id="compression_request">
       <question>How do I enable request compression?</question>
       <answer>
