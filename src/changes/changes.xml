@@ -103,6 +103,10 @@
           due-to="Carsten Wolters" due-to-email="c.wolters@gmx.de">
         The DateParser is now treating an empty string as null.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-134"
+          due-to="Sir Bode Rafael" due-to-email="sirboderafael@gmail.com">
+        Fixed a broken link referring to an "SSL with Jetty" HOW-TO.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"

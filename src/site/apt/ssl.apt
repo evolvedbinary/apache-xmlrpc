@@ -7,7 +7,7 @@
   depends on the webserver. We refer, for example, to the 
   {{{http://tomcat.apache.org/tomcat-5.5-doc/ssl-howto.html} Tomcat SSL HowTo}}
   or to the FAQ entry on
-  {{{http://www.mortbay.org/jetty/faq?s=400-Security&t=ssl} SSL with Jetty}}.
+  {{{http://docs.codehaus.org/display/JETTY/How+to+configure+SSL} SSL with Jetty}}.
 
 Background
 
