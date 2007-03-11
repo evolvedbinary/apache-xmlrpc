@@ -56,6 +56,10 @@
           due-to="Andrew Norman" due-to-email="anorman@piczoinc.com">
         Added support for redirects.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-136"
+          due-to="Mario Linke" due-to-email="linke.mario@web.de">
+        Fixed an invalid example in the "advanced" document.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">

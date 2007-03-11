@@ -50,12 +50,13 @@ Dynamic proxies
 
 -----------------------------------------------------------------------------------
     import com.foo.Adder;
+    import java.net.URL;
     import org.apache.xmlrpc.client.XmlRpcClient;
     import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
     import org.apache.xmlrpc.client.util.ClientFactory;
 
     XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-    config.setServerUrl("http://127.0.0.1:8080/xmlrpc");
+    config.setServerURL(new URL("http://127.0.0.1:8080/xmlrpc"));
     XmlRpcClient client = new XmlRpcClient();
     client.setConfig(config);
     ClientFactory factory = new ClientFactory(client);
