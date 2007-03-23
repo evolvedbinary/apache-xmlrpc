@@ -41,8 +41,15 @@ public class DateParser extends AtomicParser {
 		try {
 			super.setResult(f.parseObject(s));
 		} catch (ParseException e) {
-			throw new SAXParseException("Failed to parse integer value: " + pResult,
-										getDocumentLocator());
+            final String msg;
+            int offset = e.getErrorOffset();
+            if (e.getErrorOffset() == -1) {
+                msg = "Failed to parse date value: " + pResult;
+            } else {
+                msg = "Failed to parse date value " + pResult
+                    + " at position " + offset;
+            }
+			throw new SAXParseException(msg, getDocumentLocator(), e);
 		}
 	}
 }

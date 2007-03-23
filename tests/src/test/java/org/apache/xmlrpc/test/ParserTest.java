@@ -2,6 +2,9 @@ package org.apache.xmlrpc.test;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.text.ParseException;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -11,11 +14,16 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
+import org.apache.xmlrpc.parser.CalendarParser;
+import org.apache.xmlrpc.parser.DateParser;
 import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.util.SAXParsers;
+import org.apache.xmlrpc.util.XmlRpcDateTimeDateFormat;
+import org.apache.xmlrpc.util.XmlRpcDateTimeFormat;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 
@@ -112,5 +120,33 @@ public class ParserTest extends TestCase {
         assertEquals("bar", p4.getMethodName());
         assertNotNull(p4.getParams());
         assertTrue(p4.getParams().size() == 0);
+    }
+
+    /**
+     * Test for XMLRPC-140.
+     */
+    public void testXMLRPC140() throws Exception {
+        DateParser parser = new DateParser(new XmlRpcDateTimeFormat(){
+            private static final long serialVersionUID = 0L;
+            protected TimeZone getTimeZone() {
+                return TimeZone.getDefault();
+            }
+        }){
+            public void setResult(Object pObject){
+                try {
+                    super.setResult((String) pObject);
+                } catch (SAXException e) {
+                    throw new UndeclaredThrowableException(e);
+                }
+            }
+        };
+        try {
+            parser.setResult("20070316T162808Z");
+            fail("Expected exception");
+        } catch (UndeclaredThrowableException e) {
+            SAXParseException spe = (SAXParseException) e.getUndeclaredThrowable();
+            ParseException pe = (ParseException) spe.getException();
+            assertEquals(11, pe.getErrorOffset());
+        }
     }
 }

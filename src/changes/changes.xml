@@ -60,6 +60,10 @@
           due-to="Mario Linke" due-to-email="linke.mario@web.de">
         Fixed an invalid example in the "advanced" document.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-140">
+        An invalid dateTime value is now causing a more informative
+        error message.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">

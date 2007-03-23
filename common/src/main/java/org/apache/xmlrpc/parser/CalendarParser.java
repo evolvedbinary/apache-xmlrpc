@@ -31,8 +31,15 @@ public class CalendarParser extends AtomicParser {
 		try {
 			super.setResult(format.parseObject(pResult.trim()));
 		} catch (ParseException e) {
-			throw new SAXParseException("Failed to parse integer value: " + pResult,
-										getDocumentLocator());
+            int offset = e.getErrorOffset();
+            final String msg;
+            if (offset == -1) {
+                msg = "Failed to parse dateTime value: " + pResult;
+            } else {
+                msg = "Failed to parse dateTime value " + pResult
+                    + " at position " + e.getErrorOffset();
+            }
+            throw new SAXParseException(msg, getDocumentLocator(), e);
 		}
 	}
 }
