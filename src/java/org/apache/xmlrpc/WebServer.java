@@ -494,7 +494,9 @@ public class WebServer implements Runnable
                     }
                     catch (SocketException socketOptEx)
                     {
-                        System.err.println(socketOptEx);
+                        System.err.println("Suppressed error setting the " +
+                                           "TCP_NODELAY socket option: " +
+                                           socketOptEx);
                     }
 
                     if (allowConnection(socket))
