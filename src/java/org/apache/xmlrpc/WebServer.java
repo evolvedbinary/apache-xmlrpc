@@ -672,20 +672,26 @@ public class WebServer implements Runnable
         }
 
         /**
-         * Delegates to <code>con.run()</code>.
+         * Handle requests from incoming connections by delegating to
+         * <code>con.run()</code>.  Perform cleanup, either by
+         * finishing, or by re-pooling this instance.
          */
         public void run()
         {
             while (con != null && Thread.currentThread() == thread)
             {
+                // Handle the request.
                 con.run();
                 count++;
                 con = null;
 
-                if (count > 200 || threadpool.size() > 20)
+                // Cleanup, either by completing our run, or
+                // re-pooling ourself.
+                if (count > 200 ||
+                    threadpool.size() > 0.20 * XmlRpc.getMaxThreads())
                 {
-                    // We're old, or the number of threads in the pool
-                    // is large.
+                    // We're an old thread, or we already have a sufficient
+                    // number of inactive Runner threads in the pool.
                     return;
                 }
                 synchronized(this)
