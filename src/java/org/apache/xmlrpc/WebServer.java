@@ -811,11 +811,18 @@ public class WebServer implements Runnable
                             keepAlive = false;
                             writeUnauthorized(httpVersion, method);
                         }
+                        catch (ParseFailed malformedXML)
+                        {
+                            keepAlive = false;
+                            writeBadRequest(malformedXML.toString(),
+                                            httpVersion);
+                        }
                     }
                     else
                     {
                         keepAlive = false;
-                        writeBadRequest(httpVersion, method);
+                        writeBadRequest("Method " + method + " not " +
+                                        "implemented (try POST)", httpVersion);
                     }
                     output.flush();
                 }
@@ -913,7 +920,7 @@ public class WebServer implements Runnable
             output.write(payload);
         }
 
-        private void writeBadRequest(String httpVersion, String httpMethod)
+        private void writeBadRequest(String why, String httpVersion)
             throws IOException
         {
             output.write(toHTTPBytes(httpVersion));
@@ -921,8 +928,7 @@ public class WebServer implements Runnable
             output.write(newline);
             output.write(server);
             output.write(newline);
-            output.write(toHTTPBytes("Method " + httpMethod +
-                                     " not implemented (try POST)"));
+            output.write(toHTTPBytes(why));
         }
 
         private void writeUnauthorized(String httpVersion, String httpMethod)

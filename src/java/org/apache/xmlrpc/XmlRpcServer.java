@@ -122,10 +122,13 @@ public class XmlRpcServer
      * doesn't need to know whether the call was successful or not
      * since this is all packed into the response. No context information
      * is passed.
+     *
+     * @see #execute(InputStream, XmlRpcContext)
      */
     public byte[] execute(InputStream is)
     {
-        return execute(is, new DefaultXmlRpcContext(null, null, getHandlerMapping()));
+        return execute(is, new DefaultXmlRpcContext(null, null,
+                                                    getHandlerMapping()));
     }
 
     /**
@@ -133,10 +136,13 @@ public class XmlRpcServer
      * found. If the invoked handler is AuthenticatedXmlRpcHandler,
      * use the credentials to authenticate the user. No context information
      * is passed.
+     *
+     * @see #execute(InputStream, XmlRpcContext)
      */
     public byte[] execute(InputStream is, String user, String password)
     {
-        return execute(is, new DefaultXmlRpcContext(user, password, getHandlerMapping()));
+        return execute(is, new DefaultXmlRpcContext(user, password,
+                                                    getHandlerMapping()));
     }
     
     /**
@@ -144,6 +150,9 @@ public class XmlRpcServer
      * found. If the invoked handler is AuthenticatedXmlRpcHandler,
      * use the credentials to authenticate the user. Context information
      * is passed to the worker, and may be passed to the request handler.
+     *
+     * @throws AuthenticationFailed If authentication fails.
+     * @throws ParseFailed if unable to parse the request.
      */
     public byte[] execute(InputStream is, XmlRpcContext context)
     {
