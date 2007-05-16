@@ -115,6 +115,11 @@
           due-to="Sir Bode Rafael" due-to-email="sirboderafael@gmail.com">
         Fixed a broken link referring to an "SSL with Jetty" HOW-TO.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-141"
+          due-to="Keith McNeill" due-to-email="mcneill@streambase.com">
+        The XmlRpcRequestParser didn't reset its params field in startDocument.
+        Consequently, it wasn't reusable.
+      </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
       <action dev="jochen" type="fix" due-to="Matt Preston"

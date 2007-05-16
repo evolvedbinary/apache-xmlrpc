@@ -54,6 +54,7 @@ public class XmlRpcRequestParser extends RecursiveTypeParserImpl {
 		level = 0;
 		inMethodName = false;
 		methodName = null;
+		params = null;
 	}
 
 
