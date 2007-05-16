@@ -85,6 +85,9 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 	public void startDocument() throws SAXException {
 		super.startDocument();
 		level = 0;
+        isSuccess = false;
+        errorCode = 0;
+        errorMessage = null;
 	}
 
 	public void startElement(String pURI, String pLocalName, String pQName,

@@ -117,8 +117,9 @@
       </action>
       <action dev="jochen" type="fix" issue="XMLRPC-141"
           due-to="Keith McNeill" due-to-email="mcneill@streambase.com">
-        The XmlRpcRequestParser didn't reset its params field in startDocument.
-        Consequently, it wasn't reusable.
+        The XmlRpcRequestParser and XmlRpcResponseParser didn't reset
+        their internal state within startDocument(). Consequently, they
+        haven't been reusable.
       </action>
     </release>
     <release version="3.0" date="30-Aug-2006">
