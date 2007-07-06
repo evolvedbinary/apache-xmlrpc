@@ -15,12 +15,12 @@
         Added PropertyHandlerMapping.load(ClassLoader, Map).
       </action>
       <action dev="jochen" type="add" issue="XMLRPC-117" due-to="Jimisola Laursen"
-          due-to-email="lists@jimisola.com">
+          due-to-email="jimisola@jimisola.com">
         The authentication handler, type converter and requestprocessor factories
         are now configurable as properties of the XmlRpcServlet.
       </action>
       <action dev="jochen" type="add" issue="XMLRPC-116" due-to="Jimisola Laursen"
-          due-to-email="lists@jimisola.com">
+          due-to-email="jimisola@jimisola.com">
         Atomic properties of XmlRpcServer are now configurable as init parameters
         in the XmlRpcServlet.
       </action>
@@ -29,7 +29,7 @@
         shutdown.
       </action>
       <action dev="jochen" type="fix" issue="XMLRPC-124" due-to="Jimisola Laursen"
-          due-to-email="lists@jimisola.com">
+          due-to-email="jimisola@jimisola.com">
 		The configuration framework, as introduced by XMLRPC-116, was applicable
 		to the configuration only, and not to the XmlRpcServlet, or the
 		XmlRpcServletServer.
@@ -199,11 +199,11 @@
         Added documentation for accessing an SSL server.
       </action>
       <action dev="jochen" type="add" due-to="Jimisola Laursen"
-          due-to-email="lists@jimisola.com" issue="XMLRPC-96">
+          due-to-email="jimisola@jimisola.com" issue="XMLRPC-96">
 	    A null parameter list is now treated as an empty object array.
       </action>
       <action dev="jochen" type="fix" due-to="Jimisola Laursen"
-          due-to-email="lists@jimisola.com" issue="XMLRPC-97">
+          due-to-email="jimisola@jimisola.com" issue="XMLRPC-97">
 	    The type long was missing in types.apt.      
       </action>
     </release>
@@ -310,7 +310,7 @@
       	  The wrong version of commons-codec was downloaded by build.xml.
       </action>
       <action dev="jochen" type="add"
-      		due-to="Jimisola Laursen" due-to-email="lists@jimisola.com">
+      		due-to="Jimisola Laursen" due-to-email="jimisola@jimisola.com">
       	  Added the CommonsXmlRpcTransportFactory.
       </action>
       <action dev="jochen" type="add"
