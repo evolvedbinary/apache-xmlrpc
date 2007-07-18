@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-      <groupId>org.apache</groupId>
-      <artifactId>apache</artifactId>
-      <version>4</version>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
     <name>Apache XML-RPC</name>
     <version>3.1-SNAPSHOT</version>
-    <description>
-        Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol
-        that uses XML over HTTP to implement remote procedure calls.
-        Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to
-        handle. Version 3 of Apache XML-RPC introduces several
-        important vendor extensions over the original XML-RPC specification.
-    </description>
+    <description> 
+        Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP to
+        implement remote procedure calls. Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to handle.
+        Version 3 of Apache XML-RPC introduces several important vendor extensions over the original XML-RPC
+        specification. </description>
     <packaging>pom</packaging>
     <modules>
-      <module>common</module>
-      <module>client</module>
-      <module>server</module>
-      <module>tests</module>
+        <module>common</module>
+        <module>client</module>
+        <module>server</module>
+        <module>tests</module>
     </modules>
     <url>http://ws.apache.org/xmlrpc/</url>
     <issueManagement>
@@ -30,28 +31,28 @@
         <url>http://issues.apache.org/jira/BrowseProject.jspa?pid=10465</url>
     </issueManagement>
     <ciManagement>
-      <system>Gump</system>
-      <url>http://vmgump.apache.org/gump/public/ws-xmlrpc/xmlrpc/index.html</url>
+        <system>Gump</system>
+        <url>http://vmgump.apache.org/gump/public/ws-xmlrpc/xmlrpc/index.html</url>
     </ciManagement>
     <inceptionYear>2001</inceptionYear>
     <mailingLists>
-      <mailingList>
-        <name>XML-RPC Developers</name>
-        <subscribe>xmlrpc-dev-subscribe@ws.apache.org</subscribe>
-        <unsubscribe>xmlrpc-dev-unsubscribe@ws.apache.org</unsubscribe>
-        <post>xmlrpc-dev@ws.apache.org</post>
-        <archive>http://mail-archives.apache.org/mod_mbox/ws-xmlrpc-dev/</archive>
-        <otherArchives>
-          <otherArchive>http://marc.theaimsgroup.com/?l=xmlrpc-dev</otherArchive>
-        </otherArchives>
-      </mailingList>
-      <mailingList>
-        <name>XML-RPC Automatic Mails</name>
-        <subscribe>xmlrpc-auto-subscribe@ws.apache.org</subscribe>
-        <unsubscribe>xmlrpc-auto-unsubscribe@ws.apache.org</unsubscribe>
-        <post>xmlrpc-auto@ws.apache.org</post>
-        <archive>http://mail-archives.apache.org/mod_mbox/ws-xmlrpc-auto/</archive>
-      </mailingList>
+        <mailingList>
+            <name>XML-RPC Developers</name>
+            <subscribe>xmlrpc-dev-subscribe@ws.apache.org</subscribe>
+            <unsubscribe>xmlrpc-dev-unsubscribe@ws.apache.org</unsubscribe>
+            <post>xmlrpc-dev@ws.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/ws-xmlrpc-dev/</archive>
+            <otherArchives>
+                <otherArchive>http://marc.theaimsgroup.com/?l=xmlrpc-dev</otherArchive>
+            </otherArchives>
+        </mailingList>
+        <mailingList>
+            <name>XML-RPC Automatic Mails</name>
+            <subscribe>xmlrpc-auto-subscribe@ws.apache.org</subscribe>
+            <unsubscribe>xmlrpc-auto-unsubscribe@ws.apache.org</unsubscribe>
+            <post>xmlrpc-auto@ws.apache.org</post>
+            <archive>http://mail-archives.apache.org/mod_mbox/ws-xmlrpc-auto/</archive>
+        </mailingList>
     </mailingLists>
     <developers>
         <developer>
@@ -241,11 +242,11 @@
                 </configuration>
             </plugin>
             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-release-plugin</artifactId>
-                 <configuration>
-                     <tagBase>https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/</tagBase>
-                 </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/</tagBase>
+                </configuration>
             </plugin>
             <plugin>
                 <inherited>true</inherited>
@@ -275,10 +276,10 @@
                 <artifactId>commons-logging</artifactId>
                 <version>1.1</version>
                 <exclusions>
-                  <exclusion>
-                    <groupId>avalon-framework</groupId>
-                    <artifactId>avalon-framework</artifactId>
-                  </exclusion>
+                    <exclusion>
+                        <groupId>avalon-framework</groupId>
+                        <artifactId>avalon-framework</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -312,13 +313,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.0</version>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changes-plugin</artifactId>
+                <version>2.0-beta-2</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -334,22 +336,22 @@
         </plugins>
     </reporting>
     <distributionManagement>
-		<!-- Overwriting the apache.releases and apache.snapshots
-		     repositories seems redundant, because they are already
-		     specified in the Apache POM. Unfortunately, we cannot
-		     use scp:// URL's, because of WAGONSSH-49.
-		-->
-		<repository>
-			<id>apache.releases</id>
-			<name>Apache Release Distribution Repository</name>
-			<url>scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-		</repository>
-		<snapshotRepository>
-			<id>apache.snapshots</id>
-			<name>Apache Development Snapshot Repository</name>
-			<url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
-		</snapshotRepository>
-
+        <!-- 
+         Overwriting the apache.releases and apache.snapshots
+         repositories seems redundant, because they are already
+         specified in the Apache POM. Unfortunately, we cannot
+         use scp:// URL's, because of WAGONSSH-49.
+        -->
+        <repository>
+            <id>apache.releases</id>
+            <name>Apache Release Distribution Repository</name>
+            <url>scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+        </repository>
+        <snapshotRepository>
+            <id>apache.snapshots</id>
+            <name>Apache Development Snapshot Repository</name>
+            <url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
+        </snapshotRepository>
         <site>
             <id>people.apache.org</id>
             <name>XML-RPC directory on ws.apache.org</name>
@@ -359,13 +361,13 @@
     <profiles>
         <profile>
             <activation>
-            	<jdk>1.4</jdk>
+                <jdk>1.4</jdk>
             </activation>
             <dependencies>
                 <dependency>
-                	<groupId>org.apache.ws.commons</groupId>
-                	<artifactId>ws-commons-java5</artifactId>
-                	<version>1.0.1</version>
+                    <groupId>org.apache.ws.commons</groupId>
+                    <artifactId>ws-commons-java5</artifactId>
+                    <version>1.0.1</version>
                 </dependency>
             </dependencies>
         </profile>
