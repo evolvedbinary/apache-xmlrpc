@@ -172,7 +172,7 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 	    URI currentUri = null;
 	    try {
 	        currentUri = method.getURI();
-	        String charset = currentUri.getURI();
+	        String charset = currentUri.getProtocolCharset();
 	        redirectUri = new URI(location, true, charset);
 	        method.setURI(redirectUri);
 	    } catch (URIException ex) {

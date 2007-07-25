@@ -64,6 +64,11 @@
         An invalid dateTime value is now causing a more informative
         error message.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-144"
+          due-to="Steve Cohen" due-to-email="sc1478@att.com">
+        The redirect handling (XMLRPC-132) wasn't actually working,
+        because it treated an URI as a charset name.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
