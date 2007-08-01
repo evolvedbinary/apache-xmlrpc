@@ -69,6 +69,11 @@
         The redirect handling (XMLRPC-132) wasn't actually working,
         because it treated an URI as a charset name.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-145"
+          due-to="Gamaliel Amaudruz" due-to-email="gamaliel@fastmail.fm">
+        Address matching in the Webserver wasn't actually working,
+        because casting of integers to bytes was implemented wrong.
+      </action>
     </release>
     <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">

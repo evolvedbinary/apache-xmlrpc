@@ -120,6 +120,10 @@
     </developers>
     <contributors>
         <contributor>
+            <name>Gamaliel Amaudruz</name>
+            <email>gamaliel@fastmail.fm</email>
+        </contributor>
+        <contributor>
             <name>Alan Burlison</name>
             <email>Alan.Burlison@sun.com</email>
         </contributor>

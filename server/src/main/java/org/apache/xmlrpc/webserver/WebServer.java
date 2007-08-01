@@ -86,7 +86,10 @@ public class WebServer implements Runnable {
 					if ("*".equals(next)) {
 						pattern[i] = 256;
 					} else {
-						pattern[i] = Integer.parseInt(next);
+					    /* Note: *Not* pattern[i] = Integer.parseInt(next);
+					     * See XMLRPC-145
+					     */
+						pattern[i] = (byte) Integer.parseInt(next);
 					}
 				}
 			} catch (Exception e) {
