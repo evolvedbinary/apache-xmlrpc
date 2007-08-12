@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>xmlrpc-tests</artifactId>
@@ -64,4 +64,23 @@
       <artifactId>servlet-api</artifactId>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>xmlrpc-release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

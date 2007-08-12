@@ -3,7 +3,7 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
-    <release version="3.1-SNAPSHOT" date="Not yet released">
+    <release version="3.1" date="2007-Aug-31">
       <action dev="jochen" type="add">
         Introduced the "enabledForExceptions" property.
       </action>
@@ -74,8 +74,6 @@
         Address matching in the Webserver wasn't actually working,
         because casting of integers to bytes was implemented wrong.
       </action>
-    </release>
-    <release version="3.0.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix">
         Make the HttpClient creation in XmlRpcCommonsTransport and the
         URLConnection creation in XmlRpcSunHttpTransport protected.
