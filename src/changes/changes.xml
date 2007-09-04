@@ -3,6 +3,10 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
+    <release version="3.1.1-SNAPSHOT" date="Not yet released">
+      <action dev="jochen" type="fix" due-to="P&#243;ka Bal&#225;zs" due-to-email="p.balazs@gmail.com">
+      </action>
+    </release>
     <release version="3.1" date="2007-Aug-31">
       <action dev="jochen" type="add">
         Introduced the "enabledForExceptions" property.

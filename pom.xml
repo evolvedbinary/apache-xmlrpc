@@ -12,7 +12,7 @@
     <groupId>org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
     <name>Apache XML-RPC</name>
-    <version>3.1</version>
+    <version>3.1.1-SNAPSHOT</version>
     <description>
         Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP to
         implement remote procedure calls. Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to handle.
@@ -122,6 +122,10 @@
         <contributor>
             <name>Gamaliel Amaudruz</name>
             <email>gamaliel@fastmail.fm</email>
+        </contributor>
+        <contributor>
+            <name>P&#243;ka Bal&#225;zs</name>
+            <email>p.balazs@gmail.com</email>
         </contributor>
         <contributor>
             <name>Alan Burlison</name>

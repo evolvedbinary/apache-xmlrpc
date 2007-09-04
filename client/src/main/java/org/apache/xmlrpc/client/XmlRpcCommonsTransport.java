@@ -185,7 +185,7 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 
     protected void writeRequest(final ReqWriter pWriter) throws XmlRpcException {
 		method.setRequestEntity(new RequestEntity(){
-			public boolean isRepeatable() { return contentLength != -1; }
+			public boolean isRepeatable() { return true; }
 			public void writeRequest(OutputStream pOut) throws IOException {
 				try {
                     /* Make sure, that the socket is not closed by replacing it with our
