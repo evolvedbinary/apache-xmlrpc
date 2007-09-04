@@ -100,6 +100,17 @@
           {{{advanced.html}advanced topics}}.</p>
       </answer>
     </faq>
+
+    <faq id="nonstandard_double_format">
+      <question>I've got a server, which is expecting a non-standard
+        double format. How can I ensure, that my double values have the
+        right format?</question>
+      <answer>
+        <p>You've got to use a special type factory. An example is
+          contained in the documentation on
+          {{{advanced.html}advanced topics}}.</p>
+      </answer>
+    </faq>
   </part>
 
   <part id="server">
