@@ -40,10 +40,12 @@ import org.apache.xmlrpc.util.LimitedInputStream;
 import org.xml.sax.SAXException;
 
 
-/** A "light" HTTP transport implementation.
+/**
+ * A "light" HTTP transport implementation.
  */
 public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 	private static final String userAgent = USER_AGENT + " (Lite HTTP Transport)";
+	private boolean ssl;
 	private String hostname;
 	private String host;
 	private int port;
@@ -55,7 +57,8 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 	private boolean responseGzipCompressed = false;
 	private XmlRpcHttpClientConfig config;
 
-	/** Creates a new instance.
+	/**
+	 * Creates a new instance.
 	 * @param pClient The client controlling this instance.
 	 */
 	public XmlRpcLiteHttpTransport(XmlRpcClient pClient) {
@@ -65,6 +68,7 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
 		config = (XmlRpcHttpClientConfig) pRequest.getConfig();
 		URL url = config.getServerURL();
+		ssl = "https".equals(url.getProtocol());
 		hostname = url.getHost();
         int p = url.getPort();
 		port = p < 1 ? 80 : p;
@@ -131,7 +135,7 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 	
 			for (int tries = 0;  ;  tries++) {
 				try {
-					socket = newSocket(hostname, port);
+					socket = newSocket(ssl, hostname, port);
 					output = new BufferedOutputStream(socket.getOutputStream()){
 						/** Closing the output stream would close the whole socket, which we don't want,
 						 * because the don't want until the request is processed completely.
@@ -164,7 +168,10 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 		}
 	}
 
-    protected Socket newSocket(String pHostName, int pPort) throws UnknownHostException, IOException {
+    protected Socket newSocket(boolean pSSL, String pHostName, int pPort) throws UnknownHostException, IOException {
+        if (pSSL) {
+            throw new IOException("Unable to create SSL connections, use the XmlRpcLite14HttpTransportFactory.");
+        }
         return new Socket(pHostName, pPort);
     }
 

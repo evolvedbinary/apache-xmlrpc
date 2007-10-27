@@ -20,7 +20,8 @@ package org.apache.xmlrpc.client;
  * {@link org.apache.xmlrpc.client.XmlRpcLiteHttpTransport}.
  */
 public class XmlRpcLiteHttpTransportFactory extends XmlRpcTransportFactoryImpl {
-	/** Creates a new instance.
+	/**
+	 * Creates a new instance.
 	 * @param pClient The client, which will invoke the factory.
 	 */
 	public XmlRpcLiteHttpTransportFactory(XmlRpcClient pClient) {

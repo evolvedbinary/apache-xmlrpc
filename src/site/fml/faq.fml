@@ -127,6 +127,8 @@
     XmlRpcTransportFactory factory = myClient.getTransportFactory();
     ((XmlRpcSun15HttpTransportFactory) factory).setProxy(String pHost, int pPort);
 </source>
+        <p>With the Lite HTTP transport factory, things are slightly different:
+          You have to explicitly create an instance of XmlRpcLite14HttpTransportFactory.</p>
       </answer>
     </faq>
   </part>
