@@ -31,13 +31,20 @@ public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
         return pURL.openConnection();
     }
 
-	public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
+    /**
+     * For use by subclasses.
+     */
+    protected URLConnection getURLConnection() {
+        return conn;
+    }
+
+    public Object sendRequest(XmlRpcRequest pRequest) throws XmlRpcException {
 		XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();
 		try {
-			conn = newURLConnection(config.getServerURL());
-			conn.setUseCaches(false);
-			conn.setDoInput(true);
-			conn.setDoOutput(true);
+		    final URLConnection c = conn = newURLConnection(config.getServerURL());
+			c.setUseCaches(false);
+			c.setDoInput(true);
+			c.setDoOutput(true);
 		} catch (IOException e) {
 			throw new XmlRpcException("Failed to create URLConnection: " + e.getMessage(), e);
 		}
@@ -45,28 +52,29 @@ public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
 	}
 
 	protected void setRequestHeader(String pHeader, String pValue) {
-		conn.setRequestProperty(pHeader, pValue);
+	    getURLConnection().setRequestProperty(pHeader, pValue);
 	}
 
 	protected void close() throws XmlRpcClientException {
-		if (conn instanceof HttpURLConnection) {
-			((HttpURLConnection) conn).disconnect();
+	    final URLConnection c = getURLConnection();
+		if (c instanceof HttpURLConnection) {
+			((HttpURLConnection) c).disconnect();
 		}
 	}
 
 	protected boolean isResponseGzipCompressed(XmlRpcStreamRequestConfig pConfig) {
-		return HttpUtil.isUsingGzipEncoding(conn.getHeaderField("Content-Encoding"));
+		return HttpUtil.isUsingGzipEncoding(getURLConnection().getHeaderField("Content-Encoding"));
 	}
 
 	protected InputStream getInputStream() throws XmlRpcException {
 		try {
-			return conn.getInputStream();
+			return getURLConnection().getInputStream();
 		} catch (IOException e) {
 			throw new XmlRpcException("Failed to create input stream: " + e.getMessage(), e);
 		}
 	}
 
 	protected void writeRequest(ReqWriter pWriter) throws IOException, XmlRpcException, SAXException {
-        pWriter.write(conn.getOutputStream());
+        pWriter.write(getURLConnection().getOutputStream());
 	}
 }

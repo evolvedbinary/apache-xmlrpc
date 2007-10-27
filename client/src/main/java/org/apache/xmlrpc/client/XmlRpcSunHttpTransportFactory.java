@@ -22,7 +22,7 @@ package org.apache.xmlrpc.client;
  * {@link java.net.HttpURLConnection} class.
  */
 public class XmlRpcSunHttpTransportFactory extends XmlRpcTransportFactoryImpl {
-	/** Creates a new factory, which creates transports for the given client.
+    /** Creates a new factory, which creates transports for the given client.
 	 * @param pClient The client, which is operating the factory.
 	 */
 	public XmlRpcSunHttpTransportFactory(XmlRpcClient pClient) {

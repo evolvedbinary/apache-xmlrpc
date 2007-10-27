@@ -20,10 +20,8 @@ import java.util.List;
 import org.apache.xmlrpc.XmlRpcConfig;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
-import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcController;
 import org.apache.xmlrpc.common.XmlRpcWorkerFactory;
-import org.apache.xmlrpc.serializer.DefaultXMLWriterFactory;
 import org.apache.xmlrpc.serializer.XmlWriterFactory;
 
 
@@ -48,9 +46,9 @@ import org.apache.xmlrpc.serializer.XmlWriterFactory;
  * @since 3.0
  */
 public class XmlRpcClient extends XmlRpcController {
-	private XmlRpcTransportFactory transportFactory = new XmlRpcSunHttpTransportFactory(this);
-	private XmlRpcClientConfig config = new XmlRpcClientConfigImpl();
-	private XmlWriterFactory xmlWriterFactory = new DefaultXMLWriterFactory();
+	private XmlRpcTransportFactory transportFactory = XmlRpcClientDefaults.newTransportFactory(this);
+	private XmlRpcClientConfig config = XmlRpcClientDefaults.newXmlRpcClientConfig();
+	private XmlWriterFactory xmlWriterFactory = XmlRpcClientDefaults.newXmlWriterFactory();
 
 	protected XmlRpcWorkerFactory getDefaultXmlRpcWorkerFactory() {
 		return new XmlRpcClientWorkerFactory(this);

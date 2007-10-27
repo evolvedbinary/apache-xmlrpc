@@ -220,6 +220,10 @@
             <email>andreas.sahlbach@gmail.com</email>
         </contributor>
         <contributor>
+            <name>Julio Francisco Veronelli</name>
+            <email>ckjfveronelli@fibertel.com.ar</email>
+        </contributor>
+        <contributor>
             <name>Ken Weiner</name>
             <email>kweiner@gmail.com</email>
         </contributor>
@@ -239,6 +243,14 @@
     </scm>
     <build>
         <plugins>
+            <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.3</source>
+                    <target>1.2</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>

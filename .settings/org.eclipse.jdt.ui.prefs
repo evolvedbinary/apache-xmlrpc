@@ -1,5 +1,5 @@
-#Thu Apr 20 22:28:06 CEST 2006
+#Sat Oct 27 20:52:31 CEST 2007
 eclipse.preferences.version=1
 formatter_profile=_ws-xmlrpc
 formatter_settings_version=10
-internal.default.compliance=user
+instance/org.eclipse.core.net/org.eclipse.core.net.hasMigrated=true

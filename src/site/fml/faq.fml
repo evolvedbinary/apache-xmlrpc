@@ -111,6 +111,24 @@
           {{{advanced.html}advanced topics}}.</p>
       </answer>
     </faq>
+
+    <faq id="java_version">
+      <question>I am using Java 1.4 (or Java 1.5, or later). Can I use
+        javax.net.ssl.SSLSocketFactory? (Or the java.net.Proxy?)</question>
+      <answer>
+        <p>Yes, you can. Use the org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory.
+          (Or the org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory.)</p>
+        <p>The XmlRpcClient will detect the Java version you are using and
+          automatically create the respective factory. In other words, all you
+          need to do is cast the XmlRpcTransportFactory to the proper class.
+          For example:</p>
+<source>
+    XmlRpcClient myClient;
+    XmlRpcTransportFactory factory = myClient.getTransportFactory();
+    ((XmlRpcSun15HttpTransportFactory) factory).setProxy(String pHost, int pPort);
+</source>
+      </answer>
+    </faq>
   </part>
 
   <part id="server">
