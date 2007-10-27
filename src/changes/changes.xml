@@ -16,6 +16,9 @@
         Ensured that the server replies with a spec compliant request, if the client uses the
         content-length header.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-150">
+        The XmlRpcSunHttpTransportFactory wasn't thread safe.
+      </action>
     </release>
     <release version="3.1" date="2007-Aug-31">
       <action dev="jochen" type="add">
