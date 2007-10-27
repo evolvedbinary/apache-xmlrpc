@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.ServerStreamConnection;
+import org.apache.xmlrpc.common.XmlRpcHttpRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.server.XmlRpcHttpServer;
@@ -75,7 +76,8 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
 		XmlRpcHttpRequestConfigImpl result = newConfig(pRequest);
 		XmlRpcHttpServerConfig serverConfig = (XmlRpcHttpServerConfig) getConfig();
 		result.setBasicEncoding(serverConfig.getBasicEncoding());
-		result.setContentLengthOptional(serverConfig.isContentLengthOptional());
+		result.setContentLengthOptional(serverConfig.isContentLengthOptional()
+		        && (pRequest.getHeader("Content-Length") == null));
 		result.setEnabledForExtensions(serverConfig.isEnabledForExtensions());
 		result.setGzipCompressing(HttpUtil.isUsingGzipEncoding(pRequest.getHeader("Content-Encoding")));
 		result.setGzipRequesting(HttpUtil.isUsingGzipEncoding(pRequest.getHeaders("Accept-Encoding")));
@@ -114,7 +116,11 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
 			// The spec requires a content-length.
 			return true;
 		}
-		return !((XmlRpcHttpServerConfig) getConfig()).isContentLengthOptional();
+		boolean isRequired = !((XmlRpcHttpServerConfig) getConfig()).isContentLengthOptional();
+		if(pConfig instanceof XmlRpcHttpRequestConfig) {
+		    isRequired |= !((XmlRpcHttpRequestConfig)pConfig).isContentLengthOptional();
+		}
+		return isRequired;
 	}
 
 	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,

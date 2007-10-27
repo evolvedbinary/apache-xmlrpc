@@ -11,6 +11,11 @@
           issue="XMLRPC-149">
         It is now possible to set the clients user-agent header in the client configuration.
       </action>
+      <action dev="jochen" type="fix" due-to="Andreas Sahlbach" due-to-email="andreas.sahlbach@gmail.com"
+          issue="XMLRPC-148">
+        Ensured that the server replies with a spec compliant request, if the client uses the
+        content-length header.
+      </action>
     </release>
     <release version="3.1" date="2007-Aug-31">
       <action dev="jochen" type="add">
