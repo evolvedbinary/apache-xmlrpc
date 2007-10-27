@@ -29,6 +29,7 @@ public class XmlRpcClientConfigImpl extends XmlRpcHttpRequestConfigImpl
 	private static final long serialVersionUID = 4121131450507800889L;
 	private URL serverURL;
 	private XmlRpcRequestProcessor xmlRpcServer;
+    private String userAgent;
 
 	/** Creates a new client configuration with default settings.
 	 */
@@ -62,4 +63,19 @@ public class XmlRpcClientConfigImpl extends XmlRpcHttpRequestConfigImpl
 		xmlRpcServer = pServer;
 	}
 	public XmlRpcRequestProcessor getXmlRpcServer() { return xmlRpcServer; }
+
+    /**
+     * Returns the user agent header to use 
+     * @return the http user agent header to set when doing xmlrpc requests
+     */
+    public String getUserAgent() {
+        return userAgent;
+    }
+    
+    /**
+     * @param pUserAgent the http user agent header to set when doing xmlrpc requests
+     */
+    public void setUserAgent(String pUserAgent) {
+        userAgent = pUserAgent;
+    }
 }

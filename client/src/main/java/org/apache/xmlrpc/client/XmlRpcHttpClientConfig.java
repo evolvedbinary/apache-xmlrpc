@@ -30,4 +30,10 @@ public interface XmlRpcHttpClientConfig extends XmlRpcHttpRequestConfig {
 	 * servlet
 	 */
 	URL getServerURL();
+    
+    /**
+     * Returns the user agent header to use 
+     * @return the http user agent header to set when doing xmlrpc requests
+     */
+    String getUserAgent();
 }

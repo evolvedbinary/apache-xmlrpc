@@ -5,6 +5,11 @@
   <body>
     <release version="3.1.1-SNAPSHOT" date="Not yet released">
       <action dev="jochen" type="fix" due-to="P&#243;ka Bal&#225;zs" due-to-email="p.balazs@gmail.com">
+        The XmlRpcCommonsTransport is now always declaring its entities as repeatable.
+      </action>
+      <action dev="jochen" type="add" due-to="Andreas Sahlbach" due-to-email="andreas.sahlbach@gmail.com"
+          issue="XMLRPC-149">
+        It is now possible to set the clients user-agent header in the client configuration.
       </action>
     </release>
     <release version="3.1" date="2007-Aug-31">
