@@ -38,6 +38,13 @@ Data Types
 | Object[]           | <array>            | An array of objects. The array      |
 | java.util.List     |                    | elements may be any valid data      |
 |                    |                    | type, including another array.      |
+|                    |                    |                                     |
+|                    |                    | The server may other arrays (for    |
+|                    |                    | example String[]) or lists (using   |
+|                    |                    | generics). However, the client will |
+|                    |                    | always return an Object[], because  |
+|                    |                    | the XML-RPC protocol doesn't include|
+|                    |                    | between different array types.      |
 *--------------------+--------------------+-------------------------------------+
 
   If the property <<<enabledForExtensions>>> is set, then additional data

@@ -22,6 +22,10 @@
       <action dev="jochen" type="add" issue="XMLRPC-101" due-to="Julio Francisco Veronelli" due-to-email="ckjfveronelli@fibertel.com.ar">
         Added support for javax.net.ssl.SSLSocketFactory and javax.net.Proxy.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-151">
+        Added some clarification on the handling of Object[] and java.util.List to
+        the page on "XML-RPC Data Types".
+      </action>
     </release>
     <release version="3.1" date="2007-Aug-31">
       <action dev="jochen" type="add">
