@@ -122,8 +122,16 @@ public abstract class AbstractReflectiveHandlerMapping
      *   <li>The declaring class must not be
      *     {@link java.lang.Object}.</li>
      *   <li>If multiple methods with the same name exist,
-     *     which meet the above conditins, then only the
-     *     first method is valid.</li>
+     *     which meet the above conditins, then an attempt is
+     *     made to identify a method with a matching signature.
+     *     If such a method is found, then this method is
+     *     invoked. If multiple such methods are found, then
+     *     the first one is choosen. (This may be the case,
+     *     for example, if there are methods with a similar
+     *     signature, but varying subclasses.) Note, that
+     *     there is no concept of the "most matching" method.
+     *     If no matching method is found at all, then an
+     *     exception is thrown.</li>
      * </ul>
      * @param pKey Suffix for building handler names. A dot and
      * the method name are being added.
