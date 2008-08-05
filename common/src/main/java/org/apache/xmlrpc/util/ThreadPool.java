@@ -147,7 +147,7 @@ public class ThreadPool {
 	 * @param pTask The task being started.
 	 * @return True, if the task could be started immediately. False, if
 	 * the maxmimum number of concurrent tasks was exceeded. If so, you
-	 * might consider to use the {@link #addTask(Task)} method instead.
+	 * might consider to use the {@link #addTask(ThreadPool.Task)} method instead.
 	 */
 	public synchronized boolean startTask(Task pTask) {
 		if (maxSize != 0  &&  runningThreads.size() > maxSize) {

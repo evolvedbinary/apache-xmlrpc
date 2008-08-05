@@ -39,7 +39,7 @@ Data Types
 | java.util.List     |                    | elements may be any valid data      |
 |                    |                    | type, including another array.      |
 |                    |                    |                                     |
-|                    |                    | The server may other arrays (for    |
+|                    |                    | The server may return other arrays (for
 |                    |                    | example String[]) or lists (using   |
 |                    |                    | generics). However, the client will |
 |                    |                    | always return an Object[], because  |

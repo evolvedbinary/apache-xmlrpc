@@ -26,6 +26,9 @@
         Added some clarification on the handling of Object[] and java.util.List to
         the page on "XML-RPC Data Types".
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-157" due-to="Kay Tiong Khoo" due-to-email="kaytiong@gmail.com">
+        Minor grammar improvements.
+      </action>
     </release>
     <release version="3.1" date="2007-Aug-31">
       <action dev="jochen" type="add">

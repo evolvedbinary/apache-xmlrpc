@@ -204,50 +204,31 @@ public class MyXmlRpcServlet extends XmlRpcServlet {
       <answer>
         <p>That's a similar question than the question on initializing handlers.
           The main difference is, that in this case you want to initialize the
-          handler with any request. So, here's how to do it: First of all,
-          we assume that all handlers will implement an interface
-          RequestInitializableHandler. This interface has an init method,
-          which is being called to receive an object with the clients
-          IP address:</p>
+          handler with any request. In other words, you might achieve the goal
+          by creating a RequestProcessorFactoryFactory, that provides the
+          necessary details. However, there is an easier solution, which we
+          will demonstrate here: Use a ThreadLocal.</p>
+        <p>The class ThreadLocal allows to create information at some point
+          in the source code and use this information at one or more completely
+          different and decoupled places. The only assumption is, that you
+          are in the same thread. This is exactly our situation: We create
+          the information when processing of the XML-RPC request starts
+          and read it within the handler.</p>
+        <p>In the example below, you'd obtain the clients IP address by
+          writing <code>ClientInfoServlet.getClientIpAddress()</code>.</p>
         <source><![CDATA[
-public class MyConfig extends XmlRpcHttpRequestConfigImpl {
-	private String clientIpAddress;
-	public String getClientIpAddress() {
-	    return clientIpAddress;
-	}
-	public void setClientIpAddress(String pClientIpAddress) {
-	    clientIpAddress = pClientIpAddress;
-	}
-}
+public static class ClientInfoServlet extends XmlRpcServlet {
+    private static ThreadLocal clientIpAddress = new ThreadLocal();
 
-public interface RequestInitializableRequestProcessor {
-    public void init(MyConfig pConfig);
-}
+    public static String getClientIpAddress() {
+        return (String) clientIpAddress.get();
+    }
 
-public class MyXmlRpcServlet extends XmlRpcServlet {
-	protected XmlRpcServletServer newXmlRpcServer(ServletConfig pConfig)
-			throws XmlRpcException {
-		return new XmlRpcServletServer(){
-	        protected XmlRpcHttpRequestConfigImpl newConfig(HttpServletRequest pRequest) {
-	            MyConfig config = new MyConfig();
-	            config.setClientIpAddress(pRequest.getRemoteAddr());
-	            return config;
-	        }
-		};
-	}
-	protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
-        PropertyHandlerMapping mapping = super.newPropertyHandlerMapping(url);
-	    RequestProcessorFactoryFactory factory = new RequestSpecificProcessorFactoryFactory(){
-	        protected Object getRequestProcessor(Class pClass, XmlRpcRequest pRequest) throws XmlRpcException {
-	            RequestInitializableRequestProcessor proc =
-	                (RequestInitializableRequestProcessor) super.getRequestProcessor(pClass, pRequest);
-	            proc.init((MyConfig) pRequest.getConfig());
-	            return proc;
-	        }
-	    };
-	    mapping.setRequestProcessorFactoryFactory(factory);
-	    return mapping;
-	}
+    public void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse)
+            throws IOException, ServletException {
+        clientIpAddress.set(pRequest.getRemoteAddr());
+        super.doPost(pRequest, pResponse);
+    }
 }
         ]]></source>
       </answer>

@@ -39,6 +39,13 @@ public class ServletWebServerProvider extends ClientProviderImpl {
 	private final boolean contentLength;
 	private final int port;
 
+	/**
+	 * Creates a new instance of {@link XmlRpcServlet}.
+	 */
+	protected XmlRpcServlet newXmlRpcServlet() {
+	    return new XmlRpcServlet();
+    }
+	
 	/** Creates a new instance.
 	 * @param pMapping The test servers handler mapping.
 	 * @throws ServletException 
@@ -47,7 +54,7 @@ public class ServletWebServerProvider extends ClientProviderImpl {
 	protected ServletWebServerProvider(XmlRpcHandlerMapping pMapping, boolean pContentLength) throws ServletException, IOException {
 		super(pMapping);
 		contentLength = pContentLength;
-		servlet = new XmlRpcServlet();
+		servlet = newXmlRpcServlet();
 		webServer = new ServletWebServer(servlet, 0);
 		XmlRpcServer server = servlet.getXmlRpcServletServer();
 		server.setHandlerMapping(mapping);
