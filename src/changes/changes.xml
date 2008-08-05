@@ -29,6 +29,17 @@
       <action dev="jochen" type="fix" issue="XMLRPC-157" due-to="Kay Tiong Khoo" due-to-email="kaytiong@gmail.com">
         Minor grammar improvements.
       </action>
+      <action dev="jochen" type="add" issue="XMLRPC-156">
+        Added the XmlRpcErrorHandler, which allows to customize the error logging.
+        This allows, for example, to minimize the logging for business exceptions.
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-155">
+        Documented, that called methods are choosen based on their signature.
+        In particular, multiple methods with the same name are supported.
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-158">
+        Fixed the FAQ entry on how to obtain the clients IP address.
+      </action>
     </release>
     <release version="3.1" date="2007-Aug-31">
       <action dev="jochen" type="add">

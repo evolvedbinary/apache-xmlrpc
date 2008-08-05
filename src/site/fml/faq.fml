@@ -134,6 +134,12 @@
   </part>
 
   <part id="server">
+    <faq id="logging">
+      <question>How do I reduce the servers error logging?</question>
+      <answer>Create a subclass of XmlRpcErrorLogger and set it on the
+        XmlRpcStreamServer.</answer>
+    </faq>
+
     <faq id="streaming_mode">
       <question>How do I enable streaming mode?</question>
       <answer>
