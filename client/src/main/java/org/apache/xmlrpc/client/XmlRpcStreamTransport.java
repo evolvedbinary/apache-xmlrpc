@@ -147,7 +147,7 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 			close();
 			return result;
 		} catch (IOException e) {
-			throw new XmlRpcException("Failed to read servers response: "
+			throw new XmlRpcException("Failed to read server's response: "
 					+ e.getMessage(), e);
         } catch (SAXException e) {
             Exception ex = e.getException();
@@ -174,9 +174,9 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 			xr.setContentHandler(xp);
             xr.parse(isource);
 		} catch (SAXException e) {
-			throw new XmlRpcClientException("Failed to parse servers response: " + e.getMessage(), e);
+			throw new XmlRpcClientException("Failed to parse server's response: " + e.getMessage(), e);
 		} catch (IOException e) {
-			throw new XmlRpcClientException("Failed to read servers response: " + e.getMessage(), e);
+			throw new XmlRpcClientException("Failed to read server's response: " + e.getMessage(), e);
 		}
 		if (xp.isSuccess()) {
 			return xp.getResult();
