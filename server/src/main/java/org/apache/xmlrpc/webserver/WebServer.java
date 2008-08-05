@@ -388,14 +388,15 @@ public class WebServer implements Runnable {
 	 * @param pError The error being logged.
 	 */
 	public void log(Throwable pError) {
-		log.error(pError.getMessage(), pError);
+	    final String msg = pError.getMessage() == null ? pError.getClass().getName() : pError.getMessage();
+	    server.getErrorLogger().log(msg, pError);
 	}
 
 	/** Logs a message.
 	 * @param pMessage The being logged.
 	 */
-	public synchronized void log(String pMessage) {
-		log.error(pMessage);
+	public void log(String pMessage) {
+        server.getErrorLogger().log(pMessage);
 	}
 
 	/** Returns the {@link org.apache.xmlrpc.server.XmlRpcServer}.

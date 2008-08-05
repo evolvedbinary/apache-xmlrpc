@@ -50,7 +50,9 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 		implements XmlRpcStreamRequestProcessor {
 	private static final Log log = LogFactory.getLog(XmlRpcStreamServer.class);
 	private XmlWriterFactory writerFactory = new DefaultXMLWriterFactory();
-
+	private static final XmlRpcErrorLogger theErrorLogger = new XmlRpcErrorLogger();
+	private XmlRpcErrorLogger errorLogger = theErrorLogger;
+	
 	protected XmlRpcRequest getRequest(final XmlRpcStreamRequestConfig pConfig,
 									   InputStream pStream) throws XmlRpcException {
 		final XmlRpcRequestParser parser = new XmlRpcRequestParser(pConfig, getTypeFactory());
@@ -194,7 +196,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 				error = null;
 				log.debug("execute: Request performed successfully");
 			} catch (Throwable t) {
-				log.error("execute: Error while performing request", t);
+				logError(t);
 				result = null;
 				error = t;
 			} finally {
@@ -242,4 +244,23 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 		}
 		log.debug("execute: <-");
 	}
+
+    protected void logError(Throwable t) {
+        final String msg = t.getMessage() == null ? t.getClass().getName() : t.getMessage();
+        errorLogger.log(msg, t);
+    }
+
+    /**
+     * Returns the error logger.
+     */
+    public XmlRpcErrorLogger getErrorLogger() {
+        return errorLogger;
+    }
+
+    /**
+     * Sets the error logger.
+     */
+    public void setErrorLogger(XmlRpcErrorLogger pErrorLogger) {
+        errorLogger = pErrorLogger;
+    }
 }

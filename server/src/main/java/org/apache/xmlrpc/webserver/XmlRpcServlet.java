@@ -192,7 +192,7 @@ public class XmlRpcServlet extends HttpServlet {
 	}
 
     public void log(String pMessage, Throwable pThrowable) {
-        log.error(pMessage, pThrowable);
+        server.getErrorLogger().log(pMessage, pThrowable);
     }
 
     public void log(String pMessage) {
