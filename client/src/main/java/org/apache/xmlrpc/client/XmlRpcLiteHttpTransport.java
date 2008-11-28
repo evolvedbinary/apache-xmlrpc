@@ -221,10 +221,16 @@ public class XmlRpcLiteHttpTransport extends XmlRpcHttpTransport {
 			tokens.nextToken(); // Skip HTTP version
 			String statusCode = tokens.nextToken();
 			String statusMsg = tokens.nextToken("\n\r");
-			if (!"200".equals(statusCode)) {
-				throw new IOException("Unexpected Response from Server: "
-									  + statusMsg);
+			final int code;
+			try {
+			    code = Integer.parseInt(statusCode);
+			} catch (NumberFormatException e) {
+                throw new XmlRpcClientException("Server returned invalid status code: "
+                        + statusCode + " " + statusMsg, null);
 			}
+			if (code < 200  ||  code > 299) {
+		        throw new XmlRpcHttpTransportException(code, statusMsg);
+		    }
 			int contentLength = -1;
 			for (;;) {
 				line = HttpUtil.readLine(input, buffer);

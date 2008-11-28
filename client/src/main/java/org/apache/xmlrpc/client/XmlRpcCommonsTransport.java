@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.URI;
@@ -114,6 +115,7 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 
 	protected InputStream getInputStream() throws XmlRpcException {
         try {
+            checkStatus(method);
             return method.getResponseBodyAsStream();
 		} catch (HttpException e) {
 			throw new XmlRpcClientException("Error in HTTP transport: " + e.getMessage(), e);
@@ -242,4 +244,19 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
 			throw new XmlRpcException("I/O error while communicating with HTTP server: " + e.getMessage(), e);
 		}
 	}
+    
+    /**
+     * Check the status of the HTTP request and throw an XmlRpcHttpTransportException if it
+     * indicates that there is an error.
+     * @param pMethod the method that has been executed
+     * @throws XmlRpcHttpTransportException if the status of the method indicates that there is an error.
+     */
+    private void checkStatus(HttpMethod pMethod) throws XmlRpcHttpTransportException {
+        final int status = pMethod.getStatusCode();
+        
+        // All status codes except SC_OK are handled as errors. Perhaps some should require special handling (e.g., SC_UNAUTHORIZED)
+        if (status < 200  ||  status > 299) {
+            throw new XmlRpcHttpTransportException(status, pMethod.getStatusText());
+        }
+    }
 }

@@ -32,6 +32,10 @@
           issue="XMLRPC-161">
         The ThreadPool could create more threads than configured.
       </action>
+      <action dev="jochen" type="fix" due-to="Brandon DuRette" due-to-email="brandond@alum.mit.edu"
+          issue="XMLRPC-160">
+        Improved the handling of HTTP status codes that indicate an error.
+      </action>
     </release>
 
     <release version="3.1.1" date="2008-Aug-10">

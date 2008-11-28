@@ -86,7 +86,15 @@ public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
 
 	protected InputStream getInputStream() throws XmlRpcException {
 		try {
-			return getURLConnection().getInputStream();
+		    URLConnection connection = getURLConnection();
+		    if ( connection instanceof HttpURLConnection ) {
+		        HttpURLConnection httpConnection = (HttpURLConnection) connection;
+		        int responseCode = httpConnection.getResponseCode();
+		        if (responseCode < 200  ||  responseCode > 299) {
+		            throw new XmlRpcHttpTransportException(responseCode, httpConnection.getResponseMessage());
+		        }
+		    }
+			return connection.getInputStream();
 		} catch (IOException e) {
 			throw new XmlRpcException("Failed to create input stream: " + e.getMessage(), e);
 		}
