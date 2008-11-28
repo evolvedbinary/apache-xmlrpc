@@ -28,6 +28,10 @@
           issue="XMLRPC-162">
         Eliminated a possible race condition in the ThreadPool.
       </action>
+      <action dev="jochen" type="fix" due-to="Mark Gertsvolf" due-to-email="markg@nortel.com"
+          issue="XMLRPC-161">
+        The ThreadPool could create more threads than configured.
+      </action>
     </release>
 
     <release version="3.1.1" date="2008-Aug-10">

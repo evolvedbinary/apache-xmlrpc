@@ -155,7 +155,7 @@ public class ThreadPool {
 	 * might consider to use the {@link #addTask(ThreadPool.Task)} method instead.
 	 */
 	public synchronized boolean startTask(Task pTask) {
-		if (maxSize != 0  &&  runningThreads.size() > maxSize) {
+		if (maxSize != 0  &&  runningThreads.size() >= maxSize) {
 			return false;
 		}
         Poolable poolable;
