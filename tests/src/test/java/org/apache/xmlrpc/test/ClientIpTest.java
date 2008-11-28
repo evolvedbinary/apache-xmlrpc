@@ -24,8 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcHandler;
 import org.apache.xmlrpc.XmlRpcRequest;
@@ -39,21 +37,40 @@ import org.apache.xmlrpc.webserver.XmlRpcServlet;
  * Test case for reading the clients IP address.
  */
 public class ClientIpTest extends XmlRpcTestCase {
+    /**
+     * An object, which provides additional information
+     * about the client to the user.
+     */
     public static class ClientInfo {
         private final String ipAddress;
 
+        /**
+         * Creates a new instance.
+         */
         public ClientInfo(String pIpAddress) {
             ipAddress = pIpAddress;
         }
 
+        /**
+         * Returns the clients IP address.
+         */
         public String getIpAddress() {
             return ipAddress;
         }
     }
 
+    /**
+     * An extension of the {@link XmlRpcServlet}, which
+     * ensures the availability of a {@link ClientIpTest.ClientInfo}
+     * object.
+     */
     public static class ClientInfoServlet extends XmlRpcServlet {
+        private static final long serialVersionUID = 8210342625908021538L;
         private static ThreadLocal clientInfo = new ThreadLocal();
 
+        /**
+         * Returns the current threads. client info object.
+         */
         public static ClientInfo getClientInfo() {
             return (ClientInfo) clientInfo.get();
         }

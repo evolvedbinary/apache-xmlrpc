@@ -71,6 +71,9 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
         }
     }
 
+	/**
+	 * @param pRequest The request object.
+	 */
 	protected XmlRpcHttpRequestConfigImpl newConfig(HttpServletRequest pRequest) {
 		return new XmlRpcHttpRequestConfigImpl();
 	}

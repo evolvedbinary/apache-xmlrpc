@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.server.XmlRpcStreamServer;
 import org.apache.xmlrpc.util.ThreadPool;
 
@@ -72,8 +70,6 @@ import org.apache.xmlrpc.util.ThreadPool;
  * </pre>
  */
 public class WebServer implements Runnable {
-	private static final Log log = LogFactory.getLog(WebServer.class);
-
 	private class AddressMatcher {
 		private final int pattern[];
 		

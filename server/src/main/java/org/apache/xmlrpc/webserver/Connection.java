@@ -59,7 +59,9 @@ public class Connection implements ThreadPool.InterruptableTask, ServerStreamCon
     private static final byte[] wwwAuthenticate = toHTTPBytes("WWW-Authenticate: Basic realm=XML-RPC\r\n");
 
     private static abstract class RequestException extends IOException {
+        private static final long serialVersionUID = 2113732921468653309L;
         private final RequestData requestData;
+
         RequestException(RequestData pData, String pMessage) {
             super(pMessage);
             requestData = pData;

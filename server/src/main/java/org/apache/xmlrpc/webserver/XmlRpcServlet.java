@@ -145,6 +145,8 @@ public class XmlRpcServlet extends HttpServlet {
     /** Creates a new instance of {@link XmlRpcServer},
 	 * which is being used to process the requests. The default implementation
 	 * will simply invoke <code>new {@link XmlRpcServer}.
+	 * @param pConfig The servlets configuration.
+	 * @throws XmlRpcException
 	 */
 	protected XmlRpcServletServer newXmlRpcServer(ServletConfig pConfig)
 			throws XmlRpcException {

@@ -55,6 +55,10 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 		factory = pFactory;
 	}
 
+	/**
+	 * Called to start a value tag.
+	 * @throws SAXException
+	 */
 	protected void startValueTag() throws SAXException {
 		inValueTag = true;
 		text.setLength(0);

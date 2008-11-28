@@ -105,6 +105,7 @@ public interface RequestProcessorFactoryFactory {
          *       }
          *   }
          * </pre>
+         * @param pRequest The request object.
          */
         protected Object getRequestProcessor(Class pClass, XmlRpcRequest pRequest) throws XmlRpcException {
             return Util.newInstance(pClass);

@@ -123,6 +123,14 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 			&& pConfig.isGzipCompressing();
 	}
 
+	/**
+	 * Creates a new instance of {@link ReqWriter}.
+	 * @throws XmlRpcException Creating the instance failed.
+	 * @throws IOException Creating the instance failed, because
+	 *   an {@link IOException} occurs.
+	 * @throws SAXException Creating the instance failed, because
+	 *   the request could not be parsed.
+	 */
     protected ReqWriter newReqWriter(XmlRpcRequest pRequest)
             throws XmlRpcException, IOException, SAXException {
         ReqWriter reqWriter = new ReqWriterImpl(pRequest);

@@ -150,6 +150,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 
 	/** Called to prepare the output stream. Typically used for enabling
 	 * compression, or similar filters.
+	 * @param pConnection The connection object.
 	 */
 	protected OutputStream getOutputStream(ServerStreamConnection pConnection,
 										   XmlRpcStreamRequestConfig pConfig, OutputStream pStream) throws IOException {
@@ -162,6 +163,8 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 
 	/** Called to prepare the output stream, if content length is
 	 * required.
+	 * @param pConfig The configuration object.
+	 * @param pSize The requests size.
 	 */
 	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
 										   ServerStreamConnection pConnection,
@@ -170,6 +173,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	}
 
 	/** Returns, whether the requests content length is required.
+	 * @param pConfig The configuration object.
 	 */
 	protected boolean isContentLengthRequired(XmlRpcStreamRequestConfig pConfig) {
 		return false;
