@@ -234,6 +234,16 @@ public class WebServer implements Runnable {
 	public void setParanoid(boolean pParanoid) {
 		paranoid = pParanoid;
 	}
+
+	/**
+	 * Returns the client filtering state.
+	 * @return True, if client filtering is enabled, false otherwise.
+	 * @see #acceptClient(java.lang.String)
+	 * @see #denyClient(java.lang.String)
+	 */
+	protected boolean isParanoid() {
+		return paranoid;
+	}
 	
 	/** Add an IP address to the list of accepted clients. The parameter can
 	 * contain '*' as wildcard character, e.g. "192.168.*.*". You must call
