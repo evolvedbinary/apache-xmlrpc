@@ -56,7 +56,9 @@ public class ThreadPool {
                         if (t == null) {
                             try {
                                 synchronized (this) {
-                                    wait();
+                                    if (!isShuttingDown()  &&  getTask() == null) {
+                                        wait();
+                                    }
                                 }
                             } catch (InterruptedException e) {
                                 // Do nothing

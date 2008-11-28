@@ -23,7 +23,14 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
-    <release version="3.1.1-SNAPSHOT" date="Not yet released">
+    <release version="3.1.2" date="Not yet released">
+      <action dev="jochen" type="fix" due-to="Mark Gertsvolf" due-to-email="markg@nortel.com"
+          issue="XMLRPC-162">
+        Eliminated a possible race condition in the ThreadPool.
+      </action>
+    </release>
+
+    <release version="3.1.1" date="2008-Aug-10">
       <action dev="jochen" type="fix" due-to="P&#243;ka Bal&#225;zs" due-to-email="p.balazs@gmail.com">
         The XmlRpcCommonsTransport is now always declaring its entities as repeatable.
       </action>
