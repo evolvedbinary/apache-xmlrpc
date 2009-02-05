@@ -31,7 +31,7 @@ Specifications
 Examples and Tutorials
 
   * A simple, yet complete example of using the XmlRpcServlet by 
-    {{{http://www.petrovic.org/blog/?p=127}Mark Petrovic}}
+    {{{http://radioae6rt.wordpress.com/2006/04/23/running-an-xml-rpc-server-as-a-java-servlet/}Mark Petrovic}}
   * An example of initializing handlers by using so-called
     persistent objects, written by
     {{{http://blog.buttermountain.co.uk/2006/11/06/accessing-persistent-objects-with-apache-ws-xmlrpc-30-a-documented-example/}Iain Bullard}}.
