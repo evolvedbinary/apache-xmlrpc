@@ -105,8 +105,8 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         byte[] buffer = new byte[2048];
         String line = readLine(buffer);
         
-        StringTokenizer tokens = new StringTokenizer(line);
-        if (!tokens.hasMoreTokens()) {
+        StringTokenizer tokens = line!=null? new StringTokenizer(line): null;
+        if (tokens==null || !tokens.hasMoreTokens()) {
         	throw new ServletWebServer.Exception(400, "Bad Request",
         										 "Unable to parse requests first line (should"
         										  + " be 'METHOD uri HTTP/version', was empty.");

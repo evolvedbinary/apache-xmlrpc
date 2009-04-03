@@ -41,6 +41,9 @@
           issue="XMLRPC-159">
         Improved the handling of HTTP status codes that indicate an error.
       </action>
+      <action dev="jochen" type="fix" due-to="Alan Burlison" due-to-email="Alan.Burlison@sun.com">
+        Fixed a possible NPE in case of a malformed HTTP request in the WebServer.
+      </action>
     </release>
 
     <release version="3.1.1" date="2008-Aug-10">
