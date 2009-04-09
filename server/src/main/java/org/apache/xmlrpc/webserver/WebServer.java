@@ -332,6 +332,8 @@ public class WebServer implements Runnable {
 					
 					try {
 						if (allowConnection(socket)) {
+					        // set read timeout to 30 seconds
+					        socket.setSoTimeout(30000);
 							final ThreadPool.Task task = newTask(this, server, socket);
 							if (pool.startTask(task)) {
 								socket = null;

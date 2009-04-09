@@ -60,11 +60,11 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 	private ServletInputStream sistream;
 	private BufferedReader reader;
 	private boolean postParametersParsed;
-	private final String method;
-	private final String protocol;
-	private final String uri;
-	private final String queryString;
-	private final String httpVersion;
+	private String method;
+	private String protocol;
+	private String uri;
+	private String queryString;
+	private String httpVersion;
 	private final Map headers = new HashMap();
 	private final Map attributes = new HashMap();
 	private Map parameters;
@@ -98,34 +98,36 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 				return c;
 			}
 		};
+	}
 
-        /** Read the header lines, one by one. Note, that the size of
+   /**
+    * Read the header lines, one by one. Note, that the size of
          * the buffer is a limitation of the maximum header length!
          */
+    public void readHttpHeaders()
+      throws IOException, ServletWebServer.Exception {
         byte[] buffer = new byte[2048];
         String line = readLine(buffer);
-        
-        StringTokenizer tokens = line!=null? new StringTokenizer(line): null;
-        if (tokens==null || !tokens.hasMoreTokens()) {
-        	throw new ServletWebServer.Exception(400, "Bad Request",
-        										 "Unable to parse requests first line (should"
-        										  + " be 'METHOD uri HTTP/version', was empty.");
+        StringTokenizer tokens =
+          line != null ? new StringTokenizer(line) : null;
+        if (tokens == null || !tokens.hasMoreTokens()) {
+            throw new ServletWebServer.Exception(400, "Bad Request", "Unable to parse requests first line (should" +
+              " be 'METHOD uri HTTP/version', was empty.");
         }
         method = tokens.nextToken();
 		if (!"POST".equalsIgnoreCase(method)) {
-			throw new ServletWebServer.Exception(400, "Bad Request",
-												 "Expected 'POST' method, got " + method);
+            throw new ServletWebServer.Exception(400, "Bad Request", "Expected 'POST' method, got " +
+              method);
 		}
 		if (!tokens.hasMoreTokens()) {
-        	throw new ServletWebServer.Exception(400, "Bad Request",
-        										 "Unable to parse requests first line (should"
-					  							 + " be 'METHOD uri HTTP/version', was: " + line);
+            throw new ServletWebServer.Exception(400, "Bad Request", "Unable to parse requests first line (should" +
+              " be 'METHOD uri HTTP/version', was: " + line);
 		}
 		String u = tokens.nextToken();
 		int offset = u.indexOf('?');
 		if (offset >= 0) {
 			uri = u.substring(0, offset);
-			queryString = u.substring(offset+1);
+            queryString = u.substring(offset + 1);
 		} else {
 			uri = u;
 			queryString = null;
@@ -133,34 +135,32 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 		if (tokens.hasMoreTokens()) {
 			String v = tokens.nextToken().toUpperCase();
 			if (tokens.hasMoreTokens()) {
-	        	throw new ServletWebServer.Exception(400, "Bad Request",
-	        										 "Unable to parse requests first line (should"
-							 						  + " be 'METHOD uri HTTP/version', was: " + line);
+                throw new ServletWebServer.Exception(400, "Bad Request", "Unable to parse requests first line (should" +
+                  " be 'METHOD uri HTTP/version', was: " + line);
 			} else {
 				int index = v.indexOf('/');
 				if (index == -1) {
-		        	throw new ServletWebServer.Exception(400, "Bad Request",
-		        										 "Unable to parse requests first line (should"
-	 						  							 + " be 'METHOD uri HTTP/version', was: " + line);
+                    throw new ServletWebServer.Exception(400, "Bad Request", "Unable to parse requests first line (should" +
+                      " be 'METHOD uri HTTP/version', was: " + line);
 				}
 				protocol = v.substring(0, index).toUpperCase();
-				httpVersion = v.substring(index+1);
+                httpVersion = v.substring(index + 1);
 			}
 		} else {
 			httpVersion = "1.0";
 			protocol = "HTTP";
 		}
-
 		for (;;) {
 			line = HttpUtil.readLine(istream, buffer);
-			if (line == null  ||  line.length() == 0) {
+            if (line == null || line.length() == 0) {
 				break;
 			}
 			int off = line.indexOf(':');
 			if (off > 0) {
-				addHeader(line.substring(0, off), line.substring(off+1).trim());
+                addHeader(line.substring(0, off), line.substring(off + 1).trim());
 			} else {
-				throw new ServletWebServer.Exception(400, "Bad Request", "Unable to parse header line: " + line);
+                throw new ServletWebServer.Exception(400, "Bad Request", "Unable to parse header line: " +
+                  line);
 			}
 		}
 		contentBytesRemaining = getIntHeader("content-length");

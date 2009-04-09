@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlrpc.util.ThreadPool.InterruptableTask;
 
@@ -35,8 +33,8 @@ import org.apache.xmlrpc.util.ThreadPool.InterruptableTask;
 public class ServletConnection implements InterruptableTask {
 	private final HttpServlet servlet;
 	private final Socket socket;
-	private final HttpServletRequest request;
-	private final HttpServletResponse response;
+	private final HttpServletRequestImpl request;
+	private final HttpServletResponseImpl response;
     private boolean shuttingDown;
 
 	/** Creates a new instance.
@@ -53,6 +51,7 @@ public class ServletConnection implements InterruptableTask {
 
 	public void run() throws Throwable {
         try {
+            request.readHttpHeaders();
             servlet.service(request, response);
         } catch (Throwable t) {
             if (!shuttingDown) {

@@ -44,6 +44,14 @@
       <action dev="jochen" type="fix" due-to="Alan Burlison" due-to-email="Alan.Burlison@sun.com">
         Fixed a possible NPE in case of a malformed HTTP request in the WebServer.
       </action>
+      <action dev="jochen" type="fix" due-to="Alan Burlison" due-to-email="Alan.Burlison@sun.com"
+          issue="XMLRPC-166">
+        The webserver's connection timeout wasn't applied to the ServletWebServer.
+      </action>
+      <action dev="jochen" type="fix" due-to="Alan Burlison" due-to-email="Alan.Burlison@sun.com"
+          issue="XMLRPC-166">
+        A client could prevent other clients from connecting by not sending any data.
+      </action>
     </release>
 
     <release version="3.1.1" date="2008-Aug-10">

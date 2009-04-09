@@ -118,8 +118,6 @@ public class Connection implements ThreadPool.InterruptableTask, ServerStreamCon
         webServer = pWebServer;
         server = pServer;
         socket = pSocket;
-        // set read timeout to 30 seconds
-        socket.setSoTimeout (30000);
         input = new BufferedInputStream(socket.getInputStream()){
             /** It may happen, that the XML parser invokes close().
              * Closing the input stream must not occur, because
