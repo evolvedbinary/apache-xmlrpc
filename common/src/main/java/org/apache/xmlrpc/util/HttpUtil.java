@@ -141,7 +141,7 @@ public class HttpUtil {
                 throw new IOException ("HTTP Header too long");
             }
         }
-        return new String(pBuffer, 0, count);
+        return new String(pBuffer, 0, count, "US-ASCII");
     }
 
 	/** Parses an "Authorization" header and adds the username and password

@@ -52,6 +52,10 @@
           issue="XMLRPC-166">
         A client could prevent other clients from connecting by not sending any data.
       </action>
+      <action dev="jochen" type="fix" due-to="Greg Wurth" due-to-email="hackwurth@mac.com"
+          issue="XMLRPC-164">
+        The platforms default encoding has been used at some point when decoding HTTP headers.
+      </action>
     </release>
 
     <release version="3.1.1" date="2008-Aug-10">

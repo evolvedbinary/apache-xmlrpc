@@ -271,6 +271,10 @@
             <name>Juho Yli-Krekola</name>
             <email>Juho.Yli-Krekola@iki.fi</email>
         </contributor>
+        <contributor>
+            <name>Greg Wurth</name>
+            <email>hackwurth@mac.com</email>
+        </contributor>
     </contributors>
     <scm>
         <connection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</connection>
