@@ -33,6 +33,15 @@
 
     <menu name="XML-RPC">
       <item name="Overview"            href="/index.html"/>
+      <item name="Download"            href="/download.html"/>
+      <item name="Changes"             href="/changes-report.html"/>
+      <item name="Mailing Lists"       href="/mail-lists.html"/>
+      <item name="Contributing"        href="/contributing.html"/>
+      <item name="XML-RPC 2"           href="http://ws.apache.org/xmlrpc/xmlrpc2"/>
+      <item name="Links"               href="/links.html"/>
+    </menu>
+
+    <menu name="Documentation">
       <item name="Client Classes"      href="/client.html"/>
       <item name="Server Side XML-RPC" href="/server.html"/>
       <item name="Vendor Extensions"   href="/extensions.html"/>
@@ -40,11 +49,8 @@
       <item name="Introspection"       href="/introspection.html"/>
       <item name="Advanced Techniques" href="/advanced.html"/>
       <item name="XML-RPC Types"       href="/types.html"/>
-      <item name="Download"            href="/download.html"/>
       <item name="FAQ"                 href="/faq.html"/>
-      <item name="Contributing"        href="/contributing.html"/>
-      <item name="XML-RPC 2"           href="http://ws.apache.org/xmlrpc/xmlrpc2"/>
-      <item name="Links"               href="/links.html"/>
+      <item name="Javadocs"            href="/apidocs/index.html"/>
     </menu>
 
     ${reports}

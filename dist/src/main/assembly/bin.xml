@@ -27,6 +27,7 @@
     <format>tar.bz2</format>
     <format>zip</format>
   </formats>
+  <baseDirectory>apache-xmlrpc-${project.version}</baseDirectory>
   <fileSets>
     <fileSet>
       <directory>..</directory>

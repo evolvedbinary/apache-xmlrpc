@@ -90,6 +90,7 @@
                 </goals>
                 <phase>package</phase>
                 <configuration>
+                  <finalName>apache-xmlrpc-${project.version}</finalName>
                   <descriptors>
                     <descriptor>src/main/assembly/bin.xml</descriptor>
                     <descriptor>src/main/assembly/src.xml</descriptor>

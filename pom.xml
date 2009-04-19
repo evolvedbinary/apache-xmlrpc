@@ -361,12 +361,12 @@
         <version>2.5</version>
         <reportSets>
           <reportSet>
-            <id>aggregate</id>
             <configuration>
+              <aggregate>true</aggregate>
               <source>${maven.compile.source}</source>
             </configuration>
             <reports>
-              <report>aggregate</report>
+              <report>javadoc</report>
             </reports>
           </reportSet>
         </reportSets>
@@ -432,7 +432,18 @@
       <id>release</id>
       <build>
         <plugins>
-
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <inherited>false</inherited>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <artifactId>maven-remote-resources-plugin</artifactId>
             <version>1.0</version>
@@ -525,6 +536,7 @@
                 <id>attach-javadocs</id>
                 <goals>
                   <goal>jar</goal>
+                  <goal>aggregate</goal>
                 </goals>
               </execution>
             </executions>
