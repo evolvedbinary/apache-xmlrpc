@@ -35,15 +35,6 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>org/apache/xmlrpc/test/ScalabilityTest.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.2</version>
         <configuration>
@@ -70,5 +61,46 @@
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.xmlrpc</groupId>
+    	<artifactId>xmlrpc-client</artifactId>
+    	<version>3.1.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.xmlrpc</groupId>
+    	<artifactId>xmlrpc-server</artifactId>
+    	<version>3.1.2-SNAPSHOT</version>
+    </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2-beta-3</version>
+            <executions>
+              <execution>
+                <id>create-assemblies</id>
+                <goals>
+                  <goal>attached</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/bin.xml</descriptor>
+                    <descriptor>src/main/assembly/src.xml</descriptor>
+                  </descriptors>
+                  <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
