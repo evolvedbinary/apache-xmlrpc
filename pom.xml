@@ -321,6 +321,10 @@
             <groupId>avalon-framework</groupId>
             <artifactId>avalon-framework</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>logkit</groupId>
+            <artifactId>logkit</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>

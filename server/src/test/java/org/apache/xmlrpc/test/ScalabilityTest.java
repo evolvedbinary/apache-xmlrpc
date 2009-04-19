@@ -153,7 +153,7 @@ public class ScalabilityTest extends TestCase {
         boolean ok = false;
         try {
             long now = System.currentTimeMillis();
-            servlet.getXmlRpcServletServer().setMaxThreads(1);
+            webServer.getXmlRpcServer().setMaxThreads(1);
             new Client(100*BASE, webServer.getPort()).run();
             System.out.println("Single client: " + (System.currentTimeMillis()-now) + ", " + webServer.getNumThreads());
             shutdownWebServer();
