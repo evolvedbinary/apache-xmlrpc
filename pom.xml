@@ -392,26 +392,10 @@
   </reporting>
 
   <distributionManagement>
-    <!-- Overwriting the apache.releases and apache.snapshots
-         repositories seems redundant, because they are already
-         specified in the Apache POM. Unfortunately, we cannot
-         use scp:// URL's, because of WAGONSSH-49.
-    -->
-    <repository>
-      <id>apache.releases</id>
-      <name>Apache Release Distribution Repository</name>
-      <url>scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-    </repository>
-    <snapshotRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
-    </snapshotRepository>
-
     <site>
-      <id>people.apache.org</id>
+      <id>${xmlrpc.www.id}</id>
       <name>XML-RPC directory on ws.apache.org</name>
-      <url>scp://people.apache.org/www/ws.apache.org/xmlrpc</url>
+      <url>${xmlrpc.www.url}</url>
     </site>
   </distributionManagement>
 
@@ -567,5 +551,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <xmlrpc.www.url>scp://people.apache.org/www/ws.apache.org/xmlrpc</xmlrpc.www.url>
+    <xmlrpc.www.id>people.apache.org</xmlrpc.www.id>
   </properties>
 </project>
