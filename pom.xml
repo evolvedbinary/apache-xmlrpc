@@ -19,7 +19,10 @@
   under the License.    
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache</groupId>
@@ -29,7 +32,7 @@
   <groupId>org.apache.xmlrpc</groupId>
   <artifactId>xmlrpc</artifactId>
   <name>Apache XML-RPC</name>
-  <version>3.1.2</version>
+  <version>3.1.2-SNAPSHOT</version>
   <description>
     Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP to
     implement remote procedure calls. Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to handle.
@@ -147,7 +150,7 @@
       <email>gamaliel@fastmail.fm</email>
     </contributor>
     <contributor>
-      <name>Póka Balázs</name>
+      <name>P&#243;ka Bal&#225;zs</name>
       <email>p.balazs@gmail.com</email>
     </contributor>
     <contributor>
@@ -281,9 +284,9 @@
   </contributors>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/xmlrpc-3.1.2</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/tags/xmlrpc-3.1.2</developerConnection>
-    <url>https://svn.apache.org/viewvc/webservices/xmlrpc/tags/xmlrpc-3.1.2</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</developerConnection>
+    <url>https://svn.apache.org/viewvc/webservices/xmlrpc/trunk</url>
   </scm>
 
   <build>
