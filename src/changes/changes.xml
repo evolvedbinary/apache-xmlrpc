@@ -24,6 +24,13 @@
   </properties>
   <body>
     <release version="3.1.2" date="2009-Apr-19">
+      <action dev="jochen" type="fix">
+        The version number in the clients user agent string is now
+        updated automatically.
+      </action>
+    </release>
+
+    <release version="3.1.2" date="2009-Apr-19">
       <action dev="jochen" type="fix" due-to="Mark Gertsvolf" due-to-email="markg@nortel.com"
           issue="XMLRPC-162">
         Eliminated a possible race condition in the ThreadPool.

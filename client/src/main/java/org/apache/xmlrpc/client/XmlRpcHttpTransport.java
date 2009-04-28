@@ -20,8 +20,12 @@ package org.apache.xmlrpc.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URL;
+import java.util.Properties;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
@@ -56,11 +60,35 @@ public abstract class XmlRpcHttpTransport extends XmlRpcStreamTransport {
         }
     }
 
-	private String userAgent;
+    /** The user agent string.
+     */
+    public static final String USER_AGENT;
+    static {
+        final String p = "XmlRpcClient.properties";
+        final URL url = XmlRpcHttpTransport.class.getResource(p);
+        if (url == null) {
+            throw new IllegalStateException("Failed to locate resource: " + p);
+        }
+        InputStream stream = null;
+        try {
+            stream = url.openStream();
+            final Properties props = new Properties();
+            props.load(stream);
+            USER_AGENT = props.getProperty("user.agent");
+            if (USER_AGENT == null  ||  USER_AGENT.trim().length() == 0) {
+                throw new IllegalStateException("The property user.agent is not set.");
+            }
+            stream.close();
+            stream = null;
+        } catch (IOException e) {
+            throw new UndeclaredThrowableException(e, "Failed to load resource " + url + ": " + e.getMessage());
+        } finally {
+            if (stream != null) { try { stream.close(); } catch (Throwable t) { /* Ignore me */ } }
+        }
+    }
 
-	/** The user agent string.
-	 */
-	public static final String USER_AGENT = "Apache XML RPC 3.0";
+    private String userAgent;
+
 
 	protected XmlRpcHttpTransport(XmlRpcClient pClient, String pUserAgent) {
 		super(pClient);
