@@ -23,10 +23,13 @@
     <title>Changes in Apache XML-RPC</title>
   </properties>
   <body>
-    <release version="3.1.2" date="2009-Apr-19">
+    <release version="3.1.3-SNAPSHOT" date="2009-Apr-29">
       <action dev="jochen" type="fix">
         The version number in the clients user agent string is now
         updated automatically.
+      </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-168">
+        Fixed a deadlock in the ThreadPool.
       </action>
     </release>
 
