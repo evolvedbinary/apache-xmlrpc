@@ -129,7 +129,12 @@ public class ClientFactory {
                 if (isObjectMethodLocal()  &&  pMethod.getDeclaringClass().equals(Object.class)) {
                     return pMethod.invoke(pProxy, pArgs);
                 }
-                String methodName = pRemoteName + "." + pMethod.getName();
+                final String methodName;
+                if (pRemoteName == null  ||  pRemoteName.length() == 0) {
+                	methodName = pMethod.getName();
+                } else {
+                	methodName = pRemoteName + "." + pMethod.getName();
+                }
                 Object result;
                 try {
                     result = client.execute(methodName, pArgs);

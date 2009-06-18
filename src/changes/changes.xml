@@ -31,6 +31,9 @@
       <action dev="jochen" type="fix" issue="XMLRPC-168">
         Fixed a deadlock in the ThreadPool.
       </action>
+      <action dev="jochen" type="fix" issue="XMLRPC-174" due-to="Livnat Peer" due-to-email="livnats@gmail.com">
+        The ClientFactory is now supporting an empty remote class.
+      </action>
     </release>
 
     <release version="3.1.2" date="2009-Apr-19">
