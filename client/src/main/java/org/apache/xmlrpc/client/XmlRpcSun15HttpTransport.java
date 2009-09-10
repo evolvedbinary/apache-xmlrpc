@@ -26,6 +26,8 @@ import java.net.URLConnection;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.xmlrpc.XmlRpcRequest;
+
 
 /**
  * Default implementation of an HTTP transport in Java 1.4, based on the
@@ -55,6 +57,20 @@ public class XmlRpcSun15HttpTransport extends XmlRpcSun14HttpTransport {
      */
     public Proxy getProxy() {
         return proxy;
+    }
+
+    protected void initHttpHeaders(XmlRpcRequest pRequest)
+            throws XmlRpcClientException {
+        final XmlRpcHttpClientConfig config = (XmlRpcHttpClientConfig) pRequest.getConfig();
+        int connectionTimeout = config.getConnectionTimeout();
+        if (connectionTimeout > 0) {
+            getURLConnection().setConnectTimeout(connectionTimeout);
+        }
+        int replyTimeout = config.getReplyTimeout();
+        if (replyTimeout > 0) {
+            getURLConnection().setReadTimeout(replyTimeout);
+        }
+        super.initHttpHeaders(pRequest);
     }
 
     protected URLConnection newURLConnection(URL pURL) throws IOException {

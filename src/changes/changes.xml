@@ -34,6 +34,9 @@
       <action dev="jochen" type="fix" issue="XMLRPC-174" due-to="Livnat Peer" due-to-email="livnats@gmail.com">
         The ClientFactory is now supporting an empty remote class.
       </action>
+      <action dev="jochen" type="add" due-to="Gam" due-to-email="gamaliel@fastmail.fm">
+        Added support for configured timeouts to the XmlRpcSun15HttpTransport class.
+      </action>
     </release>
 
     <release version="3.1.2" date="2009-Apr-19">
