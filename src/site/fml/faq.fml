@@ -25,7 +25,7 @@
       <answer>
         <p>The problem is typically caused by code like the following:</p>
         <source><![CDATA[
-    Integer[] result = (Integer[])server.execute("Server.foo", param);
+    Integer[] result = server.execute("Server.foo", param);
         ]]></source>
         <p>The problem is in the fact, that the XML-RPC response tells
           the client, that the server returns an array. It doesn't tell
