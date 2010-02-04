@@ -34,6 +34,20 @@ public class SAXParsers {
 		spf = SAXParserFactory.newInstance();
 		spf.setNamespaceAware(true);
 		spf.setValidating(false);
+		try {
+		    spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		} catch (javax.xml.parsers.ParserConfigurationException e) {
+		    // Ignore it
+        } catch (org.xml.sax.SAXException e) {
+            // Ignore it
+		}
+		try {
+		    spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (javax.xml.parsers.ParserConfigurationException e) {
+            // Ignore it
+        } catch (org.xml.sax.SAXException e) {
+            // Ignore it
+		}
 	}
 
 	/** Creates a new instance of {@link XMLReader}.

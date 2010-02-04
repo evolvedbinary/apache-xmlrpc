@@ -37,6 +37,10 @@
       <action dev="jochen" type="add" due-to="Gam" due-to-email="gamaliel@fastmail.fm">
         Added support for configured timeouts to the XmlRpcSun15HttpTransport class.
       </action>
+      <action dev="jochen" type="fix" due-to="Johan H&#244;gre" due-to-email="johan.hagre@home.se">
+        Fixed a potential security hole: The client has been able to include server side resources
+        into the request by using external entities.
+      </action>
     </release>
 
     <release version="3.1.2" date="2009-Apr-19">
