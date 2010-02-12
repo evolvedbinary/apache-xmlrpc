@@ -19,6 +19,12 @@
 package org.apache.xmlrpc.common;
 
 import org.apache.xmlrpc.XmlRpcConfigImpl;
+import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcLite14HttpTransport;
+import org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
 
 
 /** Default implementation of a request configuration.
@@ -79,7 +85,13 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
 
 	public String getBasicPassword() { return basicPassword; }
 
-    /** Set the connection timeout in milliseconds.
+    /** Set the connection timeout in milliseconds. Note, that this value
+     * may or may not be used, depending on the transport factory. Transport factories,
+     * which are known to use this value: {@link XmlRpcCommonsTransportFactory},
+     * and {@link XmlRpcSun15HttpTransportFactory}. On the other hand, transport
+     * factories which are known <em>not</em> to use this value:
+     * {@link XmlRpcSunHttpTransportFactory}, {@link XmlRpcSun14HttpTransportFactory},
+     * {@link XmlRpcLiteHttpTransportFactory}, and {@link XmlRpcLite14HttpTransport}.
      * @param pTimeout connection timeout, 0 to disable it
      */
     public void setConnectionTimeout(int pTimeout) {
@@ -90,7 +102,13 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
         return connectionTimeout;
     }
 
-    /** Set the reply timeout in milliseconds.
+    /** Set the reply timeout in milliseconds. Note, that this value
+     * may or may not be used, depending on the transport factory. Transport factories,
+     * which are known to use this value: {@link XmlRpcCommonsTransportFactory},
+     * and {@link XmlRpcSun15HttpTransportFactory}. On the other hand, transport
+     * factories which are known <em>not</em> to use this value:
+     * {@link XmlRpcSunHttpTransportFactory}, {@link XmlRpcSun14HttpTransportFactory},
+     * {@link XmlRpcLiteHttpTransportFactory}, and {@link XmlRpcLite14HttpTransport}.
      * @param pTimeout reply timeout, 0 to disable it
      */
     public void setReplyTimeout(int pTimeout) {

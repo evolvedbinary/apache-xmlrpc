@@ -32,7 +32,7 @@ import org.apache.xmlrpc.XmlRpcRequest;
 /**
  * Default implementation of an HTTP transport in Java 1.4, based on the
  * {@link java.net.HttpURLConnection} class. Adds support for the
- * {@link Proxy} class.
+ * {@link Proxy} class, and the connection and reply timeout values.
  */
 public class XmlRpcSun15HttpTransport extends XmlRpcSun14HttpTransport {
     /**
