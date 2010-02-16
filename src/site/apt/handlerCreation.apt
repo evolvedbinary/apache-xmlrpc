@@ -1,0 +1,239 @@
+~~
+~~
+~~  Licensed to the Apache Software Foundation (ASF) under one
+~~  or more contributor license agreements.  See the NOTICE file
+~~  distributed with this work for additional information
+~~  regarding copyright ownership.  The ASF licenses this file
+~~  to you under the Apache License, Version 2.0 (the
+~~  "License"); you may not use this file except in compliance
+~~  with the License.  You may obtain a copy of the License at
+~~
+~~    http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~  Unless required by applicable law or agreed to in writing,
+~~  software distributed under the License is distributed on an
+~~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~  KIND, either express or implied.  See the License for the
+~~  specific language governing permissions and limitations
+~~  under the License.
+~~
+    -------------------------------
+    Custom Request Handler Creation
+    -------------------------------
+
+Custom Request Handler Creation
+
+    By default, Apache XML-RPC creates a new object for processing each request
+    received at the server side. For example, in the Calculator example, each
+    time a new request is received, a new Calculator object is created to handle
+    the request. This has some advantages such as requiring no built-in
+    synchronization mechanisms inside the processor class. On the other hand, in
+    many cases it is necessary to share some state between the requests or
+    access non-static resources inside the host application.  Some of this can
+    be addressed by use of static resources (e.g. Singleton design pattern) but
+    this can complicate code. Further, it gets even more complicated to handle
+    this when several XML-RPC servers need to be started inside one JVM, each
+    expecting unique state, or when request specific processing and state is
+    needed based on some request parameter values. Effectively addressing these
+    types of scenarios requires having custom control over the creation of the
+    processor objects. With Apache XML-RPC, this is supported by extending the
+    org.apache.xmlrpc.server.RequestProcessorFactoryFactory class.
+
+    Consider the following example of an Echo service. We have a simple service
+    interface that we want to invoke called EchoService and its implementation:
+
+------------------------------------------------------------------
+  public interface EchoService {
+    public void echo(String msg);
+  }
+
+  public class EchoServiceImpl implements EchoService {
+    private volatile int index = 1;
+
+    public void echo(String msg) {
+      System.out.println(index+": "+msg);
+      index++;
+    }
+  }
+------------------------------------------------------------------
+
+  To invoke this service over XML-RPC we need a server to accept incoming
+  requests. We call this the EchoServer:
+
+
+
+------------------------------------------------------------------
+  public class EchoServer {
+    public static void main(String[] args) throws Exception {
+      WebServer webServer = new WebServer(8080);
+      XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
+      PropertyHandlerMapping phm = new PropertyHandlerMapping();
+      phm.setVoidMethodEnabled(true);
+      phm.addHandler(EchoService.class.getName(), EchoServiceImpl.class);
+      xmlRpcServer.setHandlerMapping(phm);
+
+      XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl)
+      xmlRpcServer.getConfig();
+
+      serverConfig.setEnabledForExtensions(true);
+      serverConfig.setContentLengthOptional(false);
+      webServer.start();
+    }
+  }
+------------------------------------------------------------------
+
+    Finally, we need a client application to invoke the server. Let’s call this
+    EchoClient.
+
+------------------------------------------------------------------
+  public class EchoClient {
+    public static void main(String[] args) throws Exception {
+      XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+      config.setServerURL(new URL("http://127.0.0.1:8080/xmlrpc"));
+      config.setEnabledForExtensions(true);
+      config.setConnectionTimeout(60 * 1000);
+      config.setReplyTimeout(60 * 1000);
+      XmlRpcClient client = new XmlRpcClient();
+      client.setConfig(config);
+      ClientFactory factory = new ClientFactory(client);
+      EchoService echo = (EchoService) factory.newInstance(EchoService.class);
+      echo.echo("Hello");
+      echo.echo("World");
+    }
+  }
+------------------------------------------------------------------
+
+    Now we start first the EchoServer and the the EchoClient. The output is:
+
+------------------------------------------------------------------
+    1: Hello
+
+    1: World
+------------------------------------------------------------------
+
+    This is because the following happens by default:
+
+    * Client calls <<<echo.echo("Hello");>>>
+
+    * A new EchoServiceImpl object is created by the server to handle the
+      request. This is initialized with <<<index = 1>>>, the call is made,
+      "1: Hello" is printed and the object is garbage-collected.
+
+    * Client calls <<<echo.echo("World");>>>
+
+    * A new EchoServiceImpl object is created by the server to handle the
+      request. This is initialized with <<<index = 1>>>, the call is made,
+      "1: World" is printed and the object is garbage-collected.
+
+    []
+
+    What we would like to see as output is
+
+------------------------------------------------------------------
+    1: Hello
+
+    2: World
+------------------------------------------------------------------
+
+    To make this happen, we create a new class to create the processor
+    (EchoServiceImpl) objects. Let’s call this EchoRequestProcessorFactoryFactory:
+
+------------------------------------------------------------------
+  public class EchoRequestProcessorFactoryFactory implements
+      RequestProcessorFactoryFactory {
+    private final RequestProcessorFactory factory =
+      new EchoRequestProcessorFactory();
+    private final EchoService echo;
+
+    public EchoRequestProcessorFactoryFactory(EchoService echo) {
+      this.echo = echo;
+    }
+
+    public RequestProcessorFactory getRequestProcessorFactory(Class aClass)
+         throws XmlRpcException {
+      return factory;
+    }
+
+    private class EchoRequestProcessorFactory implements RequestProcessorFactory {
+      public Object getRequestProcessor(XmlRpcRequest xmlRpcRequest)
+          throws XmlRpcException {
+        return echo;
+      }
+    }
+  }
+------------------------------------------------------------------
+
+    Now we need to take this factory into use. To do this we modify the server
+    to create the factory and the EchoService object the factory will serve.
+
+
+------------------------------------------------------------------
+  public class EchoServer {
+    public static void main(String[] args) throws Exception {
+      WebServer webServer = new WebServer(8080);
+      XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
+      PropertyHandlerMapping phm = new PropertyHandlerMapping();
+      EchoService echo = new EchoServiceImpl();
+      phm.setRequestProcessorFactoryFactory(new EchoRequestProcessorFactoryFactory(echo));
+      phm.setVoidMethodEnabled(true);
+      phm.addHandler(EchoService.class.getName(), EchoService.class);
+      xmlRpcServer.setHandlerMapping(phm);
+
+      XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) xmlRpcServer.getConfig();
+      serverConfig.setEnabledForExtensions(true);
+      serverConfig.setContentLengthOptional(false);
+      webServer.start();
+    }
+  }
+------------------------------------------------------------------
+
+  Re-running the example now with the new server and the old client we get the
+  following output:
+
+------------------------------------------------------------------
+    1: Hello
+
+    2: World
+------------------------------------------------------------------
+
+
+   This is because all invocations will now share the same non-static
+   implementation object of EchoServiceImpl. This can access non-static
+   objects if so configured and share state between requests.
+
+   That’s it for customizing the creation of processor objects. It is possible
+   to customize the process in different ways, such as selecting a different
+   processor based on request parameters, starting several servers with
+   different processors or whatever. Through the processor objects it is also
+   possible to access any non-static state of the overall system itself.
+
+   It is also possible to have the factory check if it is asked for the factory
+   for “Echo” class or something else, and resort to the default Apache XML-RPC
+   factory in these cases. In the example this is not needed as only the Echo
+   class is registered and supported.
+
+* ABSTRACTION
+
+   Using custom processor object factories can have a benefit from abstraction
+   perspective as well. An additional change is also visible in the modified
+   server above that was not yet discussed. This is the use of the interface
+   class in the definition of the PropertyHandler:
+
+------------------------------------------------------------------
+   phm.addHandler(EchoService.class.getName(), EchoService.class);
+------------------------------------------------------------------
+
+   This allows one to more clearly parameterize the server with the processor
+   object to be given to the factory as any implementation of the interface.
+   With the default implementation giving an interface as a second parameter to
+   the <<<addHandler()>>> call will result in an exception such as
+
+------------------------------------------------------------------
+   org.apache.xmlrpc.XmlRpcException:
+       Failed to instantiate class fi.vtt.noen.mfw.echo.EchoService.
+------------------------------------------------------------------
+
+   For the customized factory this is not a problem. With the default implementation it
+   is still possible to parameterize this through the service class type but
+   the interface approach can make for cleaner code. This can be useful, for
+   example, for unit testing with services stubs.

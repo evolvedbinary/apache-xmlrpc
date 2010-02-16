@@ -287,4 +287,30 @@ Dynamic proxies
 	    }
 	}
 -----------------------------------------------------------------------------------
-  
+
+* Handler creation
+
+    Handlers are POJO's created by the XML-RPC server, which are called to serve
+    requests. By default, a new instance is created for any request.
+
+    While this makes sense for most cases, it doesn't fit others.
+
+    * The model doesn't support stateful handlers.
+
+    * Request can be slow, if handler initialization is expensive. In that
+      case a pool of reusable request handlers would be required.
+
+    * Access to shared resources can be difficult.
+
+    The solution is to implement a factory for handlers, which means implementing
+    an instance of
+    {{{apidocs/org/apache/xmlrpc/server/RequestProcessorFactoryFactory}RequestProcessorFactoryFactory}}.
+    The default implementation is a
+    {{{apidocs/org/apache/xmlrpc/server/RequestProcessorFactoryFactory.RequestSpecificProcessorFactoryFactory}RequestSpecificProcessorFactoryFactory}}:
+    It creates a new instance for any request.
+    An alternative implementation is the
+    {{{apidocs/org/apache/xmlrpc/server/RequestProcessorFactoryFactory.StatelessProcessorFactoryFactory}StatelessProcessorFactoryFactory}},
+    which creates a singleton instance upon startup and uses this singleton for
+    all requests.
+
+    A good example is given in {{{handlerCreation.html}another document}}.

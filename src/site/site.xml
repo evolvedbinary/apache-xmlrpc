@@ -48,6 +48,7 @@
       <item name="SSL"                 href="/ssl.html"/>
       <item name="Introspection"       href="/introspection.html"/>
       <item name="Advanced Techniques" href="/advanced.html"/>
+      <item name="Handler Creation"    href="/handlerCreation.html"/>
       <item name="XML-RPC Types"       href="/types.html"/>
       <item name="FAQ"                 href="/faq.html"/>
       <item name="Javadocs"            href="/apidocs/index.html"/>

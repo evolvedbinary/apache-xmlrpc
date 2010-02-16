@@ -222,6 +222,8 @@ public class MyXmlRpcServlet extends XmlRpcServlet {
     
 }
 </source>
+        <p>A good example on creating request processors is given in
+          <a href="handlerCreation.html">this document</a>.</p>
       </answer>
     </faq>
 
