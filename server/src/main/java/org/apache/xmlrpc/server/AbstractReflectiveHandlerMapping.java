@@ -149,7 +149,7 @@ public abstract class AbstractReflectiveHandlerMapping
             if (!isHandlerMethod(method)) {
                 continue;
             }
-            String name = pKey + "." + method.getName();
+            String name = pKey == null ? method.getName() : (pKey + "." + method.getName());
             Method[] mArray;
             Method[] oldMArray = (Method[]) map.get(name);
             if (oldMArray == null) {
