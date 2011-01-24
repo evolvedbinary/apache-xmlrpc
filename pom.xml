@@ -271,6 +271,10 @@
       <email>andreas.sahlbach@gmail.com</email>
     </contributor>
     <contributor>
+      <name>Antoine Toulme</name>
+      <email>antoine@lunar-ocean.com</email>
+    </contributor>
+    <contributor>
       <name>Julio Francisco Veronelli</name>
       <email>ckjfveronelli@fibertel.com.ar</email>
     </contributor>
@@ -321,6 +325,15 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.0.1</version>
+            </plugin>
+        </plugins>
+    </pluginManagement>
   </build>
 
   <dependencyManagement>

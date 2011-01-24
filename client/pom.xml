@@ -29,27 +29,55 @@
   </parent>
   <artifactId>xmlrpc-client</artifactId>
   <name>Apache XML-RPC Client Library</name>
+  <packaging>bundle</packaging>
+  <properties>
+      <xmlrpc.osgi.version>version=${project.version}</xmlrpc.osgi.version>
+      <xmlrpc.osgi.export.pkg>
+          org.apache.xmlrpc.*
+      </xmlrpc.osgi.export.pkg>
+      <xmlrpc.osgi.import.pkg>
+          !org.apache.xmlrpc.*,
+          !javax.xml.*,
+          !org.w3c.dom,
+          *
+      </xmlrpc.osgi.import.pkg>
+      <xmlrpc.osgi.symbolic.name>${project.groupId}.${project.artifactId}</xmlrpc.osgi.symbolic.name>
+      <xmlrpc.osgi.activator />
+      <xmlrpc.osgi.export>${xmlrpc.osgi.export.pkg};${xmlrpc.osgi.version}</xmlrpc.osgi.export>
+      <xmlrpc.osgi.import>${xmlrpc.osgi.import.pkg}</xmlrpc.osgi.import>
+      <xmlrpc.osgi.dynamic />
+      <xmlrpc.osgi.private.pkg>!*</xmlrpc.osgi.private.pkg>
+      <xmlrpc.osgi.failok>false</xmlrpc.osgi.failok>
+      <xmlrpc.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</xmlrpc.osgi.import.default.version>
+      <xmlrpc.osgi.exclude.dependencies>false</xmlrpc.osgi.exclude.dependencies>
+  </properties>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2</version>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <!--<version>${felix-version}</version>-->
+        <extensions>true</extensions>
         <configuration>
-          <archive>
-            <manifest>
-              <addExtensions>false</addExtensions>
-            </manifest>
-            <manifestEntries>
-              <Extension-Name>org.apache.xmlrpc.client</Extension-Name>
-              <Specification-Vendor>UserLand Software, Inc.</Specification-Vendor>
-              <Specification-Version>2003-06-30</Specification-Version>
-              <Specification-Title>XML-RPC</Specification-Title>
-              <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
-              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
-              <Implementation-Version>${project.version}</Implementation-Version>
-            </manifestEntries>
-          </archive>
+          <excludeDependencies>${xmlrpc.osgi.exclude.dependencies}</excludeDependencies>
+          <instructions>
+            <Extension-Name>org.apache.xmlrpc.client</Extension-Name>
+            <Specification-Vendor>UserLand Software, Inc.</Specification-Vendor>
+            <Specification-Version>2003-06-30</Specification-Version>
+            <Specification-Title>XML-RPC</Specification-Title>
+            <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
+            <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Bundle-Name>${project.artifactId}</Bundle-Name>
+            <Bundle-SymbolicName>${xmlrpc.osgi.symbolic.name}</Bundle-SymbolicName>
+            <Bundle-Activator>${xmlrpc.osgi.activator}</Bundle-Activator>
+            <Export-Package>${xmlrpc.osgi.export}</Export-Package>
+            <Import-Package>${xmlrpc.osgi.import}</Import-Package>
+            <DynamicImport-Package>${xmlrpc.osgi.dynamic}</DynamicImport-Package>
+            <Private-Package>${xmlrpc.osgi.private.pkg}</Private-Package>
+            <_versionpolicy>${xmlrpc.osgi.import.default.version}</_versionpolicy>
+            <_failok>${xmlrpc.osgi.failok}</_failok>
+          </instructions>
         </configuration>
       </plugin>
     </plugins>
