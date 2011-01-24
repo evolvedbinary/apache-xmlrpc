@@ -203,6 +203,14 @@ public class XmlRpcCommonsTransport extends XmlRpcHttpTransport {
                             public void close() throws IOException {
                                 flush();
                             }
+                            // See XMLRPC-173
+                            public void write( byte[] b, int off, int len ) throws IOException {
+                                out.write( b, off, len );
+                            }
+                            // See XMLRPC-173
+                            public void write( byte[] b ) throws IOException {
+                                out.write( b );
+                            }
                         };
                     } else {
                         ostream = new BufferedOutputStream(pOut){
