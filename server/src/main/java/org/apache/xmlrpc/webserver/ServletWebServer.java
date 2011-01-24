@@ -36,9 +36,12 @@ import org.apache.xmlrpc.util.ThreadPool;
 
 /**
  * <p>This is a subclass of the {@link WebServer}, which offers a minimal
- * servlet API. It is recommended to use this class, rather than the
- * {@link WebServer}, because it offers you a smooth migration path to
- * a full blown servlet engine.</p>
+ * servlet API. It is recommended that you use this class rather than the
+ * {@link WebServer} because it offers a smooth migration path to a full blown
+ * servlet engine.</p>
+ * <p>Note that this class has the same limitations as its parent
+ * {@link WebServer} in that it doesn't support HTTP keepalives and it doesn't
+ * support chunked mode requests.</p>
  * <p>Use of the {@link ServletWebServer} goes like this: First of all,
  * create a servlet. It may be an instance of {@link XmlRpcServlet} or
  * a subclass thereof. Note, that servlets are stateless: One servlet

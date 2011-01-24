@@ -34,21 +34,18 @@ import org.apache.xmlrpc.util.ThreadPool;
 
 
 /**
- * <p>The {@link WebServer} is a minimal HTTP server, that might be used
- * as an embedded web server.</p>
- * <p>Use of the {@link WebServer} has grown very popular amongst users
- * of Apache XML-RPC. Why this is the case, can hardly be explained,
- * because the {@link WebServer} is at best a workaround, compared to
- * full blown servlet engines like Tomcat or Jetty. For example, under
- * heavy load it will almost definitely be slower than a real servlet
- * engine, because it does neither support proper keepalive (multiple
- * requests per physical connection) nor chunked mode (in other words,
- * it cannot stream requests).</p>
- * <p>If you still insist in using the {@link WebServer}, it is
- * recommended to use its subclass, the {@link ServletWebServer} instead,
- * which offers a minimal subset of the servlet API. In other words,
- * you keep yourself the option to migrate to a real servlet engine
- * later.</p>
+ * <p>The {@link WebServer} is a minimal HTTP server that can be used as an
+ * embedded web server.</p>
+ * <p>Use of the {@link WebServer} has grown very popular amongst users of
+ * Apache XML-RPC.  This is despite the limitations of this class when compared
+ * to a full blown servlet engine such as Tomcat or Jetty. For example, under
+ * heavy load this class will almost definitely be slower than a real servlet
+ * engine because it doesn't support keepalive (multiple requests per physical
+ * connection) or chunked mode (it cannot stream requests).</p>
+ * <p>If you still want so use the {@link WebServer} class it is recommended
+ * you use its subclass, the {@link ServletWebServer} which offers a minimal
+ * subset of the servlet API. That will keep the open the option to migrate to
+ * a full servlet engine.</p>
  * <p>Use of the {@link WebServer} goes roughly like this: First of all,
  * create a property file (for example "MyHandlers.properties") and
  * add it to your jar file. The property keys are handler names and

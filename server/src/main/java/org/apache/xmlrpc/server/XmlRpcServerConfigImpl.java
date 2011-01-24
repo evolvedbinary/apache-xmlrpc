@@ -28,8 +28,11 @@ public class XmlRpcServerConfigImpl extends XmlRpcConfigImpl
 	private boolean isKeepAliveEnabled;
     private boolean isEnabledForExceptions;
 
-	/** Sets, whether HTTP keepalive is enabled for this server.
-	 * @param pKeepAliveEnabled True, if keepalive is enabled. False otherwise.
+	/** Sets, whether HTTP keepalive is enabled for this server. Note that the
+	 * {@link org.apache.xmlrpc.webserver.WebServer} and
+	 * {@link org.apache.xmlrpc.webserver.ServletWebServer} classes do not
+	 * implement keepalive, so this will have no effect for those classes.
+     * @param pKeepAliveEnabled True, if keepalive is enabled. False other	 * @param pKeepAliveEnabled True, if keepalive is enabled. False otherwise.
 	 */
 	public void setKeepAliveEnabled(boolean pKeepAliveEnabled) {
 		isKeepAliveEnabled = pKeepAliveEnabled;
