@@ -31,6 +31,7 @@ import java.net.URLDecoder;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,10 +40,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.servlet.ReadListener;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.DispatcherType;
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
@@ -66,6 +77,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 	private String queryString;
 	private String httpVersion;
 	private final Map headers = new HashMap();
+	private final Map parts = new HashMap();
 	private final Map attributes = new HashMap();
 	private Map parameters;
 	private String characterEncoding;
@@ -96,6 +108,18 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 					--contentBytesRemaining;
 				}
 				return c;
+			}
+
+			public boolean isFinished() {
+				return contentBytesRemaining == 0;
+			}
+
+			public boolean isReady() {
+				return true;
+			}
+
+			public void setReadListener(ReadListener arg0) {
+				throw new IllegalStateException("Not implemented.");
 			}
 		};
 	}
@@ -227,6 +251,12 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 		return Collections.enumeration(list);
 	}
 
+	public Part getPart(String name) { throw new IllegalStateException("Not implemented"); }
+
+	public Collection getParts() { throw new IllegalStateException("Not implemented"); }
+
+	public boolean authenticate (HttpServletResponse response) { throw new IllegalStateException("Not implemented"); }
+
 	public int getIntHeader(String pHeader) {
 		String s = getHeader(pHeader);
 		return s == null ? -1 : Integer.parseInt(s);
@@ -241,6 +271,10 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 	public String getQueryString() { return queryString; }
 
 	public String getRemoteUser() { throw new IllegalStateException("Not implemented"); }
+
+	public void login(String username, String password) { throw new IllegalStateException("Not implemented"); }
+
+	public void logout() { throw new IllegalStateException("Not implemented"); }
 
 	public String getRequestURI() { return uri; }
 
@@ -279,6 +313,20 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 		sb.append(getRequestURI());
 		return sb;
 	}
+
+	public AsyncContext getAsyncContext() { throw new IllegalStateException("Not implemented"); }
+
+	public boolean isAsyncSupported() { return false; }
+
+	public boolean isAsyncStarted() { return false; }
+
+	public ServletContext getServletContext() { throw new IllegalStateException("Not implemented"); }
+
+	public AsyncContext startAsync(ServletRequest req, ServletResponse resp) { throw new IllegalStateException("Not implemented"); }
+
+	public AsyncContext startAsync() { throw new IllegalStateException("Not implemented"); }
+
+	public DispatcherType getDispatcherType() { throw new IllegalStateException("Not implemented"); }
 
 	public String getRequestedSessionId() { throw new IllegalStateException("Not implemented"); }
 
@@ -544,4 +592,10 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 	}
 
 	protected String getHttpVersion() { return httpVersion; }
+
+	public long getContentLengthLong() { throw new IllegalStateException("Not implemented."); }
+
+	public String changeSessionId() { throw new IllegalStateException("Not implemented."); }
+
+	public HttpUpgradeHandler upgrade(Class arg0) { throw new IllegalStateException("Not implemented."); }
 }

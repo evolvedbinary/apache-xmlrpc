@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 
 /** Default implementation of a servlet output stream.
@@ -99,4 +100,8 @@ class ServletOutputStreamImpl extends ServletOutputStream {
 	boolean isCommitted() {
 		return committed;
 	}
+
+	public boolean isReady() { return true; }
+
+	public void setWriteListener(WriteListener arg0) { throw new IllegalStateException("Not implemented."); }
 }

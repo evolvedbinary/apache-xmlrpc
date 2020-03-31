@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletOutputStream;
@@ -84,7 +86,7 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 		}
 	}
 
-	private String getHeader(String pHeader) {
+	public String getHeader(String pHeader) {
 		String key = pHeader.toLowerCase();
 		Object o = headers.get(key);
 		if (o == null) {
@@ -99,6 +101,26 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 				return (String) list.get(0);
 			}
 		}
+	}
+
+	public Collection getHeaderNames() {
+		return headers.keySet();
+	}
+
+	public Collection getHeaders(String pHeader) {
+		String key = pHeader.toLowerCase();
+		Object o = headers.get(key);
+		List list;
+		if (o instanceof List) {
+		list = (List) o;
+		} else {
+			list = Collections.singletonList(o);
+		}
+		return list;
+	}
+
+	public int getStatus() {
+		return status;
 	}
 
 	public void addIntHeader(String pHeader, int pValue) {
@@ -465,4 +487,6 @@ public class HttpServletResponseImpl implements HttpServletResponse {
 		sb.append("\r\n");
 		return sb.toString();
 	}
+
+	public void setContentLengthLong(long arg0) { throw new IllegalStateException("Not implemented."); }
 }
