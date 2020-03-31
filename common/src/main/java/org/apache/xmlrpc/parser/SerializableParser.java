@@ -29,6 +29,14 @@ import org.apache.xmlrpc.XmlRpcException;
  */
 public class SerializableParser extends ByteArrayParser {
 	public Object getResult() throws XmlRpcException {
+                if (!"1".equals(System.getProperty("org.apache.xmlrpc.allowInsecureDeserialization"))) {
+                    throw new UnsupportedOperationException(
+                            "Deserialization of ex:serializable objects is vulnerable to " +
+                            "remote execution attacks and is disabled by default. " +
+                            "If you are sure the source data is trusted, you can enable " +
+                            "it by setting org.apache.xmlrpc.allowInsecureDeserialization " +
+                            "JVM property to 1");
+                }
 		try {
 			byte[] res = (byte[]) super.getResult();
 			ByteArrayInputStream bais = new ByteArrayInputStream(res);

@@ -805,34 +805,6 @@ public class BaseTest extends XmlRpcTestCase {
 		assertTrue(ok);
 	}
 
-	/** Test, whether we can invoke a method, passing an instance of
-	 * {@link java.io.Serializable} as a parameter.
-	 * @throws Exception The test failed.
-	 */
-	public void testSerializableParam() throws Exception {
-		for (int i = 0;  i < providers.length;  i++) {
-			testSerializableParam(providers[i]);
-		}
-	}
-
-	private void testSerializableParam(ClientProvider pProvider) throws Exception {
-		final String methodName = "Remote.serializableParam";
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-		cal.set(2005, 5, 23, 8, 4, 0);
-		cal.set(Calendar.MILLISECOND, 5);
-		final Object[] params = new Object[]{new Remote.CalendarWrapper(cal)};
-		final XmlRpcClient client = pProvider.getClient();
-		Object result = client.execute(getExConfig(pProvider), methodName, params);
-		assertEquals(new Long(cal.getTime().getTime()), result);
-		boolean ok = false;
-		try {
-			client.execute(getConfig(pProvider), methodName, params);
-		} catch (XmlRpcExtensionException e) {
-			ok = true;
-		}
-		assertTrue(ok);
-	}
-
 	/** Tests, whether we can invoke a method, passing an instance of
      * {@link Calendar} as a parameter.
      * @throws Exception The test failed.
