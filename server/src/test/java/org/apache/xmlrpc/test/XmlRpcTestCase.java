@@ -75,7 +75,6 @@ public abstract class XmlRpcTestCase extends TestCase {
                 // new LiteTransportProvider(mapping, false), Doesn't support HTTP/1.1
                 new SunHttpTransportProvider(pMapping, true),
                 new SunHttpTransportProvider(pMapping, false),
-                new CommonsProvider(pMapping),
                 new ServletWebServerProvider(pMapping, true),
                 new ServletWebServerProvider(pMapping, false)
             };
