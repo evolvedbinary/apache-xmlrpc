@@ -48,6 +48,13 @@ public class SAXParsers {
         } catch (org.xml.sax.SAXException e) {
             // Ignore it
 		}
+        try {
+            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        } catch (javax.xml.parsers.ParserConfigurationException e) {
+            // Ignore it
+        } catch (org.xml.sax.SAXException e) {
+            // Ignore it
+        }
 	}
 
 	/** Creates a new instance of {@link XMLReader}.
