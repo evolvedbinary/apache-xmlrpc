@@ -69,19 +69,21 @@ public class XmlRpcResponseParser extends RecursiveTypeParserImpl {
 											getDocumentLocator());
 			}
 			errorMessage = (String) map.get("faultString");
-            Object exception = map.get("faultCause");
-            if (exception != null) {
-                try {
-                    byte[] bytes = (byte[]) exception;
-                    ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-                    ObjectInputStream ois = new ObjectInputStream(bais);
-                    errorCause = (Throwable) ois.readObject();
-                    ois.close();
-                    bais.close();
-                } catch (Throwable t) {
-                    // Ignore me
-                }
-            }
+			if (((XmlRpcStreamRequestConfig)cfg).isEnabledForExceptions()) {
+				Object exception = map.get("faultCause");
+				if (exception != null) {
+					try {
+						byte[] bytes = (byte[]) exception;
+						ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+						ObjectInputStream ois = new ObjectInputStream(bais);
+						errorCause = (Throwable) ois.readObject();
+						ois.close();
+						bais.close();
+					} catch (Throwable t) {
+						// Ignore me
+					}
+				}
+			}
 		}
 	}
 
