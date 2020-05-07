@@ -22,9 +22,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.apache.xmlrpc</groupId>
+    <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
-    <version>3.1.4-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <properties>
@@ -51,6 +51,11 @@
   <artifactId>xmlrpc-common</artifactId>
   <packaging>bundle</packaging>
   <name>Apache XML-RPC Common Library</name>
+  <scm>
+      <connection>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</connection>
+      <developerConnection>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</developerConnection>
+      <url>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</url>
+  </scm>
   <build>
     <plugins>
       <plugin>

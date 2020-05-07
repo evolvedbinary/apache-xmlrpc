@@ -22,14 +22,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.apache.xmlrpc</groupId>
+    <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
     <artifactId>xmlrpc</artifactId>
-    <version>3.1.4-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>xmlrpc-client</artifactId>
   <name>Apache XML-RPC Client Library</name>
   <packaging>bundle</packaging>
+  <scm>
+      <connection>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</connection>
+      <developerConnection>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</developerConnection>
+      <url>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</url>
+  </scm>
   <properties>
       <xmlrpc.osgi.version>version=${project.version}</xmlrpc.osgi.version>
       <xmlrpc.osgi.export.pkg>
@@ -85,9 +90,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.xmlrpc</groupId>
+      <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-common</artifactId>
-      <version>3.1.4-SNAPSHOT</version>
+      <version>4.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

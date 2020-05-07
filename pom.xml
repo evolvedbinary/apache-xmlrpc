@@ -26,10 +26,10 @@
     <artifactId>apache</artifactId>
     <version>5</version>
   </parent>
-  <groupId>org.apache.xmlrpc</groupId>
+  <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
   <artifactId>xmlrpc</artifactId>
   <name>Apache XML-RPC</name>
-  <version>3.1.4-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <description>
     Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP to
     implement remote procedure calls. Compared to SOAP, or JAX-RPC, it is stable, much simpler and easier to handle.
@@ -37,8 +37,16 @@
     specification.
   </description>
   <packaging>pom</packaging>
-  <url>http://ws.apache.org/xmlrpc/</url>
+  <url>https://ws.apache.org/xmlrpc/</url>
   <inceptionYear>2001</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>https://opensource.org/licenses/Apache2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <modules>
     <module>common</module>
@@ -48,8 +56,8 @@
   </modules>
 
   <issueManagement>
-    <system>jira</system>
-    <url>http://issues.apache.org/jira/BrowseProject.jspa?pid=10465</url>
+    <system>GitHub</system>
+    <url>https://github.com/evolvedbinary/apaxche-xmlrpc/issues</url>
   </issueManagement>
 
   <ciManagement>
@@ -302,12 +310,19 @@
       <name>Juho Yli-Krekola</name>
       <email>Juho.Yli-Krekola@iki.fi</email>
     </contributor>
+    <contributor>
+      <name>Adam Retter</name>
+      <email>adam@evolvedbinary.com</email>
+      <organization>Evolved Binary</organization>
+      <organizationUrl>https://www.evolvedbinary.com</organizationUrl>
+      <timezone>UTC</timezone>
+    </contributor>
   </contributors>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/xmlrpc/trunk</developerConnection>
-    <url>https://svn.apache.org/viewvc/webservices/xmlrpc/trunk</url>
+    <connection>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</connection>
+    <developerConnection>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</developerConnection>
+    <url>scm:git:https://github.com/evolvedbinary/apache-xmlrpc.git</url>
   </scm>
 
   <build>
@@ -328,6 +343,18 @@
           <target>1.2</target>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <useReleaseProfile>true</useReleaseProfile>
+          <releaseProfiles>eb-xmlrpc-release</releaseProfiles>
+        </configuration>
+      </plugin>
+
     </plugins>
     <pluginManagement>
         <plugins>
@@ -335,6 +362,11 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>2.0.1</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-gpg-plugin</artifactId>
+              <version>1.6</version>
             </plugin>
         </plugins>
     </pluginManagement>
@@ -427,6 +459,11 @@
       <name>XML-RPC directory on ws.apache.org</name>
       <url>${xmlrpc.www.url}</url>
     </site>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Nexus Release Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
   </distributionManagement>
 
   <profiles>
@@ -502,7 +539,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.0-alpha-4</version>
             <configuration>
               <passphrase>${gpg.passphrase}</passphrase>
             </configuration>
@@ -573,6 +609,27 @@
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
             <version>0.6</version>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- NOTE: this is used from the maven-release-plugin -->
+      <id>eb-xmlrpc-release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
