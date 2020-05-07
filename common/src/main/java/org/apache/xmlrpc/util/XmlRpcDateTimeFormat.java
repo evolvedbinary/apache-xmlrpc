@@ -40,6 +40,7 @@ public abstract class XmlRpcDateTimeFormat extends Format {
 
     /** Returns the time zone, which is used to interpret date/time
      * values.
+     * @return the time zone
      */
     protected abstract TimeZone getTimeZone();
 

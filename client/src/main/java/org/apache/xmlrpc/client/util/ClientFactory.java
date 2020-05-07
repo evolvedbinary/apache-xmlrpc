@@ -66,6 +66,7 @@ public class ClientFactory {
     }
 
     /** Returns the factories client.
+     * @return the client
      */
     public XmlRpcClient getClient() {
         return client;
@@ -74,6 +75,7 @@ public class ClientFactory {
     /** Returns, whether a method declared by the {@link Object
      * Object class} is performed by the local object, rather than
      * by the server. Defaults to true.
+     * @return true if the method is performed by the local object
      */
     public boolean isObjectMethodLocal() {
         return objectMethodLocal;
@@ -82,6 +84,8 @@ public class ClientFactory {
     /** Sets, whether a method declared by the {@link Object
      * Object class} is performed by the local object, rather than
      * by the server. Defaults to true.
+     *
+     * @param pObjectMethodLocal true if the method is performed by the local object
      */
     public void setObjectMethodLocal(boolean pObjectMethodLocal) {
         objectMethodLocal = pObjectMethodLocal;
@@ -95,6 +99,9 @@ public class ClientFactory {
      *   newInstance(Thread.currentThread().getContextClassLoader(),
      *     pClass)
      * </pre>
+     *
+     * @param pClass the class to instantiate
+     * @return the new object
      */
     public Object newInstance(Class pClass) {
         return newInstance(Thread.currentThread().getContextClassLoader(), pClass);
@@ -106,6 +113,10 @@ public class ClientFactory {
      * <pre>
      *   newInstance(pClassLoader, pClass, pClass.getName())
      * </pre>
+     *
+     * @param pClassLoader the class loader
+     * @param pClass the class to instantiate
+     * @return the new object
      */
     public Object newInstance(ClassLoader pClassLoader, Class pClass) {
         return newInstance(pClassLoader, pClass, pClass.getName());
@@ -122,6 +133,7 @@ public class ClientFactory {
      *   method name. For example, if <code>pRemoteName</code>
      *   is "Foo" and you want to invoke the method "bar" in
      *   the handler, then the full method name would be "Foo.bar".
+     * @return the new object
      */
     public Object newInstance(ClassLoader pClassLoader, final Class pClass, final String pRemoteName) {
        return Proxy.newProxyInstance(pClassLoader, new Class[]{pClass}, new InvocationHandler(){

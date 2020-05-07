@@ -28,11 +28,14 @@ import org.apache.xmlrpc.XmlRpcRequest;
 public interface XmlRpcRequestProcessor {
 	/** Processes the given request and returns a
 	 * result object.
+	 * @param pRequest the request
+	 * @return the result
 	 * @throws XmlRpcException Processing the request failed.
 	 */
 	Object execute(XmlRpcRequest pRequest) throws XmlRpcException;
 
 	/** Returns the request processors {@link TypeConverterFactory}.
+	 * @return the type converter factory of the request processor
 	 */
     TypeConverterFactory getTypeConverterFactory();
 }

@@ -22,8 +22,8 @@ import org.apache.xmlrpc.XmlRpcConfig;
 
 
 /** A common base class for
- * {@link org.apache.xmlrpc.server.XmlRpcServer} and
- * {@link org.apache.xmlrpc.client.XmlRpcClient}.
+ * org.apache.xmlrpc.server.XmlRpcServer and
+ * org.apache.xmlrpc.client.XmlRpcClient.
  */
 public abstract class XmlRpcController {
 	private XmlRpcWorkerFactory workerFactory = getDefaultXmlRpcWorkerFactory();

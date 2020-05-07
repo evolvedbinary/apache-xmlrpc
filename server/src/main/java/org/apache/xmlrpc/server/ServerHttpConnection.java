@@ -26,9 +26,13 @@ import org.apache.xmlrpc.common.ServerStreamConnection;
  */
 public interface ServerHttpConnection extends ServerStreamConnection {
     /** Sets a response header.
+     *
+     * @param pKey the key
+     * @param pValue the value
      */
     void setResponseHeader(String pKey, String pValue);
     /** Sets the content length.
+     * @param pContentLength the content length
      */
     void setContentLength(int pContentLength);
 }

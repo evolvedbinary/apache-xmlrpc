@@ -32,6 +32,7 @@ public class XmlRpcIOException extends IOException {
 
 	/** Creates a new instance of {@link XmlRpcIOException}
 	 * with the given cause.
+	 * @param t the cause
 	 */
 	public XmlRpcIOException(Throwable t) {
 		super(t.getMessage());
@@ -40,6 +41,7 @@ public class XmlRpcIOException extends IOException {
 
 	/** Returns the linked exception, which is the actual
 	 * cause for this exception.
+	 * @return the linked exception
 	 */
 	public Throwable getLinkedException() {
 		return linkedException;

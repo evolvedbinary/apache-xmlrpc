@@ -111,7 +111,7 @@ public class Connection implements ThreadPool.InterruptableTask, ServerStreamCon
      * @param pServer The server being used to execute requests.
      * @param pSocket The server socket to handle; the <code>Connection</code>
      * is responsible for closing this socket.
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public Connection(WebServer pWebServer, XmlRpcStreamServer pServer, Socket pSocket)
             throws IOException {
@@ -376,6 +376,8 @@ public class Connection implements ThreadPool.InterruptableTask, ServerStreamCon
     }
 
     /** Sets a response header value.
+     * @param pHeader the header name
+     * @param pValue  the header value
      */
     public void setResponseHeader(String pHeader, String pValue) {
         headers.put(pHeader, pValue);

@@ -44,8 +44,8 @@ public abstract class XmlRpcWorkerFactory {
 
 	/** Returns the factory controller.
 	 * @return The controller, an instance of
-	 * {@link org.apache.xmlrpc.client.XmlRpcClient}, or
-	 * {@link org.apache.xmlrpc.server.XmlRpcServer}.
+	 * org.apache.xmlrpc.client.XmlRpcClient, or
+	 * org.apache.xmlrpc.server.XmlRpcServer.
 	 */
 	public XmlRpcController getController() {
 		return controller;

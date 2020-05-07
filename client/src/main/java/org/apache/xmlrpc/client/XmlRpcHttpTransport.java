@@ -34,8 +34,7 @@ import org.xml.sax.SAXException;
 
 
 /** Abstract base implementation of an HTTP transport. Base class for the
- * concrete implementations, like {@link org.apache.xmlrpc.client.XmlRpcSunHttpTransport},
- * or {@link org.apache.xmlrpc.client.XmlRpcCommonsTransport}.
+ * concrete implementations, like {@link org.apache.xmlrpc.client.XmlRpcSunHttpTransport}.
  */
 public abstract class XmlRpcHttpTransport extends XmlRpcStreamTransport {
     protected class ByteArrayReqWriter implements ReqWriter {

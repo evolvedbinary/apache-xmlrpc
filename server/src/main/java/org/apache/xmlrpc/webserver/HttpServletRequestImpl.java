@@ -126,8 +126,10 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
    /**
     * Read the header lines, one by one. Note, that the size of
-         * the buffer is a limitation of the maximum header length!
-         */
+	* the buffer is a limitation of the maximum header length!
+	* @throws IOException if an I/O error occurs
+	* @throws ServletWebServer.Exception if a Servlet error occurs
+	*/
     public void readHttpHeaders()
       throws IOException, ServletWebServer.Exception {
         byte[] buffer = new byte[2048];

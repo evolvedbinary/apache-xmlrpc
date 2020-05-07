@@ -150,10 +150,11 @@ public class WebServer implements Runnable {
 	 *
 	 * @param pPort Port number; 0 for a random port, choosen by the operating
 	 * system.
-	 * @param backlog
+	 * @param backlog requested maximum length of the queue of incoming connections.
 	 * @param addr If <code>null</code>, binds to
 	 * <code>INADDR_ANY</code>, meaning that all network interfaces on
 	 * a multi-homed host will be listening.
+	 * @return the server socket
 	 * @exception IOException Error creating listener socket.
 	 */
 	protected ServerSocket createServerSocket(int pPort, int backlog, InetAddress addr)

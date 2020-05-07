@@ -100,6 +100,8 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	/**
      * This method allows to convert the error into another error. For example, this
      * may be an error, which could be deserialized by the client.
+	 * @param pError the error to convert
+	 * @return the converted error
 	 */
     protected Throwable convertThrowable(Throwable pError) {
         return pError;
@@ -151,6 +153,10 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	/** Called to prepare the output stream. Typically used for enabling
 	 * compression, or similar filters.
 	 * @param pConnection The connection object.
+	 * @param pConfig the config
+	 * @param pStream the output stream to prepare
+	 * @return the prepared output stream
+	 * @throws IOException if an I/O error occurs
 	 */
 	protected OutputStream getOutputStream(ServerStreamConnection pConnection,
 										   XmlRpcStreamRequestConfig pConfig, OutputStream pStream) throws IOException {
@@ -164,7 +170,10 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	/** Called to prepare the output stream, if content length is
 	 * required.
 	 * @param pConfig The configuration object.
+	 * @param pConnection the connection
 	 * @param pSize The requests size.
+	 * @return the prepared output stream
+	 * @throws IOException if an I/O error occurs
 	 */
 	protected OutputStream getOutputStream(XmlRpcStreamRequestConfig pConfig,
 										   ServerStreamConnection pConnection,
@@ -174,6 +183,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 
 	/** Returns, whether the requests content length is required.
 	 * @param pConfig The configuration object.
+	 * @return true if the content length is required
 	 */
 	protected boolean isContentLengthRequired(XmlRpcStreamRequestConfig pConfig) {
 		return false;
@@ -259,6 +269,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 
     /**
      * Returns the error logger.
+	 * @return the error logger
      */
     public XmlRpcErrorLogger getErrorLogger() {
         return errorLogger;
@@ -266,6 +277,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 
     /**
      * Sets the error logger.
+	 * @param pErrorLogger the error logger
      */
     public void setErrorLogger(XmlRpcErrorLogger pErrorLogger) {
         errorLogger = pErrorLogger;

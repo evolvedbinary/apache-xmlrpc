@@ -34,14 +34,22 @@ public interface TypeConverter {
     /** Returns, whether the {@link TypeConverter} is
      * ready to handle the given object. If so,
      * {@link #convert(Object)} may be called.
+     *
+     * @param pObject the object to test
+     * @return true if the object is convertable
      */
     boolean isConvertable(Object pObject);
     /** Converts the given object into the required
      * representation.
+     *
+     * @param pObject the object to convert
+     * @return the converted object
      */
     Object convert(Object pObject);
     /** Converts the given object into its generic
      * representation.
+     * @param result the result to convert back
+     * @return the original object
      */
     Object backConvert(Object result);
 }

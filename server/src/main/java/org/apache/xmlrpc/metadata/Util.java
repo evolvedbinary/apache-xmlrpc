@@ -142,6 +142,9 @@ public class Util {
 
     /** Returns a help string for the given method, which
      * is applied to the given class.
+	 * @param pClass the class
+	 * @param pMethods the methods
+	 * @return the help string
      */
     public static String getMethodHelp(Class pClass, Method[] pMethods) {
         final List result = new ArrayList();
@@ -170,6 +173,9 @@ public class Util {
 
     /** Returns a help string for the given method, which
 	 * is applied to the given class.
+	 * @param pClass the class
+	 * @param pMethod the method
+	 * @return the help string
 	 */
 	public static String getMethodHelp(Class pClass, Method pMethod) {
 		StringBuffer sb = new StringBuffer();
@@ -191,6 +197,8 @@ public class Util {
 
     /** Returns a signature for the given parameter set. This is used
      * in error messages.
+	 * @param args the parameter set
+	 * @return the signature
      */
     public static String getSignature(Object[] args) {
         StringBuffer sb = new StringBuffer();
@@ -209,6 +217,9 @@ public class Util {
 
     /**
      * Creates a new instance of <code>pClass</code>.
+	 * @param pClass the class
+	 * @return the new instance of the class
+	 * @throws XmlRpcException if the class cannot be instantiated
      */
     public static Object newInstance(Class pClass) throws XmlRpcException {
         try {

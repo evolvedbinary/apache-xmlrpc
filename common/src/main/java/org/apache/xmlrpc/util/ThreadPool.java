@@ -227,6 +227,8 @@ public class ThreadPool {
 
 	/** Returns the number of threads, which have actually been created,
      * as opposed to the number of currently running threads.
+	 *
+	 * @return the number of threads
 	 */
     public synchronized int getNumThreads() { return num; }
 }

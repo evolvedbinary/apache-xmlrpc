@@ -74,6 +74,9 @@ public interface RequestProcessorFactoryFactory {
          * configure the request processor. The returned object is an
          * instance of the class parameter in
          * {@link RequestProcessorFactoryFactory#getRequestProcessorFactory(Class)}.
+         * @param pRequest the request
+         * @return the request processor
+         * @throws XmlRpcException if an XML-RPC error occurs
          */
         public Object getRequestProcessor(XmlRpcRequest pRequest) throws XmlRpcException;
     }
@@ -81,6 +84,9 @@ public interface RequestProcessorFactoryFactory {
     /**
      * This method is invoked at startup. It creates a factory for instances of
      * <code>pClass</code>.
+     * @param pClass the class
+     * @return the request processor factory
+     * @throws XmlRpcException if an XML-RPC error occurs
      */
     public RequestProcessorFactory getRequestProcessorFactory(Class pClass) throws XmlRpcException;
 
@@ -105,7 +111,10 @@ public interface RequestProcessorFactoryFactory {
          *       }
          *   }
          * </pre>
+         * @param pClass the class
          * @param pRequest The request object.
+         * @return the request processor
+         * @throws XmlRpcException if an XML-RPC error occurs
          */
         protected Object getRequestProcessor(Class pClass, XmlRpcRequest pRequest) throws XmlRpcException {
             return Util.newInstance(pClass);
@@ -141,6 +150,10 @@ public interface RequestProcessorFactoryFactory {
          *       }
          *   }
          * </pre>
+         *
+         * @param pClass the class
+         * @return the request processor
+         * @throws XmlRpcException if an XML-RPC error occurs
          */
         protected Object getRequestProcessor(Class pClass) throws XmlRpcException {
             return Util.newInstance(pClass);

@@ -48,6 +48,8 @@ public class TimingOutCallback implements AsyncCallback {
 
         /** Creates a new instance with the given error code and
          * error message.
+         * @param pCode the error code
+         * @param message the error message
          */
         public TimeoutException(int pCode, String message) {
             super(pCode, message);
@@ -60,12 +62,14 @@ public class TimingOutCallback implements AsyncCallback {
     private boolean responseSeen;
 
     /** Waits the specified number of milliseconds for a response.
+     * @param pTimeout the timeout
      */
     public TimingOutCallback(long pTimeout) {
         timeout = pTimeout;
     }
 
     /** Called to wait for the response.
+     * @return the response
      * @throws InterruptedException The thread was interrupted.
      * @throws TimeoutException No response was received after waiting the specified time.
      * @throws Throwable An error was returned by the server.

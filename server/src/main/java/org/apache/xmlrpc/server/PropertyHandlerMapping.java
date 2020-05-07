@@ -106,12 +106,14 @@ public class PropertyHandlerMapping extends AbstractReflectiveHandlerMapping {
      * @param pKey The class key, which is passed
      * to {@link #registerPublicMethods(String, Class)}.
      * @param pClass Class, which is responsible for handling the request.
+     @throws XmlRpcException if an XML-RPC error occurs
      */
     public void addHandler(String pKey, Class pClass) throws XmlRpcException {
         registerPublicMethods(pKey, pClass);
     }
 
     /** Removes all handlers with the given class key.
+     * @param pKey the class key
      */
     public void removeHandler(String pKey) {
         for (Iterator i = handlerMap.keySet().iterator(); i.hasNext();) {

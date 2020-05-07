@@ -57,7 +57,7 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 
 	/**
 	 * Called to start a value tag.
-	 * @throws SAXException
+	 * @throws SAXException if the value tag cannot be started
 	 */
 	protected void startValueTag() throws SAXException {
 		inValueTag = true;

@@ -40,7 +40,7 @@ public class ServletConnection implements InterruptableTask {
 	/** Creates a new instance.
 	 * @param pServlet The servlet, which ought to handle the request.
 	 * @param pSocket The socket, to which the client is connected.
-	 * @throws IOException
+	 * @throws IOException if an I/O error occurs
 	 */
 	public ServletConnection(HttpServlet pServlet, Socket pSocket) throws IOException {
 		servlet = pServlet;

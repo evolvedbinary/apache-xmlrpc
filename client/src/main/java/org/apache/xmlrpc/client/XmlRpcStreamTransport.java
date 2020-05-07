@@ -46,6 +46,11 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
         /**
          * Writes the requests data to the given output stream.
          * The method ensures, that the target is being closed.
+		 *
+		 * @param pStream the output stream
+		 * @throws XmlRpcException if an XML-RPC error occurs
+		 * @throws IOException if an I/O error occurs
+		 * @throws SAXException if a SAX error occurs
          */
         void write(OutputStream pStream) throws XmlRpcException, IOException, SAXException;
     }
@@ -60,6 +65,11 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
         /** Writes the requests uncompressed XML data to the given
          * output stream. Ensures, that the output stream is being
          * closed.
+		 *
+		 * @param pStream the output stream
+		 * @throws XmlRpcException if an XML-RPC error occurs
+		 * @throws IOException if an I/O error occurs
+		 * @throws SAXException if a SAX error occurs
          */
         public void write(OutputStream pStream)
                 throws XmlRpcException, IOException, SAXException {
@@ -97,6 +107,8 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
     }
 
 	/** Creates a new instance on behalf of the given client.
+	 *
+	 * @param pClient the client
 	 */
 	protected XmlRpcStreamTransport(XmlRpcClient pClient) {
 		super(pClient);
@@ -104,6 +116,7 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 
 	/** Closes the connection and ensures, that all resources are being
 	 * released.
+	 * @throws XmlRpcClientException if an RPC error occurs
 	 */
 	protected abstract void close() throws XmlRpcClientException;
 
@@ -115,6 +128,8 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 
 	/** Returns the input stream, from which the response is
 	 * being read.
+	 * @return the input stream
+	 * @throws XmlRpcClientException if an RPC error occurs
 	 */
 	protected abstract InputStream getInputStream() throws XmlRpcException;
 
@@ -125,6 +140,8 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 
 	/**
 	 * Creates a new instance of {@link ReqWriter}.
+	 * @param pRequest the request
+	 * @return the request writer
 	 * @throws XmlRpcException Creating the instance failed.
 	 * @throws IOException Creating the instance failed, because
 	 *   an {@link IOException} occurs.

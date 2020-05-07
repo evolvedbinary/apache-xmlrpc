@@ -34,6 +34,8 @@ public class DateSerializer extends TypeSerializerImpl {
     private final Format format;
 
     /** Creates a new instance with the given formatter.
+     *
+     * @param pFormat the format
      */
     public DateSerializer(Format pFormat) {
         format = pFormat;

@@ -25,8 +25,7 @@ import java.io.OutputStream;
 
 
 /** Implementation of {@link ServerStreamConnection} for
- * use by the
- * {@link org.apache.xmlrpc.client.XmlRpcLocalStreamTransport}.
+ * use by the org.apache.xmlrpc.client.XmlRpcLocalStreamTransport.
  */
 public class LocalStreamConnection {
     private class LocalServerStreamConnection implements ServerStreamConnection {
@@ -51,6 +50,9 @@ public class LocalStreamConnection {
     private final ServerStreamConnection serverStreamConnection;
 
 	/** Creates a new instance with the given request stream.
+	 *
+	 * @param pConfig the stream request configuration
+	 * @param pRequest the request stream
 	 */
 	public LocalStreamConnection(XmlRpcStreamRequestConfig pConfig, 
 			InputStream pRequest) {
@@ -60,12 +62,16 @@ public class LocalStreamConnection {
 	}
 
 	/** Returns the request stream.
+	 *
+	 * @return the request stream
 	 */
 	public InputStream getRequest() {
 		return request;
 	}
 
 	/** Returns the request configuration.
+	 *
+	 * @return the request configuration
 	 */
 	public XmlRpcStreamRequestConfig getConfig() {
 		return config;
@@ -73,12 +79,16 @@ public class LocalStreamConnection {
 
 	/** Returns an output stream, to which the response
 	 * may be written.
+	 *
+	 * @return the response output stream
 	 */
 	public ByteArrayOutputStream getResponse() {
 		return response;
 	}
 
     /** Returns the servers connection.
+	 *
+	 * @return the servers connection
      */
     public ServerStreamConnection getServerStreamConnection() {
         return serverStreamConnection;

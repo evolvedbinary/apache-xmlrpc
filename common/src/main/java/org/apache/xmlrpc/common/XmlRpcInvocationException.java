@@ -31,6 +31,10 @@ public class XmlRpcInvocationException extends XmlRpcException {
     /**
      * Creates a new instance with the given error code, error message
      * and cause.
+     *
+     * @param pCode the error code
+     * @param pMessage the error message
+     * @param pLinkedException the cause
      */
     public XmlRpcInvocationException(int pCode, String pMessage, Throwable pLinkedException) {
         super(pCode, pMessage, pLinkedException);
@@ -38,6 +42,9 @@ public class XmlRpcInvocationException extends XmlRpcException {
 
     /**
      * Creates a new instance with the given error message and cause.
+     *
+     * @param pMessage the error message
+     * @param pLinkedException the cause
      */
     public XmlRpcInvocationException(String pMessage, Throwable pLinkedException) {
         super(pMessage, pLinkedException);

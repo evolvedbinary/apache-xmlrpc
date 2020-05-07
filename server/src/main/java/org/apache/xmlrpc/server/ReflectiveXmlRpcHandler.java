@@ -55,10 +55,12 @@ public class ReflectiveXmlRpcHandler implements XmlRpcHandler {
 
 	/** Creates a new instance.
 	 * @param pMapping The mapping, which creates this handler.
+     * @param pTypeConverterFactory the type conversion factory
 	 * @param pClass The class, which has been inspected to create
 	 * this handler. Typically, this will be the same as
 	 * <pre>pInstance.getClass()</pre>. It is used for diagnostic
 	 * messages only.
+     * @param pFactory the request processor factory
 	 * @param pMethods The method, which will be invoked for
 	 * executing the handler. 
 	 */

@@ -45,6 +45,7 @@ public interface XmlRpcMetaDataHandler extends XmlRpcHandler {
 	 * are being concatenated with commas. The inner arrays
 	 * first element is the return type, followed by the
 	 * parameter types.
+	 * @throws XmlRpcException if an RPC error occurs
 	 */
     String[][] getSignatures() throws XmlRpcException;
 
@@ -53,6 +54,8 @@ public interface XmlRpcMetaDataHandler extends XmlRpcHandler {
 	 * Typically, the handler mapping will pick up the
 	 * matching handler, invoke its method
 	 * {@link #getMethodHelp()}, and return the result.</p>
+	 * @return the help
+	 * @throws XmlRpcException if an RPC error occurs
      */
     String getMethodHelp() throws XmlRpcException;
 }

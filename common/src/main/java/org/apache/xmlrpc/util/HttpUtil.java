@@ -79,6 +79,7 @@ public class HttpUtil {
      * Returns, whether the HTTP header value <code>pHeaderValue</code>
      * indicates, that another encoding than "identity" is used.
      * This is typically the value of "Transfer-Encoding", or "TE".
+	 * @param pHeaderValue the header value to extract the transfer encoding from
      * @return Null, if the transfer encoding in use is "identity".
      *   Otherwise, another transfer encoding. 
      */

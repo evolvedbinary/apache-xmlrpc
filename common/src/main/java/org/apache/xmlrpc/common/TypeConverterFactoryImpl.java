@@ -198,6 +198,9 @@ public class TypeConverterFactoryImpl implements TypeConverterFactory {
     }
 
     /** Returns a type converter for the given class.
+      * @param pClass the type of class for the type converter
+      *
+      * @return the type converter
      */
     public TypeConverter getTypeConverter(Class pClass) {
         if (void.class.equals(pClass)) {

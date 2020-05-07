@@ -82,6 +82,7 @@ public abstract class XmlRpcConfigImpl implements XmlRpcConfig, XmlRpcHttpConfig
 
     /** Returns the timezone, which is used to interpret date/time
      * values. Defaults to {@link TimeZone#getDefault()}.
+	 * @param pTimeZone the timezone
      */
     public void setTimeZone(TimeZone pTimeZone) {
         timeZone = pTimeZone;

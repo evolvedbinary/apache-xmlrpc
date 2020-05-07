@@ -42,6 +42,8 @@ public class XmlRpcServerConfigImpl extends XmlRpcConfigImpl
 
     /** Sets, whether the server may create a "faultCause" element in an error
      * response. Note, that this may be a security issue!
+	 *
+	 * @param pEnabledForExceptions true if the server may create a "faultCause" element
      */
     public void setEnabledForExceptions(boolean pEnabledForExceptions) {
         isEnabledForExceptions = pEnabledForExceptions;

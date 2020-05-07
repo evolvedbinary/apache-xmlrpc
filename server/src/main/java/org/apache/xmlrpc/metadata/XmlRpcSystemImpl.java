@@ -34,6 +34,7 @@ public class XmlRpcSystemImpl {
 
 	/** Creates a new instance, which provides meta data
 	 * for the given handler mappings methods.
+	 * @param pMapping the handler mapping
 	 */
 	public XmlRpcSystemImpl(XmlRpcListableHandlerMapping pMapping) {
 		mapping = pMapping;
@@ -41,6 +42,9 @@ public class XmlRpcSystemImpl {
 
 	/** Implements the "system.methodSignature" call.
 	 * @see XmlRpcListableHandlerMapping#getMethodSignature(String)
+	 * @param methodName the name of the method
+	 * @return the method signature
+	 * @throws XmlRpcException if an internal error occurs
 	 */
 	public String[][] methodSignature(String methodName) throws XmlRpcException {
 		return mapping.getMethodSignature(methodName);
@@ -48,6 +52,9 @@ public class XmlRpcSystemImpl {
 
 	/** Implements the "system.methodHelp" call.
 	 * @see XmlRpcListableHandlerMapping#getMethodHelp(String)
+	 * @param methodName the name of the method
+	 * @return the help string
+	 * @throws XmlRpcException if an internal error occurs
 	 */
 	public String methodHelp(String methodName) throws XmlRpcException {
 		return mapping.getMethodHelp(methodName);
@@ -55,6 +62,9 @@ public class XmlRpcSystemImpl {
 
 	/** Implements the "system.listMethods" call.
 	 * @see XmlRpcListableHandlerMapping#getListMethods()
+	 *
+	 * @return the list of methods
+	 * @throws XmlRpcException if an internal error occurs
 	 */
 	public String[] listMethods() throws XmlRpcException {
 		return mapping.getListMethods();
@@ -63,6 +73,9 @@ public class XmlRpcSystemImpl {
 	/**
      * Adds an instance of this class to the given handler
      * mapping.
+	 *
+	 * @param pMapping the property handler mapping
+	 @throws XmlRpcException if an internal error occurs
 	 */
 	public static void addSystemHandler(final PropertyHandlerMapping pMapping)
             throws XmlRpcException {

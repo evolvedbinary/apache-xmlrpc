@@ -30,6 +30,8 @@ public class XmlRpcClientDefaults {
 
     /**
      * Creates a new transport factory for the given client.
+     * @param pClient the client
+     * @return the transport factory
      */
     public static XmlRpcTransportFactory newTransportFactory(XmlRpcClient pClient) {
         try {
@@ -45,6 +47,7 @@ public class XmlRpcClientDefaults {
 
     /**
      * Creates a new instance of {@link XmlRpcClientConfig}.
+     * @return the config
      */
     public static XmlRpcClientConfig newXmlRpcClientConfig() {
         return new XmlRpcClientConfigImpl();
@@ -52,6 +55,7 @@ public class XmlRpcClientDefaults {
     
     /**
      * Creates a new {@link XmlWriterFactory}.
+     * @return the XML writer factory
      */
     public static XmlWriterFactory newXmlWriterFactory() {
         return xmlWriterFactory;

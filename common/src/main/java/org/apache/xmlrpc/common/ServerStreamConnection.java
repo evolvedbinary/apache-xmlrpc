@@ -30,12 +30,19 @@ import java.io.OutputStream;
  */
 public interface ServerStreamConnection {
     /** Returns the connections input stream.
+     *
+     * @return the connections input stream
+     * @throws IOException if an I/O error occurs
      */
     InputStream newInputStream() throws IOException;
     /** Returns the connections output stream.
+     *
+     * @return the connections output stream
+     * @throws IOException if an I/O error occurs
      */
     OutputStream newOutputStream() throws IOException;
     /** Closes the connection, and frees resources.
+     * @throws IOException if an I/O error occurs
      */
     void close() throws IOException;
 }

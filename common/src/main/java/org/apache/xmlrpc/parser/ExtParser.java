@@ -49,6 +49,7 @@ public abstract class ExtParser implements TypeParser {
 	protected abstract ContentHandler getExtHandler() throws SAXException;
 
 	/** Returns the outer node name.
+	 * @return the outer node name
 	 */
 	protected abstract String getTagName();
 

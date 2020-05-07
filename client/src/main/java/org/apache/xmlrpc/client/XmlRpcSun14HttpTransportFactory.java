@@ -46,6 +46,7 @@ public class XmlRpcSun14HttpTransportFactory extends XmlRpcTransportFactoryImpl 
 
     /**
      * Returns the SSLSocketFactory to be used by transports.
+     * @return the SSL Socket Factory
      */
     public SSLSocketFactory getSSLSocketFactory() {
         return sslSocketFactory;

@@ -30,6 +30,7 @@ public interface XmlRpcHttpServerConfig extends XmlRpcServerConfig, XmlRpcHttpCo
 
     /** Returns, whether the server may create a "faultCause" element in an error
      * response. Note, that this may be a security issue!
+	 * @return True, if the server may create a "faultCause" element
      */
     boolean isEnabledForExceptions();
 }

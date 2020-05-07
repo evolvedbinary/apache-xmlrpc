@@ -49,6 +49,9 @@ public abstract class AbstractReflectiveHandlerMapping
     public interface AuthenticationHandler {
         /** Returns, whether the user is authenticated and
          * authorized to perform the request.
+         * @param pRequest the request
+         * @return  true if the user is authenticated and authorized
+         * @throws XmlRpcException if an XML-RPC error occurs
          */
         boolean isAuthorized(XmlRpcRequest pRequest)
             throws XmlRpcException;
@@ -62,6 +65,7 @@ public abstract class AbstractReflectiveHandlerMapping
 
     /**
      * Sets the mappings {@link TypeConverterFactory}.
+     * @param pFactory the type converter factory
      */
     public void setTypeConverterFactory(TypeConverterFactory pFactory) {
         typeConverterFactory = pFactory;
@@ -69,6 +73,7 @@ public abstract class AbstractReflectiveHandlerMapping
 
     /**
      * Returns the mappings {@link TypeConverterFactory}.
+     * @return the type converter factory
      */
     public TypeConverterFactory getTypeConverterFactory() {
         return typeConverterFactory;
@@ -76,24 +81,28 @@ public abstract class AbstractReflectiveHandlerMapping
 
     /** Sets the mappings {@link RequestProcessorFactoryFactory}. Note, that this doesn't
      * affect already registered handlers.
+     * @param pFactory the request processor factory
      */
     public void setRequestProcessorFactoryFactory(RequestProcessorFactoryFactory pFactory) {
         requestProcessorFactoryFactory = pFactory;
     }
 
     /** Returns the mappings {@link RequestProcessorFactoryFactory}.
+     * @return the request processor factory
      */
     public RequestProcessorFactoryFactory getRequestProcessorFactoryFactory() {
         return requestProcessorFactoryFactory;
     }
 
     /** Returns the authentication handler, if any, or null.
+     * @return the authentication handler
      */
     public AuthenticationHandler getAuthenticationHandler() {
         return authenticationHandler;
     }
 
     /** Sets the authentication handler, if any, or null.
+     * @param pAuthenticationHandler the authentication handler
      */
     public void setAuthenticationHandler(AuthenticationHandler pAuthenticationHandler) {
         authenticationHandler = pAuthenticationHandler;
@@ -139,6 +148,7 @@ public abstract class AbstractReflectiveHandlerMapping
      * @param pKey Suffix for building handler names. A dot and
      * the method name are being added.
      * @param pType The class being inspected.
+     * @throws XmlRpcException if an internal error occurs
      */
     protected void registerPublicMethods(String pKey,
     		Class pType) throws XmlRpcException {
@@ -175,6 +185,8 @@ public abstract class AbstractReflectiveHandlerMapping
      * methods. This is used for error messages only. Typically,
      * it is the same than <pre>pInstance.getClass()</pre>.
      * @param pMethods The method being invoked.
+     * @return the XML-RPC handler
+     * @throws XmlRpcException if an error occurs
      */
     protected XmlRpcHandler newXmlRpcHandler(final Class pClass,
             final Method[] pMethods) throws XmlRpcException {
@@ -190,6 +202,8 @@ public abstract class AbstractReflectiveHandlerMapping
     }
 
     /** Creates a signature for the given method.
+     * @param pMethods the methods
+     * @return the signature
      */
     protected String[][] getSignature(Method[] pMethods) {
     	return Util.getSignature(pMethods);
@@ -197,6 +211,9 @@ public abstract class AbstractReflectiveHandlerMapping
 
     /** Creates a help string for the given method, when applied
      * to the given class.
+     * @param pClass the class
+     * @param pMethods the methods
+     * @return the help string
      */
     protected String getMethodHelp(Class pClass, Method[] pMethods) {
     	return Util.getMethodHelp(pClass, pMethods);
@@ -204,6 +221,7 @@ public abstract class AbstractReflectiveHandlerMapping
 
     /** Returns the {@link XmlRpcHandler} with the given name.
      * @param pHandlerName The handlers name
+     * @return the handler
      * @throws XmlRpcNoSuchHandlerException A handler with the given
      * name is unknown.
      */
@@ -249,6 +267,7 @@ public abstract class AbstractReflectiveHandlerMapping
      * Returns, whether void methods are enabled. By default, null values
      * aren't supported by XML-RPC and void methods are in fact returning
      * null (at least from the perspective of reflection).
+     * @return true if void methods are enabled
      */
     public boolean isVoidMethodEnabled() {
         return voidMethodEnabled;
@@ -258,6 +277,7 @@ public abstract class AbstractReflectiveHandlerMapping
      * Sets, whether void methods are enabled. By default, null values
      * aren't supported by XML-RPC and void methods are in fact returning
      * null (at least from the perspective of reflection).
+     * @param pVoidMethodEnabled true if void methods are enabled
      */
     public void setVoidMethodEnabled(boolean pVoidMethodEnabled) {
         voidMethodEnabled = pVoidMethodEnabled;

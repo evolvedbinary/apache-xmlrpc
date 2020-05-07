@@ -58,6 +58,9 @@ public class SAXParsers {
 	}
 
 	/** Creates a new instance of {@link XMLReader}.
+	 *
+	 * @return the XML Reader
+	 * @throws XmlRpcException if the XML Reader cannot be created
 	 */
 	public static XMLReader newXMLReader() throws XmlRpcException {
 		try {
@@ -72,6 +75,8 @@ public class SAXParsers {
 	/**
 	 * Returns the SAX parser factory, which is used by Apache XML-RPC. You may
 	 * use this to configure the factory.
+	 *
+	 * @return the SAX parser factory
 	 */
 	public static SAXParserFactory getSAXParserFactory() {
 	    return spf;
@@ -80,6 +85,8 @@ public class SAXParsers {
 	/**
      * Sets the SAX parser factory, which is used by Apache XML-RPC. You may use
      * this to configure another instance than the default.
+	 *
+	 * @param pFactory the SAX parser factory
      */
 	public static void setSAXParserFactory(SAXParserFactory pFactory) {
         spf = pFactory;

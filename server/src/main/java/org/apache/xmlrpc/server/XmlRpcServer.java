@@ -46,6 +46,7 @@ public class XmlRpcServer extends XmlRpcController
 	}
 
     /** Sets the servers {@link TypeConverterFactory}.
+	 * @param pFactory the type converter factory
      */
     public void setTypeConverterFactory(TypeConverterFactory pFactory) {
         typeConverterFactory = pFactory;

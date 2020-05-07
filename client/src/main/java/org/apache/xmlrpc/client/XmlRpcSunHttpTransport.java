@@ -51,6 +51,7 @@ public class XmlRpcSunHttpTransport extends XmlRpcHttpTransport {
 
     /**
      * For use by subclasses.
+	 * @return the URL connection
      */
     protected URLConnection getURLConnection() {
         return conn;

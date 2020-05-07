@@ -43,6 +43,7 @@ public interface XmlRpcStreamRequestConfig extends XmlRpcStreamConfig, XmlRpcReq
      * in case of errors. The "faultCause" is an exception, which the
      * server has trapped and written into a byte stream as a serializable
      * object.
+	 * @return true if the response should contain a "faultClause" element
 	 */
 	boolean isEnabledForExceptions();
 }

@@ -26,7 +26,7 @@ import java.io.PrintWriter;
  * failed on the remote side (for example, an exception was thrown within
  * the server) or the communication with the server failed. The latter
  * is indicated by throwing an instance of
- * {@link org.apache.xmlrpc.client.XmlRpcClientException}.
+ * org.apache.xmlrpc.client.XmlRpcClientException.
  */
 public class XmlRpcException extends Exception {
 	private static final long serialVersionUID = 3258693217049325618L;

@@ -47,6 +47,7 @@ public class XmlRpcSun15HttpTransport extends XmlRpcSun14HttpTransport {
 
     /**
      * Sets the proxy to use.
+     * @param pProxy the proxy
      */
     public void setProxy(Proxy pProxy) {
         proxy = pProxy;
@@ -54,6 +55,7 @@ public class XmlRpcSun15HttpTransport extends XmlRpcSun14HttpTransport {
 
     /**
      * Returns the proxy to use.
+     * @return the proxy
      */
     public Proxy getProxy() {
         return proxy;

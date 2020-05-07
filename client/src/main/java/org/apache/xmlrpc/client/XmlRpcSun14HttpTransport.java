@@ -51,6 +51,7 @@ public class XmlRpcSun14HttpTransport extends XmlRpcSunHttpTransport {
 
     /**
      * Returns the SSLSocketFactory used to create secure sockets.
+     * @return the SSL Socket Factory
      */
     public SSLSocketFactory getSSLSocketFactory() {
         return sslSocketFactory;

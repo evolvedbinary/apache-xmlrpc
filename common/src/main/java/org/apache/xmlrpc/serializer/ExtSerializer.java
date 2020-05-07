@@ -26,10 +26,14 @@ import org.xml.sax.SAXException;
  * or JAXB.
  */
 public abstract class ExtSerializer implements TypeSerializer {
-	/** Returns the unqualied tag name.
+	/** Returns the unqualified tag name.
+	 * @return the unqualified tag name
 	 */
 	protected abstract String getTagName();
 	/** Performs the actual serialization.
+	 * @param pHandler the content handler
+	 * @param pObject the object to serialize
+	 * @throws SAXException if an error occurs during serialization
 	 */
 	protected abstract void serialize(ContentHandler pHandler, Object pObject) throws SAXException;
 

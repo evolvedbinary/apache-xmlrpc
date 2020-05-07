@@ -82,14 +82,14 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
     /** Set the connection timeout in milliseconds. Note, that this value
      * may or may not be used, depending on the transport factory. Transport factories,
      * which are known to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory},
-     * and {@link org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory}.
+     * org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory,
+     * and org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory.
      * On the other hand, transport
      * factories which are known <em>not</em> to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory}, and
-     * {@link org.apache.xmlrpc.client.XmlRpcLite14HttpTransport}.
+     * org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory, and
+     * org.apache.xmlrpc.client.XmlRpcLite14HttpTransport.
      * @param pTimeout connection timeout, 0 to disable it
      */
     public void setConnectionTimeout(int pTimeout) {
@@ -103,14 +103,14 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
     /** Set the reply timeout in milliseconds. Note, that this value
      * may or may not be used, depending on the transport factory. Transport factories,
      * which are known to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory},
-     * and {@link org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory}.
+     * org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory,
+     * and org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory.
      * On the other hand, transport
      * factories which are known <em>not</em> to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory},
-     * and {@link org.apache.xmlrpc.client.XmlRpcLite14HttpTransport}.
+     * org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory,
+     * and org.apache.xmlrpc.client.XmlRpcLite14HttpTransport.
      * @param pTimeout reply timeout, 0 to disable it
      */
     public void setReplyTimeout(int pTimeout) {
@@ -125,6 +125,8 @@ public class XmlRpcHttpRequestConfigImpl extends XmlRpcConfigImpl implements
      * in case of errors. The "faultCause" is an exception, which the
      * server has trapped and written into a byte stream as a serializable
      * object.
+	 *
+	 * @param pEnabledForExceptions true if the response should contain a "faultClause" element
      */
     public void setEnabledForExceptions(boolean pEnabledForExceptions) {
         enabledForExceptions = pEnabledForExceptions;

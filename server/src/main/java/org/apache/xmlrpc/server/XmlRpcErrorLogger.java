@@ -31,6 +31,8 @@ public class XmlRpcErrorLogger {
 
     /**
      * Called to log the given error.
+     * @param pMessage the message
+     * @param pThrowable the cause
      */
     public void log(String pMessage, Throwable pThrowable) {
         log.error(pMessage, pThrowable);
@@ -38,6 +40,7 @@ public class XmlRpcErrorLogger {
 
     /**
      * Called to log the given error message.
+     * @param pMessage the message
      */
     public void log(String pMessage) {
         log.error(pMessage);

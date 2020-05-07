@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 
-/** A SAX parser for an {@link org.apache.xmlrpc.client.XmlRpcClient}'s
+/** A SAX parser for an @link org.apache.xmlrpc.client.XmlRpcClient's
  * request.
  */
 public class XmlRpcRequestParser extends RecursiveTypeParserImpl {

@@ -25,6 +25,10 @@ package org.apache.xmlrpc.common;
 public interface TypeConverterFactory {
     /** Creates an instance of {@link TypeFactory}, which may be
      * used to create instances of the given class.
+     *
+     * @param pClass the type of class for the type converter
+     *
+     * @return the type converter
      */
     TypeConverter getTypeConverter(Class pClass);
 }

@@ -31,6 +31,7 @@ public class DateParser extends AtomicParser {
 	private final Format f;
 
     /** Creates a new instance with the given format.
+     * @param pFormat the format
      */
     public DateParser(Format pFormat) {
         f = pFormat;

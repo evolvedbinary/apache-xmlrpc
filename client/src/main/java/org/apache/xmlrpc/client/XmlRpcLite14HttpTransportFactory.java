@@ -38,6 +38,7 @@ public class XmlRpcLite14HttpTransportFactory extends XmlRpcLiteHttpTransportFac
 
     /**
      * Sets the SSL Socket Factory to use for https connections.
+     * @return the SSL Socket Factory
      */
     public SSLSocketFactory getSSLSocketFactory() {
         return sslSocketFactory;
@@ -45,6 +46,7 @@ public class XmlRpcLite14HttpTransportFactory extends XmlRpcLiteHttpTransportFac
 
     /**
      * Returns the SSL Socket Factory to use for https connections.
+     * @param pSSLSocketFactory the SSL Socket Factory
      */
     public void setSSLSocketFactory(SSLSocketFactory pSSLSocketFactory) {
         sslSocketFactory = pSSLSocketFactory;

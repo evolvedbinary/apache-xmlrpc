@@ -51,9 +51,11 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
 		}
 
 		/** Returns the servlet request.
+		 * @return the request
 		 */
 		public HttpServletRequest getRequest() { return request; }
 		/** Returns the servlet response.
+		 * @return the response
 		 */
 		public HttpServletResponse getResponse() { return response; }
 
@@ -71,8 +73,9 @@ public class XmlRpcServletServer extends XmlRpcHttpServer {
         }
     }
 
-	/**
+	/** Create a new config.
 	 * @param pRequest The request object.
+	 * @return the config
 	 */
 	protected XmlRpcHttpRequestConfigImpl newConfig(HttpServletRequest pRequest) {
 		return new XmlRpcHttpRequestConfigImpl();

@@ -18,11 +18,8 @@
  */
 package org.apache.xmlrpc.common;
 
-import org.apache.xmlrpc.common.XmlRpcHttpConfig;
-import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 
-
-/** Extension of {@link org.apache.xmlrpc.client.XmlRpcClientConfig}
+/** Extension of org.apache.xmlrpc.client.XmlRpcClientConfig
  * for HTTP based transport. Provides details like server URL,
  * user credentials, and so on.
  */
@@ -40,14 +37,14 @@ public interface XmlRpcHttpRequestConfig extends XmlRpcStreamRequestConfig, XmlR
     /** Returns the connection timeout in milliseconds. Note, that this value
      * may or may not be used, depending on the transport factory. Transport factories,
      * which are known to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory},
-     * and {@link org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory}.
+     * org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory,
+     * and org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory.
      * On the other hand, transport
      * factories which are known <em>not</em> to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory},
-     * and {@link org.apache.xmlrpc.client.XmlRpcLite14HttpTransport}.
+     * org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory,
+     * and org.apache.xmlrpc.client.XmlRpcLite14HttpTransport.
      * 
      * @return connection timeout in milliseconds or 0 if no set
      */
@@ -56,14 +53,14 @@ public interface XmlRpcHttpRequestConfig extends XmlRpcStreamRequestConfig, XmlR
     /** Return the reply timeout in milliseconds.  Note, that this value
      * may or may not be used, depending on the transport factory. Transport factories,
      * which are known to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory},
-     * and {@link org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory}.
+     * org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory,
+     * and org.apache.xmlrpc.client.XmlRpcSun15HttpTransportFactory.
      * On the other hand, transport
      * factories which are known <em>not</em> to use this value:
-     * {@link org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory},
-     * {@link org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory},
-     * and {@link org.apache.xmlrpc.client.XmlRpcLite14HttpTransport}.
+     * org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcSun14HttpTransportFactory,
+     * org.apache.xmlrpc.client.XmlRpcLiteHttpTransportFactory,
+     * and org.apache.xmlrpc.client.XmlRpcLite14HttpTransport.
      * @return reply timeout in milliseconds or 0 if no set
      */
     int getReplyTimeout();

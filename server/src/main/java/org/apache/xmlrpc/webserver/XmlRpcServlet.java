@@ -42,17 +42,17 @@ import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.xmlrpc.util.ReflectionUtil;
 
 
-/** <p>A default servlet implementation The typical use would
+/** A default servlet implementation The typical use would
  * be to derive a subclass, which is overwriting at least the
- * method {@link #newXmlRpcHandlerMapping()}.</p>
- * <p>The servlet accepts the following init parameters:
+ * method {@link #newXmlRpcHandlerMapping()}.
+ * The servlet accepts the following init parameters:
  *   <table border="1">
+ *     <caption>init parameters</caption>
  *     <tr><th>Name</th><th>Description</th></tr>
  *     <tr><td>enabledForExtensions</td><td>Sets the value
  *       {@link XmlRpcConfig#isEnabledForExtensions()}
  *       to true.</td></tr>
  *   </table>
- * </p>
  */
 public class XmlRpcServlet extends HttpServlet {
 	private static final long serialVersionUID = 2348768267234L;
@@ -107,36 +107,48 @@ public class XmlRpcServlet extends HttpServlet {
 	}
 
 	/** Sets the servlets {@link AbstractReflectiveHandlerMapping.AuthenticationHandler}.
+	 *
+	 * @param pHandler the authentication handler
 	 */
 	public void setAuthenticationHandler(AbstractReflectiveHandlerMapping.AuthenticationHandler pHandler) {
 	    authenticationHandler = pHandler;
 	}
 
 	/** Returns the servlets {@link AbstractReflectiveHandlerMapping.AuthenticationHandler}.
+	 *
+	 * @return pHandler the authentication handler
 	 */
 	public AbstractReflectiveHandlerMapping.AuthenticationHandler getAuthenticationHandler() {
 	    return authenticationHandler;
 	}
 
 	/** Sets the servlets {@link RequestProcessorFactoryFactory}.
+	 *
+	 * @param pFactory the request processor factory factory
 	 */
 	public void setRequestProcessorFactoryFactory(RequestProcessorFactoryFactory pFactory) {
         requestProcessorFactoryFactory = pFactory;
 	}
 
 	/** Returns the servlets {@link RequestProcessorFactoryFactory}.
+	 *
+	 * @return the request processor factory factory
 	 */
 	public RequestProcessorFactoryFactory getRequestProcessorFactoryFactory() {
         return requestProcessorFactoryFactory;
 	}
 
 	/** Sets the servlets {@link TypeConverterFactory}.
+	 *
+	 * @param pFactory the type converter factory
 	 */
 	public void setTypeConverterFactory(TypeConverterFactory pFactory) {
 	    typeConverterFactory = pFactory;
 	}
 
     /** Returns the servlets {@link TypeConverterFactory}.
+	 *
+	 * @return the type converter factory
      */
     public TypeConverterFactory getTypeConverterFactory() {
         return typeConverterFactory;
@@ -144,9 +156,10 @@ public class XmlRpcServlet extends HttpServlet {
 
     /** Creates a new instance of {@link XmlRpcServer},
 	 * which is being used to process the requests. The default implementation
-	 * will simply invoke <code>new {@link XmlRpcServer}.
+	 * will simply invoke <code>new {@link XmlRpcServer}</code>.
 	 * @param pConfig The servlets configuration.
-	 * @throws XmlRpcException
+	 * @return the XmlRpcServletServer
+	 * @throws XmlRpcException if an error occurs
 	 */
 	protected XmlRpcServletServer newXmlRpcServer(ServletConfig pConfig)
 			throws XmlRpcException {
@@ -156,6 +169,9 @@ public class XmlRpcServlet extends HttpServlet {
 	/** Creates a new handler mapping. The default implementation loads
 	 * a property file from the resource
 	 * <code>org/apache/xmlrpc/webserver/XmlRpcServlet.properties</code>
+	 *
+	 * @return the handler mapping
+	 @throws XmlRpcException if an error occurs
 	 */
 	protected XmlRpcHandlerMapping newXmlRpcHandlerMapping() throws XmlRpcException {
 		URL url = XmlRpcServlet.class.getResource("XmlRpcServlet.properties");
@@ -172,6 +188,13 @@ public class XmlRpcServlet extends HttpServlet {
 	/** Creates a new instance of {@link PropertyHandlerMapping} by
 	 * loading the property file from the given URL. Called from
 	 * {@link #newXmlRpcHandlerMapping()}.
+	 *
+	 * @param url the URL of the property file.
+	 *
+	 * @return the handler mapping
+	 *
+	 * @throws IOException if an I/O error occurs
+	 * @throws XmlRpcException if an error occurs
 	 */
 	protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
         PropertyHandlerMapping mapping = new PropertyHandlerMapping();
@@ -191,6 +214,10 @@ public class XmlRpcServlet extends HttpServlet {
 
 	/** Creates a new instance of {@link org.apache.xmlrpc.webserver.RequestData}
 	 * for the request.
+	 * @param pRequest the request
+	 * @param pResponse the response
+	 * @throws IOException if an I/O error occurs
+	 * @throws ServletException if a Sevlet error occurs
 	 */
 	public void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException, ServletException {
 		server.execute(pRequest, pResponse);
