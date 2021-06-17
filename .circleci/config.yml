@@ -6,12 +6,22 @@ jobs:
       - image: cimg/openjdk:8.0
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
       - run:
           name: Build
           command: mvn -B -DskipTests clean package
       - run:
           name: Test
           command: mvn verify
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
 
 workflows:
   ci:
