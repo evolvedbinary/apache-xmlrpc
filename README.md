@@ -11,7 +11,7 @@ This is a simple fork for the purposes of applying the latest security patches.
 * The security patches were obtained from the Fedora project's package at: https://download-ib01.fedoraproject.org/pub/fedora/linux/releases/34/Everything/source/tree/Packages/x/xmlrpc-3.1.3-28.fc34.src.rpm
     * Whilst 6 patches are available, the 2nd patch for OSGI metadata has not been applied as `PR: XMLRPC-184` (see commit: f0b8977) exists in the main line of this code base and already adds some conflicting OSGI metadata support. 
 
-*NOTE*: This fork was created for our own purposes, and we offer no guarantee that we will maintain it beyond out own requirements.
+*NOTE*: This fork was created for our own purposes, and we offer no guarantee that we will maintain it beyond our own requirements.
 
 However, if you want a possibly more secure Apache XML-RPC than the last official version (3.1.3), then this fork's artifacts are available
 from Maven Central as:
