@@ -61,8 +61,8 @@
   </issueManagement>
 
   <ciManagement>
-    <system>Gump</system>
-    <url>http://vmgump.apache.org/gump/public/ws-xmlrpc/xmlrpc/index.html</url>
+    <system>CircleCI</system>
+    <url>https://circleci.com/gh/evolvedbinary/apache-xmlrpc/tree/main</url>
   </ciManagement>
 
   <mailingLists>

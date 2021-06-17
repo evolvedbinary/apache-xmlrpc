@@ -1,4 +1,5 @@
 # Fork of Apache XML-RPC
+[![CircleCI](https://circleci.com/gh/evolvedbinary/apache-xmlrpc/tree/main.svg?style=svg)](https://circleci.com/gh/evolvedbinary/apache-xmlrpc/tree/main)
 [![Java 8](https://img.shields.io/badge/java-8+-blue.svg)](https://adoptopenjdk.net/)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://opensource.org/licenses/Apache2.0)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.evolvedbinary.thirdparty.org.apache.xmlrpc/xmlrpc/badge.svg)](https://search.maven.org/search?q=g:com.evolvedbinary.thirdparty.org.apache.xmlrpc)
