@@ -33,12 +33,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 
-/** Stub implementation of a {@link javax.servlet.http.HttpServletResponse}
+/** Stub implementation of a {@link jakarta.servlet.http.HttpServletResponse}
  * with lots of unimplemented methods. I implemented only those, which
  * are required for testing the {@link org.apache.xmlrpc.webserver.XmlRpcServlet}.
  * Perhaps someone else is adding more at a later time?

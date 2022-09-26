@@ -21,7 +21,7 @@ package org.apache.xmlrpc.test;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;

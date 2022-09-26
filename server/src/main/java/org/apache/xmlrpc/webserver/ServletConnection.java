@@ -21,7 +21,7 @@ package org.apache.xmlrpc.webserver;
 import java.io.IOException;
 import java.net.Socket;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 
 import org.apache.xmlrpc.util.ThreadPool.InterruptableTask;
 

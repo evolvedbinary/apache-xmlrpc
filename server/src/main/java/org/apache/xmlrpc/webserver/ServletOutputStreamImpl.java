@@ -21,8 +21,8 @@ package org.apache.xmlrpc.webserver;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 
 /** Default implementation of a servlet output stream.

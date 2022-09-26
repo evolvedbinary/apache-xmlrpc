@@ -93,7 +93,7 @@
     <dependency>
       <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-common</artifactId>
-      <version>4.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

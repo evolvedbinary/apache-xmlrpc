@@ -21,7 +21,7 @@ package org.apache.xmlrpc.test;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import junit.framework.TestCase;
 
