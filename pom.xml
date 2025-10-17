@@ -460,11 +460,6 @@
       <name>XML-RPC directory on ws.apache.org</name>
       <url>${xmlrpc.www.url}</url>
     </site>
-    <repository>
-      <id>sonatype-nexus-staging</id>
-      <name>Nexus Release Repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
   </distributionManagement>
 
   <profiles>
@@ -631,6 +626,18 @@
                 </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.8.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <deploymentName>${project.artifactId}-${project.version}</deploymentName>
+              <failOnBuildFailure>true</failOnBuildFailure>
+              <waitUntil>validated</waitUntil>
+            </configuration>
           </plugin>
         </plugins>
       </build>
