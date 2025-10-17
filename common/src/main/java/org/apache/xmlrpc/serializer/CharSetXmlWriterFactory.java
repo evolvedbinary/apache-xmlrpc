@@ -18,16 +18,13 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.apache.ws.commons.serialize.CharSetXMLWriter;
-import org.apache.ws.commons.serialize.XMLWriter;
-
 
 /** An implementation of {@link org.apache.xmlrpc.serializer.XmlWriterFactory},
  * which creates instances of
  * {@link org.apache.ws.commons.serialize.CharSetXMLWriter}.
  */
 public class CharSetXmlWriterFactory extends BaseXmlWriterFactory {
-    protected XMLWriter newXmlWriter() {
-		return new CharSetXMLWriter();
+    protected ExtendedXMLWriter newXmlWriter() {
+		return new ExtendedCharSetXMLWriter();
 	}
 }

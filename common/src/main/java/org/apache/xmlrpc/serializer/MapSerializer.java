@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -54,7 +53,7 @@ public class MapSerializer extends TypeSerializerImpl {
 		config = pConfig;
 	}
 
-    protected void writeEntry(ContentHandler pHandler, Object pKey, Object pValue) throws SAXException {
+    protected void writeEntry(SerializerHandler pHandler, Object pKey, Object pValue) throws SAXException {
 		pHandler.startElement("", MEMBER_TAG, MEMBER_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", NAME_TAG, NAME_TAG, ZERO_ATTRIBUTES);
 		if (config.isEnabledForExtensions()  &&  !(pKey instanceof String)) {
@@ -68,7 +67,7 @@ public class MapSerializer extends TypeSerializerImpl {
 		pHandler.endElement("", MEMBER_TAG, MEMBER_TAG);
 	}
 
-    private void writeValue(ContentHandler pHandler, Object pValue)
+    private void writeValue(SerializerHandler pHandler, Object pValue)
             throws SAXException {
         TypeSerializer ts = typeFactory.getSerializer(config, pValue);
 		if (ts == null) {
@@ -77,7 +76,7 @@ public class MapSerializer extends TypeSerializerImpl {
 		ts.write(pHandler, pValue);
     }
 
-    protected void writeData(ContentHandler pHandler, Object pData) throws SAXException {
+    protected void writeData(SerializerHandler pHandler, Object pData) throws SAXException {
 		Map map = (Map) pData;
 		for (Iterator iter = map.entrySet().iterator();  iter.hasNext();  ) {
 			Map.Entry entry = (Map.Entry) iter.next();
@@ -85,7 +84,7 @@ public class MapSerializer extends TypeSerializerImpl {
 		}
 	}
 
-    public void write(final ContentHandler pHandler, Object pObject) throws SAXException {
+    public void write(final SerializerHandler pHandler, Object pObject) throws SAXException {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", STRUCT_TAG, STRUCT_TAG, ZERO_ATTRIBUTES);
 		writeData(pHandler, pObject);

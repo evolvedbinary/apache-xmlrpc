@@ -20,7 +20,6 @@ package org.apache.xmlrpc.serializer;
 
 import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -45,20 +44,20 @@ public class ObjectArraySerializer extends TypeSerializerImpl {
 		typeFactory = pTypeFactory;
 		config = pConfig;
 	}
-	protected void writeObject(ContentHandler pHandler, Object pObject) throws SAXException {
+	protected void writeObject(SerializerHandler pHandler, Object pObject) throws SAXException {
 		TypeSerializer ts = typeFactory.getSerializer(config, pObject);
 		if (ts == null) {
 			throw new SAXException("Unsupported Java type: " + pObject.getClass().getName());
 		}
 		ts.write(pHandler, pObject);
 	}
-	protected void writeData(ContentHandler pHandler, Object pObject) throws SAXException {
+	protected void writeData(SerializerHandler pHandler, Object pObject) throws SAXException {
 		Object[] data = (Object[]) pObject;
 		for (int i = 0;  i < data.length;  i++) {
 			writeObject(pHandler, data[i]);
 		}
 	}
-	public void write(final ContentHandler pHandler, Object pObject) throws SAXException {
+	public void write(final SerializerHandler pHandler, Object pObject) throws SAXException {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", ARRAY_TAG, ARRAY_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", DATA_TAG, DATA_TAG, ZERO_ATTRIBUTES);

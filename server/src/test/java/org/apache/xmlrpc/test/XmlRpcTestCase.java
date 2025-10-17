@@ -25,8 +25,6 @@ import jakarta.servlet.ServletException;
 
 import junit.framework.TestCase;
 
-import org.apache.ws.commons.serialize.XMLWriter;
-import org.apache.ws.commons.serialize.XMLWriterImpl;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -35,6 +33,8 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.common.TypeConverterFactory;
 import org.apache.xmlrpc.common.TypeConverterFactoryImpl;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
+import org.apache.xmlrpc.serializer.ExtendedXMLWriter;
+import org.apache.xmlrpc.serializer.ExtendedXMLWriterImpl;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
@@ -101,7 +101,7 @@ public abstract class XmlRpcTestCase extends TestCase {
     static String writeRequest(XmlRpcClient pClient, XmlRpcRequest pRequest)
             throws SAXException {
         StringWriter sw = new StringWriter();
-        XMLWriter xw = new XMLWriterImpl();
+        ExtendedXMLWriter xw = new ExtendedXMLWriterImpl();
         xw.setEncoding("US-ASCII");
         xw.setDeclarating(true);
         xw.setIndenting(false);

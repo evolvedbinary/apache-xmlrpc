@@ -21,9 +21,12 @@ package org.apache.xmlrpc.parser;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ws.commons.serialize.DOMBuilder;
 import org.apache.xmlrpc.serializer.NodeSerializer;
-import org.xml.sax.ContentHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 
@@ -31,13 +34,25 @@ import org.xml.sax.SAXException;
  */
 public class NodeParser extends ExtParser {
 	private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-	private final DOMBuilder builder = new DOMBuilder();
+	private ExtendedDOMBuilder builder = null;
+    private short domType = Node.DOCUMENT_TYPE_NODE;
 
 	protected String getTagName() {
 		return NodeSerializer.DOM_TAG;
 	}
 
-	protected ContentHandler getExtHandler() throws SAXException {
+	protected ParserHandler getExtHandler(Attributes attrs) throws SAXException {
+        final String domTypeStr = attrs.getValue(NodeSerializer.NS_DOM, NodeSerializer.TYPE_ATTR_NAME);
+        if (domTypeStr.length() > 0) {
+            try {
+                domType = Short.parseShort(domTypeStr);
+            } catch (final NumberFormatException e) {
+                // no-op
+            }
+        }
+
+         builder = new ExtendedDOMBuilder(domType == Node.TEXT_NODE);
+
 		try {
 			builder.setTarget(dbf.newDocumentBuilder().newDocument());
 		} catch (ParserConfigurationException e) {
@@ -46,7 +61,24 @@ public class NodeParser extends ExtParser {
 		return builder;
 	}
 
-	public Object getResult() {
-		return builder.getTarget();
+    public Object getResult() {
+        final Document document = (Document) builder.getTarget();
+
+        switch (domType) {
+            case Node.DOCUMENT_NODE:
+                return document;
+
+            case Node.TEXT_NODE:
+                return document.getDocumentElement().getFirstChild();
+
+            case Node.ATTRIBUTE_NODE:
+                // NOTE(AR) we should be expecting a <dom:attribute attr-name="attr-value"/> element, see: {@link ExtendedDOMSerializer#doSerialize(Node, ContentHandler)}
+                final Element domAttrElement = document.getDocumentElement();
+                final NamedNodeMap attributes = domAttrElement.getAttributes();
+                return attributes.item(0);
+
+            default:
+                return document.getFirstChild();
+        }
 	}
 }

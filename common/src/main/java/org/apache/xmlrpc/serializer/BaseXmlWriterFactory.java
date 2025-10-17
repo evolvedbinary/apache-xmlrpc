@@ -23,11 +23,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.ws.commons.serialize.XMLWriter;
-import org.apache.ws.commons.serialize.XMLWriterImpl;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
-import org.xml.sax.ContentHandler;
 
 
 /** The default instance of {@link XmlWriterFactory} creates
@@ -35,13 +32,14 @@ import org.xml.sax.ContentHandler;
  * This works for any Java version since 1.2
  */
 public class BaseXmlWriterFactory implements XmlWriterFactory {
-	protected XMLWriter newXmlWriter() {
-		return new XMLWriterImpl();
+
+    protected ExtendedXMLWriter newXmlWriter() {
+		return new ExtendedXMLWriterImpl();
 	}
 
-	public ContentHandler getXmlWriter(XmlRpcStreamConfig pConfig, OutputStream pStream)
+	public SerializerHandler getXmlWriter(XmlRpcStreamConfig pConfig, OutputStream pStream)
 			throws XmlRpcException {
-		XMLWriter xw = newXmlWriter();
+        ExtendedXMLWriter xw = newXmlWriter();
 		xw.setDeclarating(true);
 		String enc = pConfig.getEncoding();
 		if (enc == null) {

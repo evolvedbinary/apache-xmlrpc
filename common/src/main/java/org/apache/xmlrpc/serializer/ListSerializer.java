@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -36,7 +35,7 @@ public class ListSerializer extends ObjectArraySerializer {
 	public ListSerializer(TypeFactory pTypeFactory, XmlRpcStreamConfig pConfig) {
 		super(pTypeFactory, pConfig);
 	}
-	protected void writeData(ContentHandler pHandler, Object pObject) throws SAXException {
+	protected void writeData(SerializerHandler pHandler, Object pObject) throws SAXException {
 		List data = (List) pObject;
 		for (int i = 0;  i < data.size();  i++) {
 			writeObject(pHandler, data.get(i));

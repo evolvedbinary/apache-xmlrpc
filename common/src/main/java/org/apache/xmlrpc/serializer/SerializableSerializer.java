@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import org.apache.ws.commons.util.Base64;
 import org.apache.ws.commons.util.Base64.Encoder;
 import org.apache.ws.commons.util.Base64.EncoderOutputStream;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -38,7 +37,7 @@ public class SerializableSerializer extends TypeSerializerImpl {
 	public static final String SERIALIZABLE_TAG = "serializable";
 	private static final String EX_SERIALIZABLE_TAG = "ex:" + SERIALIZABLE_TAG;
 
-	public void write(final ContentHandler pHandler, Object pObject) throws SAXException {
+	public void write(final SerializerHandler pHandler, Object pObject) throws SAXException {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", SERIALIZABLE_TAG, EX_SERIALIZABLE_TAG, ZERO_ATTRIBUTES);
 		char[] buffer = new char[1024];

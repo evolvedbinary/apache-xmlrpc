@@ -18,7 +18,6 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /** A {@link TypeSerializer} for BigInteger.
@@ -30,7 +29,7 @@ public class BigIntegerSerializer extends TypeSerializerImpl {
 
     private static final String EX_BIGINTEGER_TAG = "ex:" + BIGINTEGER_TAG;
 
-    public void write(ContentHandler pHandler, Object pObject) throws SAXException {
+    public void write(SerializerHandler pHandler, Object pObject) throws SAXException {
         write(pHandler, BIGINTEGER_TAG, EX_BIGINTEGER_TAG, pObject.toString());
     }
 

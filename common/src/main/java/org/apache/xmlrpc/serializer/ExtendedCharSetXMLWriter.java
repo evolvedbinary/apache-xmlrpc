@@ -14,33 +14,31 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 package org.apache.xmlrpc.serializer;
 
-import java.text.Format;
-
 import org.xml.sax.SAXException;
 
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 
-/** A {@link TypeSerializer} for date values.
- */
-public class DateSerializer extends TypeSerializerImpl {
-    /** Tag name of a date value.
-     */
-    public static final String DATE_TAG = "dateTime.iso8601";
+public class ExtendedCharSetXMLWriter extends ExtendedXMLWriterImpl {
+    private CharsetEncoder charsetEncoder;
 
-    private final Format format;
-
-    /** Creates a new instance with the given formatter.
-     *
-     * @param pFormat the format
-     */
-    public DateSerializer(Format pFormat) {
-        format = pFormat;
+    public void startDocument() throws SAXException {
+        String enc = getEncoding();
+        if (enc == null) {
+            enc = "UTF-8";
+        }
+        Charset charSet = Charset.forName(enc);
+        if (charSet.canEncode()) {
+            charsetEncoder = charSet.newEncoder();
+        }
+        super.startDocument();
     }
 
-	public void write(SerializerHandler pHandler, Object pObject) throws SAXException {
-        write(pHandler, DATE_TAG, format.format(pObject));
-	}
+    public boolean canEncode(char c) {
+        return (charsetEncoder == null) ? super.canEncode(c) : charsetEncoder.canEncode(c);
+    }
 }

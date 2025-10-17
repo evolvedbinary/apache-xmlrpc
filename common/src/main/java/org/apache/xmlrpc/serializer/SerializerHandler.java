@@ -14,33 +14,15 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 package org.apache.xmlrpc.serializer;
 
-import java.text.Format;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.ext.LexicalHandler;
 
-import org.xml.sax.SAXException;
-
-
-/** A {@link TypeSerializer} for date values.
+/**
+ * Interface to unify {@link ContentHandler} and {@link LexicalHandler}.
  */
-public class DateSerializer extends TypeSerializerImpl {
-    /** Tag name of a date value.
-     */
-    public static final String DATE_TAG = "dateTime.iso8601";
-
-    private final Format format;
-
-    /** Creates a new instance with the given formatter.
-     *
-     * @param pFormat the format
-     */
-    public DateSerializer(Format pFormat) {
-        format = pFormat;
-    }
-
-	public void write(SerializerHandler pHandler, Object pObject) throws SAXException {
-        write(pHandler, DATE_TAG, format.format(pObject));
-	}
+public interface SerializerHandler extends ContentHandler, LexicalHandler {
 }

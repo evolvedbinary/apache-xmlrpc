@@ -192,4 +192,60 @@ public abstract class RecursiveTypeParserImpl extends TypeParserImpl {
 			context.endPrefixMapping(pPrefix);
 		}
 	}
+
+    public void comment(char[] ch, int start, int length) throws SAXException {
+        if (typeParser == null) {
+            super.comment(ch, start, length);
+        } else {
+            typeParser.comment(ch, start, length);
+        }
+    }
+
+    public void startCDATA() throws SAXException {
+        if (typeParser == null) {
+            super.startCDATA();
+        } else {
+            typeParser.startCDATA();
+        }
+    }
+
+    public void endCDATA() throws SAXException {
+        if (typeParser == null) {
+            super.endCDATA();
+        } else {
+            typeParser.endCDATA();
+        }
+    }
+
+    public void startDTD(String name, String publicId, String systemId) throws SAXException {
+        if (typeParser == null) {
+            super.startDTD(name, publicId, systemId);
+        } else {
+            typeParser.startDTD(name, publicId, systemId);
+        }
+    }
+
+    public void endDTD() throws SAXException {
+        if (typeParser == null) {
+            super.endDTD();
+        } else {
+            typeParser.endDTD();
+        }
+    }
+
+    public void startEntity(String name) throws SAXException {
+        if (typeParser == null) {
+            super.startEntity(name);
+        } else {
+            typeParser.startEntity(name);
+        }
+    }
+
+    public void endEntity(String name) throws SAXException {
+        if (typeParser == null) {
+            super.endEntity(name);
+        } else {
+            typeParser.endEntity(name);
+        }
+    }
 }

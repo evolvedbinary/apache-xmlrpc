@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.apache.ws.commons.util.Base64;
 import org.apache.ws.commons.util.Base64.Encoder;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -34,7 +33,7 @@ public class ByteArraySerializer extends TypeSerializerImpl {
 	/** Tag name of a base64 value.
 	 */
 	public static final String BASE_64_TAG = "base64";
-	public void write(final ContentHandler pHandler, Object pObject) throws SAXException {
+	public void write(final SerializerHandler pHandler, Object pObject) throws SAXException {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement("", BASE_64_TAG, BASE_64_TAG, ZERO_ATTRIBUTES);
 		byte[] buffer = (byte[]) pObject;

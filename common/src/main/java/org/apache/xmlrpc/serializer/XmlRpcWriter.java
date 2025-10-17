@@ -29,7 +29,6 @@ import org.apache.xmlrpc.common.TypeFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -44,14 +43,14 @@ public class XmlRpcWriter {
 	private static final Attributes ZERO_ATTRIBUTES = new AttributesImpl();
 	private final XmlRpcStreamConfig config;
 	private final TypeFactory typeFactory;
-	private final ContentHandler handler;
+	private final SerializerHandler handler;
 
 	/** Creates a new instance.
 	 * @param pConfig The clients configuration.
 	 * @param pHandler The target SAX handler.
 	 * @param pTypeFactory The type factory being used to create serializers.
 	 */
-	public XmlRpcWriter(XmlRpcStreamConfig pConfig, ContentHandler pHandler,
+	public XmlRpcWriter(XmlRpcStreamConfig pConfig, SerializerHandler pHandler,
 					    TypeFactory pTypeFactory) {
 		config = pConfig;
 		handler = pHandler;
