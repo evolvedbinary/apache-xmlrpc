@@ -23,14 +23,13 @@ import java.io.OutputStream;
 import org.apache.ws.commons.serialize.XMLWriter;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
-import org.xml.sax.ContentHandler;
 
 
 /** This factory is responsible for creating instances of
  * {@link org.apache.ws.commons.serialize.XMLWriter}.
  */
 public interface XmlWriterFactory {
-	/** Creates a new instance of {@link ContentHandler},
+	/** Creates a new instance of {@link SerializerHandler},
 	 * writing to the given {@link java.io.OutputStream}.
 	 * @return A SAX handler, typically an instance of
 	 * {@link XMLWriter}.
@@ -38,6 +37,6 @@ public interface XmlWriterFactory {
 	 * @param pConfig The request or response configuration.
 	 * @throws XmlRpcException Creating the handler failed.
 	 */
-	public ContentHandler getXmlWriter(XmlRpcStreamConfig pConfig,
+	public SerializerHandler getXmlWriter(XmlRpcStreamConfig pConfig,
 									   OutputStream pStream) throws XmlRpcException;
 }

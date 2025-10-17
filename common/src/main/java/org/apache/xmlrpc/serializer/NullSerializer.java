@@ -18,7 +18,6 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -32,7 +31,7 @@ public class NullSerializer extends TypeSerializerImpl {
 	 */
 	public static final String EX_NIL_TAG = "ex:nil";
 
-	public void write(ContentHandler pHandler, Object pObject) throws SAXException {
+	public void write(SerializerHandler pHandler, Object pObject) throws SAXException {
 		pHandler.startElement("", VALUE_TAG, VALUE_TAG, ZERO_ATTRIBUTES);
 		pHandler.startElement(XmlRpcWriter.EXTENSIONS_URI, NIL_TAG, EX_NIL_TAG, ZERO_ATTRIBUTES);
 		pHandler.endElement(XmlRpcWriter.EXTENSIONS_URI, NIL_TAG, EX_NIL_TAG);

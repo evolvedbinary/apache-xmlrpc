@@ -18,7 +18,6 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -35,9 +34,9 @@ public abstract class ExtSerializer implements TypeSerializer {
 	 * @param pObject the object to serialize
 	 * @throws SAXException if an error occurs during serialization
 	 */
-	protected abstract void serialize(ContentHandler pHandler, Object pObject) throws SAXException;
+	protected abstract void serialize(SerializerHandler pHandler, Object pObject) throws SAXException;
 
-	public void write(ContentHandler pHandler, Object pObject)
+	public void write(SerializerHandler pHandler, Object pObject)
 			throws SAXException {
 		final String tag = getTagName();
 		final String exTag = "ex:" + getTagName();

@@ -20,30 +20,30 @@ package org.apache.xmlrpc.jaxb;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshallerHandler;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.parser.ExtParser;
-import org.xml.sax.ContentHandler;
+import org.apache.xmlrpc.parser.ParserHandler;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 
 /** A parser for JAXB objects.
  */
 public class JaxbParser extends ExtParser {
-	private final JAXBContext context;
-	private UnmarshallerHandler handler;
+    private final JAXBContext context;
+	private UnmarshallerParserHandler handler;
 
 	/** Creates a new instance with the given context.
 	 * @param pContext The context being used for creating unmarshallers.
 	 */
 	public JaxbParser(JAXBContext pContext) {
-		context = pContext;
+        context = pContext;
 	}
 
-	protected ContentHandler getExtHandler() throws SAXException {
+	protected ParserHandler getExtHandler(Attributes attrs) throws SAXException {
 		try {
-			handler = context.createUnmarshaller().getUnmarshallerHandler();
+			handler = new UnmarshallerParserHandler(context.createUnmarshaller().getUnmarshallerHandler());
 		} catch (JAXBException e) {
 			throw new SAXException(e);
 		}

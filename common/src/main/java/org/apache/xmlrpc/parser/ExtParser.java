@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -36,17 +35,18 @@ import org.xml.sax.SAXParseException;
  */
 public abstract class ExtParser implements TypeParser {
 	private Locator locator;
-	private ContentHandler handler;
+	private ParserHandler handler;
 	private int level = 0;
 	private final List prefixes = new ArrayList();
 
 	/** Returns a content handler for parsing the actual
 	 * contents.
+     * @param attrs Attributes form the Element we are creating the parser for.
 	 * @return A SAX handler for parsing the XML inside
 	 * the outer ex:foo element.
 	 * @throws SAXException Creating the handler failed.
 	 */
-	protected abstract ContentHandler getExtHandler() throws SAXException;
+	protected abstract ParserHandler getExtHandler(final Attributes attrs) throws SAXException;
 
 	/** Returns the outer node name.
 	 * @return the outer node name
@@ -130,7 +130,7 @@ public abstract class ExtParser implements TypeParser {
 												new QName(pURI, pLocalName),
 												locator);
 				}
-				handler = getExtHandler();
+				handler = getExtHandler(pAttrs);
 				handler.startDocument();
 				for (int i = 0;  i < prefixes.size();  i += 2) {
 					handler.startPrefixMapping((String) prefixes.get(i),
@@ -158,4 +158,46 @@ public abstract class ExtParser implements TypeParser {
 				break;
 		}
 	}
+
+    public void comment(char[] ch, int start, int length) throws SAXException {
+        if (handler != null) {
+            handler.comment(ch, start, length);
+        }
+    }
+
+    public void startCDATA() throws SAXException {
+        if (handler != null) {
+            handler.startCDATA();
+        }
+    }
+
+    public void endCDATA() throws SAXException {
+        if (handler != null) {
+            handler.endCDATA();
+        }
+    }
+
+    public void startDTD(String name, String publicId, String systemId) throws SAXException {
+        if (handler != null) {
+            handler.startDTD(name, publicId, systemId);
+        }
+    }
+
+    public void endDTD() throws SAXException {
+        if (handler != null) {
+            handler.endDTD();
+        }
+    }
+
+    public void startEntity(String name) throws SAXException {
+        if (handler != null) {
+            handler.startEntity(name);
+        }
+    }
+
+    public void endEntity(String name) throws SAXException {
+        if (handler != null) {
+            handler.endEntity(name);
+        }
+    }
 }

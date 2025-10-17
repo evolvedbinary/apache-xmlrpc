@@ -18,7 +18,6 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -32,5 +31,5 @@ public interface TypeSerializer {
 	 * @param pObject The object being written.
 	 * @throws SAXException Writing the object failed.
 	 */
-	void write(ContentHandler pHandler, Object pObject) throws SAXException;
+	void write(SerializerHandler pHandler, Object pObject) throws SAXException;
 }

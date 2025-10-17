@@ -24,7 +24,6 @@ import java.io.StringWriter;
 import org.apache.ws.commons.serialize.CharSetXMLWriter;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 
@@ -57,7 +56,7 @@ public class DefaultXMLWriterFactory implements XmlWriterFactory {
 		factory = xwf;
 	}
 
-	public ContentHandler getXmlWriter(XmlRpcStreamConfig pConfig,
+	public SerializerHandler getXmlWriter(XmlRpcStreamConfig pConfig,
 									   OutputStream pStream) throws XmlRpcException {
 		return factory.getXmlWriter(pConfig, pStream);
 	}

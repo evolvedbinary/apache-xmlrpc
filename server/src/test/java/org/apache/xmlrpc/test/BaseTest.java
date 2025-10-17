@@ -219,10 +219,10 @@ public class BaseTest extends XmlRpcTestCase {
 		 * @return The sum of the values of all "int" nodes.
 		 */
 		public int nodeParam(Node pNode) {
-			if (pNode.getNodeType() != Node.DOCUMENT_NODE) {
-				throw new IllegalStateException("Expected document node, got " + pNode);
+            if (pNode.getNodeType() != Node.DOCUMENT_NODE) {
+                throw new IllegalStateException("Expected document node, got " + pNode);
 			}
-			Element e = ((Document) pNode).getDocumentElement();
+            Element e = ((Document) pNode).getDocumentElement();
 			if (!ROOT_TAG.equals(e.getLocalName()) || !INT_URI.equals(e.getNamespaceURI())) {
 				throw new IllegalStateException("Expected root element 'root', got "
 												+ new QName(e.getNamespaceURI(), e.getLocalName()));

@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import org.apache.xmlrpc.serializer.ExtSerializer;
+import org.apache.xmlrpc.serializer.SerializerHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -46,7 +47,7 @@ public class JaxbSerializer extends ExtSerializer {
 
 	protected String getTagName() { return JAXB_TAG; }
 
-	protected void serialize(final ContentHandler pHandler, Object pObject) throws SAXException {
+	protected void serialize(final SerializerHandler pHandler, Object pObject) throws SAXException {
 		/* We must ensure, that startDocument() and endDocument() events
 		 * are suppressed. So we replace the content handler with the following:
 		 */

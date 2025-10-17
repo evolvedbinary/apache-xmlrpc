@@ -18,7 +18,6 @@
  */
 package org.apache.xmlrpc.serializer;
 
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /** A {@link TypeSerializer} for BigDecimal.
@@ -30,7 +29,7 @@ public class BigDecimalSerializer extends TypeSerializerImpl {
 
     private static final String EX_BIGDECIMAL_TAG = "ex:" + BIGDECIMAL_TAG;
 
-    public void write(ContentHandler pHandler, Object pObject) throws SAXException {
+    public void write(SerializerHandler pHandler, Object pObject) throws SAXException {
         write(pHandler, BIGDECIMAL_TAG, EX_BIGDECIMAL_TAG, pObject.toString());
     }
 

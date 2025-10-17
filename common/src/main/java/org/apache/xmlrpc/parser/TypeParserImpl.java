@@ -19,15 +19,19 @@
 package org.apache.xmlrpc.parser;
 
 import org.apache.xmlrpc.XmlRpcException;
+import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.AttributesImpl;
 
 
 /** Abstract base implementation of a {@link org.apache.xmlrpc.parser.TypeParser},
  * for derivation of subclasses.
  */
 public abstract class TypeParserImpl implements TypeParser {
+    protected static final Attributes ZERO_ATTRIBUTES = new AttributesImpl();
+
 	private Object result;
 	private Locator locator;
 
@@ -86,4 +90,25 @@ public abstract class TypeParserImpl implements TypeParser {
 
 	public void ignorableWhitespace(char[] pChars, int pOffset, int pLength) throws SAXException {
 	}
+
+    public void comment(char[] ch, int start, int length) throws SAXException {
+    }
+
+    public void startCDATA() throws SAXException {
+    }
+
+    public void endCDATA() throws SAXException {
+    }
+
+    public void startDTD(String name, String publicId, String systemId) throws SAXException {
+    }
+
+    public void endDTD() throws SAXException {
+    }
+
+    public void startEntity(String name) throws SAXException {
+    }
+
+    public void endEntity(String name) throws SAXException {
+    }
 }

@@ -29,9 +29,9 @@ import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.common.XmlRpcStreamConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.parser.XmlRpcResponseParser;
+import org.apache.xmlrpc.serializer.SerializerHandler;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.apache.xmlrpc.util.SAXParsers;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -75,7 +75,7 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
                 throws XmlRpcException, IOException, SAXException {
             final XmlRpcStreamConfig config = (XmlRpcStreamConfig) request.getConfig();
             try {
-                ContentHandler h = getClient().getXmlWriterFactory().getXmlWriter(config, pStream);
+                SerializerHandler h = getClient().getXmlWriterFactory().getXmlWriter(config, pStream);
                 XmlRpcWriter xw = new XmlRpcWriter(config, h, getClient().getTypeFactory());
                 xw.write(request);
                 pStream.close();
@@ -200,6 +200,7 @@ public abstract class XmlRpcStreamTransport extends XmlRpcTransportImpl {
 		try {
 			xp = new XmlRpcResponseParser(pConfig, getClient().getTypeFactory());
 			xr.setContentHandler(xp);
+            xr.setProperty("http://xml.org/sax/properties/lexical-handler", xp);
             xr.parse(isource);
 		} catch (SAXException e) {
 			throw new XmlRpcClientException("Failed to parse server's response: " + e.getMessage(), e);

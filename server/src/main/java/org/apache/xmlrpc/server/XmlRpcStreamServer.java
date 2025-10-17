@@ -36,10 +36,10 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestProcessor;
 import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.serializer.DefaultXMLWriterFactory;
+import org.apache.xmlrpc.serializer.SerializerHandler;
 import org.apache.xmlrpc.serializer.XmlRpcWriter;
 import org.apache.xmlrpc.serializer.XmlWriterFactory;
 import org.apache.xmlrpc.util.SAXParsers;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -62,6 +62,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 		final XMLReader xr = SAXParsers.newXMLReader();
 		xr.setContentHandler(parser);
 		try {
+            xr.setProperty("http://xml.org/sax/properties/lexical-handler", parser);
 			xr.parse(new InputSource(pStream));
 		} catch (SAXException e) {
 			Exception ex = e.getException();
@@ -84,7 +85,7 @@ public abstract class XmlRpcStreamServer extends XmlRpcServer
 	protected XmlRpcWriter getXmlRpcWriter(XmlRpcStreamRequestConfig pConfig,
 										   OutputStream pStream)
 			throws XmlRpcException {
-		ContentHandler w = getXMLWriterFactory().getXmlWriter(pConfig, pStream);
+        SerializerHandler w = getXMLWriterFactory().getXmlWriter(pConfig, pStream);
 		return new XmlRpcWriter(pConfig, w, getTypeFactory());
 	}
 

@@ -19,13 +19,12 @@
 package org.apache.xmlrpc.parser;
 
 import org.apache.xmlrpc.XmlRpcException;
-import org.xml.sax.ContentHandler;
 
 
 /** Interface of a SAX handler parsing a single parameter or
  * result object.
  */
-public interface TypeParser extends ContentHandler {
+public interface TypeParser extends ParserHandler {
 	/** Returns the parsed object.
 	 * @return The parameter or result object.
 	 * @throws XmlRpcException Creating the result object failed.
