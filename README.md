@@ -25,7 +25,7 @@ from Maven Central as:
     <dependency>    
         <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
         <artifactId>xmlrpc-server</artifactId>
-        <version>5.0.0</version>
+        <version>6.1.0</version>
     </dependency>
 ```
 
@@ -34,7 +34,7 @@ from Maven Central as:
     <dependency>    
         <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
         <artifactId>xmlrpc-client</artifactId>
-        <version>5.0.0</version>
+        <version>6.1.0</version>
     </dependency>
 ```
 
@@ -43,7 +43,7 @@ from Maven Central as:
     <dependency>    
         <groupId>com.evolvedbinary.thirdparty.org.apache.xmlrpc</groupId>
         <artifactId>xmlrpc-common</artifactId>
-        <version>5.0.0</version>
+        <version>6.1.0</version>
     </dependency>
 ```
 
