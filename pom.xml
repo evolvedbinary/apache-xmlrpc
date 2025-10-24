@@ -411,6 +411,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>com.evolvedbinary.thirdparty.xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>1.4.02</version>
+      </dependency>
+      <dependency>
         <groupId>jakarta.servlet</groupId>
         <artifactId>jakarta.servlet-api</artifactId>
         <version>5.0.0</version>
@@ -423,9 +428,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.ws.commons.util</groupId>
+        <groupId>com.evolvedbinary.thirdparty.org.apache.ws.commons.util</groupId>
         <artifactId>ws-commons-util</artifactId>
-        <version>1.0.2</version>
+        <version>1.1.0</version>
       </dependency>
       <dependency>
         <groupId>jaxme</groupId>
@@ -490,9 +495,9 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.apache.ws.commons</groupId>
+          <groupId>com.evolvedbinary.thirdparty.org.apache.ws.commons.java5</groupId>
           <artifactId>ws-commons-java5</artifactId>
-          <version>1.0.1</version>
+          <version>1.1.0</version>
         </dependency>
       </dependencies>
     </profile>
