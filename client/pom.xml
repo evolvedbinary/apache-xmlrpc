@@ -95,5 +95,9 @@
       <artifactId>xmlrpc-common</artifactId>
       <version>4.0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>com.evolvedbinary.thirdparty.xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+    </dependency>
   </dependencies>
 </project>
