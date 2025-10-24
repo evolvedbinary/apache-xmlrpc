@@ -50,11 +50,11 @@ from Maven Central as:
 ## Perfoming a Release
 To release a new version for Evolved Binary to Maven Central, simply run:
 ``` bash
-mvn -Dmaven.site.skip=true -Dmaven.site.deploy.skip=true -Dgpg.keyname=D4A08A8AB731BF576354A8183EF2B4866A540119 -Darguments="-Dmaven.site.skip=true -Dmaven.site.deploy.skip=true -Dgpg.keyname=D4A08A8AB731BF576354A8183EF2B4866A540119" release:prepare
+mvn -Dmaven.site.skip=true -Dmaven.site.deploy.skip=true -Darguments="-Dmaven.site.skip=true -Dmaven.site.deploy.skip=true" release:prepare
 
 ...
 
-mvn -Dmaven.site.skip=true -Dmaven.site.deploy.skip=true -Dgpg.keyname=D4A08A8AB731BF576354A8183EF2B4866A540119 -Darguments="-Dmaven.site.skip=true -Dmaven.site.deploy.skip=true -Dgpg.keyname=D4A08A8AB731BF576354A8183EF2B4866A540119" release:perform
+mvn -Dmaven.site.skip=true -Dmaven.site.deploy.skip=true -Darguments="-Dmaven.site.skip=true -Dmaven.site.deploy.skip=true" release:perform
 ```
 
 Then visit https://oss.sontatype.org and login, and release the staged artifacts to Maven Central
