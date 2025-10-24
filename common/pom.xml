@@ -90,7 +90,11 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.ws.commons.util</groupId>
+      <groupId>com.evolvedbinary.thirdparty.xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.evolvedbinary.thirdparty.org.apache.ws.commons.util</groupId>
       <artifactId>ws-commons-util</artifactId>
     </dependency>
     <dependency>

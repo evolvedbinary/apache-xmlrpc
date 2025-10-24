@@ -49,7 +49,7 @@
         <include>org.apache.xmlrpc:*</include>
         <include>org.apache.xmlrpc:*</include>
         <include>commons-logging:commons-logging</include>
-        <include>org.apache.ws.commons.util:ws-commons-util</include>
+        <include>com.evolvedbinary.thirdparty.org.apache.ws.commons.util:ws-commons-util</include>
       </includes>
     </dependencySet>
   </dependencySets>
