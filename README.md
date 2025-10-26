@@ -15,7 +15,14 @@ This is a simple fork for the purposes of:
 
 *NOTE*: This fork was created for our own purposes, and we offer no guarantee that we will maintain it beyond our own requirements.
 
-*NOTE*: The version 4.x.x line contains only the original source code plus the security updates, whereas the 5.x.x line also contains changes to switch from the `javax.servlet` package namespace to Jakarta EE's `jakarta.servlet` package namespace.
+| Version | Purpose                                                                                                                                                                                                                                                                                                       |
+|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 4.0.0   | Contains only the original source code of [Apache XML-RPC 3.1.3](https://github.com/evolvedbinary/apache-xmlrpc/tree/xmlrpc-3.1.3), plus the security updates.                                                                                                                                                | 
+| 4.1.0   | 4.0.0 with backports of [f59578a](https://github.com/evolvedbinary/apache-xmlrpc/commit/f59578a95810fac320b99e097fe453d4569cb0c3) and [c7a7091](https://github.com/evolvedbinary/apache-xmlrpc/commit/c7a709199f18f588c5a9b7477e5e6c51515d25aa).                                                              |
+| 5.0.0   | Upgraded from `javax.servlet` package namespace to Jakarta EE's `jakarta.servlet`.                                                                                                                                                                                                                            |
+| 6.0.0   | Enable the serialization and deserialization of all DOM Node types within function parameter values. [f59578a](https://github.com/evolvedbinary/apache-xmlrpc/commit/f59578a95810fac320b99e097fe453d4569cb0c3)                                                                                                |
+| 6.1.0   | Upgraded from `org.apache.ws.commons.util:ws-commons-util:1.0.2` to `com.evolvedbinary.thirdparty.org.apache.ws.commons.util:ws-commons-util:1.1.0` to fix an issue with namespace prefix mappings. [c7a7091](https://github.com/evolvedbinary/apache-xmlrpc/commit/c7a709199f18f588c5a9b7477e5e6c51515d25aa) |
+
 
 However, if you want a possibly more secure Apache XML-RPC than the last official version (3.1.3), then this fork's artifacts are available
 from Maven Central as:
